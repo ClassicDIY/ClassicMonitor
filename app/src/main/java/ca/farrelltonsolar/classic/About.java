@@ -1,6 +1,5 @@
 package ca.farrelltonsolar.classic;
 
-
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
