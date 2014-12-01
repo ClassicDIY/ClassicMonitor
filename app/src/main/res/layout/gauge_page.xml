@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:baselineAligned="false"
+    android:paddingEnd="5dp"
+    android:paddingStart="5dp"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    >
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="20"
+        android:orientation="vertical"
+        android:weightSum="6">
+
+        <ca.farrelltonsolar.classic.GaugeView
+            android:id="@+id/PVVoltage"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            app:scaleStartValue="0"
+            app:scaleEndValue="200"
+            app:showRanges="true"
+            app:showScale="false"
+            app:showReading="true"
+            app:readingTitle="@string/PVVoltTitle"
+            app:showOuterShadow="false"
+            app:showOuterBorder="true"
+            app:showOuterRim="true"
+            app:showInnerRim="true"
+            app:textPrecision="1"
+            app:textReadingSize="0.1"
+            app:textTitleSize="0.05"
+            android:layout_marginTop="10dp"
+            app:textUnit="V"
+            app:register="PVVoltage"
+            android:layout_weight="3" />
+
+        <ca.farrelltonsolar.classic.GaugeView
+            android:id="@+id/PVCurrent"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            app:scaleStartValue="0"
+            app:scaleEndValue="2000"
+            app:showRanges="true"
+            app:showScale="false"
+            app:showReading="true"
+            app:readingTitle="@string/PVCurrentTitle"
+            app:showOuterShadow="false"
+            app:showOuterBorder="true"
+            app:showOuterRim="true"
+            app:showInnerRim="true"
+            app:textPrecision="1"
+            app:textReadingSize="0.1"
+            app:textTitleSize="0.05"
+            android:layout_marginTop="10dp"
+            app:textUnit="A"
+            app:register="PVCurrent"
+            android:layout_weight="3" />
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="20"
+        android:orientation="vertical"
+        android:weightSum="6">
+
+        <ca.farrelltonsolar.uicomponents.SolarGauge
+
+            android:id="@+id/Power"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="4"
+
+            app:register="Power"
+            app:scaleStartValue="0"
+            app:scaleEndValue="2000"
+            app:biDirectional="false"
+            app:gaugeTitle="@string/PowerTitle"
+            app:majorTickPercentOfMax="10"
+            app:readingColor="#FFFFFF00"
+            app:readingUnit="W"
+            app:showLeds="true"
+            app:readingPrecision="0"
+            app:showReading="true"
+            app:tickLabelColor="#FFFFFFFF"
+            app:titleColor="#FF00FF00" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/EnergyTotal"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1">
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/textSizeMedium"
+                        android:labelFor="@+id/Value"
+                        android:singleLine="true"
+                        android:text="@string/TotalEnergyTitle" />
+
+                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/EnergyTotalValue"
+                            android:textSize="@dimen/textSizeXLarge"
+                            android:textStyle="bold"
+                            android:singleLine="true"
+                            android:inputType="none"
+                            android:text="0.0"
+                            android:textColor="#1a1940" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/textSizeSmall"
+                            android:singleLine="true"
+                            android:paddingLeft="2dip"
+                            android:text="@string/energy_unit" />
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/EnergyToday"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1">
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/textSizeMedium"
+                        android:labelFor="@+id/Value"
+                        android:id="@+id/Title"
+                        android:singleLine="true"
+                        android:text="@string/EnergyTodayTitle" />
+
+                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/EnergyTodayValue"
+                            android:textSize="@dimen/textSizeXLarge"
+                            android:textStyle="bold"
+                            android:singleLine="true"
+                            android:text="0.0"
+                            android:inputType="none" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/textSizeSmall"
+                            android:id="@+id/Unit"
+                            android:singleLine="true"
+                            android:paddingLeft="2dip"
+                            android:text="@string/energy_unit" />
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ca.farrelltonsolar.classic.SOCWheel
+                    android:id="@+id/SOC"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    ProgressWheel:text="95%"
+                    ProgressWheel:textColor="#222222"
+                    ProgressWheel:textSize="@dimen/textSizeLarge"
+                    android:textStyle="bold"
+                    ProgressWheel:rimColor="#44000000"
+                    ProgressWheel:barLength="60dp"
+                    ProgressWheel:barColor="#339BB9"
+                    ProgressWheel:barWidth="@dimen/SOCBarWidth"
+                    ProgressWheel:rimWidth="@dimen/SOCRimWidth"
+                    android:clickable="false"
+                    android:longClickable="true"
+                    android:layout_gravity="center|top"
+                    android:visibility="invisible" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ChargeStateTitle"
+                android:textSize="@dimen/textSizeXLarge"
+                android:text="Off"
+                android:singleLine="true"
+                android:inputType="none"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/ChargeState"
+                android:textSize="@dimen/textSizeMedium"
+                android:text="No data"
+                android:singleLine="true"
+                android:inputType="none"/>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="20"
+        android:id="@+id/container"
+        android:orientation="vertical"
+        android:weightSum="6">
+
+        <ca.farrelltonsolar.classic.GaugeView
+            android:id="@+id/BatVoltage"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            app:scaleStartValue="0"
+            app:scaleEndValue="2000"
+            app:showRanges="true"
+            app:showScale="false"
+            app:showReading="true"
+            app:readingTitle="@string/BatVoltsTitle"
+            app:showOuterShadow="false"
+            app:showOuterBorder="true"
+            app:showOuterRim="true"
+            app:showInnerRim="true"
+            app:textPrecision="1"
+            app:textReadingSize="0.1"
+            app:textTitleSize="0.05"
+            android:layout_marginTop="10dp"
+            app:textUnit="V"
+            app:register="BatVoltage"
+            android:layout_weight="3" />
+
+        <ca.farrelltonsolar.classic.GaugeView
+            android:id="@+id/BatCurrent"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            app:scaleStartValue="0"
+            app:scaleEndValue="2000"
+            app:showRanges="true"
+            app:showScale="false"
+            app:showReading="true"
+            app:readingTitle="@string/BatCurrentTitle"
+            app:showOuterShadow="false"
+            app:showOuterBorder="true"
+            app:showOuterRim="true"
+            app:showInnerRim="true"
+            app:textPrecision="1"
+            app:textReadingSize="0.1"
+            app:textTitleSize="0.05"
+            android:layout_marginTop="10dp"
+            app:textUnit="A"
+            app:register="BatCurrent"
+            android:layout_weight="3" />
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Classic</string>
+    <string name="action_settings">Impostazioni</string>
+    <string name="EnergyTodayTitle">Energia Oggi</string>
+    <string name="TotalEnergyTitle">Energia Total</string>
+    <string name="energy_unit">kWh</string>
+    <string name="power_unit">Watts</string>
+    <string name="volt_unit">Volts</string>
+    <string name="amp_unit">Amps</string>
+    <string name="ChargeState">carica Stato</string>
+    <string name="Absorb">Regolare la tensione della batteria a assorbire set point.</string>
+    <string name="Bulk">Inseguimento del punto di potenza massima fino a assorbire la tensione raggiunta.</string>
+    <string name="Float">La batteria è piena e regolare la tensione della batteria al set point galleggiante.</string>
+    <string name="Tracking">Monitoraggio Max power point. Cerco galleggiante set point di tensione.</string>
+    <string name="Equalize">Regolare la tensione della batteria al set point di equalizzazione.</string>
+    <string name="Error">Tensione di ingresso supera la tensione di esercizio massima classico.</string>
+    <string name="SeekingEqualize">Monitoraggio Max power point. Cerco pareggiare tensione set point.</string>
+    <string name="ChargeStateOff">Nessun potere, in attesa di fonte di energia.</string>
+    <string name="AbsorbTitle">assorbire</string>
+    <string name="BulkTitle">massa</string>
+    <string name="FloatTitle">Fluttuare</string>
+    <string name="TrackingTitle">Fluttuare</string>
+    <string name="EqualizeTitle">pareggiare</string>
+    <string name="ErrorTitle">errore</string>
+    <string name="SeekingEqualizeTitle">equalizzazione</string>
+    <string name="ChargeStateOffTitle">spento</string>
+    <string name="FoundClassic">Collegato al Classic all\'indirizzo %1$s:%2$d </string>
+    <string name="ClassicNotFound">Scansione di rete locale per la porta %1$d</string>
+    <string name="ClassicNotConnecting">Tentativo di connessione a %1$s:%2$d</string>
+    <string name="NoConnection">Nessuna connessione</string>
+    <string name="PVVoltTitle">PV Volt</string>
+    <string name="PVCurrentTitle">PV corrente</string>
+    <string name="BatVoltsTitle">Battery Volt</string>
+    <string name="BatCurrentTitle">corrente della batteria</string>
+    <string name="BatPowerTitle">Alimentazione a batteria</string>
+    <string name="PowerTitle">potenza</string>
+    <string name="SettingsLabel">Impostazioni</string>
+    <string name="About">circa</string>
+    <string name="DoneButton">Fatto</string>
+    <string name="ApplyButton">applicare</string>
+    <string name="CancelButton">annullare</string>
+    <string name="GaugeTabTitle">Gauge</string>
+    <string name="CalendarTabTitle">calendario</string>
+    <string name="ChartTabTitle">grafico</string>
+    <string name="BatteryVoltageScaleSettingDialogTitle">Tensione della batteria Gauge Scala</string>
+    <string name="BatteryCurrentGaugeScaleSettingDialogTitle">Battery Gauge scala corrente</string>
+    <string name="PowerGaugeScaleSettingDialogTitle">Potenza Gauge Scala</string>
+    <string name="BatteryVoltageScaleSettingTitle">Tensione della batteria Scala</string>
+    <string name="BatteryCurrentGaugeScaleSettingTitle">Batteria scala corrente</string>
+    <string name="PowerGaugeScaleSettingTitle">Potenza Scala</string>
+    <string name="bi_directional_gauge_units">Visualizzare unità calibro bi-direzionali in watt</string>
+    <string name="Calendar">calendario</string>
+    <string name="LockScale">Scale di blocco</string>
+    <string name="CalendarFloat">(Fluttuare)</string>
+    <string name="ScanSubnetCheckbox">Eseguire la scansione del subnet locale per il Classic</string>
+    <string name="ModbusPortSetting">Set porta Modbus del Classic</string>
+    <string name="StartScanAddress">Inizia la scansione a</string>
+    <string name="IPAddressSetting">Indirizzo IP:</string>
+    <string name="IPAddressPrompt">Immettere un indirizzo IP</string>
+    <string name="StartScanIPTitle">Inizia Indirizzo IP Scan</string>
+    <string name="NumberOfAddressesToScan">Numero di indirizzi IP per la scansione</string>
+    <string name="ScanPrompt">scansione:</string>
+    <string name="ScanTitle">Indirizzi di scansione</string>
+    <string name="StaticIPAddressTitle">Impostare l\'indirizzo IP del Classic</string>
+    <string name="StaticIPAddressPrompt">Indirizzo IP:</string>
+    <string name="StaticIPAddressDialogTitle">Indirizzo IP Classic</string>
+    <string name="StaticIPAddressSummary">Indirizzo IP statico del Classic</string>
+    <string name="UploadLogsSummary">Upload Logs Per PVOutput</string>
+    <string name="APIKeyTitle">API Key</string>
+    <string name="APIKeyPrompt">API Key:</string>
+    <string name="APIKeyDialogTitle">API Key</string>
+    <string name="SIDDialogTitle">SID</string>
+    <string name="SIDDialogMessage">SID:</string>
+    <string name="SIDTitle">SID</string>
+    <string name="ClearLogsTitle">Cancella i log registrati</string>
+    <string name="NetworkCategoryTitle">Impostazioni di connessione</string>
+    <string name="GaugePreferenceTitle">Calibri</string>
+    <string name="PVOutputPreferenceTitle">PVOutput</string>
+
+    <string name="MonthNames">\'Gennaio\',\'Febbraio\',\'Marzo\',\'Aprile\',\'Maggio\',\'Giugno\',\'Luglio\',\'Agosto\',\'Settembre\',\'Ottobre\',\'Novembre\',\'Dicembre\'</string>
+
+    <string name="MonthNamesShort">\'genn\',\'febbr\',\'mar\',\'apr\',\'magg\',\'giugno\',\'luglio\',\'ag\',\'sett\',\'ott\',\'nov\',\'dic\'</string>
+
+    <string name="DayNames">\'Domenica\',\'Lunedi\',\'Martedì\',\'Mercoledì\',\'Giovedi\',\'Venerdì\',\'Sabato\'</string>
+
+    <string name="DayNamesShort">\'do\',\'lun\',\'mar\',\'mer\',\'gio\',\'ven\',\'sab\'</string>
+
+</resources>

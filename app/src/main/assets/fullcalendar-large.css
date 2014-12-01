@@ -1,0 +1,381 @@
+/*!
+ * FullCalendar v1.6.4 Stylesheet
+ * Docs & License: http://arshaw.com/fullcalendar/
+ * (c) 2013 Adam Shaw
+ */
+
+
+.fc {
+	direction: ltr;
+	text-align: left;
+	}
+	
+.fc table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	}
+	
+html .fc,
+.fc table {
+	font-size: 1em;
+	}
+	
+.fc td,
+.fc th {
+	padding: 0;
+	vertical-align: top;
+	}
+
+
+
+/* Header
+------------------------------------------------------------------------*/
+
+.fc-header td {
+	white-space: nowrap;
+	}
+
+.fc-header-left {
+	width: 25%;
+	text-align: left;
+	}
+	
+.fc-header-center {
+	text-align: center;
+	}
+	
+.fc-header-right {
+	width: 0%;
+	text-align: right;
+	}
+	
+.fc-header-title {
+	display: inline-block;
+	vertical-align: top;
+	}
+	
+.fc-header-title h2 {
+	margin-top: 0;
+	white-space: nowrap;
+	}
+	
+.fc .fc-header-space {
+	padding-left: 10px;
+	}
+	
+.fc-header .fc-button {
+	margin-bottom: 1em;
+	vertical-align: top;
+	}
+	
+/* buttons edges butting together */
+
+.fc-header .fc-button {
+	margin-right: -1px;
+	}
+	
+.fc-header .fc-corner-right,  /* non-theme */
+.fc-header .ui-corner-right { /* theme */
+	margin-right: 0; /* back to normal */
+	}
+	
+/* button layering (for border precedence) */
+	
+.fc-header .fc-state-hover,
+.fc-header .ui-state-hover {
+	z-index: 2;
+	}
+	
+.fc-header .fc-state-down {
+	z-index: 3;
+	}
+
+.fc-header .fc-state-active,
+.fc-header .ui-state-active {
+	z-index: 4;
+	}
+	
+	
+	
+/* Content
+------------------------------------------------------------------------*/
+	
+.fc-content {
+	clear: both;
+	zoom: 1; /* for IE7, gives accurate coordinates for [un]freezeContentHeight */
+	}
+	
+.fc-view {
+	width: 100%;
+	overflow: hidden;
+	}
+	
+	
+
+/* Cell Styles
+------------------------------------------------------------------------*/
+
+.fc-widget-header,    /* <th>, usually */
+.fc-widget-content {  /* <td>, usually */
+	border: 1px solid #ddd;
+	}
+	
+.fc-state-highlight { /* <td> today cell */ /* TODO: add .fc-today to <th> */
+	background: #fcf8e3;
+	}
+	
+.fc-cell-overlay { /* semi-transparent rectangle while dragging */
+	background: #bce8f1;
+	opacity: .3;
+	filter: alpha(opacity=30); /* for IE */
+	}
+	
+
+
+/* Buttons
+------------------------------------------------------------------------*/
+
+.fc-button {
+	position: relative;
+	display: inline-block;
+	padding: 0 .6em;
+	overflow: hidden;
+	height: 1.9em;
+	line-height: 1.9em;
+	white-space: nowrap;
+	cursor: pointer;
+	}
+	
+.fc-state-default { /* non-theme */
+	border: 1px solid;
+	}
+
+.fc-state-default.fc-corner-left { /* non-theme */
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+	}
+
+.fc-state-default.fc-corner-right { /* non-theme */
+	border-top-right-radius: 4px;
+	border-bottom-right-radius: 4px;
+	}
+
+/*
+	Our default prev/next buttons use HTML entities like &lsaquo; &rsaquo; &laquo; &raquo;
+	and we'll try to make them look good cross-browser.
+*/
+
+.fc-text-arrow {
+	margin: 0 .1em;
+	font-size: 2em;
+	font-family: "Courier New", Courier, monospace;
+	vertical-align: baseline; /* for IE7 */
+	}
+
+.fc-button-prev .fc-text-arrow,
+.fc-button-next .fc-text-arrow { /* for &lsaquo; &rsaquo; */
+	font-weight: bold;
+	}
+	
+/* icon (for jquery ui) */
+	
+.fc-button .fc-icon-wrap {
+	position: relative;
+	float: left;
+	top: 50%;
+	}
+	
+.fc-button .ui-icon {
+	position: relative;
+	float: left;
+	margin-top: -50%;
+	*margin-top: 0;
+	*top: -50%;
+	}
+	
+/*
+  button states
+  borrowed from twitter bootstrap (http://twitter.github.com/bootstrap/)
+*/
+
+.fc-state-default {
+	background-color: #f5f5f5;
+	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+	background-repeat: repeat-x;
+	border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	color: #333;
+	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+	}
+
+.fc-state-hover,
+.fc-state-down,
+.fc-state-active,
+.fc-state-disabled {
+	color: #333333;
+	background-color: #e6e6e6;
+	}
+
+.fc-state-down,
+.fc-state-active {
+	background-color: #cccccc;
+	background-image: none;
+	outline: 0;
+	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+	}
+
+.fc-state-disabled {
+	cursor: default;
+	background-image: none;
+	opacity: 0.65;
+	filter: alpha(opacity=65);
+	box-shadow: none;
+	}
+
+	
+
+/* Global Event Styles
+------------------------------------------------------------------------*/
+
+.fc-event-container > * {
+	z-index: 8;
+	}
+
+.fc-event-container > .ui-draggable-dragging,
+.fc-event-container > .ui-resizable-resizing {
+	z-index: 9;
+	}
+	 
+.fc-event {
+	border-style: none;
+	border-width: 0;
+	font-size: .7em;
+	cursor: default;
+	}
+
+a.fc-event {
+	text-decoration: none;
+	}
+	
+a.fc-event,
+.fc-event-draggable {
+	cursor: pointer;
+	}
+	
+.fc-rtl .fc-event {
+	text-align: right;
+	}
+
+.fc-event-inner {
+    position: relative;
+    width: 95%;
+    height: 100%;
+    border-style: none;
+    overflow: hidden;
+    text-align: center;
+	}
+	
+.fc-event-time,
+.fc-event-title {
+	padding: 0 1px;
+    text-align: center;
+    color: #0b105e;
+	}
+	
+.fc .ui-resizable-handle {
+	display: block;
+	position: absolute;
+	z-index: 99999;
+	overflow: hidden; /* hacky spaces (IE6/7) */
+	font-size: 300%;  /* */
+	line-height: 50%; /* */
+	}
+	
+	
+
+	
+/* Reusable Separate-border Table
+------------------------------------------------------------*/
+
+table.fc-border-separate {
+	border-collapse: separate;
+	}
+	
+.fc-border-separate th,
+.fc-border-separate td {
+	border-width: 1px 0 0 1px;
+	}
+	
+.fc-border-separate th.fc-last,
+.fc-border-separate td.fc-last {
+	border-right-width: 1px;
+	}
+	
+.fc-border-separate tr.fc-last th,
+.fc-border-separate tr.fc-last td {
+	border-bottom-width: 1px;
+	}
+	
+.fc-border-separate tbody tr.fc-first td,
+.fc-border-separate tbody tr.fc-first th {
+	border-top-width: 0;
+	}
+	
+	
+
+/* Month View, Basic Week View, Basic Day View
+------------------------------------------------------------------------*/
+
+.fc-grid th {
+	text-align: center;
+	}
+
+.fc .fc-week-number {
+	width: 22px;
+	text-align: center;
+	}
+
+.fc .fc-week-number div {
+	padding: 0 2px;
+	}
+	
+.fc-grid .fc-day-number {
+	float: right;
+	padding: 0 2px;
+    font-size: .7em;
+	}
+	
+.fc-grid .fc-other-month .fc-day-number {
+	opacity: 0.3;
+	filter: alpha(opacity=30); /* for IE */
+	/* opacity with small font can sometimes look too faded
+	   might want to set the 'color' property instead
+	   making day-numbers bold also fixes the problem */
+	}
+	
+.fc-grid .fc-day-content {
+	clear: both;
+	padding: 0px ; /* distance between events and day edges */
+	}
+	
+/* event styles */
+	
+.fc-grid .fc-event-time {
+	font-weight: bold;
+	}
+	
+/* right-to-left */
+	
+.fc-rtl .fc-grid .fc-day-number {
+	float: left;
+	}
+	
+.fc-rtl .fc-grid .fc-event-time {
+	float: right;
+	}
+	
