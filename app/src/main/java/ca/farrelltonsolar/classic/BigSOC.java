@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
+import ca.farrelltonsolar.uicomponents.SolarGauge;
+
 /**
  * Created by Graham on 02/03/14.
  */
@@ -28,14 +30,13 @@ public class BigSOC extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bigsoc);
         LocalBroadcastManager.getInstance(MyApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter("ca.farrelltonsolar.classic.GaugePage"));
-        GaugeView gaugeView = (GaugeView) findViewById(R.id.BatCurrent);
+        SolarGauge gaugeView = (SolarGauge) findViewById(R.id.BatCurrent);
         LoadSettings();
         if (_bidirectionalUnitsInWatts) {
             gaugeView.setScaleEnd(Constants.BiDirectionalPowerScales[_biDirectionalScaleIndex]);
             gaugeView.setTitle(MyApplication.getAppContext().getString(R.string.BatPowerTitle));
             gaugeView.setUnit("W");
-        }
-        else {
+        } else {
             gaugeView.setScaleEnd(Constants.BatteryCurrentScales[_batteryCurrentScaleIndex]);
             gaugeView.setTitle(MyApplication.getAppContext().getString(R.string.BatCurrentTitle));
             gaugeView.setUnit("A");
@@ -71,13 +72,12 @@ public class BigSOC extends Activity {
     };
 
     private void SetReadings(Readings readings) {
-        GaugeView gaugeView = (GaugeView) findViewById(R.id.BatCurrent);
+        SolarGauge gaugeView = (SolarGauge) findViewById(R.id.BatCurrent);
         float batteryCurrent = readings.GetFloat(RegisterName.BatCurrent);
         if (_bidirectionalUnitsInWatts) {
             float batteryVolts = readings.GetFloat(RegisterName.BatVoltage);
-            gaugeView.setTargetValue(batteryCurrent*batteryVolts);
-        }
-        else {
+            gaugeView.setTargetValue(batteryCurrent * batteryVolts);
+        } else {
             gaugeView.setTargetValue(batteryCurrent);
         }
         int socVal = readings.GetInt(RegisterName.SOC);
@@ -85,6 +85,7 @@ public class BigSOC extends Activity {
         soc.setText(String.format("%s%%", String.valueOf(socVal)));
         soc.setProgress(socVal);
     }
+
     @Override
     protected void onPause() {
         super.onStop();
@@ -120,7 +121,7 @@ public class BigSOC extends Activity {
                         @Override
                         public void onAnimationEnd(Animation arg0) {
                             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
-                            GaugeView gaugeView = (GaugeView) v;
+                            SolarGauge gaugeView = (SolarGauge) v;
                             if (_bidirectionalUnitsInWatts) {
                                 _biDirectionalScaleIndex++;
                                 if (_biDirectionalScaleIndex >= Constants.BiDirectionalPowerScales.length) {

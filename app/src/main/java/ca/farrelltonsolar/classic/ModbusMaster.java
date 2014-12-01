@@ -73,7 +73,6 @@ import ca.farrelltonsolar.j2modlite.procimg.Register;
 //            new Tupple { Description = "(Slave) State set by master charge controller.", Value = 9 }
 
 
-
 public class ModbusMaster extends IntentService {
 
     private BroadcastNotifier _broadcaster;
@@ -279,6 +278,8 @@ public class ModbusMaster extends IntentService {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                         return;
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                     if (GetConnectionState() == ConnectionState.Stopped) {
                         running = false;
@@ -297,12 +298,10 @@ public class ModbusMaster extends IntentService {
                                 if (_minuteLogEntry.GetLogs().isEmpty()) {
                                     LoadMinuteLogs();
                                 }
-                            }
-                            else if (Function.DayLogs.equals(GetFunction())) {
+                            } else if (Function.DayLogs.equals(GetFunction())) {
                                 BroadcastLogs("ca.farrelltonsolar.classic.DayLogs", _dayLogEntry);
                                 SetFunction(Function.Registers); // back to registers when loaded
-                            }
-                            else if (Function.MinuteLogs.equals(GetFunction())) {
+                            } else if (Function.MinuteLogs.equals(GetFunction())) {
                                 BroadcastLogs("ca.farrelltonsolar.classic.MinuteLogs", _minuteLogEntry);
                                 SetFunction(Function.Registers); // back to registers when loaded
                             }
@@ -422,26 +421,24 @@ public class ModbusMaster extends IntentService {
         return rVal;
     }
 
-    protected float WHr(float val)
-    {
+    protected float WHr(float val) {
         val /= 1000;
         return val;
     }
 
-    protected float PScale(float val)
-    {
+    protected float PScale(float val) {
         val = val * v_pu * i_pu;
         val /= 131072;
         return val;
     }
-    protected float VScale(float val)
-    {
+
+    protected float VScale(float val) {
         val = val * v_pu;
         val /= 32768;
         return val;
     }
-    protected float IScale(float val)
-    {
+
+    protected float IScale(float val) {
         val = val * i_pu;
         val /= 32768;
         return val;
@@ -449,7 +446,7 @@ public class ModbusMaster extends IntentService {
 
     private void GetModbusReadings() throws ModbusException {
         try {
-            if (_foundTriStar){
+            if (_foundTriStar) {
                 ReadMultipleRegistersResponse regRes = _modbusMaster.readMultipleRegisters(0, 80);
                 if (regRes != null) {
 
@@ -568,7 +565,7 @@ public class ModbusMaster extends IntentService {
             if (regRes != null) {
                 byte[] v0 = regRes.getRegister(0).toBytes();
                 byte[] v1 = regRes.getRegister(1).toBytes();
-                byte[] v2 =regRes.getRegister(2).toBytes();
+                byte[] v2 = regRes.getRegister(2).toBytes();
                 byte[] v3 = regRes.getRegister(3).toBytes();
 
                 byte[] temp = new byte[8];
@@ -604,7 +601,7 @@ public class ModbusMaster extends IntentService {
             if (regRes != null) {
                 int count = regRes.getWordCount();
                 if (count > 0) {
-                    int j = count-1;
+                    int j = count - 1;
                     for (int i = 0; i < count; i++, j--) {
                         mWattHourLog[j + day] = registerToShort(regRes.getRegister(i).toBytes());
                     }
@@ -622,7 +619,7 @@ public class ModbusMaster extends IntentService {
             if (regRes != null) {
                 int count = regRes.getWordCount();
                 if (count > 0) {
-                    int j = count-1;
+                    int j = count - 1;
                     for (int i = 0; i < count; i++, j--) {
                         mFloatLog[j + day] = registerToShort(regRes.getRegister(i).toBytes());
                     }
@@ -672,8 +669,7 @@ public class ModbusMaster extends IntentService {
             if (v > 0) {
                 sum += mWattLog[k];
                 v--;
-            }
-            else {
+            } else {
                 mHourlyWattLog[w++] = (short) (sum / 12);
                 sum = 0;
                 v = 12;

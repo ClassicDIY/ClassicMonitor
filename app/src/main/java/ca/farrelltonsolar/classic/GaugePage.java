@@ -17,6 +17,7 @@ import android.view.animation.Animation;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import ca.farrelltonsolar.uicomponents.BaseGauge;
 import ca.farrelltonsolar.uicomponents.SolarGauge;
 
 /**
@@ -44,41 +45,41 @@ public class GaugePage extends Fragment {
                              Bundle savedInstanceState) {
         View theView = inflater.inflate(R.layout.gauge_page, container, false);
         LoadSettings();
-        GaugeView gaugeView;
-        SolarGauge powerGauge;
-        powerGauge = (SolarGauge) theView.findViewById(R.id.Power);
-        if (powerGauge != null) {
-            powerGauge.setScaleEnd(Constants.PowerScales[_powerScaleIndex]);
+        BaseGauge gauge;
+
+        gauge = (BaseGauge) theView.findViewById(R.id.Power);
+        if (gauge != null) {
+            gauge.setScaleEnd(Constants.PowerScales[_powerScaleIndex]);
             if (_lockScale == false) {
-                powerGauge.setOnClickListener(GetClickListener(container));
+                gauge.setOnClickListener(GetClickListener(container));
             }
         }
-        gaugeView = (GaugeView) theView.findViewById(R.id.PVCurrent);
-        if (gaugeView != null) {
-            gaugeView.setScaleEnd(Constants.PVCurrentScales[_pvCurrentScaleIndex]);
+        gauge = (BaseGauge) theView.findViewById(R.id.PVCurrent);
+        if (gauge != null) {
+            gauge.setScaleEnd(Constants.PVCurrentScales[_pvCurrentScaleIndex]);
             if (_lockScale == false) {
-                gaugeView.setOnClickListener(GetClickListener(container));
+                gauge.setOnClickListener(GetClickListener(container));
             }
         }
-        gaugeView = (GaugeView) theView.findViewById(R.id.PVVoltage);
-        if (gaugeView != null) {
-            gaugeView.setScaleEnd(Constants.PVVoltScales[_pvVoltageScaleIndex]);
+        gauge = (BaseGauge) theView.findViewById(R.id.PVVoltage);
+        if (gauge != null) {
+            gauge.setScaleEnd(Constants.PVVoltScales[_pvVoltageScaleIndex]);
             if (_lockScale == false) {
-                gaugeView.setOnClickListener(GetClickListener(container));
+                gauge.setOnClickListener(GetClickListener(container));
             }
         }
-        gaugeView = (GaugeView) theView.findViewById(R.id.BatVoltage);
-        if (gaugeView != null) {
-            gaugeView.setScaleEnd(Constants.BatteryVoltScales[_batteryVoltageScaleIndex]);
+        gauge = (BaseGauge) theView.findViewById(R.id.BatVoltage);
+        if (gauge != null) {
+            gauge.setScaleEnd(Constants.BatteryVoltScales[_batteryVoltageScaleIndex]);
             if (_lockScale == false) {
-                gaugeView.setOnClickListener(GetClickListener(container));
+                gauge.setOnClickListener(GetClickListener(container));
             }
         }
-        gaugeView = (GaugeView) theView.findViewById(R.id.BatCurrent);
-        if (gaugeView != null) {
-            gaugeView.setScaleEnd(Constants.BatteryCurrentScales[_batteryCurrentScaleIndex]);
+        gauge = (BaseGauge) theView.findViewById(R.id.BatCurrent);
+        if (gauge != null) {
+            gauge.setScaleEnd(Constants.BatteryCurrentScales[_batteryCurrentScaleIndex]);
             if (_lockScale == false) {
-                gaugeView.setOnClickListener(GetClickListener(container));
+                gauge.setOnClickListener(GetClickListener(container));
             }
         }
 
@@ -172,14 +173,14 @@ public class GaugePage extends Fragment {
             powerGauge.setLeftLed(readings.GetBoolean(RegisterName.Aux1));
             powerGauge.setRightLed(readings.GetBoolean(RegisterName.Aux2));
 
-            GaugeView gaugeView = (GaugeView) this.getView().findViewById(R.id.PVVoltage);
-            gaugeView.setTargetValue(readings.GetFloat(RegisterName.PVVoltage));
-            gaugeView = (GaugeView) this.getView().findViewById(R.id.PVCurrent);
-            gaugeView.setTargetValue(readings.GetFloat(RegisterName.PVCurrent));
-            gaugeView = (GaugeView) this.getView().findViewById(R.id.BatVoltage);
+            BaseGauge gauge = (BaseGauge) this.getView().findViewById(R.id.PVVoltage);
+            gauge.setTargetValue(readings.GetFloat(RegisterName.PVVoltage));
+            gauge = (BaseGauge) this.getView().findViewById(R.id.PVCurrent);
+            gauge.setTargetValue(readings.GetFloat(RegisterName.PVCurrent));
+            gauge = (BaseGauge) this.getView().findViewById(R.id.BatVoltage);
             float batteryVolts = readings.GetFloat(RegisterName.BatVoltage);
-            gaugeView.setTargetValue(batteryVolts);
-            gaugeView = (GaugeView) this.getView().findViewById(R.id.BatCurrent);
+            gauge.setTargetValue(batteryVolts);
+            gauge = (BaseGauge) this.getView().findViewById(R.id.BatCurrent);
             float batteryCurrent = readings.GetFloat(RegisterName.BatCurrent);
             boolean biDirectional = readings.GetBoolean(RegisterName.BiDirectional);
             if (biDirectional) {
@@ -197,22 +198,22 @@ public class GaugePage extends Fragment {
                 }
                 if (_bidirectionalGaugeScaleSet == false) {
                     if (_bidirectionalUnitsInWatts) {
-                        gaugeView.setScaleEnd(Constants.BiDirectionalPowerScales[_biDirectionalScaleIndex]);
+                        gauge.setScaleEnd(Constants.BiDirectionalPowerScales[_biDirectionalScaleIndex]);
                     } else {
-                        gaugeView.setScaleEnd(Constants.BatteryCurrentScales[_batteryCurrentScaleIndex]);
+                        gauge.setScaleEnd(Constants.BatteryCurrentScales[_batteryCurrentScaleIndex]);
                     }
                     _bidirectionalGaugeScaleSet = true;
                 }
                 if (_bidirectionalUnitsInWatts) {
-                    gaugeView.setTargetValue(batteryCurrent * batteryVolts);
+                    gauge.setTargetValue(batteryCurrent * batteryVolts);
                 } else {
-                    gaugeView.setTargetValue(batteryCurrent);
+                    gauge.setTargetValue(batteryCurrent);
                 }
                 int socVal = readings.GetInt(RegisterName.SOC);
                 soc.setText(String.format("%s%%", String.valueOf(socVal)));
                 soc.setProgress(socVal); //  convert x/100 to y/360
             } else {
-                gaugeView.setTargetValue(readings.GetFloat(RegisterName.BatCurrent));
+                gauge.setTargetValue(readings.GetFloat(RegisterName.BatCurrent));
             }
             SetBidirectional(biDirectional);
             TextView tv = (TextView) this.getView().findViewById(R.id.EnergyTotalValue);
@@ -230,35 +231,35 @@ public class GaugePage extends Fragment {
     }
 
     private void InitializeReadings(View view) {
-        SolarGauge powerGauge = (SolarGauge) view.findViewById(R.id.Power);
+        BaseGauge powerGauge = (BaseGauge) view.findViewById(R.id.Power);
         powerGauge.setTargetValue(0.0f);
-        GaugeView gaugeView = (GaugeView) view.findViewById(R.id.PVVoltage);
-        gaugeView.setTargetValue(0.0f);
-        gaugeView = (GaugeView) view.findViewById(R.id.PVCurrent);
-        gaugeView.setTargetValue(0.0f);
-        gaugeView = (GaugeView) view.findViewById(R.id.BatVoltage);
-        gaugeView.setTargetValue(0.0f);
-        gaugeView = (GaugeView) view.findViewById(R.id.BatCurrent);
-        gaugeView.setTargetValue(0.0f);
+        BaseGauge gauge;
+        gauge = (BaseGauge) view.findViewById(R.id.PVVoltage);
+        gauge.setTargetValue(0.0f);
+        gauge = (BaseGauge) view.findViewById(R.id.PVCurrent);
+        gauge.setTargetValue(0.0f);
+        gauge = (BaseGauge) view.findViewById(R.id.BatVoltage);
+        gauge.setTargetValue(0.0f);
+        gauge = (BaseGauge) view.findViewById(R.id.BatCurrent);
+        gauge.setTargetValue(0.0f);
         TextView tv = (TextView) this.getView().findViewById(R.id.ChargeState);
         tv.setText(getString(R.string.NoConnection));
     }
 
     private void SetBidirectional(boolean val) {
-        GaugeView gaugeView = (GaugeView) this.getView().findViewById(R.id.BatCurrent);
-        if (gaugeView.getBiDirectional() != val) {
+        BaseGauge gauge = (BaseGauge) this.getView().findViewById(R.id.BatCurrent);
+        if (gauge.getBiDirectional() != val) {
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
             if (_bidirectionalUnitsInWatts) {
-                gaugeView.setScaleEnd(Constants.BiDirectionalPowerScales[_biDirectionalScaleIndex]);
-                gaugeView.setTitle(MyApplication.getAppContext().getString(R.string.BatPowerTitle));
-                gaugeView.setUnit("W");
+                gauge.setScaleEnd(Constants.BiDirectionalPowerScales[_biDirectionalScaleIndex]);
+                gauge.setTitle(MyApplication.getAppContext().getString(R.string.BatPowerTitle));
+                gauge.setUnit("W");
             } else {
-                gaugeView.setScaleEnd(Constants.BatteryCurrentScales[_batteryCurrentScaleIndex]);
-                gaugeView.setTitle(MyApplication.getAppContext().getString(R.string.BatCurrentTitle));
-                gaugeView.setUnit("A");
+                gauge.setScaleEnd(Constants.BatteryCurrentScales[_batteryCurrentScaleIndex]);
+                gauge.setTitle(MyApplication.getAppContext().getString(R.string.BatCurrentTitle));
+                gauge.setUnit("A");
             }
-            gaugeView.setBiDirectional(val);
-            gaugeView.redrawGauge();
+            gauge.setBiDirectional(val);
         }
     }
 
@@ -275,7 +276,7 @@ public class GaugePage extends Fragment {
 
                         @Override
                         public void onAnimationEnd(Animation arg0) {
-                            GaugeView gaugeView;
+                            BaseGauge gauge;
                             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
                             switch (v.getId()) {
                                 case R.id.Power:
@@ -283,53 +284,53 @@ public class GaugePage extends Fragment {
                                     if (_powerScaleIndex >= Constants.PowerScales.length) {
                                         _powerScaleIndex = 0;
                                     }
-                                    SolarGauge powerGauge = (SolarGauge)v;
+                                    BaseGauge powerGauge = (BaseGauge) v;
                                     powerGauge.setScaleEnd(Constants.PowerScales[_powerScaleIndex]);
                                     settings.edit().putInt(Constants.PowerScale, _powerScaleIndex).commit();
                                     break;
                                 case R.id.PVVoltage:
-                                    gaugeView = (GaugeView) v;
+                                    gauge = (BaseGauge) v;
                                     _pvVoltageScaleIndex++;
                                     if (_pvVoltageScaleIndex >= Constants.PVVoltScales.length) {
                                         _pvVoltageScaleIndex = 0;
                                     }
-                                    gaugeView.setScaleEnd(Constants.PVVoltScales[_pvVoltageScaleIndex]);
+                                    gauge.setScaleEnd(Constants.PVVoltScales[_pvVoltageScaleIndex]);
                                     settings.edit().putInt(Constants.PVVoltScale, _pvVoltageScaleIndex).commit();
                                     break;
                                 case R.id.PVCurrent:
-                                    gaugeView = (GaugeView) v;
+                                    gauge = (BaseGauge) v;
                                     _pvCurrentScaleIndex++;
                                     if (_pvCurrentScaleIndex >= Constants.PVCurrentScales.length) {
                                         _pvCurrentScaleIndex = 0;
                                     }
-                                    gaugeView.setScaleEnd(Constants.PVCurrentScales[_pvCurrentScaleIndex]);
+                                    gauge.setScaleEnd(Constants.PVCurrentScales[_pvCurrentScaleIndex]);
                                     settings.edit().putInt(Constants.PVCurrentScale, _pvCurrentScaleIndex).commit();
                                     break;
                                 case R.id.BatVoltage:
-                                    gaugeView = (GaugeView) v;
+                                    gauge = (BaseGauge) v;
                                     _batteryVoltageScaleIndex++;
                                     if (_batteryVoltageScaleIndex >= Constants.BatteryVoltScales.length) {
                                         _batteryVoltageScaleIndex = 0;
                                     }
-                                    gaugeView.setScaleEnd(Constants.BatteryVoltScales[_batteryVoltageScaleIndex]);
+                                    gauge.setScaleEnd(Constants.BatteryVoltScales[_batteryVoltageScaleIndex]);
                                     settings.edit().putInt(Constants.BatteryVoltScale, _batteryVoltageScaleIndex).commit();
                                     break;
                                 case R.id.BatCurrent:
-                                    gaugeView = (GaugeView) v;
-                                    boolean isBidirectional = gaugeView.getBiDirectional();
+                                    gauge = (BaseGauge) v;
+                                    boolean isBidirectional = gauge.getBiDirectional();
                                     if (isBidirectional && _bidirectionalUnitsInWatts) {
                                         _biDirectionalScaleIndex++;
                                         if (_biDirectionalScaleIndex >= Constants.BiDirectionalPowerScales.length) {
                                             _biDirectionalScaleIndex = 0;
                                         }
-                                        gaugeView.setScaleEnd(Constants.BiDirectionalPowerScales[_biDirectionalScaleIndex]);
+                                        gauge.setScaleEnd(Constants.BiDirectionalPowerScales[_biDirectionalScaleIndex]);
                                         settings.edit().putInt(Constants.BiDirectionalPowerScale, _biDirectionalScaleIndex).commit();
                                     } else {
                                         _batteryCurrentScaleIndex++;
                                         if (_batteryCurrentScaleIndex >= Constants.BatteryCurrentScales.length) {
                                             _batteryCurrentScaleIndex = 0;
                                         }
-                                        gaugeView.setScaleEnd(Constants.BatteryCurrentScales[_batteryCurrentScaleIndex]);
+                                        gauge.setScaleEnd(Constants.BatteryCurrentScales[_batteryCurrentScaleIndex]);
                                         settings.edit().putInt(Constants.BatteryCurrentScale, _batteryCurrentScaleIndex).commit();
                                     }
                                     break;

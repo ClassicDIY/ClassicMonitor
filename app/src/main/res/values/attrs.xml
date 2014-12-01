@@ -1,50 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="GaugeView">
-        <attr name="showOuterShadow" format="boolean" />
-        <attr name="showOuterBorder" format="boolean" />
-        <attr name="showOuterRim" format="boolean" />
-        <attr name="showInnerRim" format="boolean" />
-        <attr name="showNeedle" format="boolean" />
-        <attr name="showLeds" format="boolean" />
-        <attr name="showScale" format="boolean" />
-        <attr name="showRanges" format="boolean" />
-        <attr name="readingTitle" format="string" />
-        <attr name="showReading" format="boolean" />
-        <attr name="biDirectional" format="boolean" />
-
-        <attr name="outerShadowWidth" format="float" />
-        <attr name="outerBorderWidth" format="float" />
-        <attr name="outerRimWidth" format="float" />
-        <attr name="innerRimWidth" format="float" />
-        <attr name="innerRimBorderWidth" format="float" />
-        <attr name="needleWidth" format="float" />
-        <attr name="needleHeight" format="float" />
-
-        <attr name="scalePosition" format="float" />
-        <attr name="scaleStartValue" format="float" />
-        <attr name="scaleEndValue" format="float" />
-        <attr name="scaleStartAngle" format="float" />
-
-        <attr name="divisions" format="integer" />
-        <attr name="subdivisions" format="integer" />
-        <attr name="multiplier" format="integer" />
-
-        <attr name="rangeValues" format="reference" />
-        <attr name="rangeColors" format="reference" />
-
-        <attr name="textReading" format="string|reference" />
-        <attr name="textReadingColor" format="color" />
-        <attr name="textReadingSize" format="float" />
-        <attr name="textTitleColor" format="color" />
-        <attr name="textTitleSize" format="float" />
-        <attr name="textUnit" format="string|reference" />
-        <attr name="textUnitColor" format="color" />
-        <attr name="textUnitSize" format="float" />
-        <attr name="textShadowColor" format="color" />
-        <attr name="textPrecision" format="integer" />
-    </declare-styleable>
 
     <declare-styleable name="SolarFragment">
         <attr name="register" format="string|reference" />
@@ -55,6 +11,7 @@
     <declare-styleable name="FontFitTextView">
         <attr name="maxFontSize" format="dimension" />
     </declare-styleable>
+
 
     <declare-styleable name="ProgressWheel">
         <attr name="text" format="string" />
@@ -69,7 +26,8 @@
         <attr name="radius" format="dimension" />
         <attr name="barWidth" format="dimension" />
         <attr name="barLength" format="dimension" />
-        <attr name="contourColor" format="color"/>
-        <attr name="contourSize" format="dimension"/>
+        <attr name="contourColor" format="color" />
+        <attr name="contourSize" format="dimension" />
     </declare-styleable>
+
 </resources>
