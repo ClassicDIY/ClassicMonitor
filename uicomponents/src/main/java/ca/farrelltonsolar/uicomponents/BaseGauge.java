@@ -13,7 +13,6 @@ import android.graphics.RadialGradient;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -32,8 +31,8 @@ public class BaseGauge extends View {
     public static float mInnerRimWidthPercentOfDiameter = 5;
 
 
-    public static float mTitleHeightPercentOfRadius = 6; // percent of face radius
-    public static float mReadingHeightPercentOfRadius = 12; // percent of face radius
+    public static float mTitleHeightPercentOfRadius = 5; // percent of face radius
+    public static float mReadingHeightPercentOfRadius = 10; // percent of face radius
 
     //    public static final int[] OUTER_SHADOW_COLORS = {Color.argb(255, 255, 254, 187), Color.argb(200, 255, 247, 219), Color.argb(100, 255, 255, 255)};
     public static final int[] OUTER_SHADOW_COLORS = {Color.argb(255, 0, 0, 0), Color.argb(200, 255, 247, 219), Color.argb(100, 255, 255, 255)};
@@ -412,11 +411,13 @@ public class BaseGauge extends View {
         if (mCurrentValue < minimumValue)
             mCurrentValue = minimumValue;
         float angle = mBiDirectional ? mScaleStartAngle + mAvailableAngle / 2 + mCurrentValue * (mAvailableAngle / 2) / mScaleEndValue : mScaleStartAngle + (mCurrentValue * (mAvailableAngle) / mScaleEndValue);
-        setNeedleShadowPosition(angle - 90);
+// this does not work on emulator when HW acc is enabled (libc crash)
+//        setNeedleShadowPosition(angle);
         canvas.save(Canvas.MATRIX_SAVE_FLAG);
         canvas.rotate(angle - 90, mGaugeRect.centerX(), mGaugeRect.centerY());
-        canvas.drawPath(mNeedleLeftPath, mNeedleLeftPaint);
         canvas.drawPath(mNeedleRightPath, mNeedleRightPaint);
+        canvas.drawPath(mNeedleLeftPath, mNeedleLeftPaint);
+
         canvas.restore();
         canvas.drawCircle(mNeedleScrew.centerX(), mNeedleScrew.centerY(), mNeedleScrew.width() / 2, getDefaultNeedleScrewPaint(mNeedleScrew));
         canvas.drawCircle(mNeedleScrew.centerX(), mNeedleScrew.centerY(), mNeedleScrew.width() / 2, getDefaultNeedleScrewBorderPaint());
@@ -563,19 +564,19 @@ public class BaseGauge extends View {
     }
 
     private void setNeedleShadowPosition(final float angle) {
-        float dx = (float) Math.cos(angle / 180 * Math.PI) * 10f;
-        float dy = (float) Math.sin(angle / 180 * Math.PI) * 10f;
-        if (angle > 90) {
+        float dx = (float) Math.cos(angle / 180 * Math.PI) * 5f;
+        float dy = (float) Math.sin(angle / 180 * Math.PI) * 5f;
+        if (dx < 0 || dy < 0) {
             // Move shadow from right to left
-            mNeedleRightPaint.setShadowLayer(0, 0, 0, Color.BLACK);
+            mNeedleRightPaint.clearShadowLayer();
             mNeedleLeftPaint.setShadowLayer(mNeedleWidth, dx, dy, Color.BLACK);
-            setLayerType(LAYER_TYPE_SOFTWARE, mNeedleLeftPaint);
+//            setLayerType(LAYER_TYPE_SOFTWARE, mNeedleLeftPaint);
 
         } else {
             // Move shadow from left to right
-            mNeedleLeftPaint.setShadowLayer(0, 0, 0, Color.BLACK);
+            mNeedleLeftPaint.clearShadowLayer();
             mNeedleRightPaint.setShadowLayer(mNeedleWidth, dx, dy, Color.BLACK);
-            setLayerType(LAYER_TYPE_SOFTWARE, mNeedleRightPaint);
+//            setLayerType(LAYER_TYPE_SOFTWARE, mNeedleRightPaint);
         }
     }
 
@@ -638,8 +639,8 @@ public class BaseGauge extends View {
 
     @SuppressWarnings("NewApi")
     protected void initDrawingTools() {
-        if (Build.VERSION.SDK_INT >= 11 && !isInEditMode()) {
-            setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        if (!isInEditMode()) {
+            setLayerType(View.LAYER_TYPE_HARDWARE, null); // paint.setShadowLayer not supported in HW acc.
         }
         mAvailableAngle = mScaleEndAngle - mScaleStartAngle;
         if (mAvailableAngle > 180) {
@@ -685,7 +686,7 @@ public class BaseGauge extends View {
 
         mReadingTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mReadingTextPaint.setColor(mReadingColor);
-        mReadingTextPaint.setTextAlign(mFace == Quadrant.Quarter ? Paint.Align.LEFT : Paint.Align.CENTER);
+        mReadingTextPaint.setTextAlign(Paint.Align.CENTER);
 
         mTicksPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTicksPaint.setStrokeWidth(3.0f);

@@ -1,72 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_margin="10dp"
+    android:orientation="vertical"
     android:weightSum="60">
 
     <ca.farrelltonsolar.classic.SOCWheel
         android:id="@+id/SOC"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        ProgressWheel:text="95%"
-        ProgressWheel:textColor="#222222"
-        ProgressWheel:textSize="80sp"
-        ProgressWheel:rimColor="#44000000"
-        ProgressWheel:barLength="60dp"
-        ProgressWheel:barColor="#339BB9"
-        ProgressWheel:barWidth="15dp"
-        ProgressWheel:rimWidth="25dp"
+        android:layout_gravity="center"
+        android:layout_weight="30"
         android:clickable="false"
         android:longClickable="true"
-        android:layout_weight="30"
-        android:layout_gravity="center" />
+        ProgressWheel:barColor="#339BB9"
+        ProgressWheel:barLength="60dp"
+        ProgressWheel:barWidth="15dp"
+        ProgressWheel:rimColor="#44000000"
+        ProgressWheel:rimWidth="25dp"
+        ProgressWheel:text="95%"
+        ProgressWheel:textColor="#222222"
+        ProgressWheel:textSize="80sp" />
 
-    <!--<ca.farrelltonsolar.classic.GaugeView-->
-    <!--android:id="@+id/BatCurrent"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--app:scaleStartValue="0"-->
-    <!--app:scaleEndValue="2000"-->
-    <!--app:showRanges="true"-->
-    <!--app:showScale="false"-->
-    <!--app:showReading="true"-->
-    <!--app:readingTitle="@string/BatCurrentTitle"-->
-    <!--app:showOuterShadow="false"-->
-    <!--app:showOuterBorder="true"-->
-    <!--app:showOuterRim="true"-->
-    <!--app:showInnerRim="true"-->
-    <!--app:textPrecision="0"-->
-    <!--app:textReadingSize="0.1"-->
-    <!--app:textTitleSize="0.05"-->
-    <!--android:layout_marginTop="10dp"-->
-    <!--app:textUnit="A"-->
-    <!--app:register="BatCurrent"-->
-    <!--android:layout_weight="30"-->
-    <!--android:layout_gravity="center" />-->
     <ca.farrelltonsolar.uicomponents.SolarGauge
 
         android:id="@+id/BatCurrent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="30"
-        android:layout_marginTop="10dp"
         android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_weight="30"
 
-        app:register="BatCurrent"
-        app:scaleStartValue="0"
-        app:scaleEndValue="2000"
-        app:biDirectional="true"
+        app:biDirectional="false"
         app:gaugeTitle="@string/BatCurrentTitle"
-        app:majorTickPercentOfMax="10"
-        app:readingColor="#FFFFFF00"
-        app:readingUnit="A"
         app:readingPrecision="0"
-        app:showReading="true"
-        app:tickLabelColor="#FFFFFFFF"
-        app:titleColor="#FF00FF00" />
+        app:readingUnit="A"
+        app:register="BatCurrent"
+        app:scaleEndValue="2000"
+        app:scaleStartValue="0"
+        app:showReading="true" />
 </LinearLayout>

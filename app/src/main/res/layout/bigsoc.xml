@@ -59,14 +59,10 @@
         app:register="BatCurrent"
         app:scaleStartValue="0"
         app:scaleEndValue="2000"
-        app:biDirectional="true"
+        app:biDirectional="false"
         app:gaugeTitle="@string/BatCurrentTitle"
-        app:majorTickPercentOfMax="10"
-        app:readingColor="#FFFFFF00"
         app:readingUnit="A"
         app:readingPrecision="0"
-        app:showReading="true"
-        app:tickLabelColor="#FFFFFFFF"
-        app:titleColor="#FF00FF00" />
+        app:showReading="true" />
 
 </LinearLayout>

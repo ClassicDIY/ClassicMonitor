@@ -118,6 +118,7 @@
                             android:inputType="none"
                             android:text="0.0"
                             android:textColor="#1a1940" />
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -225,7 +226,7 @@
                 android:text="No data"
                 android:singleLine="true"
 
-                android:inputType="none"/>
+                android:inputType="none" />
 
 
         </LinearLayout>
@@ -269,11 +270,7 @@
 
             app:readingUnit="A"
             app:readingPrecision="1"
-            app:showReading="true"
-            app:tickLabelColor="#FFFFFFFF"
-            app:titleColor="#FF00FF00"
-
-            />
+            app:showReading="true" />
 
 
     </LinearLayout>
