@@ -2,7 +2,6 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
@@ -17,7 +16,9 @@
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="15"
+
         android:orientation="vertical"
+
         android:weightSum="6">
 
         <ca.farrelltonsolar.uicomponents.BaseGauge
@@ -33,13 +34,15 @@
             app:gaugeTitle="@string/PVVoltTitle"
             app:readingUnit="V"
             app:readingPrecision="1"
-            app:showReading="true" />
+            app:showReading="true"
+            app:majorTickPercentOfMax="5" />
 
         <ca.farrelltonsolar.uicomponents.BaseGauge
             android:id="@+id/PVCurrent"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
+
             android:layout_weight="3"
 
             app:register="PVCurrent"
@@ -48,7 +51,8 @@
             app:gaugeTitle="@string/PVCurrentTitle"
             app:readingUnit="A"
             app:readingPrecision="1"
-            app:showReading="true" />
+            app:showReading="true"
+            app:majorTickPercentOfMax="5" />
 
     </LinearLayout>
 
@@ -88,6 +92,7 @@
                 android:id="@+id/EnergyTotal"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
+                android:layout_marginLeft="5dp"
                 android:layout_weight="1">
 
                 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -106,6 +111,7 @@
                     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+
                         android:orientation="horizontal">
 
                         <TextView
@@ -116,8 +122,7 @@
                             android:textStyle="bold"
                             android:singleLine="true"
                             android:inputType="none"
-                            android:text="0.0"
-                            android:textColor="#1a1940" />
+                            android:text="0.0" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -182,23 +187,37 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <ca.farrelltonsolar.classic.SOCWheel
+                <!--<ca.farrelltonsolar.classic.SOCWheel-->
+                <!--android:id="@+id/SOC"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="fill_parent"-->
+                <!--ProgressWheel:text="95%"-->
+                <!--ProgressWheel:textColor="#222222"-->
+                <!--ProgressWheel:textSize="@dimen/textSizeLarge"-->
+                <!--android:textStyle="bold"-->
+                <!--ProgressWheel:rimColor="#44000000"-->
+                <!--ProgressWheel:barLength="60dp"-->
+                <!--ProgressWheel:barColor="#339BB9"-->
+                <!--ProgressWheel:barWidth="@dimen/SOCBarWidth"-->
+                <!--ProgressWheel:rimWidth="@dimen/SOCRimWidth"-->
+                <!--android:clickable="false"-->
+                <!--android:longClickable="true"-->
+                <!--android:layout_gravity="center|top"-->
+                <!--android:visibility="invisible" />-->
+
+                <ca.farrelltonsolar.uicomponents.SOCGauge
                     android:id="@+id/SOC"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    ProgressWheel:text="95%"
-                    ProgressWheel:textColor="#222222"
-                    ProgressWheel:textSize="@dimen/textSizeLarge"
-                    android:textStyle="bold"
-                    ProgressWheel:rimColor="#44000000"
-                    ProgressWheel:barLength="60dp"
-                    ProgressWheel:barColor="#339BB9"
-                    ProgressWheel:barWidth="@dimen/SOCBarWidth"
-                    ProgressWheel:rimWidth="@dimen/SOCRimWidth"
                     android:clickable="false"
                     android:longClickable="true"
                     android:layout_gravity="center|top"
-                    android:visibility="invisible" />
+                    android:visibility="invisible"
+                    android:textStyle="bold"
+
+                    app:readingColor="#FFFFFFFF"
+                    app:orientation="0" />
+
             </FrameLayout>
         </LinearLayout>
 
@@ -206,6 +225,7 @@
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
+            android:layout_marginLeft="5dp"
             android:layout_weight="7">
 
             <TextView
@@ -254,7 +274,8 @@
             app:gaugeTitle="@string/BatVoltsTitle"
             app:readingUnit="V"
             app:readingPrecision="1"
-            app:showReading="true" />
+            app:showReading="true"
+            app:majorTickPercentOfMax="5" />
 
         <ca.farrelltonsolar.uicomponents.BaseGauge
             android:id="@+id/BatCurrent"

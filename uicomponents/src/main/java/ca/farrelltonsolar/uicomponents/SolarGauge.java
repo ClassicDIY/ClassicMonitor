@@ -65,8 +65,8 @@ public class SolarGauge extends BaseGauge {
 
     protected void readAttrs(final Context context, final AttributeSet attrs, final int defStyle) {
         super.readAttrs(context, attrs, defStyle);
-        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.GaugeView, defStyle, 0);
-        mShowLEDs = a.getBoolean(R.styleable.GaugeView_showLeds, false);
+        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Gauge, defStyle, 0);
+        mShowLEDs = a.getBoolean(R.styleable.Gauge_showLeds, false);
         a.recycle();
     }
 }

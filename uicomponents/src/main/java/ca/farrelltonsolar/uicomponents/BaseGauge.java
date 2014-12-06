@@ -21,12 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class BaseGauge extends View {
-
-    protected static final String TAG = BaseGauge.class.getSimpleName();
+public class BaseGauge extends BaseComponent {
 
     // widths are defined as the percent of gauge diameter
-    public static float mOuterShadowWidthPercentOfDiameter = 5f;
+    public static float mOuterShadowWidthPercentOfDiameter = 2f;
     public static float mOuterRimWidthPercentOfDiameter = 5;
     public static float mInnerRimWidthPercentOfDiameter = 5;
 
@@ -58,7 +56,7 @@ public class BaseGauge extends View {
     private int mDefaultColor = Color.rgb(180, 180, 180);
     private double mMajorTickPercentOfMax;
     private int mMinorTicksPerDivision;
-    private LabelConverter mLabelConverter;
+
     private String mGaugeTitle;
     private String mReadingUnit;
 
@@ -86,7 +84,7 @@ public class BaseGauge extends View {
     private boolean mBiDirectional;
     private boolean mShowReading;
     private boolean mShowScale;
-    private boolean mStaticBackgroundLoaded;
+    private boolean mStaticBackgroundLoaded = false;
     private boolean mShowOuterShadow;
     private boolean mShowRim;
 
@@ -111,24 +109,20 @@ public class BaseGauge extends View {
     private float mNeedleAcceleration;
     private long mNeedleLastMoved = -1;
 
-    private float mDensity;
     private Bitmap mBackground;
 
-    private int mViewWidth;
-    private int mViewHeight;
     private boolean mBSizeChangedComplete = false;
 
     public BaseGauge(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
-        mDensity = getResources().getDisplayMetrics().density;
-        //if (!isInEditMode()) {
+
         readAttrs(context, attrs, defStyle);
         initDrawingTools();
-        //}
-        setLabelConverter(new BaseGauge.LabelConverter() {
+
+        setLabelConverter(new LabelConverter() {
             @Override
-            public String getLabelFor(double progress, double maxProgress) {
-                return String.valueOf((int) Math.round(progress));
+            public String getLabelFor(float val, float min, float max) {
+                return String.valueOf((int) Math.round(val));
             }
         });
 
@@ -199,15 +193,6 @@ public class BaseGauge extends View {
         invalidateAll();
     }
 
-    public LabelConverter getLabelConverter() {
-        return mLabelConverter;
-    }
-
-    public void setLabelConverter(LabelConverter labelConverter) {
-        this.mLabelConverter = labelConverter;
-        invalidateAll();
-    }
-
     public void clearColoredRanges() {
         mRanges.clear();
         invalidateAll();
@@ -258,32 +243,7 @@ public class BaseGauge extends View {
         mReadingUnit = val;
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-        //Measure Width
-        if (widthMode == MeasureSpec.EXACTLY || widthMode == MeasureSpec.AT_MOST) {
-            //Must be this size
-            mViewWidth = widthSize;
-        } else {
-            mViewWidth = getSuggestedMinimumWidth();
-        }
-        //Measure Height
-        if (heightMode == MeasureSpec.EXACTLY || heightMode == MeasureSpec.AT_MOST) {
-            //Must be this size
-            mViewHeight = heightSize;
-        } else {
-            mViewHeight = getSuggestedMinimumHeight();
-        }
-        //MUST CALL THIS
-        setMeasuredDimension(mViewWidth, mViewHeight);
-
-
-    }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -301,10 +261,13 @@ public class BaseGauge extends View {
         mFaceRadius = mFaceRect.width() / 2;
         mInnerRimWidth = (mInnerRim.width() - mFaceRect.width()) / 2;
         mFaceBorderPaint.setStrokeWidth((mInnerRim.width() - mFaceRect.width()) / 2);
-        mFacePaint.setShader(new RadialGradient(mFaceRect.centerX(), mFaceRect.centerY(), mFaceRadius, new int[]{Color.rgb(50, 132, 206), Color.rgb(36, 89, 162), Color.rgb(27, 59, 131)}, new float[]{0.5f, 0.96f, 0.99f}, Shader.TileMode.MIRROR));
-        mFaceShadowPaint.setShader(new RadialGradient(mFaceRect.centerX(), mFaceRect.centerY(), mFaceRadius, new int[]{Color.argb(60, 40, 96, 170),
-                Color.argb(80, 15, 34, 98), Color.argb(120, 0, 0, 0), Color.argb(140, 0, 0, 0)},
-                new float[]{0.60f, 0.85f, 0.96f, 0.99f}, Shader.TileMode.MIRROR));
+        if (!isInEditMode()) {
+
+            mFacePaint.setShader(new RadialGradient(mFaceRect.centerX(), mFaceRect.centerY(), mFaceRadius, new int[]{Color.rgb(50, 132, 206), Color.rgb(36, 89, 162), Color.rgb(27, 59, 131)}, new float[]{0.5f, 0.96f, 0.99f}, Shader.TileMode.MIRROR));
+            mFaceShadowPaint.setShader(new RadialGradient(mFaceRect.centerX(), mFaceRect.centerY(), mFaceRadius, new int[]{Color.argb(60, 40, 96, 170),
+                    Color.argb(80, 15, 34, 98), Color.argb(120, 0, 0, 0), Color.argb(140, 0, 0, 0)},
+                    new float[]{0.60f, 0.85f, 0.96f, 0.99f}, Shader.TileMode.MIRROR));
+        }
 
         mNeedleWidth = mNeedleScrew.width() / 4;
         float needleRadius = mScaleArc.width() / 2.1f;
@@ -332,7 +295,6 @@ public class BaseGauge extends View {
 
     public void invalidateAll() {
         updateSizes();
-        mStaticBackgroundLoaded = false;
         invalidate();
     }
 
@@ -347,6 +309,7 @@ public class BaseGauge extends View {
             float readingSize = mReadingHeightPercentOfRadius * mFaceRadius / 100;
             mReadingTextPaint.setTextSize(readingSize * mDensity);
             mReadingTextPaint.setShadowLayer(readingSize / 5, readingSize / 10, 0, Color.BLACK);
+            mStaticBackgroundLoaded = false;
         }
     }
 
@@ -453,7 +416,7 @@ public class BaseGauge extends View {
         // Set the paint for that size.
         mTickLabelTextPaint.setTextSize(desiredTextSize);
 
-        double curProgress = 0;
+        float curProgress = 0;
         float currentAngle = clockwise ? startAngle : endAngle;
         while (currentAngle <= endAngle && currentAngle >= startAngle) {
             canvas.drawLine(
@@ -476,7 +439,7 @@ public class BaseGauge extends View {
                         mTicksPaint
                 );
             }
-            if (mLabelConverter != null) {
+            if (getLabelConverter() != null) {
                 canvas.save();
                 canvas.rotate(180 + currentAngle, mGaugeRect.centerX(), mGaugeRect.centerY());
                 float txtX = mGaugeRect.centerX() + mScaleRadius + mMajorTicksLength / 2 + 8;
@@ -486,7 +449,7 @@ public class BaseGauge extends View {
                 float dx = (float) Math.cos(shadowAngle / 180 * Math.PI) * 5f;
                 float dy = -(float) Math.sin(shadowAngle / 180 * Math.PI) * 5f;
                 mTickLabelTextPaint.setShadowLayer(desiredTextSize / 5, dx, dy, Color.BLACK);
-                canvas.drawText(mLabelConverter.getLabelFor(curProgress, mScaleEndValue), txtX, txtY, mTickLabelTextPaint);
+                canvas.drawText(getLabelConverter().getLabelFor(curProgress, mScaleStartValue, mScaleEndValue), txtX, txtY, mTickLabelTextPaint);
                 canvas.restore();
             }
             if (clockwise) {
@@ -741,37 +704,33 @@ public class BaseGauge extends View {
     }
 
     protected void readAttrs(final Context context, final AttributeSet attrs, final int defStyle) {
-        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.GaugeView, defStyle, 0);
-        mShowOuterShadow = a.getBoolean(R.styleable.GaugeView_showOuterShadow, true);
-        mShowRim = a.getBoolean(R.styleable.GaugeView_showRim, true);
-        mBiDirectional = a.getBoolean(R.styleable.GaugeView_biDirectional, false);
+        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Gauge, defStyle, 0);
+        mShowOuterShadow = a.getBoolean(R.styleable.Gauge_showOuterShadow, true);
+        mShowRim = a.getBoolean(R.styleable.Gauge_showRim, true);
+        mBiDirectional = a.getBoolean(R.styleable.Gauge_biDirectional, false);
 
-        mShowScale = a.getBoolean(R.styleable.GaugeView_showScale, true);
-        setScaleStart(a.getInteger(R.styleable.GaugeView_scaleStartValue, 0));
-        setScaleEnd(a.getInteger(R.styleable.GaugeView_scaleEndValue, 100));
-        mScaleStartAngle = a.getInteger(R.styleable.GaugeView_scaleStartAngle, -70);
-        mScaleEndAngle = a.getInteger(R.styleable.GaugeView_scaleEndAngle, 250);
-        setMajorTickPercentOfMax(a.getInteger(R.styleable.GaugeView_majorTickPercentOfMax, 10));
-        setMinorTicksPerDivision(a.getInteger(R.styleable.GaugeView_minorTicksPerDivision, 4));
+        mShowScale = a.getBoolean(R.styleable.Gauge_showScale, true);
+        setScaleStart(a.getInteger(R.styleable.Gauge_scaleStartValue, 0));
+        setScaleEnd(a.getInteger(R.styleable.Gauge_scaleEndValue, 100));
+        mScaleStartAngle = a.getInteger(R.styleable.Gauge_scaleStartAngle, -70);
+        mScaleEndAngle = a.getInteger(R.styleable.Gauge_scaleEndAngle, 250);
+        setMajorTickPercentOfMax(a.getInteger(R.styleable.Gauge_majorTickPercentOfMax, 10));
+        setMinorTicksPerDivision(a.getInteger(R.styleable.Gauge_minorTicksPerDivision, 4));
 
-        mShowReading = a.getBoolean(R.styleable.GaugeView_showReading, false);
-        mReadingUnit = a.getString(R.styleable.GaugeView_readingUnit);
-        mReadingPrecision = a.getInteger(R.styleable.GaugeView_readingPrecision, 1);
-        mGaugeTitle = a.getString(R.styleable.GaugeView_gaugeTitle);
+        mShowReading = a.getBoolean(R.styleable.Gauge_showReading, false);
+        mReadingUnit = a.getString(R.styleable.Gauge_readingUnit);
+        mReadingPrecision = a.getInteger(R.styleable.Gauge_readingPrecision, 1);
+        mGaugeTitle = a.getString(R.styleable.Gauge_gaugeTitle);
 
-        mTitleColor = a.getColor(R.styleable.GaugeView_titleColor, Color.WHITE);
-        mReadingColor = a.getColor(R.styleable.GaugeView_readingColor, Color.YELLOW);
-        mTickLabelColor = a.getColor(R.styleable.GaugeView_tickLabelColor, Color.WHITE);
+        mTitleColor = a.getColor(R.styleable.Gauge_titleColor, Color.WHITE);
+        mReadingColor = a.getColor(R.styleable.Gauge_readingColor, Color.YELLOW);
+        mTickLabelColor = a.getColor(R.styleable.Gauge_tickLabelColor, Color.WHITE);
 
         a.recycle();
 
         addColoredRange(0, 30, Color.GREEN);
         addColoredRange(30, 60, Color.YELLOW);
         addColoredRange(60, 100, Color.RED);
-    }
-
-    public static interface LabelConverter {
-        String getLabelFor(double progress, double maxProgress);
     }
 
     public static class ColoredRange {

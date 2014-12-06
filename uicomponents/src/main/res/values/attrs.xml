@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="GaugeView">
+    <declare-styleable name="Gauge">
         <attr name="showOuterShadow" format="boolean" />
 
         <attr name="showRim" format="boolean" />
@@ -28,6 +28,8 @@
 
         <attr name="rangeValues" format="reference" />
         <attr name="rangeColors" format="reference" />
+
+        <attr name="orientation" format="integer" />
 
     </declare-styleable>
 

@@ -9,22 +9,17 @@
     android:orientation="vertical"
     android:weightSum="60">
 
-    <ca.farrelltonsolar.classic.SOCWheel
+    <ca.farrelltonsolar.uicomponents.SOCGauge
         android:id="@+id/SOC"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_weight="30"
         android:clickable="false"
         android:longClickable="true"
-        ProgressWheel:barColor="#339BB9"
-        ProgressWheel:barLength="60dp"
-        ProgressWheel:barWidth="15dp"
-        ProgressWheel:rimColor="#44000000"
-        ProgressWheel:rimWidth="25dp"
-        ProgressWheel:text="95%"
-        ProgressWheel:textColor="#222222"
-        ProgressWheel:textSize="80sp" />
+        android:layout_weight="30"
+        android:layout_gravity="center"
+
+        app:readingColor="#FFFFFFFF"
+        app:orientation="1" />
 
     <ca.farrelltonsolar.uicomponents.SolarGauge
 

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ca.farrelltonsolar.uicomponents.BaseGauge;
+import ca.farrelltonsolar.uicomponents.SOCGauge;
 import ca.farrelltonsolar.uicomponents.SolarGauge;
 
 /**
@@ -184,9 +185,8 @@ public class GaugePage extends Fragment {
             float batteryCurrent = readings.GetFloat(RegisterName.BatCurrent);
             boolean biDirectional = readings.GetBoolean(RegisterName.BiDirectional);
             if (biDirectional) {
-                SOCWheel soc = (SOCWheel) this.getView().findViewById(R.id.SOC);
+                SOCGauge soc = (SOCGauge) this.getView().findViewById(R.id.SOC);
                 if (soc.getVisibility() != View.VISIBLE) {
-                    soc.resetCount();
                     soc.setOnClickListener(new View.OnClickListener() {
                         @Override
                         //On click function
@@ -210,8 +210,7 @@ public class GaugePage extends Fragment {
                     gauge.setTargetValue(batteryCurrent);
                 }
                 int socVal = readings.GetInt(RegisterName.SOC);
-                soc.setText(String.format("%s%%", String.valueOf(socVal)));
-                soc.setProgress(socVal); //  convert x/100 to y/360
+                soc.setValue(socVal); //  convert x/100 to y/360
             } else {
                 gauge.setTargetValue(readings.GetFloat(RegisterName.BatCurrent));
             }

@@ -1,6 +1,5 @@
 package ca.farrelltonsolar.classic;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,16 +8,18 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
+import ca.farrelltonsolar.uicomponents.SOCGauge;
 import ca.farrelltonsolar.uicomponents.SolarGauge;
 
 /**
  * Created by Graham on 02/03/14.
  */
-public class BigSOC extends Activity {
+public class BigSOC extends ActionBarActivity {
 
     boolean _bidirectionalUnitsInWatts = false;
     boolean _lockScale = false;
@@ -81,9 +82,8 @@ public class BigSOC extends Activity {
             gaugeView.setTargetValue(batteryCurrent);
         }
         int socVal = readings.GetInt(RegisterName.SOC);
-        SOCWheel soc = (SOCWheel) findViewById(R.id.SOC);
-        soc.setText(String.format("%s%%", String.valueOf(socVal)));
-        soc.setProgress(socVal);
+        SOCGauge soc = (SOCGauge) findViewById(R.id.SOC);
+        soc.setValue(socVal);
     }
 
     @Override
