@@ -17,7 +17,6 @@ import android.widget.Button;
 public class Settings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
 
-
     private IPAddressPreference _IPAddressPreference;
     private EditTextPreference _PortPreference;
     private CheckBoxPreference _autoScan;
@@ -43,7 +42,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             @Override
             //On click function
             public void onClick(View view) {
-                startActivity(new Intent(view.getContext(), MainActivity.class));
+                startActivity(new Intent(view.getContext(), MonitorActivity.class));
             }
         });
         final Button Apply = (Button) findViewById(R.id.Apply);
@@ -56,13 +55,13 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
                 LocalBroadcastManager.getInstance(MyApplication.getAppContext()).sendBroadcast(modbusStopIntent);
                 Intent modbusInitIntent = new Intent("ca.farrelltonsolar.classic.ModbusSetup", null, MyApplication.getAppContext(), ModbusMaster.class);
                 startService(modbusInitIntent);
-                startActivity(new Intent(view.getContext(), MainActivity.class));
+                startActivity(new Intent(view.getContext(), MonitorActivity.class));
             }
         });
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
         try {
-            _PortPreference = (EditTextPreference)findPreference(Constants.PORT_PREFERENCE);
+            _PortPreference = (EditTextPreference) findPreference(Constants.PORT_PREFERENCE);
             _IPAddressPreference = (IPAddressPreference) findPreference(Constants.IP_ADDRESS_PREFERENCE);
             _autoScan = (CheckBoxPreference) findPreference(Constants.SUBNET_SCAN_PREFERENCE);
             _startScan = (IPAddressPreference) findPreference(Constants.START_IP_PREFERENCE);
@@ -92,7 +91,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             _PortPreference.setSummary(settings.getString(Constants.PORT_PREFERENCE, "502"));
             _SID.setSummary(settings.getString(Constants.SID, ""));
             _APIKey.setSummary(settings.getString(Constants.APIKey, "255"));
-            Preference button = (Preference)findPreference("ResetLogs");
+            Preference button = (Preference) findPreference("ResetLogs");
             button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference arg0) {

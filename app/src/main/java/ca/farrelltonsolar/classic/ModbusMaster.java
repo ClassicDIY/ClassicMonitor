@@ -581,7 +581,7 @@ public class ModbusMaster extends IntentService {
                 unitName = unitName.trim();
                 if (unitName.length() > 0) {
                     Intent intent = new Intent("ca.farrelltonsolar.classic.Unit");
-                    intent.setClass(MyApplication.getAppContext(), MainActivity.class);
+                    intent.setClass(MyApplication.getAppContext(), MonitorActivity.class);
                     intent.putExtra("UnitName", unitName);
                     LocalBroadcastManager.getInstance(MyApplication.getAppContext()).sendBroadcast(intent);
                 }

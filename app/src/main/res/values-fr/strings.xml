@@ -82,5 +82,6 @@
     <string name="MonthNamesShort">\'JA\',\'FE\',\'MA\',\'AL\',\'MA\',\'JN\',\'JL\',\'AU\',\'SE\',\'OC\',\'NO\',\'DE\'</string>
     <string name="DayNames">\'Dimanche\',\'Lundi\',\'Mardi\',\'Mercredi\',\'Jeudi\',\'Vendredi\',\'Samedi\'</string>
     <string name="DayNamesShort">\'Dim\',\'Lun\',\'Mar\',\'Mer\',\'Jeu\',\'Ven\',\'Sam\'</string>
+    <string name="network">Network</string>
 
 </resources>

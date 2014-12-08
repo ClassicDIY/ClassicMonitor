@@ -6,12 +6,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -19,27 +16,19 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Locale;
+import ca.farrelltonsolar.uicomponents.SlidingTabLayout;
+import ca.farrelltonsolar.uicomponents.TabStripAdapter;
 
-public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
+public class MonitorActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    SectionsPagerAdapter mSectionsPagerAdapter;
-    GaugePage mGaugePage;
-    CalendarPage mCalendar;
-    ChartPage mChart;
+    private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
+
     ViewPager mViewPager;
+    private TabStripAdapter mTabsAdapter;
+
+    String mClassic = "";
+    private int mPosition = 0;
 
     @Override
     protected void onDestroy() {
@@ -50,60 +39,81 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        LocalBroadcastManager.getInstance(MyApplication.getAppContext()).registerReceiver(mUnitReceiver, new IntentFilter("ca.farrelltonsolar.classic.Unit"));
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mGaugePage = new GaugePage();
-            mCalendar = new CalendarPage();
-            mChart = new ChartPage();
 
-            // Set up the action bar.
-            final ActionBar actionBar = getSupportActionBar();
-            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-            // Create the adapter that will return a fragment for each of the three
-            // primary sections of the activity.
-            mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-            // Set up the ViewPager with the sections adapter.
-            mViewPager = (ViewPager) findViewById(R.id.pager);
-            mViewPager.setAdapter(mSectionsPagerAdapter);
-
-            // When swiping between different sections, select the corresponding
-            // tab. We can also use ActionBar.Tab#select() to do this if we have
-            // a reference to the Tab.
-            mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                @Override
-                public void onPageSelected(int position) {
-                    actionBar.setSelectedNavigationItem(position);
-                }
-            });
-
-            // For each of the sections in the app, add a tab to the action bar.
-            for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-                // Create a tab with text corresponding to the page title defined by
-                // the adapter. Also specify this Activity object, which implements
-                // the TabListener interface, as the callback (listener) for when
-                // this tab is selected.
-                actionBar.addTab(
-                        actionBar.newTab()
-                                .setText(mSectionsPagerAdapter.getPageTitle(i))
-                                .setTabListener(this)
-                );
-            }
+            mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+            // Set up the drawer.
+            DrawerLayout layout = (DrawerLayout) findViewById(R.id.drawer_layout);
+            mNavigationDrawerFragment.setUp(R.id.navigation_drawer, layout);
+            setupActionBar();
         } else {
             LocalBroadcastManager.getInstance(MyApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter("ca.farrelltonsolar.classic.GaugePage"));
             LocalBroadcastManager.getInstance(MyApplication.getAppContext()).registerReceiver(mToastReceiver, new IntentFilter("ca.farrelltonsolar.classic.Toast"));
         }
-        LocalBroadcastManager.getInstance(MyApplication.getAppContext()).registerReceiver(mUnitReceiver, new IntentFilter("ca.farrelltonsolar.classic.Unit"));
-
     }
+
+    private void setupActionBar() {
+        // Set up the action bar.
+        final ActionBar actionBar = getSupportActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        mTabsAdapter = new TabStripAdapter(getSupportFragmentManager(), this,
+                (ViewPager) findViewById(R.id.pager),
+                (SlidingTabLayout) findViewById(R.id.sliding_tabs));
+        mTabsAdapter.addTab(R.string.GaugeTabTitle, GaugePage.class, null);
+        mTabsAdapter.addTab(R.string.CalendarTabTitle, CalendarPage.class, null);
+        mTabsAdapter.addTab(R.string.ChartTabTitle, ChartPage.class, null);
+        mTabsAdapter.notifyTabsChanged();
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+//        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+//
+//        mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+//        mSlidingTabLayout.setViewPager(mViewPager);
+
+        // Set up the ViewPager with the sections adapter.
+//        mViewPager = (ViewPager) findViewById(R.id.pager);
+//        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        // When swiping between different sections, select the corresponding
+        // tab. We can also use ActionBar.Tab#select() to do this if we have
+        // a reference to the Tab.
+//        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+//            @Override
+//            public void onPageSelected(int position) {
+//                actionBar.setSelectedNavigationItem(position);
+//            }
+//        });
+
+        // For each of the sections in the app, add a tab to the action bar.
+//        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+//            // Create a tab with text corresponding to the page title defined by
+//            // the adapter. Also specify this Activity object, which implements
+//            // the TabListener interface, as the callback (listener) for when
+//            // this tab is selected.
+//            actionBar.addTab(
+//                    actionBar.newTab()
+//                            .setText(mSectionsPagerAdapter.getPageTitle(i))
+//                            .setTabListener(this)
+//            );
+//        }
+    }
+
+    public void restoreActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setTitle(MyApplication.mUnitName);
+    }
+
     // Our handler for received Intents.
     private BroadcastReceiver mUnitReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // Get extra data included in the Intent
-            String unitName = intent.getStringExtra("UnitName");
-            setTitle(unitName);
+            mClassic = intent.getStringExtra("UnitName");
+            getSupportActionBar().setTitle(mClassic + mPosition);
         }
     };
 
@@ -166,19 +176,28 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             if (tview != null) {
                 tview.setText(MyApplication.getChargeStateText(cs));
             }
-        }
-        catch (Exception ignore) {
+        } catch (Exception ignore) {
 
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        if (mNavigationDrawerFragment == null) {
+            getMenuInflater().inflate(R.menu.gauge_activity_actions, menu);
+            return true;
+        }
+        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+            // Only show items in the action bar relevant to this screen
+            // if the drawer is not showing. Otherwise, let the drawer
+            // decide what to show in the action bar.
+            getMenuInflater().inflate(R.menu.gauge_activity_actions, menu);
+            restoreActionBar();
+            return true;
+        }
+        return super.onCreateOptionsMenu(menu);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -201,21 +220,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
     @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, switch to the corresponding page in
-        // the ViewPager.
-        mViewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
         Intent modbusInitIntent = new Intent("ca.farrelltonsolar.classic.ModbusControl", null, MyApplication.getAppContext(), ModbusMaster.class);
@@ -226,56 +230,16 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     @Override
     protected void onResume() {
         super.onResume();
-        setTitle(MyApplication.mUnitName);
         Intent modbusInitIntent = new Intent("ca.farrelltonsolar.classic.ModbusControl", null, MyApplication.getAppContext(), ModbusMaster.class);
         modbusInitIntent.putExtra("Control", ConnectionState.Connected.ordinal());
         LocalBroadcastManager.getInstance(MyApplication.getAppContext()).sendBroadcast(modbusInitIntent);
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    @Override
+    public void onNavigationDrawerItemSelected(int position) {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Fragment rVal = null;
-            switch (position) {
-                case 0:
-                    rVal = mGaugePage;
-                    break;
-                case 1:
-                    rVal = mCalendar;
-                    break;
-                case 2:
-                    rVal = mChart;
-                    break;
-            }
-            return rVal;
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            Locale l = Locale.getDefault();
-            switch (position) {
-                case 0:
-                    return getString(R.string.GaugeTabTitle).toUpperCase(l);
-                case 1:
-                    return getString(R.string.CalendarTabTitle).toUpperCase(l);
-                case 2:
-                    return getString(R.string.ChartTabTitle).toUpperCase(l);
-            }
-            return null;
-        }
+        mPosition = position;
+        Toast.makeText(this.getBaseContext(), "Position: " + position, Toast.LENGTH_SHORT).show();
     }
+
 }

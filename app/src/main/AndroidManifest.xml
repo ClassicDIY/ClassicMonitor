@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ca.farrelltonsolar.classic"
     android:versionCode="173"
@@ -11,14 +12,18 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18" />-->
+    <!--<android:uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
+    <!--<android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="18" />-->
+
     <application
-        android:name="ca.farrelltonsolar.classic.MyApplication"
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name="ca.farrelltonsolar.classic.MainActivity"
+            android:name=".MonitorActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,32 +31,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name="Settings"
+            android:name=".Settings"
             android:label="@string/SettingsLabel"
-            android:parentActivityName="ca.farrelltonsolar.classic.MainActivity" />
+            android:parentActivityName=".MonitorActivity" />
         <activity
-            android:name="About"
+            android:name=".About"
             android:label="@string/About"
-            android:parentActivityName="ca.farrelltonsolar.classic.MainActivity" />
-        <!--<activity-->
-        <!--android:name=".CalendarPage"-->
-        <!--android:label="@string/Calendar"-->
-        <!--android:parentActivityName="ca.farrelltonsolar.classic.MainActivity" />-->
+            android:parentActivityName=".MonitorActivity" />
         <activity
-            android:name="BigSOC"
+            android:name=".BigSOC"
             android:label="SOC"
-            android:parentActivityName="ca.farrelltonsolar.classic.MainActivity" />
+            android:parentActivityName=".MonitorActivity" />
 
         <service
-            android:name="ca.farrelltonsolar.classic.ModbusMaster"
+            android:name=".ModbusMaster"
             android:exported="false" />
-        <!--android:process=":services">-->
-        <!--<intent-filter>-->
-        <!--&lt;!&ndash; Start/Stop service &ndash;&gt;-->
-        <!--<action android:name="ca.farrelltonsolar.classic.ModbusMaster" />-->
-        <!--</intent-filter>-->
-        <!--</service>-->
+        <!-- android:process=":services"> -->
+        <!-- <intent-filter> -->
+        <!-- &lt;!&ndash; Start/Stop service &ndash;&gt; -->
+        <!-- <action android:name="ca.farrelltonsolar.classic.ModbusMaster" /> -->
+        <!-- </intent-filter> -->
+        <!-- </service> -->
+
 
     </application>
+
 </manifest>

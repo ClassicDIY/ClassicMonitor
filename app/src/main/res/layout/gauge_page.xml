@@ -35,7 +35,8 @@
             app:readingUnit="V"
             app:readingPrecision="1"
             app:showReading="true"
-            app:majorTickPercentOfMax="5" />
+            app:majorTickPercentOfMax="5"
+            app:showInnerRim="false" />
 
         <ca.farrelltonsolar.uicomponents.BaseGauge
             android:id="@+id/PVCurrent"
@@ -52,7 +53,8 @@
             app:readingUnit="A"
             app:readingPrecision="1"
             app:showReading="true"
-            app:majorTickPercentOfMax="5" />
+            app:majorTickPercentOfMax="5"
+            app:showInnerRim="false" />
 
     </LinearLayout>
 
@@ -79,7 +81,8 @@
             app:readingUnit="W"
             app:showLeds="true"
             app:readingPrecision="0"
-            app:showReading="true" />
+            app:showReading="true"
+            app:showInnerRim="false" />
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
@@ -275,7 +278,8 @@
             app:readingUnit="V"
             app:readingPrecision="1"
             app:showReading="true"
-            app:majorTickPercentOfMax="5" />
+            app:majorTickPercentOfMax="5"
+            app:showInnerRim="false" />
 
         <ca.farrelltonsolar.uicomponents.BaseGauge
             android:id="@+id/BatCurrent"
@@ -291,7 +295,8 @@
 
             app:readingUnit="A"
             app:readingPrecision="1"
-            app:showReading="true" />
+            app:showReading="true"
+            app:showInnerRim="false" />
 
 
     </LinearLayout>

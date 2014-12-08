@@ -24,7 +24,7 @@ import java.util.List;
 public class BaseGauge extends BaseComponent {
 
     // widths are defined as the percent of gauge diameter
-    public static float mOuterShadowWidthPercentOfDiameter = 2f;
+    public static float mOuterShadowWidthPercentOfDiameter = 3f;
     public static float mOuterRimWidthPercentOfDiameter = 5;
     public static float mInnerRimWidthPercentOfDiameter = 5;
 
@@ -87,7 +87,7 @@ public class BaseGauge extends BaseComponent {
     private boolean mStaticBackgroundLoaded = false;
     private boolean mShowOuterShadow;
     private boolean mShowRim;
-
+    private boolean mShowInnerRim;
     private int mReadingPrecision;
 
     private float mTargetValue;
@@ -244,23 +244,37 @@ public class BaseGauge extends BaseComponent {
     }
 
 
-
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 
+        if (w == 0 || h == 0)
+            return;
         mGaugeRect = getScaledRect(1);
-        float scale = (100 - mOuterShadowWidthPercentOfDiameter) / 100;
-        mOuterRim = getScaledRect(scale);
-        scale -= mOuterRimWidthPercentOfDiameter / 100;
-        mInnerRim = getScaledRect(scale);
-        scale -= mInnerRimWidthPercentOfDiameter / 100;
-        mFaceRect = getScaledRect(scale);
+        float scale = 1.0f;
+        if (mShowOuterShadow) {
+            scale = (100 - mOuterShadowWidthPercentOfDiameter) / 100;
+        }
+        if (mShowRim) {
+            mOuterRim = getScaledRect(scale);
+            scale -= mOuterRimWidthPercentOfDiameter / 100;
+            if (mShowInnerRim) {
+                mInnerRim = getScaledRect(scale);
+                scale -= mInnerRimWidthPercentOfDiameter / 100;
+                mFaceRect = getScaledRect(scale);
+                mInnerRimWidth = (mInnerRim.width() - mFaceRect.width()) / 2;
+                mFaceBorderPaint.setStrokeWidth((mInnerRim.width() - mFaceRect.width()) / 2);
+            } else {
+                mFaceRect = getScaledRect(scale);
+                mFaceBorderPaint.setStrokeWidth((mOuterRim.width() - mFaceRect.width()) / 2);
+            }
+        } else {
+            mFaceRect = getScaledRect(scale);
+        }
         mScaleArc = getScaledRect(scale * 0.8f);
         mNeedleScrew = getScaledRect(0.06f);
         mScaleRadius = mScaleArc.width() / 2;
         mFaceRadius = mFaceRect.width() / 2;
-        mInnerRimWidth = (mInnerRim.width() - mFaceRect.width()) / 2;
-        mFaceBorderPaint.setStrokeWidth((mInnerRim.width() - mFaceRect.width()) / 2);
+
         if (!isInEditMode()) {
 
             mFacePaint.setShader(new RadialGradient(mFaceRect.centerX(), mFaceRect.centerY(), mFaceRadius, new int[]{Color.rgb(50, 132, 206), Color.rgb(36, 89, 162), Color.rgb(27, 59, 131)}, new float[]{0.5f, 0.96f, 0.99f}, Shader.TileMode.MIRROR));
@@ -477,9 +491,11 @@ public class BaseGauge extends BaseComponent {
             }
             if (mShowRim) {
                 canvas.drawOval(mOuterRim, getRimPaint(mOuterRim));
-                canvas.drawOval(mInnerRim, mBorderAccentPaint);
-                // Draw the face border (inner rim)
-                canvas.drawCircle(mGaugeRect.centerX(), mGaugeRect.centerY(), mFaceRect.width() / 2 + mInnerRimWidth / 2, mFaceBorderPaint);
+                if (mShowInnerRim) {
+                    canvas.drawOval(mInnerRim, mBorderAccentPaint);
+                    // Draw the face border (inner rim)
+                    canvas.drawCircle(mGaugeRect.centerX(), mGaugeRect.centerY(), mFaceRect.width() / 2 + mInnerRimWidth / 2, mFaceBorderPaint);
+                }
             }
         } else if (mFace == Quadrant.Half) {
             if (mShowOuterShadow) {
@@ -487,9 +503,11 @@ public class BaseGauge extends BaseComponent {
             }
             if (mShowRim) {
                 canvas.drawArc(mOuterRim, 180, 180, true, getRimPaint(mOuterRim));
-                canvas.drawArc(mInnerRim, 180, 180, true, mBorderAccentPaint);
-                // Draw the face border (inner rim)
-                //canvas.drawArc(mFaceRect, 180, 180, true, mFaceBorderPaint);
+                if (mShowInnerRim) {
+                    canvas.drawArc(mInnerRim, 180, 180, true, mBorderAccentPaint);
+                    // Draw the face border (inner rim)
+                    //canvas.drawArc(mFaceRect, 180, 180, true, mFaceBorderPaint);
+                }
             }
         }
         // Todo quarter gauge
@@ -707,6 +725,7 @@ public class BaseGauge extends BaseComponent {
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Gauge, defStyle, 0);
         mShowOuterShadow = a.getBoolean(R.styleable.Gauge_showOuterShadow, true);
         mShowRim = a.getBoolean(R.styleable.Gauge_showRim, true);
+        mShowInnerRim = a.getBoolean(R.styleable.Gauge_showInnerRim, true);
         mBiDirectional = a.getBoolean(R.styleable.Gauge_biDirectional, false);
 
         mShowScale = a.getBoolean(R.styleable.Gauge_showScale, true);

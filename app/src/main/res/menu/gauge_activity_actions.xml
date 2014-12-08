@@ -1,12 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="ca.farrelltonsolar.classic.MainActivity" >
+    tools:context="ca.farrelltonsolar.classic.MonitorActivity">
 
-    <item android:id="@+id/action_settings"
+<item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"/>
-    <item android:id="@+id/action_about"
-        android:title="@string/About"
-        android:orderInCategory="200"/>
+
 </menu>

@@ -312,16 +312,16 @@ public class SOCGauge extends BaseComponent {
             float alpha = rect.width() / getOriginalWidth();
             return new RectF(
                     rect.left + 20 * alpha,
-                    rect.top + 3 * alpha,
+                    rect.top + 8 * alpha,
                     rect.right - 40 * alpha,
-                    rect.bottom - 3 * alpha
+                    rect.bottom - 8 * alpha
             );
         } else if (getOrientation() == VERTICAL) {
             float alpha = rect.height() / getOriginalHeight();
             return new RectF(
-                    rect.left + 4 * alpha,
+                    rect.left + 8 * alpha,
                     rect.top + 40 * alpha,
-                    rect.right - 4 * alpha,
+                    rect.right - 8 * alpha,
                     rect.bottom - 20 * alpha
             );
         } else throw new IllegalStateException("Invalid orientation value: " + getOrientation());

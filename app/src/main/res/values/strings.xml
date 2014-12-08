@@ -83,4 +83,14 @@
     <string name="DayNames">\'Sunday\',\'Monday\',\'Tuesday\',\'Wednesday\',\'Thursday\',\'Friday\',\'Saturday\'</string>
     <string name="DayNamesShort">\'Sun\',\'Mon\',\'Tue\',\'Wed\',\'Thu\',\'Fri\',\'Sat\'</string>
 
+
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_section1">Device 1</string>
+    <string name="title_section2">Device 2</string>
+    <string name="title_section3">Device 3</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+    <string name="network">Network</string>
+
 </resources>

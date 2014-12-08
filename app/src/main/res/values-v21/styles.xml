@@ -5,6 +5,9 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat">
+        <!--<item name="android:background">@color/background_floating_material_dark</item>-->
         <!-- Customize your theme here. -->
     </style>
+
+
 </resources>

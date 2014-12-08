@@ -84,5 +84,6 @@
     <string name="DayNames">\'Domingo\',\'Lunes\',\'Martes\',\'Miércoles\',\'Jueves\',\'Viernes\',\'Sábado\'</string>
 
     <string name="DayNamesShort">\'Dom\',\'Lun\',\'Mar\',\'Mie\',\'Jue\',\'Vie\',\'Sab\'</string>
+    <string name="network">Network</string>
 
 </resources>
