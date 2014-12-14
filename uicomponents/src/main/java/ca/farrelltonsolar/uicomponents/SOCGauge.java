@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014. FarrelltonSolar
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package ca.farrelltonsolar.uicomponents;
 
 import android.content.Context;
@@ -48,25 +64,23 @@ public class SOCGauge extends BaseComponent {
         }
     };
 
-    private float mMaxValue = DEFAULT_MAX;
-    private float mCurrentValue = 0;
-    private float mMinValue = DEFAULT_MIN;
-    private int mOrientation = DEFAULT_ORIENTATION;
-    private ValueToColorConverter mValueToColorConverter;
+    private float maxValue = DEFAULT_MAX;
+    private float currentValue = 0;
+    private float minValue = DEFAULT_MIN;
+    private int orientation = DEFAULT_ORIENTATION;
+    private ValueToColorConverter valueToColorConverter;
 
-    private int mViewWidth;
-    private int mViewHeight;
-    protected RectF mGaugeRect;
-    protected RectF mBatteryRect;
-    protected PointF mTextPosition;
+    protected RectF gaugeRect;
+    protected RectF batteryRect;
+    protected PointF textPosition;
 
-    private int mReadingColor = 0xFFFFFFFF;
+    private int readingColor = 0xFFFFFFFF;
 
-    private Paint mPaint;
-    private Paint mBmpPaint;
-    private Paint mOvalPaint;
-    private Paint mTextPaint;
-    private Bitmap mBatteryBitmap;
+    private Paint contentPaint;
+    private Paint bitmapPaint;
+    private Paint ovalPaint;
+    private Paint textPaint;
+    private Bitmap batteryBitmap;
 
     public SOCGauge(Context context, AttributeSet attrs, final int defStyle) {
         super(context, attrs);
@@ -91,31 +105,31 @@ public class SOCGauge extends BaseComponent {
     }
 
     public float getMax() {
-        return mMaxValue;
+        return maxValue;
     }
 
     public void setMax(float max) {
-        if (max < mMinValue) {
+        if (max < minValue) {
             throw new IllegalArgumentException("Illegal value: max < min");
         }
-        this.mMaxValue = max;
+        this.maxValue = max;
         invalidate();
     }
 
     public float getMin() {
-        return mMinValue;
+        return minValue;
     }
 
     public void setMin(float min) {
-        if (mMaxValue < min) {
+        if (maxValue < min) {
             throw new IllegalArgumentException("Illegal value: min > max");
         }
-        this.mMinValue = min;
+        this.minValue = min;
         invalidate();
     }
 
     public float getValue() {
-        return mCurrentValue;
+        return currentValue;
     }
 
     public void setValue(float value) {
@@ -123,36 +137,36 @@ public class SOCGauge extends BaseComponent {
             value = getMin();
         if (value >= getMax())
             value = getMax();
-        this.mCurrentValue = value;
+        this.currentValue = value;
         invalidate();
     }
 
     public ValueToColorConverter getValueToColorConverter() {
-        return mValueToColorConverter;
+        return valueToColorConverter;
     }
 
     public void setValueToColorConverter(ValueToColorConverter valueToColorConverter) {
-        this.mValueToColorConverter = valueToColorConverter;
+        this.valueToColorConverter = valueToColorConverter;
         invalidate();
     }
 
     private int getColorForValue(float value) {
-        return mValueToColorConverter == null ? DEFAULT_CONVERTER.getColorOf(this, value) : mValueToColorConverter.getColorOf(this, value);
+        return valueToColorConverter == null ? DEFAULT_CONVERTER.getColorOf(this, value) : valueToColorConverter.getColorOf(this, value);
     }
 
     public int getOrientation() {
-        return mOrientation;
+        return orientation;
     }
 
     public void setOrientation(int orientation) {
         if (orientation == VERTICAL || orientation == HORIZONTAL)
-            this.mOrientation = orientation;
+            this.orientation = orientation;
         else throw new IllegalArgumentException("Invalid orientation: " + orientation);
 
         if (getOrientation() == HORIZONTAL)
-            mBatteryBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_empty_battery_horisontal);
+            batteryBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_empty_battery_horisontal);
         else
-            mBatteryBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_empty_battery_vertical);
+            batteryBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_empty_battery_vertical);
     }
 
     public float getPercentage() {
@@ -162,79 +176,79 @@ public class SOCGauge extends BaseComponent {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 
-        mGaugeRect = getRect(getWidth(), getHeight());
-        mBatteryRect = getBatteryContentRect(mGaugeRect);
+        gaugeRect = getRect(getWidth(), getHeight());
+        batteryRect = getBatteryContentRect(gaugeRect);
 
         final float testTextSize = 96f;
         // Get the bounds of the text, using our testTextSize.
-        mTextPaint.setTextSize(testTextSize);
+        textPaint.setTextSize(testTextSize);
         Rect bounds = new Rect();
-        mTextPaint.getTextBounds("100%", 0, 4, bounds);
+        textPaint.getTextBounds("100%", 0, 4, bounds);
         // Calculate the desired size as a proportion of our testTextSize.
-        float desiredTextSize = testTextSize * Math.min(mBatteryRect.width(), mBatteryRect.height()) / bounds.width();
+        float desiredTextSize = testTextSize * Math.min(batteryRect.width(), batteryRect.height()) / bounds.width();
         desiredTextSize = desiredTextSize > testTextSize ? testTextSize : desiredTextSize;
         // Set the paint for that size.
-        mTextPaint.setTextSize(desiredTextSize);
-        mTextPaint.setShadowLayer(desiredTextSize / 5, desiredTextSize / 10, 0, Color.BLACK);
-        mTextPaint.getTextBounds("100%", 0, 4, bounds);
-        mTextPosition = new PointF(mBatteryRect.centerX(), mBatteryRect.centerY() + bounds.height() / 2);
+        textPaint.setTextSize(desiredTextSize);
+        textPaint.setShadowLayer(desiredTextSize / 5, desiredTextSize / 10, 0, Color.BLACK);
+        textPaint.getTextBounds("100%", 0, 4, bounds);
+        textPosition = new PointF(batteryRect.centerX(), batteryRect.centerY() + bounds.height() / 2);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-//        mPaint.setColor(Color.TRANSPARENT);
-//        canvas.drawPaint(mPaint);
+//        contentPaint.setColor(Color.TRANSPARENT);
+//        canvas.drawPaint(contentPaint);
 
         if (getWidth() == 0 || getHeight() == 0)
             return;
 
         RectF rect = getRect(getWidth(), getHeight());
         float alpha = rect.width() / getOriginalWidth();
-        mPaint.setColor(getColorForValue(getValue()));
+        contentPaint.setColor(getColorForValue(getValue()));
         if (!isInEditMode())
-            mPaint.setMaskFilter(new BlurMaskFilter(3 * alpha, BlurMaskFilter.Blur.NORMAL));
+            contentPaint.setMaskFilter(new BlurMaskFilter(3 * alpha, BlurMaskFilter.Blur.NORMAL));
 
-        RectF contentRect = new RectF(mBatteryRect);
+        RectF contentRect = new RectF(batteryRect);
         float percentage = getPercentage();
         if (getOrientation() == HORIZONTAL) {
             contentRect.right = contentRect.left + contentRect.width() * percentage / 100;
         } else {
             contentRect.top = contentRect.top + contentRect.height() * (100 - percentage) / 100;
         }
-        canvas.drawRect(contentRect, mPaint);
+        canvas.drawRect(contentRect, contentPaint);
 
         if (percentage > 0.5f && percentage < 99.0f) {
-            mOvalPaint.setColor(getColorForValue(getValue()));
+            ovalPaint.setColor(getColorForValue(getValue()));
             if (getOrientation() == HORIZONTAL) {
-                canvas.drawOval(new RectF(contentRect.right - alpha * 20, contentRect.top, contentRect.right + alpha * 20, contentRect.bottom), mOvalPaint);
-                mOvalPaint.setColor(Color.argb(6, 0, 0, 0));
-                canvas.drawOval(new RectF(contentRect.right - alpha * 20, contentRect.top, contentRect.right + alpha * 20, contentRect.bottom), mOvalPaint);
+                canvas.drawOval(new RectF(contentRect.right - alpha * 20, contentRect.top, contentRect.right + alpha * 20, contentRect.bottom), ovalPaint);
+                ovalPaint.setColor(Color.argb(6, 0, 0, 0));
+                canvas.drawOval(new RectF(contentRect.right - alpha * 20, contentRect.top, contentRect.right + alpha * 20, contentRect.bottom), ovalPaint);
             } else {
-                canvas.drawOval(new RectF(contentRect.left, contentRect.top - alpha * 25, contentRect.right, contentRect.top + alpha * 25), mOvalPaint);
-                mOvalPaint.setColor(Color.argb(6, 0, 0, 0));
-                canvas.drawOval(new RectF(contentRect.left, contentRect.top - alpha * 25, contentRect.right, contentRect.top + alpha * 25), mOvalPaint);
+                canvas.drawOval(new RectF(contentRect.left, contentRect.top - alpha * 25, contentRect.right, contentRect.top + alpha * 25), ovalPaint);
+                ovalPaint.setColor(Color.argb(6, 0, 0, 0));
+                canvas.drawOval(new RectF(contentRect.left, contentRect.top - alpha * 25, contentRect.right, contentRect.top + alpha * 25), ovalPaint);
             }
 
-            mPaint.setColor(getColorForValue(getValue()));
+            contentPaint.setColor(getColorForValue(getValue()));
             if (getOrientation() == HORIZONTAL) {
-                canvas.drawOval(new RectF(contentRect.right - alpha * 12, contentRect.top + alpha * 20, contentRect.right + alpha * 12, contentRect.bottom - alpha * 20), mPaint);
-                mPaint.setColor(Color.argb(80, 255, 255, 255));
+                canvas.drawOval(new RectF(contentRect.right - alpha * 12, contentRect.top + alpha * 20, contentRect.right + alpha * 12, contentRect.bottom - alpha * 20), contentPaint);
+                contentPaint.setColor(Color.argb(80, 255, 255, 255));
                 if (!isInEditMode())
-                    mPaint.setMaskFilter(new BlurMaskFilter(6 * alpha, BlurMaskFilter.Blur.NORMAL));
-                canvas.drawOval(new RectF(contentRect.right - alpha * 12, contentRect.top + alpha * 20, contentRect.right + alpha * 12, contentRect.bottom - alpha * 20), mPaint);
+                    contentPaint.setMaskFilter(new BlurMaskFilter(6 * alpha, BlurMaskFilter.Blur.NORMAL));
+                canvas.drawOval(new RectF(contentRect.right - alpha * 12, contentRect.top + alpha * 20, contentRect.right + alpha * 12, contentRect.bottom - alpha * 20), contentPaint);
             } else {
-                canvas.drawOval(new RectF(contentRect.left + alpha * 20, contentRect.top - alpha * 12, contentRect.right - alpha * 20, contentRect.top + alpha * 12), mPaint);
-                mPaint.setColor(Color.argb(80, 255, 255, 255));
+                canvas.drawOval(new RectF(contentRect.left + alpha * 20, contentRect.top - alpha * 12, contentRect.right - alpha * 20, contentRect.top + alpha * 12), contentPaint);
+                contentPaint.setColor(Color.argb(80, 255, 255, 255));
                 if (!isInEditMode())
-                    mPaint.setMaskFilter(new BlurMaskFilter(6 * alpha, BlurMaskFilter.Blur.NORMAL));
-                canvas.drawOval(new RectF(contentRect.left + alpha * 20, contentRect.top - alpha * 12, contentRect.right - alpha * 20, contentRect.top + alpha * 12), mPaint);
+                    contentPaint.setMaskFilter(new BlurMaskFilter(6 * alpha, BlurMaskFilter.Blur.NORMAL));
+                canvas.drawOval(new RectF(contentRect.left + alpha * 20, contentRect.top - alpha * 12, contentRect.right - alpha * 20, contentRect.top + alpha * 12), contentPaint);
             }
         }
 
-        Bitmap bmp = Bitmap.createScaledBitmap(mBatteryBitmap, (int) rect.width(), (int) rect.height(), true);
-        canvas.drawBitmap(bmp, rect.left, rect.top, mBmpPaint);
+        Bitmap bmp = Bitmap.createScaledBitmap(batteryBitmap, (int) rect.width(), (int) rect.height(), true);
+        canvas.drawBitmap(bmp, rect.left, rect.top, bitmapPaint);
 
         // debug, draw green outer box to show padding
 
@@ -243,39 +257,39 @@ public class SOCGauge extends BaseComponent {
 //        testPaint.setStrokeWidth(3);
 //        testPaint.setColor(Color.GREEN);
 ////        canvas.drawRect(0, 0, mViewWidth, mViewHeight, testPaint);
-//        canvas.drawRect(mBatteryRect, testPaint);
+//        canvas.drawRect(batteryRect, testPaint);
 //        canvas.drawRect(0, 0,  getWidth() + getPaddingLeft() + getPaddingRight(), getHeight() + getPaddingTop() + getPaddingBottom(), testPaint);
 
         // end debug
 
-        canvas.drawText(getLabelConverter().getLabelFor(percentage, mMinValue, mMaxValue), mTextPosition.x, mTextPosition.y, mTextPaint);
+        canvas.drawText(getLabelConverter().getLabelFor(percentage, minValue, maxValue), textPosition.x, textPosition.y, textPaint);
     }
 
     private void init() {
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPaint.setStyle(Paint.Style.FILL);
+        contentPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        contentPaint.setStyle(Paint.Style.FILL);
 
-        mBmpPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBmpPaint.setStyle(Paint.Style.FILL);
+        bitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        bitmapPaint.setStyle(Paint.Style.FILL);
 
-        mOvalPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mOvalPaint.setStyle(Paint.Style.FILL);
-        mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setColor(mReadingColor);
-        mTextPaint.setStyle(Paint.Style.FILL);
-        mTextPaint.setAntiAlias(true);
-        mTextPaint.setTextAlign(Paint.Align.CENTER);
+        ovalPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        ovalPaint.setStyle(Paint.Style.FILL);
+        textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textPaint.setColor(readingColor);
+        textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setAntiAlias(true);
+        textPaint.setTextAlign(Paint.Align.CENTER);
 
         if (getOrientation() == HORIZONTAL)
-            mBatteryBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_empty_battery_horisontal);
+            batteryBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_empty_battery_horisontal);
         else if (getOrientation() == VERTICAL)
-            mBatteryBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_empty_battery_vertical);
+            batteryBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_empty_battery_vertical);
         else throw new IllegalStateException("Invalid orientation value: " + getOrientation());
     }
 
     private float getOriginalWidth() {
         if (!isInEditMode()) {
-            return mBatteryBitmap.getWidth();
+            return batteryBitmap.getWidth();
         } else {
             return (getOrientation() == HORIZONTAL) ? 467 : 216;
         }
@@ -283,7 +297,7 @@ public class SOCGauge extends BaseComponent {
 
     private float getOriginalHeight() {
         if (!isInEditMode()) {
-            return mBatteryBitmap.getHeight();
+            return batteryBitmap.getHeight();
         } else {
             return (getOrientation() == HORIZONTAL) ? 216 : 467;
         }
@@ -337,10 +351,10 @@ public class SOCGauge extends BaseComponent {
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Gauge, defStyle, 0);
         int orientation = a.getInteger(R.styleable.Gauge_orientation, DEFAULT_ORIENTATION);
         if (orientation == VERTICAL || orientation == HORIZONTAL)
-            this.mOrientation = orientation;
+            this.orientation = orientation;
         setMin(a.getFloat(R.styleable.Gauge_scaleStartValue, DEFAULT_MIN));
         setMax(a.getFloat(R.styleable.Gauge_scaleEndValue, DEFAULT_MAX));
-        mReadingColor = a.getColor(R.styleable.Gauge_readingColor, Color.YELLOW);
+        readingColor = a.getColor(R.styleable.Gauge_readingColor, Color.YELLOW);
         a.recycle();
     }
 }

@@ -1,10 +1,8 @@
 package ca.farrelltonsolar.classic;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -56,7 +54,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
-    private boolean mUserLearnedDrawer;
+    private ArrayAdapter<ChargeController> adapter;
 
     public NavigationDrawerFragment() {
     }
@@ -64,19 +62,13 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Read in the flag indicating whether or not the user has demonstrated awareness of the
-        // drawer. See PREF_USER_LEARNED_DRAWER for details.
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
-
         if (savedInstanceState != null) {
             mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
             mFromSavedInstanceState = true;
         }
-
         // Select either the default item (0) or the last selected item.
         selectItem(mCurrentSelectedPosition);
+
     }
 
     @Override
@@ -97,16 +89,15 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
+        adapter = new ArrayAdapter<>(
                 getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                new String[]{
-                        "AAA",
-                        getString(R.string.title_section2),
-                        getString(R.string.title_section3),
-                }));
+                R.layout.drawer_list_item_activated,
+                android.R.id.text1);
+        adapter.setNotifyOnChange(true);
+        mDrawerListView.setAdapter(adapter);
+        mDrawerListView.clearChoices();
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+
         return mDrawerListView;
     }
 
@@ -120,7 +111,7 @@ public class NavigationDrawerFragment extends Fragment {
      * @param fragmentId   The android:id of this fragment in its activity's layout.
      * @param drawerLayout The DrawerLayout containing this fragment's UI.
      */
-    public void setUp(int fragmentId, DrawerLayout drawerLayout) {
+    public void setUp(int fragmentId, DrawerLayout drawerLayout, ChargeControllers chargeControllers) {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
 
@@ -157,26 +148,17 @@ public class NavigationDrawerFragment extends Fragment {
                 if (!isAdded()) {
                     return;
                 }
-
-                if (!mUserLearnedDrawer) {
-                    // The user manually opened the drawer; store this flag to prevent auto-showing
-                    // the navigation drawer automatically in the future.
-                    mUserLearnedDrawer = true;
-                    SharedPreferences sp = PreferenceManager
-                            .getDefaultSharedPreferences(getActivity());
-                    sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
-                }
-
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
             }
         };
-
-        // If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
-        // per the navigation drawer design guidelines.
-        if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
+        if (chargeControllers != null) {
+            for (ChargeController ct : chargeControllers.getControllers()) {
+                adapter.add(ct);
+            }
+        }
+        if (adapter.getCount() == 0) {
             mDrawerLayout.openDrawer(mFragmentContainerView);
         }
-
         // Defer code dependent on restoration of previous instance state.
         mDrawerLayout.post(new Runnable() {
             @Override
@@ -184,7 +166,6 @@ public class NavigationDrawerFragment extends Fragment {
                 mDrawerToggle.syncState();
             }
         });
-
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
@@ -197,13 +178,18 @@ public class NavigationDrawerFragment extends Fragment {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
         if (mCallbacks != null) {
-            mCallbacks.onNavigationDrawerItemSelected(position);
+            if (adapter != null) {
+                if (position < adapter.getCount()) {
+                    mCallbacks.onNavigationDrawerItemSelected(adapter.getItem(position));
+                }
+            }
         }
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        Toast.makeText(activity.getBaseContext(), "Drawer attached", Toast.LENGTH_SHORT).show();
         try {
             mCallbacks = (NavigationDrawerCallbacks) activity;
         } catch (ClassCastException e) {
@@ -221,6 +207,7 @@ public class NavigationDrawerFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
+//        configuration.commit();
     }
 
     @Override
@@ -248,11 +235,13 @@ public class NavigationDrawerFragment extends Fragment {
         }
 
         if (item.getItemId() == R.id.action_scan) {
-            Toast.makeText(getActivity(), "Example action_scan.", Toast.LENGTH_SHORT).show();
+            adapter.clear();
+            MonitorActivity act = (MonitorActivity) getActivity();
+            act.clearChargeControllerList();
             return true;
         }
         if (item.getItemId() == R.id.action_add) {
-            Toast.makeText(getActivity(), "Example action_add.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Add static address.", Toast.LENGTH_SHORT).show();
             return true;
         }
 
@@ -274,6 +263,7 @@ public class NavigationDrawerFragment extends Fragment {
         return ((ActionBarActivity) getActivity()).getSupportActionBar();
     }
 
+
     /**
      * Callbacks interface that all activities using this fragment must implement.
      */
@@ -281,6 +271,11 @@ public class NavigationDrawerFragment extends Fragment {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onNavigationDrawerItemSelected(int position);
+        void onNavigationDrawerItemSelected(ChargeController device);
     }
+
+    public void AddChargeController(ChargeController cc) {
+        adapter.add(cc);
+    }
+
 }

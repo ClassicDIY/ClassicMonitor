@@ -12,9 +12,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18" />-->
-    <!--<android:uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
-    <!--<android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="18" />-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".MyApplication"
@@ -31,7 +31,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".Settings"
             android:label="@string/SettingsLabel"
@@ -46,15 +45,11 @@
             android:parentActivityName=".MonitorActivity" />
 
         <service
-            android:name=".ModbusMaster"
-            android:exported="false" />
-        <!-- android:process=":services"> -->
-        <!-- <intent-filter> -->
-        <!-- &lt;!&ndash; Start/Stop service &ndash;&gt; -->
-        <!-- <action android:name="ca.farrelltonsolar.classic.ModbusMaster" /> -->
-        <!-- </intent-filter> -->
-        <!-- </service> -->
-
+            android:name="ca.farrelltonsolar.classic.ModbusService"
+            android:exported="false"></service>
+        <service
+            android:name=".UDPListener"
+            android:exported="false"></service>
 
     </application>
 

@@ -1,37 +1,56 @@
 package ca.farrelltonsolar.classic;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import ca.farrelltonsolar.uicomponents.SlidingTabLayout;
 import ca.farrelltonsolar.uicomponents.TabStripAdapter;
 
 public class MonitorActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-    private NavigationDrawerFragment mNavigationDrawerFragment;
-
-
-    ViewPager mViewPager;
-    private TabStripAdapter mTabsAdapter;
-
-    String mClassic = "";
-    private int mPosition = 0;
+    private NavigationDrawerFragment navigationDrawerFragment;
+    private TabStripAdapter tabStripAdapter;
+    ModbusService modbusService;
+    UDPListener UDPListenerService;
+    boolean ismodbusServiceBound = false;
+    boolean isUDPListenerServiceBound = false;
+    ChargeController currentChargeController;
+    private static Gson GSON = new Gson();
+    ComplexPreferences configuration;
+    private ChargeControllers chargeControllers;
 
     @Override
     protected void onDestroy() {
+        if (ismodbusServiceBound) {
+            modbusService.disconnect();
+            unbindService(modbusServiceConnection);
+            Log.d(getClass().getName(), "unbindService modbusServiceConnection");
+        }
+        if (isUDPListenerServiceBound) {
+            UDPListenerService.stopListening();
+            unbindService(UDPListenerServiceConnection);
+            Log.d(getClass().getName(), "unbindService UDPListenerServiceConnection");
+        }
+        Log.d(getClass().getName(), "onDestroy");
         super.onDestroy();
     }
 
@@ -39,81 +58,102 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        LocalBroadcastManager.getInstance(MyApplication.getAppContext()).registerReceiver(mUnitReceiver, new IntentFilter("ca.farrelltonsolar.classic.Unit"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mUnitReceiver, new IntentFilter("ca.farrelltonsolar.classic.UnitName"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mCCReceiver, new IntentFilter("ca.farrelltonsolar.classic.AddChargeController"));
+        configuration = ComplexPreferences.getComplexPreferences(this, null, Context.MODE_PRIVATE);
+        chargeControllers = configuration.getObject("devices", ChargeControllers.class);
+        if (chargeControllers == null) { // save empty collection
+            chargeControllers = new ChargeControllers();
+            configuration.putObject("devices", chargeControllers);
+            configuration.commit();
+        }
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
-            mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+            navigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
             // Set up the drawer.
             DrawerLayout layout = (DrawerLayout) findViewById(R.id.drawer_layout);
-            mNavigationDrawerFragment.setUp(R.id.navigation_drawer, layout);
+            navigationDrawerFragment.setUp(R.id.navigation_drawer, layout, chargeControllers);
             setupActionBar();
         } else {
-            LocalBroadcastManager.getInstance(MyApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter("ca.farrelltonsolar.classic.GaugePage"));
-            LocalBroadcastManager.getInstance(MyApplication.getAppContext()).registerReceiver(mToastReceiver, new IntentFilter("ca.farrelltonsolar.classic.Toast"));
+            LocalBroadcastManager.getInstance(this).registerReceiver(mReadingsReceiver, new IntentFilter("ca.farrelltonsolar.classic.GaugePage"));
+            LocalBroadcastManager.getInstance(this).registerReceiver(mToastReceiver, new IntentFilter("ca.farrelltonsolar.classic.Toast"));
         }
+        if (savedInstanceState != null) {
+            String json = savedInstanceState.getString("currentChargeController");
+            if (json != null && json.isEmpty() == false) {
+                currentChargeController = GSON.fromJson(json, ChargeController.class);
+            }
+        }
+        bindService(new Intent(this, ModbusService.class), modbusServiceConnection, Context.BIND_AUTO_CREATE);
+        bindService(new Intent(this, UDPListener.class), UDPListenerServiceConnection, Context.BIND_AUTO_CREATE);
+        Log.d(getClass().getName(), "onCreate");
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.d(getClass().getName(), "onSaveInstanceState");
+        super.onSaveInstanceState(outState);
+        outState.putString("currentChargeController", GSON.toJson(currentChargeController));
+    }
+
+    private ServiceConnection modbusServiceConnection = new ServiceConnection() {
+
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            ModbusService.ModbusServiceBinder binder = (ModbusService.ModbusServiceBinder) service;
+            modbusService = binder.getService();
+            ismodbusServiceBound = true;
+            Log.d(getClass().getName(), "ModbusService ServiceConnected");
+        }
+
+        public void onServiceDisconnected(ComponentName arg0) {
+            ismodbusServiceBound = false;
+            modbusService = null;
+            Log.d(getClass().getName(), "ModbusService ServiceDisconnected");
+        }
+    };
+
+    private ServiceConnection UDPListenerServiceConnection = new ServiceConnection() {
+
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            UDPListener.UDPListenerServiceBinder binder = (UDPListener.UDPListenerServiceBinder) service;
+            UDPListenerService = binder.getService();
+            isUDPListenerServiceBound = true;
+            UDPListenerService.listen(chargeControllers);
+            Log.d(getClass().getName(), "UDPListener ServiceConnected");
+        }
+
+        public void onServiceDisconnected(ComponentName arg0) {
+            isUDPListenerServiceBound = false;
+            UDPListenerService = null;
+            Log.d(getClass().getName(), "UDPListener ServiceDisconnected");
+        }
+    };
+
     private void setupActionBar() {
-        // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
-        mTabsAdapter = new TabStripAdapter(getSupportFragmentManager(), this,
+        tabStripAdapter = new TabStripAdapter(getSupportFragmentManager(), this,
                 (ViewPager) findViewById(R.id.pager),
                 (SlidingTabLayout) findViewById(R.id.sliding_tabs));
-        mTabsAdapter.addTab(R.string.GaugeTabTitle, GaugePage.class, null);
-        mTabsAdapter.addTab(R.string.CalendarTabTitle, CalendarPage.class, null);
-        mTabsAdapter.addTab(R.string.ChartTabTitle, ChartPage.class, null);
-        mTabsAdapter.notifyTabsChanged();
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-//        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-//
-//        mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
-//        mSlidingTabLayout.setViewPager(mViewPager);
-
-        // Set up the ViewPager with the sections adapter.
-//        mViewPager = (ViewPager) findViewById(R.id.pager);
-//        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        // When swiping between different sections, select the corresponding
-        // tab. We can also use ActionBar.Tab#select() to do this if we have
-        // a reference to the Tab.
-//        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-//            @Override
-//            public void onPageSelected(int position) {
-//                actionBar.setSelectedNavigationItem(position);
-//            }
-//        });
-
-        // For each of the sections in the app, add a tab to the action bar.
-//        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-//            // Create a tab with text corresponding to the page title defined by
-//            // the adapter. Also specify this Activity object, which implements
-//            // the TabListener interface, as the callback (listener) for when
-//            // this tab is selected.
-//            actionBar.addTab(
-//                    actionBar.newTab()
-//                            .setText(mSectionsPagerAdapter.getPageTitle(i))
-//                            .setTabListener(this)
-//            );
-//        }
+        tabStripAdapter.addTab(R.string.GaugeTabTitle, GaugePage.class, null);
+        tabStripAdapter.addTab(R.string.CalendarTabTitle, CalendarPage.class, null);
+        tabStripAdapter.addTab(R.string.ChartTabTitle, ChartPage.class, null);
+        tabStripAdapter.notifyTabsChanged();
     }
 
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(MyApplication.mUnitName);
     }
 
     // Our handler for received Intents.
     private BroadcastReceiver mUnitReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            mClassic = intent.getStringExtra("UnitName");
-            getSupportActionBar().setTitle(mClassic + mPosition);
+            getSupportActionBar().setTitle(intent.getStringExtra("UnitName"));
         }
     };
 
@@ -122,7 +162,6 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
     private BroadcastReceiver mToastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // Get extra data included in the Intent
             Toast.makeText(context, intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
         }
     };
@@ -131,7 +170,6 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
     private BroadcastReceiver mReadingsReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // Get extra data included in the Intent
             SetReadings(new Readings(intent.getBundleExtra("readings")));
         }
     };
@@ -183,11 +221,11 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (mNavigationDrawerFragment == null) {
+        if (navigationDrawerFragment == null) {
             getMenuInflater().inflate(R.menu.gauge_activity_actions, menu);
             return true;
         }
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+        if (!navigationDrawerFragment.isDrawerOpen()) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
@@ -197,7 +235,6 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
         }
         return super.onCreateOptionsMenu(menu);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -221,25 +258,42 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
 
     @Override
     protected void onPause() {
+        Log.d(getClass().getName(), "onPause");
         super.onPause();
-        Intent modbusInitIntent = new Intent("ca.farrelltonsolar.classic.ModbusControl", null, MyApplication.getAppContext(), ModbusMaster.class);
-        modbusInitIntent.putExtra("Control", ConnectionState.Paused.ordinal());
-        LocalBroadcastManager.getInstance(MyApplication.getAppContext()).sendBroadcast(modbusInitIntent);
     }
 
     @Override
     protected void onResume() {
+        Log.d(getClass().getName(), "onResume");
         super.onResume();
-        Intent modbusInitIntent = new Intent("ca.farrelltonsolar.classic.ModbusControl", null, MyApplication.getAppContext(), ModbusMaster.class);
-        modbusInitIntent.putExtra("Control", ConnectionState.Connected.ordinal());
-        LocalBroadcastManager.getInstance(MyApplication.getAppContext()).sendBroadcast(modbusInitIntent);
     }
 
     @Override
-    public void onNavigationDrawerItemSelected(int position) {
+    public void onNavigationDrawerItemSelected(ChargeController device) {
 
-        mPosition = position;
-        Toast.makeText(this.getBaseContext(), "Position: " + position, Toast.LENGTH_SHORT).show();
+        if (ismodbusServiceBound) {
+            currentChargeController = device;
+            modbusService.Monitor(device);
+        } else {
+            Toast.makeText(this, "Not bound to service", Toast.LENGTH_SHORT).show();
+        }
     }
 
+    // Our handler for received Intents.
+    private BroadcastReceiver mCCReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ChargeController cc = GSON.fromJson(intent.getStringExtra("ChargeController"), ChargeController.class);
+            navigationDrawerFragment.AddChargeController(cc);
+            chargeControllers.getControllers().add(cc);
+            configuration.putObject("devices", chargeControllers);
+            configuration.commit();
+        }
+    };
+
+    public void clearChargeControllerList() {
+        modbusService.disconnect();
+        chargeControllers.getControllers().clear();
+        UDPListenerService.listen(chargeControllers);
+    }
 }

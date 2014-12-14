@@ -1,11 +1,7 @@
 package ca.farrelltonsolar.classic;
 
 import android.app.Application;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.util.HashMap;
@@ -16,7 +12,6 @@ import java.util.Map;
  */
 public class MyApplication extends Application {
     private static Context context;
-    public static String mUnitName = "";
 
     static Map<Integer, String> _chargeStates = new HashMap<Integer, String>();
     static Map<Integer, String> _chargeStateTitles = new HashMap<Integer, String>();
@@ -29,15 +24,11 @@ public class MyApplication extends Application {
         mLogSaver.Terminate();
     }
 
-    public void onCreate(){
+    public void onCreate() {
         super.onCreate();
         MyApplication.context = getApplicationContext();
         InitializeChargeStateLookup();
         InitializeChargeStateTitleLookup();
-        Log.d(Constants.LOG_TAG, "InitializeModbus");
-        Intent modbusInitIntent = new Intent("ca.farrelltonsolar.classic.ModbusSetup", null, context, ModbusMaster.class);
-        this.startService(modbusInitIntent);
-        LocalBroadcastManager.getInstance(MyApplication.getAppContext()).registerReceiver(mUnitReceiver, new IntentFilter("ca.farrelltonsolar.classic.Unit"));
         mLogSaver.Start();
         //mLogSaver.ResetLogs();
         Log.d(Constants.LOG_TAG, "InitializeModbus complete");
@@ -72,6 +63,7 @@ public class MyApplication extends Application {
         _chargeStates.put(10, getString(R.string.Error));
         _chargeStates.put(18, getString(R.string.SeekingEqualize));
     }
+
     private void InitializeChargeStateTitleLookup() {
         _chargeStateTitles.put(-1, "");
         _chargeStateTitles.put(0, getString(R.string.ChargeStateOffTitle));
@@ -83,13 +75,4 @@ public class MyApplication extends Application {
         _chargeStateTitles.put(10, getString(R.string.ErrorTitle));
         _chargeStateTitles.put(18, getString(R.string.SeekingEqualizeTitle));
     }
-
-    // Our handler for received Intents.
-    private BroadcastReceiver mUnitReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Get extra data included in the Intent
-            mUnitName = intent.getStringExtra("UnitName");
-        }
-    };
 }

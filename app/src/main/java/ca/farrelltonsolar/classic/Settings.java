@@ -10,7 +10,6 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.Button;
 
@@ -50,11 +49,6 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             @Override
             //On click function
             public void onClick(View view) {
-                Intent modbusStopIntent = new Intent("ca.farrelltonsolar.classic.ModbusControl", null, MyApplication.getAppContext(), ModbusMaster.class);
-                modbusStopIntent.putExtra("Control", ConnectionState.Stopped.ordinal());
-                LocalBroadcastManager.getInstance(MyApplication.getAppContext()).sendBroadcast(modbusStopIntent);
-                Intent modbusInitIntent = new Intent("ca.farrelltonsolar.classic.ModbusSetup", null, MyApplication.getAppContext(), ModbusMaster.class);
-                startService(modbusInitIntent);
                 startActivity(new Intent(view.getContext(), MonitorActivity.class));
             }
         });

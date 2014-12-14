@@ -77,7 +77,7 @@ public class ModbusMaster extends IntentService {
 
     private BroadcastNotifier _broadcaster;
 
-    private PortScanner _portScanner;
+    //    private PortScanner _portScanner;
     private ModbusTCPMaster _modbusMaster;
 
     private InetAddress _inetAddress = null; //the slave's address
@@ -99,7 +99,7 @@ public class ModbusMaster extends IntentService {
      */
     public ModbusMaster() {
         super("ModbusMaster");
-        _portScanner = new PortScanner();
+//        _portScanner = new PortScanner();
         _broadcaster = new BroadcastNotifier();
     }
 
@@ -216,30 +216,31 @@ public class ModbusMaster extends IntentService {
                 LoadSettings();
                 DefaultReadings();
                 if (_scanLocalSubnet) {
-                    Log.d(Constants.LOG_TAG, "Scanning local subnet");
-                    boolean classicFound = false;
-                    while (!classicFound) {
-                        try {
-                            classicFound = _portScanner.ScanLocalSubnet();
-                        } catch (UnknownHostException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                            return;
-                        }
-                        if (!classicFound) {
-                            DefaultReadings();
-                            LoadSettings();
-                            if (!_scanLocalSubnet) {
-                                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
-                                settings.edit().putString(Constants.LAST_IP_ADDRESS, "").commit();
-                                SetConnectionState(ConnectionState.Initialized);
-                                break;
-                            }
-                        }
-                    }
-                    _inetAddress = _portScanner.GetFoundInetAddress();
-                    SetConnectionState(ConnectionState.Initialized);
+                    return;
+//                    Log.d(Constants.LOG_TAG, "Scanning local subnet");
+//                    boolean classicFound = false;
+//                    while (!classicFound) {
+//                        try {
+//                            classicFound = _portScanner.ScanLocalSubnet();
+//                        } catch (UnknownHostException e) {
+//                            e.printStackTrace();
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                            return;
+//                        }
+//                        if (!classicFound) {
+//                            DefaultReadings();
+//                            LoadSettings();
+//                            if (!_scanLocalSubnet) {
+//                                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
+//                                settings.edit().putString(Constants.LAST_IP_ADDRESS, "").commit();
+//                                SetConnectionState(ConnectionState.Initialized);
+//                                break;
+//                            }
+//                        }
+//                    }
+//                    _inetAddress = _portScanner.GetFoundInetAddress();
+//                    SetConnectionState(ConnectionState.Initialized);
                 } else {
                     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
                     settings.edit().putString(Constants.LAST_IP_ADDRESS, "").commit();
@@ -361,6 +362,23 @@ public class ModbusMaster extends IntentService {
                 LocalBroadcastManager.getInstance(MyApplication.getAppContext()).unregisterReceiver(mMessageReceiver);
             }
             SetConnectionState(ConnectionState.NotFound);
+        } else if ("ca.farrelltonsolar.classic.ModbusUnitName".equalsIgnoreCase(intent.getAction())) {
+            try {
+                _modbusMaster = new ModbusTCPMaster(_inetAddress, _port, 1);
+                _modbusMaster.setRetries(Constants.MODBUS_RETRIES);
+                _modbusMaster.connect();
+                if (_modbusMaster.isConnected()) {
+                    if (LookForTriStar() == false) {
+                        GetUnitName();
+                    }
+                }
+            } catch (ModbusIOException e) {
+                e.printStackTrace();
+            } catch (ModbusSlaveException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -374,11 +392,11 @@ public class ModbusMaster extends IntentService {
                 String port = settings.getString(Constants.PORT_PREFERENCE, "502");
                 SetPort(Integer.valueOf(port));
                 SetSubnetScan(settings.getBoolean(Constants.SUBNET_SCAN_PREFERENCE, true));
-                if (_scanLocalSubnet) {
-                    _portScanner.SetStartIP(settings.getString(Constants.START_IP_PREFERENCE, ""));
-                    String countString = settings.getString(Constants.END_IP_COUNT_PREFERENCE, "255");
-                    _portScanner.SetScanCount(Integer.valueOf(countString));
-                }
+//                if (_scanLocalSubnet) {
+//                    _portScanner.SetStartIP(settings.getString(Constants.START_IP_PREFERENCE, ""));
+//                    String countString = settings.getString(Constants.END_IP_COUNT_PREFERENCE, "255");
+//                    _portScanner.SetScanCount(Integer.valueOf(countString));
+//                }
             } catch (Exception e) {
                 Log.d(Constants.LOG_TAG, "Reset settings and use defaults");
                 settings.edit().clear().commit();

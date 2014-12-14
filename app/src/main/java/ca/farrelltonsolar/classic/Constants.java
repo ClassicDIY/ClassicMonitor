@@ -7,6 +7,9 @@ public class Constants {
     // Used to write to the system log from this class.
     public static final String LOG_TAG = "FarrelltonSolar";
 
+    // UDP listening port for available classics on the subnet
+    public static final int CLASSIC_UDP_PORT = 4626;
+
     // Defines a custom Intent action
     public static final String BROADCAST_ACTION = "ca.farrelltonsolar.classic.BROADCAST";
 
@@ -55,12 +58,12 @@ public class Constants {
     public static final String APIKey = "APIKey";
     public static final String SID = "SID";
 
-    public static final int[] BatteryVoltScales = new int[] {160, 100, 80, 40, 20};
-    public static final int[] BatteryCurrentScales = new int[] {250, 200, 150, 100, 80, 40, 20};
-    public static final int[] PVVoltScales = new int[] {250, 200, 160, 100, 80, 40};
-    public static final int[] PVCurrentScales = new int[] {80, 50, 40, 20, 10};
-    public static final int[] PowerScales = new int[] {5000, 4000, 3000, 2000, 1000};
-    public static final int[] BiDirectionalPowerScales = new int[] {8000, 5000, 3000, 2000, 1000, 500};
+    public static final int[] BatteryVoltScales = new int[]{160, 100, 80, 40, 20};
+    public static final int[] BatteryCurrentScales = new int[]{250, 200, 150, 100, 80, 40, 20};
+    public static final int[] PVVoltScales = new int[]{250, 200, 160, 100, 80, 40};
+    public static final int[] PVCurrentScales = new int[]{80, 50, 40, 20, 10};
+    public static final int[] PowerScales = new int[]{5000, 4000, 3000, 2000, 1000};
+    public static final int[] BiDirectionalPowerScales = new int[]{8000, 5000, 3000, 2000, 1000, 500};
 
     public static final int PVOUTPUT_RATE_LIMIT = 10000; // every n milliseconds
     public static final int PVOUTPUT_RECORD_LIMIT = 20; // max uploads per session

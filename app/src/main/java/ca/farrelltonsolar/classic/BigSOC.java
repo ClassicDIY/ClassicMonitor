@@ -46,7 +46,7 @@ public class BigSOC extends ActionBarActivity {
             gaugeView.setOnClickListener(GetClickListener());
         }
         gaugeView.setBiDirectional(true);
-        setTitle(MyApplication.mUnitName);
+
     }
 
     private void LoadSettings() {
@@ -97,7 +97,7 @@ public class BigSOC extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        setTitle(MyApplication.mUnitName);
+
         StartModbus();
     }
 
