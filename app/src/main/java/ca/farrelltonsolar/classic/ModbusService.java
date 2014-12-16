@@ -51,9 +51,7 @@ public class ModbusService extends Service {
         }
         if (pollTimer != null) {
             pollTimer.cancel();
-            pollTimer.purge();
         }
-        Log.d(getClass().getName(), "disconnect");
     }
 
     public class ModbusServiceBinder extends Binder {
@@ -82,7 +80,7 @@ public class ModbusService extends Service {
         pollTimer = new Timer();
         task = new ModbusTask(controller.getInetSocketAddress(), this.getBaseContext());
         pollTimer.schedule(task, 1000, Constants.MODBUS_POLL_TIME);
-        Log.d(getClass().getName(), "Monitor running");
+        Log.d(getClass().getName(), String.format("Monitor running on: %s", controller.toString()));
     }
 
 

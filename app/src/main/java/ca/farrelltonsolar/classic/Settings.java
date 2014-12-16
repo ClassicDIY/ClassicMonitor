@@ -18,9 +18,6 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
 
     private IPAddressPreference _IPAddressPreference;
     private EditTextPreference _PortPreference;
-    private CheckBoxPreference _autoScan;
-    private IPAddressPreference _startScan;
-    private EditTextPreference _countScan;
     private CheckBoxPreference _uploadToPVOutput;
     private EditTextPreference _SID;
     private EditTextPreference _APIKey;
@@ -53,25 +50,15 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             }
         });
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
         try {
             _PortPreference = (EditTextPreference) findPreference(Constants.PORT_PREFERENCE);
             _IPAddressPreference = (IPAddressPreference) findPreference(Constants.IP_ADDRESS_PREFERENCE);
-            _autoScan = (CheckBoxPreference) findPreference(Constants.SUBNET_SCAN_PREFERENCE);
-            _startScan = (IPAddressPreference) findPreference(Constants.START_IP_PREFERENCE);
-            _countScan = (EditTextPreference) findPreference(Constants.END_IP_COUNT_PREFERENCE);
-            ScanEnabled(_autoScan.isChecked());
             _uploadToPVOutput = (CheckBoxPreference) findPreference(Constants.UploadToPVOutput);
             _SID = (EditTextPreference) findPreference(Constants.SID);
             _APIKey = (EditTextPreference) findPreference(Constants.APIKey);
             UploadToPVOutputEnabled(_uploadToPVOutput.isChecked());
-            _autoScan.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    boolean isEnabled = ((Boolean) newValue).booleanValue();
-                    ScanEnabled(isEnabled);
-                    return true;
-                }
-            });
+
             _uploadToPVOutput.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     boolean isEnabled = ((Boolean) newValue).booleanValue();
@@ -79,8 +66,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
                     return true;
                 }
             });
-            _startScan.setSummary(settings.getString(Constants.START_IP_PREFERENCE, ""));
-            _countScan.setSummary(settings.getString(Constants.END_IP_COUNT_PREFERENCE, "255"));
+
             _IPAddressPreference.setSummary(settings.getString(Constants.IP_ADDRESS_PREFERENCE, "Static IP Address of the Classic"));
             _PortPreference.setSummary(settings.getString(Constants.PORT_PREFERENCE, "502"));
             _SID.setSummary(settings.getString(Constants.SID, ""));
@@ -108,12 +94,6 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
         _APIKey.setEnabled(isEnabled);
     }
 
-    private void ScanEnabled(boolean isEnabled) {
-        _startScan.setEnabled(isEnabled);
-        _countScan.setEnabled(isEnabled);
-        _IPAddressPreference.setEnabled(!isEnabled);
-    }
-
     private boolean screenIsLarge() {
         int screenMask = getResources().getConfiguration().screenLayout;
         return (screenMask & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE || (screenMask & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE;
@@ -123,37 +103,26 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     protected void onResume() {
 
         super.onResume();
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
         settings.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
         settings.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
 
         if (key.equals(Constants.IP_ADDRESS_PREFERENCE)) {
             _IPAddressPreference.setSummary(settings.getString(key, ""));
         } else if (key.equals(Constants.PORT_PREFERENCE)) {
             _PortPreference.setSummary(settings.getString(key, "502"));
-        } else if (key.equals(Constants.START_IP_PREFERENCE)) {
-            _startScan.setSummary(settings.getString(key, ""));
-        } else if (key.equals(Constants.END_IP_COUNT_PREFERENCE)) {
-            Integer count = 255;
-            String countString = settings.getString(key, "");
-            if (countString.length() > 0) {
-                count = Integer.valueOf(countString);
-                if (count < 0 || count > 255) {
-                    count = 255;
-                }
-            }
-            _countScan.setSummary(String.valueOf(count));
+
         }
     }
 }

@@ -40,7 +40,7 @@ import ca.farrelltonsolar.j2modlite.ModbusException;
  */
 public class UDPListener extends Service {
 
-
+    final Object lock = new Object();
     private final IBinder mBinder = new UDPListenerServiceBinder();
     private static Gson GSON = new Gson();
     private ListenerThread mListener;
@@ -67,25 +67,34 @@ public class UDPListener extends Service {
         private DatagramPacket packet;
         private ArrayList<InetSocketAddress> alreadyFoundList = new ArrayList<>();
 
-        public ArrayList<InetSocketAddress> getAlreadyFoundList() {
-            synchronized (this) {
-                return alreadyFoundList;
-            }
-        }
-
         public void addToAlreadyFoundList(InetSocketAddress address) {
-            synchronized (this) {
+            synchronized (lock) {
                 alreadyFoundList.add(address);
             }
         }
 
-        public ListenerThread(final ChargeControllers controllers) {
-            try {
-                if (controllers != null) {
-                    for (ChargeController cc : controllers.getControllers()) {
-                        alreadyFoundList.add(cc.getInetSocketAddress());
+        private boolean hasAddressAlreadyBeenFound(InetSocketAddress address) {
+            boolean rVal = false;
+            synchronized (lock) {
+                for (InetSocketAddress cc : alreadyFoundList) {
+                    if (cc.equals(address)) {
+                        rVal = true;
+                        break;
                     }
                 }
+            }
+            return rVal;
+        }
+
+        public void removeFromAlreadyFoundList(InetSocketAddress address) {
+            synchronized (lock) {
+                alreadyFoundList.remove(address);
+            }
+        }
+
+        public ListenerThread(ArrayList<InetSocketAddress> current) {
+            try {
+                alreadyFoundList = current;
                 packet = new DatagramPacket(buffer, buffer.length);
                 socket = new DatagramSocket(Constants.CLASSIC_UDP_PORT);
                 socket.setSoTimeout(2000);
@@ -96,13 +105,13 @@ public class UDPListener extends Service {
         }
 
         private boolean GetRunning() {
-            synchronized (this) {
+            synchronized (lock) {
                 return running;
             }
         }
 
         public void SetRunning(boolean state) {
-            synchronized (this) {
+            synchronized (lock) {
                 running = state;
                 if (state == false && socket != null) {
                     socket.close();
@@ -131,6 +140,7 @@ public class UDPListener extends Service {
                         InetSocketAddress socketAddress = new InetSocketAddress(address, port);
                         if (hasAddressAlreadyBeenFound(socketAddress) == false) {
                             Log.d(getClass().getName(), "Found new classic at address: " + address + " port: " + port);
+                            addToAlreadyFoundList(socketAddress);
                             Runnable r = new NamerThread(socketAddress, this);
                             new Thread(r).start();
                         }
@@ -147,9 +157,9 @@ public class UDPListener extends Service {
             } catch (Exception e) {
                 Log.w(getClass().getName(), "mListener Exception: " + e.toString());
             } finally {
-                Log.d(getClass().getName(), "finally");
                 socket.close();
                 socket.disconnect();
+                Log.d(getClass().getName(), "closed socket and disconnected");
             }
             Log.d(getClass().getName(), "mListener exiting");
         }
@@ -175,9 +185,10 @@ public class UDPListener extends Service {
                         Intent pkg = new Intent("ca.farrelltonsolar.classic.AddChargeController");
                         pkg.putExtra("ChargeController", GSON.toJson(cc));
                         broadcaster.sendBroadcast(pkg);
-                        container.addToAlreadyFoundList(socketAddress);
+
                     } catch (ModbusException e) {
                         Log.d(getClass().getName(), "Failed to get unit info" + e.getMessage());
+                        removeFromAlreadyFoundList(socketAddress);
                     } finally {
                         modbus.disconnect();
                     }
@@ -185,22 +196,12 @@ public class UDPListener extends Service {
             }
         }
 
-        private boolean hasAddressAlreadyBeenFound(InetSocketAddress address) {
-            boolean rVal = false;
-            ArrayList<InetSocketAddress> controllers = getAlreadyFoundList();
-            for (InetSocketAddress cc : controllers) {
-                if (cc.equals(address)) {
-                    rVal = true;
-                    break;
-                }
-            }
-            return rVal;
-        }
+
     }
 
-    public void listen(final ChargeControllers controllers) {
+    public void listen(ArrayList<InetSocketAddress> alreadyFoundList) {
         stopListening();
-        mListener = new ListenerThread(controllers);
+        mListener = new ListenerThread(alreadyFoundList);
         mListener.start();
         Log.d(getClass().getName(), "UDP Listener running");
     }

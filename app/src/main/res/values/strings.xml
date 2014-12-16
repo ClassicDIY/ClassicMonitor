@@ -82,8 +82,6 @@
     <string name="MonthNamesShort">\'Jan\',\'Feb\',\'Mar\',\'Apr\',\'May\',\'Jun\',\'Jul\',\'Aug\',\'Sep\',\'Oct\',\'Nov\',\'Dec\'</string>
     <string name="DayNames">\'Sunday\',\'Monday\',\'Tuesday\',\'Wednesday\',\'Thursday\',\'Friday\',\'Saturday\'</string>
     <string name="DayNamesShort">\'Sun\',\'Mon\',\'Tue\',\'Wed\',\'Thu\',\'Fri\',\'Sat\'</string>
-
-
     <string name="title_activity_main">MainActivity</string>
     <string name="title_section1">Device 1</string>
     <string name="title_section2">Device 2</string>
@@ -92,5 +90,13 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="network">Network</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="PowerTabTitle">Power</string>
+    <string name="EnergyTabTitle">Energy</string>
+    <string name="StateOfChargeTabTitle">State of Charge</string>
+    <string name="TemperatureTabTitle">Temperature</string>
+    <string name="PCBTemperature">PCB</string>
+    <string name="FETTemperature">FET</string>
+    <string name="BatTemperature">Battery</string>
 
 </resources>

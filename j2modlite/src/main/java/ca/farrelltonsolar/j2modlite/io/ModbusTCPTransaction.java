@@ -204,8 +204,9 @@ public class ModbusTCPTransaction implements ModbusTransaction {
                         m_Response = m_IO.readResponse();
 
                         if (m_Response.getTransactionID() != m_Request.getTransactionID()) {
-                            Log.d(Modbus.LOG_TAG_MODBUS, "expected " + m_Request.getTransactionID() +
+                            Log.d(Modbus.LOG_TAG_MODBUS, "Wrong transactionId, expected " + m_Request.getTransactionID() +
                                     ", got " + m_Response.getTransactionID());
+                            m_Response = null;
                         }
 
                     } while (m_Response == null && ++retryCounter < retryLimit);
@@ -247,7 +248,7 @@ public class ModbusTCPTransaction implements ModbusTransaction {
         }
 
 		/*
-		 * The slave may have returned an exception -- check for that.
+         * The slave may have returned an exception -- check for that.
 		 */
         if (m_Response instanceof ExceptionResponse)
             throw new ModbusSlaveException(((ExceptionResponse) m_Response).getExceptionCode());

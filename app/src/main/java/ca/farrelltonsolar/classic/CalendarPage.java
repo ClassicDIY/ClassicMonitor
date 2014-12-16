@@ -42,32 +42,28 @@ public class CalendarPage extends Fragment {
         webSettings.setJavaScriptEnabled(true);
         mWebView.addJavascriptInterface(new WebViewInterface(), "MainActivityInterface");
         mWebView.setWebChromeClient(new WebChromeClient());
-        String MonthNames = MyApplication.getAppContext().getString(R.string.MonthNames);
-        String MonthNamesShort = MyApplication.getAppContext().getString(R.string.MonthNamesShort);
-        String DayNames = MyApplication.getAppContext().getString(R.string.DayNames);
-        String DayNamesShort = MyApplication.getAppContext().getString(R.string.DayNamesShort);
+        String MonthNames = MonitorApplication.getAppContext().getString(R.string.MonthNames);
+        String MonthNamesShort = MonitorApplication.getAppContext().getString(R.string.MonthNamesShort);
+        String DayNames = MonitorApplication.getAppContext().getString(R.string.DayNames);
+        String DayNamesShort = MonitorApplication.getAppContext().getString(R.string.DayNamesShort);
         mPageData = String.format(Constants.Calendar_html, GetCSS(), MonthNames, MonthNamesShort, DayNames, DayNamesShort);
         mWebView.loadDataWithBaseURL("file:///android_asset/", mPageData, "text/html", "utf-8", null);
-        LocalBroadcastManager.getInstance(MyApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter("ca.farrelltonsolar.classic.DayLogs"));
+        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter("ca.farrelltonsolar.classic.DayLogs"));
         return theView;
     }
 
     private String GetCSS() {
         String rVal;
-        if ((getResources().getConfiguration().screenLayout &      Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
-            rVal =  "fullcalendar-xlarge";
-        }
-        else if ((getResources().getConfiguration().screenLayout &      Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
-            rVal =  "fullcalendar-large";
-        }
-        else if ((getResources().getConfiguration().screenLayout &      Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
-            rVal =  "fullcalendar-normal";
-        }
-        else if ((getResources().getConfiguration().screenLayout &      Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL) {
-            rVal =  "fullcalendar-small";
-        }
-        else {
-            rVal =  "fullcalendar-normal";
+        if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
+            rVal = "fullcalendar-xlarge";
+        } else if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
+            rVal = "fullcalendar-large";
+        } else if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
+            rVal = "fullcalendar-normal";
+        } else if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL) {
+            rVal = "fullcalendar-small";
+        } else {
+            rVal = "fullcalendar-normal";
         }
         return rVal;
     }
@@ -77,11 +73,11 @@ public class CalendarPage extends Fragment {
         webView.loadDataWithBaseURL("file:///android_asset/", mPageData, "text/html", "utf-8", null);
     }
 
-    public class WebViewInterface{
+    public class WebViewInterface {
 
         @JavascriptInterface
-        public void  showToast(String message){
-            Toast.makeText(MyApplication.getAppContext(), message, Toast.LENGTH_LONG).show();
+        public void showToast(String message) {
+            Toast.makeText(MonitorApplication.getAppContext(), message, Toast.LENGTH_LONG).show();
         }
 
         @JavascriptInterface
@@ -114,33 +110,31 @@ public class CalendarPage extends Fragment {
                         if (fromYesterday >= 0) {
                             String t = String.valueOf(mData[fromYesterday] / 10.0f) + " kWh";
                             if (mFloatData[fromYesterday] > 0) {
-                                t += "\n " + MyApplication.getAppContext().getString(R.string.CalendarFloat);
+                                t += "\n " + MonitorApplication.getAppContext().getString(R.string.CalendarFloat);
                             }
                             days[i] = new EventObject(t, s);
                             fromYesterday--;
-                        }
-                        else {
+                        } else {
                             days[i] = new EventObject("", s);
                         }
                         calendar.add(Calendar.DATE, 1);
                     }
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return days;
         }
 
-        public Date FromUnixTime(long unixTime)
-        {
-            Date dateTime = new Date(unixTime*1000);
+        public Date FromUnixTime(long unixTime) {
+            Date dateTime = new Date(unixTime * 1000);
             return dateTime;
         }
+
         public int getDifferenceDays(Date d1, Date d2) {
-            int daysdiff=0;
+            int daysdiff = 0;
             long diff = d2.getTime() - d1.getTime();
-            long diffDays = diff / (24 * 60 * 60 * 1000)+1;
+            long diffDays = diff / (24 * 60 * 60 * 1000) + 1;
             daysdiff = (int) diffDays;
             return daysdiff;
         }
@@ -163,9 +157,9 @@ public class CalendarPage extends Fragment {
     }
 
     private void RequestCalendarData() {
-        Intent modbusInitIntent = new Intent("ca.farrelltonsolar.classic.ModbusControl", null, MyApplication.getAppContext(), ModbusMaster.class);
-        modbusInitIntent.putExtra("Page", Function.DayLogs.ordinal());
-        LocalBroadcastManager.getInstance(MyApplication.getAppContext()).sendBroadcast(modbusInitIntent);
+//        Intent modbusInitIntent = new Intent("ca.farrelltonsolar.classic.ModbusControl", null, MyApplication.getAppContext(), ModbusMaster.class);
+//        modbusInitIntent.putExtra("Page", Function.DayLogs.ordinal());
+//        LocalBroadcastManager.getInstance(MyApplication.getAppContext()).sendBroadcast(modbusInitIntent);
     }
 
     // Our handler for received Intents.
@@ -191,9 +185,7 @@ public class CalendarPage extends Fragment {
                     mFloatData = logs.getShortArray(String.valueOf(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY));
                 }
                 Refresh();
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -203,12 +195,13 @@ public class CalendarPage extends Fragment {
         public int start;
         public int end;
     }
-    public class EventObject
-    {
+
+    public class EventObject {
         public EventObject(String t, String s) {
             title = t;
             start = s;
         }
+
         public String title = "";
         public String start = "";
     }

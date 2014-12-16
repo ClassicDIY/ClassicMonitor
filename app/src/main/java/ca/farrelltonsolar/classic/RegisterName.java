@@ -13,5 +13,8 @@ public enum RegisterName {
     BiDirectional,
     SOC,
     Aux1,
-    Aux2
+    Aux2,
+    BatTemperature,
+    FETTemperature,
+    PCBTemperature
 }

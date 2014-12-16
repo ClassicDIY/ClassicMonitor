@@ -42,26 +42,22 @@ public class ChartPage extends Fragment {
         mWebView.setWebChromeClient(new WebChromeClient());
         URL = GetHtmlPage();
         mWebView.loadUrl(URL);
-        LocalBroadcastManager.getInstance(MyApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter("ca.farrelltonsolar.classic.MinuteLogs"));
+        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter("ca.farrelltonsolar.classic.MinuteLogs"));
         return theView;
     }
 
     private String GetHtmlPage() {
         String rVal;
-        if ((getResources().getConfiguration().screenLayout &      Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
-            rVal =  "file:///android_asset/chart-xlarge.html";
-        }
-        else if ((getResources().getConfiguration().screenLayout &      Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
-            rVal =  "file:///android_asset/chart-large.html";
-        }
-        else if ((getResources().getConfiguration().screenLayout &      Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
-            rVal =  "file:///android_asset/chart-normal.html";
-        }
-        else if ((getResources().getConfiguration().screenLayout &      Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL) {
-            rVal =  "file:///android_asset/chart-small.html";
-        }
-        else {
-            rVal =  "file:///android_asset/chart-normal.html";
+        if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
+            rVal = "file:///android_asset/chart-xlarge.html";
+        } else if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
+            rVal = "file:///android_asset/chart-large.html";
+        } else if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
+            rVal = "file:///android_asset/chart-normal.html";
+        } else if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL) {
+            rVal = "file:///android_asset/chart-small.html";
+        } else {
+            rVal = "file:///android_asset/chart-normal.html";
         }
         return rVal;
 
@@ -72,11 +68,11 @@ public class ChartPage extends Fragment {
         webView.loadUrl(URL);
     }
 
-    public class WebViewInterface{
+    public class WebViewInterface {
 
         @JavascriptInterface
-        public void  showToast(String message){
-            Toast.makeText(MyApplication.getAppContext(), message, Toast.LENGTH_LONG).show();
+        public void showToast(String message) {
+            Toast.makeText(MonitorApplication.getAppContext(), message, Toast.LENGTH_LONG).show();
         }
 
         @JavascriptInterface
@@ -86,7 +82,7 @@ public class ChartPage extends Fragment {
                 Gson gson = new Gson();
                 short[] reverseData = new short[mData.length];
                 int j = 0;
-                for (int i = mData.length-1; i >= 0; i--) {
+                for (int i = mData.length - 1; i >= 0; i--) {
                     reverseData[j++] = mData[i];
                 }
                 rVal = gson.toJson(reverseData);
@@ -161,9 +157,9 @@ public class ChartPage extends Fragment {
     }
 
     private void RequestChartData() {
-        Intent modbusInitIntent = new Intent("ca.farrelltonsolar.classic.ModbusControl", null, MyApplication.getAppContext(), ModbusMaster.class);
-        modbusInitIntent.putExtra("Page", Function.MinuteLogs.ordinal());
-        LocalBroadcastManager.getInstance(MyApplication.getAppContext()).sendBroadcast(modbusInitIntent);
+//        Intent modbusInitIntent = new Intent("ca.farrelltonsolar.classic.ModbusControl", null, MyApplication.getAppContext(), ModbusMaster.class);
+//        modbusInitIntent.putExtra("Page", Function.MinuteLogs.ordinal());
+//        LocalBroadcastManager.getInstance(MyApplication.getAppContext()).sendBroadcast(modbusInitIntent);
     }
 
     // Our handler for received Intents.
@@ -188,9 +184,7 @@ public class ChartPage extends Fragment {
                     mData = logs.getShortArray(String.valueOf(Constants.CLASSIC_POWER_HOURLY_CATEGORY));
                 }
                 Refresh();
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

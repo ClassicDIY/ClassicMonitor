@@ -4,6 +4,12 @@
 
     <PreferenceCategory android:title="@string/NetworkCategoryTitle">
 
+        <CheckBoxPreference
+            android:key="SubnetScan"
+            android:summary="@string/ScanSubnetCheckbox"
+            android:disableDependentsState="true"
+            android:defaultValue="true" />
+
         <EditTextPreference
             android:dialogTitle="@string/ModbusPortSetting"
             android:dialogMessage="Port:"
@@ -14,30 +20,7 @@
             android:maxLength="4"
             android:numeric="decimal"
             android:defaultValue="502" />
-        <CheckBoxPreference
-            android:key="SubnetScan"
-            android:summary="@string/ScanSubnetCheckbox"
-            android:disableDependentsState="true"
-            android:defaultValue="true" />
 
-        <ca.farrelltonsolar.classic.IPAddressPreference
-            android:dialogTitle="@string/StartScanAddress"
-            android:dialogMessage="@string/IPAddressSetting"
-            android:key="StartIpAddress"
-            android:summary="@string/IPAddressPrompt"
-            android:title="@string/StartScanIPTitle"/>
-
-
-        <EditTextPreference
-            android:dialogTitle="@string/NumberOfAddressesToScan"
-            android:dialogMessage="@string/ScanPrompt"
-            android:key="EndIpAddressCount"
-            android:title="@string/ScanTitle"
-            android:inputType="numberDecimal"
-            android:digits="0123456789"
-            android:maxLength="3"
-            android:numeric="decimal"
-            android:defaultValue="255" />
 
         <ca.farrelltonsolar.classic.IPAddressPreference
             android:dialogTitle="@string/StaticIPAddressTitle"
@@ -79,11 +62,11 @@
 
     <PreferenceCategory android:title="@string/PVOutputPreferenceTitle">
 
-    <CheckBoxPreference
-        android:key="UploadToPVOutput"
-        android:summary="@string/UploadLogsSummary"
-        android:disableDependentsState="false"
-        android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="UploadToPVOutput"
+            android:summary="@string/UploadLogsSummary"
+            android:disableDependentsState="false"
+            android:defaultValue="false" />
 
         <EditTextPreference
             android:dialogTitle="@string/APIKeyDialogTitle"
@@ -104,8 +87,9 @@
             android:maxLength="5"
             android:numeric="decimal"
             android:defaultValue="" />
-        <Preference android:title="@string/ClearLogsTitle"
-            android:key="ResetLogs"/>
+        <Preference
+            android:title="@string/ClearLogsTitle"
+            android:key="ResetLogs" />
 
     </PreferenceCategory>
 

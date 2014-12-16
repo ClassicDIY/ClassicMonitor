@@ -47,10 +47,10 @@ public class LogSaver {
     }
 
     public static void ResetLogs() {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
         String fName = settings.getString("LogDate", "");
         if (fName.length() > 0) {
-            MyApplication.getAppContext().deleteFile(fName);
+            MonitorApplication.getAppContext().deleteFile(fName);
         }
         settings.edit().remove("LogDate").commit();
         settings.edit().remove("UploadDate").commit();
@@ -78,8 +78,7 @@ public class LogSaver {
                         e.printStackTrace();
                     }
                 }
-            }
-            else {
+            } else {
                 SaveLogs(logs); // never saved before!
             }
         }
@@ -88,17 +87,17 @@ public class LogSaver {
     private void SaveLogs(Bundle logs) {
         String updatedLogFilename = GetFileName();
         save(logs, updatedLogFilename);
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
         String fName = settings.getString("LogDate", "");
         if (fName.length() > 0) {
-            MyApplication.getAppContext().deleteFile(fName);
+            MonitorApplication.getAppContext().deleteFile(fName);
         }
         settings.edit().putString("LogDate", updatedLogFilename).commit();
     }
 
     private Date LogDate() {
         Date logDate = null;
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
         String fName = settings.getString("LogDate", "");
         if (fName.length() > 0) {
             try {
@@ -112,15 +111,15 @@ public class LogSaver {
 
     public void Start() {
 
-        LocalBroadcastManager.getInstance(MyApplication.getAppContext()).registerReceiver(mDayLogReceiver, new IntentFilter("ca.farrelltonsolar.classic.DayLogs"));
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
+        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mDayLogReceiver, new IntentFilter("ca.farrelltonsolar.classic.DayLogs"));
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
         boolean doUpload = settings.getBoolean(Constants.UploadToPVOutput, false);
         if (doUpload) {
             mLogger = new Thread(new Runnable() {
                 public void run() {
                     boolean running = true;
                     int sleepTime = 10000;
-                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
+                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
                     String uploadDateString = settings.getString("UploadDate", "");
                     String APIKey = settings.getString(Constants.APIKey, "");
                     String SID = settings.getString(Constants.SID, "");
@@ -180,7 +179,7 @@ public class LogSaver {
                                 }
                                 Thread.sleep(sleepTime);
                             } while (running);
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -209,7 +208,7 @@ public class LogSaver {
     }
 
     private int getDifferenceDays(Date d1, Date d2) {
-        int daysdiff=0;
+        int daysdiff = 0;
         long diff = d2.getTime() - d1.getTime();
         long diffDays = diff / (24 * 60 * 60 * 1000);
         daysdiff = (int) diffDays;
@@ -278,7 +277,7 @@ public class LogSaver {
 
     public void save(final Bundle bundle, String file) {
         try {
-            FileOutputStream fOut = MyApplication.getAppContext().openFileOutput(file, Context.MODE_PRIVATE);
+            FileOutputStream fOut = MonitorApplication.getAppContext().openFileOutput(file, Context.MODE_PRIVATE);
             fOut.write(serializeBundle(bundle));
             fOut.close();
         } catch (Exception e) {
@@ -292,7 +291,7 @@ public class LogSaver {
             byte[] array = new byte[kBufferExpansionSize];
             int bytesRead = 0;
             int totalLength = 0;
-            InputStream fin = MyApplication.getAppContext().openFileInput(file);
+            InputStream fin = MonitorApplication.getAppContext().openFileInput(file);
             //InputStream fin = new BufferedInputStream(new FileInputStream(file));
             while ((bytesRead = fin.read(array, totalLength, array.length - totalLength)) != -1) {
                 totalLength += bytesRead;

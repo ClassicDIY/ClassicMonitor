@@ -87,5 +87,12 @@
 
     <string name="DayNamesShort">\'do\',\'lun\',\'mar\',\'mer\',\'gio\',\'ven\',\'sab\'</string>
     <string name="network">Network</string>
+    <string name="PowerTabTitle">Power</string>
+    <string name="EnergyTabTitle">Energy</string>
+    <string name="StateOfChargeTabTitle">State of Charge</string>
+    <string name="TemperatureTabTitle">Temperature</string>
+    <string name="PCBTemperature">PCB Temperature</string>
+    <string name="FETTemperature">FET Temperature</string>
+    <string name="BatTemperature">Bat Temperature</string>
 
 </resources>

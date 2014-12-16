@@ -16,29 +16,68 @@
 
 package ca.farrelltonsolar.classic;
 
-import com.google.gson.Gson;
+import android.widget.ArrayAdapter;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChargeControllers {
-    private static Gson GSON = new Gson();
+    final Object lock = new Object();
 
     public ChargeControllers() {
         this.devices = new ArrayList<>();
     }
 
-    public ChargeControllers(List<ChargeController> devices) {
-        this.devices = devices;
-    }
-
     private List<ChargeController> devices;
 
-    public List<ChargeController> getControllers() {
-        return devices;
+    public ChargeController get(int position) {
+        synchronized (lock) {
+//            if (position >= devices.size()) {
+//                position = 0;
+//            }
+            return devices.get(position);
+        }
     }
 
-    public String toJSON() {
-        return GSON.toJson(this);
+    public void add(ChargeController cc) {
+        synchronized (lock) {
+            devices.add(cc);
+        }
     }
+
+    public void remove(ChargeController cc) {
+        synchronized (lock) {
+            devices.remove(cc);
+        }
+    }
+
+    public int count() {
+        synchronized (lock) {
+            return devices.size();
+        }
+    }
+
+    public void clear() {
+        synchronized (lock) {
+            devices.clear();
+        }
+    }
+
+    public void load(ArrayAdapter adapter) {
+        synchronized (lock) {
+            for (ChargeController ct : devices) {
+                adapter.add(ct);
+            }
+        }
+    }
+
+    public void load(ArrayList<InetSocketAddress> arr) {
+        synchronized (lock) {
+            for (ChargeController cc : devices) {
+                arr.add(cc.getInetSocketAddress());
+            }
+        }
+    }
+
 }

@@ -62,9 +62,9 @@ public class SolarGauge extends BaseGauge {
     }
 
     private void drawLEDs(final Canvas canvas) {
-        float x1 = mGaugeRect.centerX() - (mGaugeRect.centerX() * .05f);
-        float x2 = mGaugeRect.centerX() + (mGaugeRect.centerX() * .05f);
-        float y = mGaugeRect.bottom - (mGaugeRect.centerY() * .4f);
+        float x1 = mGaugeRect.centerX() - (mGaugeRect.centerX() * .07f);
+        float x2 = mGaugeRect.centerX() + (mGaugeRect.centerX() * .07f);
+        float y = mGaugeRect.centerY() + mScaleRadius;
         float rad = mGaugeRect.width() * 0.015f;
         canvas.drawCircle(x1, y, rad, mLed1Colour);
         canvas.drawCircle(x2, y, rad, mLed2Colour);

@@ -54,78 +54,78 @@ public class BaseGauge extends BaseComponent {
     protected PointF mTitlePosition;
     protected PointF mReadingPosition;
 
-    private float mScaleStartAngle;
-    private float mScaleEndAngle;
-    private float mAvailableAngle;
-    private Quadrant mFace = Quadrant.Full;
+    protected float mScaleStartAngle;
+    protected float mScaleEndAngle;
+    protected float mAvailableAngle;
+    protected Quadrant mFace = Quadrant.Full;
 
-    private float mScaleStartValue;
-    private float mScaleEndValue;
+    protected float mScaleStartValue;
+    protected float mScaleEndValue;
 
-    private float mFaceRadius;
-    private float mScaleRadius;
-    private float mInnerRimWidth;
-    private float mMajorTickStepValue;
-    private float mMajorTicksLength;
-    private float mMinorTicksLength;
+    protected float mFaceRadius;
+    protected float mScaleRadius;
+    protected float mInnerRimWidth;
+    protected float mMajorTickStepValue;
+    protected float mMajorTicksLength;
+    protected float mMinorTicksLength;
 
-    private int mDefaultColor = Color.rgb(180, 180, 180);
-    private double mMajorTickPercentOfMax;
-    private int mMinorTicksPerDivision;
+    protected int mDefaultColor = Color.rgb(180, 180, 180);
+    protected double mMajorTickPercentOfMax;
+    protected int mMinorTicksPerDivision;
 
-    private String mGaugeTitle;
-    private String mReadingUnit;
+    protected String mGaugeTitle;
+    protected String mReadingUnit;
 
-    private List<ColoredRange> mRanges = new ArrayList<ColoredRange>();
+    protected List<ColoredRange> mRanges = new ArrayList<ColoredRange>();
 
-    private int mTitleColor;
-    private int mReadingColor;
-    private int mTickLabelColor;
+    protected int mTitleColor;
+    protected int mReadingColor;
+    protected int mTickLabelColor;
 
-    private Paint mNeedleScrewPaint;
-    private Paint mNeedleScrewBorderPaint;
-    private Paint mBackgroundPaint;
-    private Paint mBorderAccentPaint;
-    private Paint mFacePaint;
-    private Paint mFaceBorderPaint;
-    private Paint mFaceShadowPaint;
-    private Paint mNeedleLeftPaint;
-    private Paint mNeedleRightPaint;
-    private Paint mTicksPaint;
-    private Paint mTickLabelTextPaint;
-    private Paint mColoredRangePaint;
-    private Paint mTitleTextPaint;
-    private Paint mReadingTextPaint;
+    protected Paint mNeedleScrewPaint;
+    protected Paint mNeedleScrewBorderPaint;
+    protected Paint mBackgroundPaint;
+    protected Paint mBorderAccentPaint;
+    protected Paint mFacePaint;
+    protected Paint mFaceBorderPaint;
+    protected Paint mFaceShadowPaint;
+    protected Paint mNeedleLeftPaint;
+    protected Paint mNeedleRightPaint;
+    protected Paint mTicksPaint;
+    protected Paint mTickLabelTextPaint;
+    protected Paint mColoredRangePaint;
+    protected Paint mTitleTextPaint;
+    protected Paint mReadingTextPaint;
 
-    private boolean mBiDirectional;
-    private boolean mShowReading;
-    private boolean mShowScale;
-    private boolean mStaticBackgroundLoaded = false;
-    private boolean mShowOuterShadow;
-    private boolean mShowRim;
-    private boolean mShowInnerRim;
-    private int mReadingPrecision;
+    protected boolean mBiDirectional;
+    protected boolean mShowReading;
+    protected boolean mShowScale;
+    protected boolean mStaticBackgroundLoaded = false;
+    protected boolean mShowOuterShadow;
+    protected boolean mShowRim;
+    protected boolean mShowInnerRim;
+    protected int mReadingPrecision;
 
-    private float mTargetValue;
-    private float mTargetValueNoCaps;
-    private float mCurrentValue;
+    protected float mTargetValue;
+    protected float mTargetValueNoCaps;
+    protected float mCurrentValue;
 
     protected RectF mGaugeRect;
-    private RectF mOuterRim;
-    private RectF mInnerRim;
-    private RectF mFaceRect;
-    private RectF mScaleArc;
-    private RectF mNeedleScrew;
+    protected RectF mOuterRim;
+    protected RectF mInnerRim;
+    protected RectF mFaceRect;
+    protected RectF mScaleArc;
+    protected RectF mNeedleScrew;
 
-    private Path mNeedleRightPath;
-    private Path mNeedleLeftPath;
-    private float mNeedleWidth;
+    protected Path mNeedleRightPath;
+    protected Path mNeedleLeftPath;
+    protected float mNeedleWidth;
 
-    private float mNeedleVelocity;
-    private float mNeedleAcceleration;
-    private long mNeedleLastMoved = -1;
+    protected float mNeedleVelocity;
+    protected float mNeedleAcceleration;
+    protected long mNeedleLastMoved = -1;
 
-    private Bitmap mBackground;
+    protected Bitmap mBackground;
 
     private boolean mBSizeChangedComplete = false;
 
@@ -152,30 +152,34 @@ public class BaseGauge extends BaseComponent {
         this(context, null, 0);
     }
 
-    public double getScaleStart() {
+    public float getScaleStart() {
         return mScaleStartValue;
     }
 
     public void setScaleStart(float scaleStart) {
         if (scaleStart < 0 || mBiDirectional)
             scaleStart = 0;
-        this.mScaleStartValue = scaleStart;
-        if (mScaleEndValue < mScaleStartValue)
-            mScaleEndValue = mScaleStartValue + 1;
-        invalidateAll();
+        if (mScaleStartValue != scaleStart) {
+            this.mScaleStartValue = scaleStart;
+            if (mScaleEndValue < mScaleStartValue)
+                mScaleEndValue = mScaleStartValue + 1;
+            invalidateAll();
+        }
     }
 
-    public double getScaleEnd() {
+    public float getScaleEnd() {
         return mScaleEndValue;
     }
 
     public void setScaleEnd(float scaleEnd) {
         if (scaleEnd < 0)
             scaleEnd = 0;
-        this.mScaleEndValue = scaleEnd;
-        if (mScaleStartValue > mScaleStartValue)
-            mScaleStartValue = mScaleEndValue - 1;
-        invalidateAll();
+        if (mScaleEndValue != scaleEnd) {
+            this.mScaleEndValue = scaleEnd;
+            if (mScaleStartValue > mScaleStartValue)
+                mScaleStartValue = mScaleEndValue - 1;
+            invalidateAll();
+        }
     }
 
     public boolean getBiDirectional() {
@@ -196,8 +200,10 @@ public class BaseGauge extends BaseComponent {
     public void setMajorTickPercentOfMax(double val) {
         if (val <= 0 || val > 100)
             throw new IllegalArgumentException("Bad value specified as a major tick step percent.");
-        this.mMajorTickPercentOfMax = val;
-        invalidateAll();
+        if (mMajorTickPercentOfMax != val) {
+            this.mMajorTickPercentOfMax = val;
+            invalidateAll();
+        }
     }
 
     public int getMinorTicks() {
@@ -205,8 +211,10 @@ public class BaseGauge extends BaseComponent {
     }
 
     public void setMinorTicksPerDivision(int minorTicks) {
-        this.mMinorTicksPerDivision = minorTicks;
-        invalidateAll();
+        if (mMinorTicksPerDivision != minorTicks) {
+            this.mMinorTicksPerDivision = minorTicks;
+            invalidateAll();
+        }
     }
 
     public void clearColoredRanges() {
@@ -215,6 +223,11 @@ public class BaseGauge extends BaseComponent {
     }
 
     public void addColoredRange(double begin, double end, int color) {
+        addRangeSub(begin, end, color);
+        invalidateAll();
+    }
+
+    private void addRangeSub(double begin, double end, int color) {
         if (begin >= end)
             throw new IllegalArgumentException("Incorrect number range specified!");
         if (begin < 0 || begin > 100)
@@ -222,6 +235,16 @@ public class BaseGauge extends BaseComponent {
         if (end < 0 || end > 100)
             throw new IllegalArgumentException("Incorrect number range specified!");
         mRanges.add(new ColoredRange(color, begin, end));
+    }
+
+    public void setGreenRange(double startGreen, double endGreen) {
+        if (startGreen > 0) {
+            addRangeSub(0, startGreen, Color.YELLOW);
+        }
+        addRangeSub(startGreen, endGreen, Color.GREEN);
+        if (endGreen < 100) {
+            addRangeSub(endGreen, 100, Color.RED);
+        }
         invalidateAll();
     }
 
@@ -259,14 +282,30 @@ public class BaseGauge extends BaseComponent {
         mReadingUnit = val;
     }
 
-
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-
         if (w == 0 || h == 0)
             return;
+        mBackground = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(mBackground);
         mGaugeRect = getScaledRect(1);
         float scale = 1.0f;
+
+        if (isInEditMode()) {
+            Paint editPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            editPaint.setStyle(Paint.Style.FILL);
+            editPaint.setColor(Color.RED);
+            if (mFace == Quadrant.Full) {
+                canvas.drawOval(mGaugeRect, editPaint);
+
+            } else if (mFace == Quadrant.Half) {
+                canvas.drawArc(mGaugeRect, 180, 180, true, editPaint);
+            }
+            scale -= mInnerRimWidthPercentOfDiameter / 100;
+            mFaceRect = getScaledRect(scale);
+            drawFace(canvas);
+            return;
+        }
         if (mShowOuterShadow) {
             scale = (100 - mOuterShadowWidthPercentOfDiameter) / 100;
         }
@@ -287,18 +326,24 @@ public class BaseGauge extends BaseComponent {
             mFaceRect = getScaledRect(scale);
         }
         mScaleArc = getScaledRect(scale * 0.8f);
-        mNeedleScrew = getScaledRect(0.06f);
         mScaleRadius = mScaleArc.width() / 2;
+        mNeedleScrew = getScaledRect(0.06f);
         mFaceRadius = mFaceRect.width() / 2;
-
-        if (!isInEditMode()) {
-
-            mFacePaint.setShader(new RadialGradient(mFaceRect.centerX(), mFaceRect.centerY(), mFaceRadius, new int[]{Color.rgb(50, 132, 206), Color.rgb(36, 89, 162), Color.rgb(27, 59, 131)}, new float[]{0.5f, 0.96f, 0.99f}, Shader.TileMode.MIRROR));
-            mFaceShadowPaint.setShader(new RadialGradient(mFaceRect.centerX(), mFaceRect.centerY(), mFaceRadius, new int[]{Color.argb(60, 40, 96, 170),
-                    Color.argb(80, 15, 34, 98), Color.argb(120, 0, 0, 0), Color.argb(140, 0, 0, 0)},
-                    new float[]{0.60f, 0.85f, 0.96f, 0.99f}, Shader.TileMode.MIRROR));
+        mFacePaint.setShader(new RadialGradient(mFaceRect.centerX(), mFaceRect.centerY(), mFaceRadius, new int[]{Color.rgb(50, 132, 206), Color.rgb(36, 89, 162), Color.rgb(27, 59, 131)}, new float[]{0.5f, 0.96f, 0.99f}, Shader.TileMode.MIRROR));
+        mFaceShadowPaint.setShader(new RadialGradient(mFaceRect.centerX(), mFaceRect.centerY(), mFaceRadius, new int[]{Color.argb(60, 40, 96, 170),
+                Color.argb(80, 15, 34, 98), Color.argb(120, 0, 0, 0), Color.argb(140, 0, 0, 0)},
+                new float[]{0.60f, 0.85f, 0.96f, 0.99f}, Shader.TileMode.MIRROR));
+        drawRim(canvas);
+        drawFace(canvas);
+        mBSizeChangedComplete = true;
+        updateSizes();
+        if (mShowScale) {
+            drawScale(canvas);
         }
+        makeNeedle();
+    }
 
+    private void makeNeedle() {
         mNeedleWidth = mNeedleScrew.width() / 4;
         float needleRadius = mScaleArc.width() / 2.1f;
         float counterBalanceSize = mNeedleScrew.width();
@@ -318,18 +363,26 @@ public class BaseGauge extends BaseComponent {
         mNeedleRightPath.lineTo(x + mNeedleWidth, y - counterBalanceSize);
         mNeedleRightPath.lineTo(x, y - needleRadius);
         mNeedleRightPath.lineTo(x, y);
-
-        mBSizeChangedComplete = true;
-        updateSizes();
     }
 
     public void invalidateAll() {
-        updateSizes();
-        invalidate();
+        if (mBSizeChangedComplete && !isInEditMode()) {
+            if (mBackground != null) {
+                mBackground.recycle();
+            }
+            mBackground = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.ARGB_8888);
+            final Canvas canvas = new Canvas(mBackground);
+            drawRim(canvas);
+            drawFace(canvas);
+            updateSizes();
+            if (mShowScale) {
+                drawScale(canvas);
+            }
+        }
     }
 
     private void updateSizes() {
-        if (mBSizeChangedComplete) {
+        if (!isInEditMode()) {
             mMajorTickStepValue = (float) ((mScaleEndValue - mScaleStartValue) * mMajorTickPercentOfMax / 100);
             mMajorTicksLength = mScaleRadius * 0.1f;
             mMinorTicksLength = mMajorTicksLength / 2.5f;
@@ -339,62 +392,26 @@ public class BaseGauge extends BaseComponent {
             float readingSize = mReadingHeightPercentOfRadius * mFaceRadius / 100;
             mReadingTextPaint.setTextSize(readingSize * mDensity);
             mReadingTextPaint.setShadowLayer(readingSize / 5, readingSize / 10, 0, Color.BLACK);
-            mStaticBackgroundLoaded = false;
-        }
-    }
-
-    private void loadStaticBackground() {
-        if (isInEditMode()) {
-            return;
-        }
-        if (null != mBackground) {
-            // Let go of the old background
-            mBackground.recycle();
-        }
-        // Create a new background according to the new width and height
-        int h = getHeight();
-        if (h == 0)
-            return;
-
-        mBackground = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(mBackground);
-
-        // debug, draw green outer box to show padding
-//        RectF outerRing = getScaledRect(1);
-//        Paint testPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-//        testPaint.setStyle(Paint.Style.STROKE);
-//        testPaint.setStrokeWidth(3);
-//        testPaint.setColor(Color.GREEN);
-//        canvas.drawRect(0, 0, mViewWidth, mViewHeight, testPaint);
-//        canvas.drawRect(0, 0,  outerRing.width() + getPaddingLeft() + getPaddingRight(), outerRing.height() + getPaddingTop() + getPaddingBottom(), testPaint);
-
-        // end debug
-
-        drawRim(canvas);
-        drawFace(canvas);
-        if (mShowScale) {
-            drawScale(canvas);
         }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (null != mBackground) {
+            canvas.drawBitmap(mBackground, 0, 0, mBackgroundPaint);
+        }
         if (isInEditMode()) {
             return;
         }
-        if (mStaticBackgroundLoaded == false) {
-            mStaticBackgroundLoaded = true;
-            loadStaticBackground();
-        }
-        if (null == mBackground) {
-            //Logger.log.error("Background not created.");
-        } else {
-            canvas.drawBitmap(mBackground, 0, 0, mBackgroundPaint);
-        }
         drawText(canvas);
         drawNeedle(canvas);
-        computeCurrentValue();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                computeCurrentValue();
+            }
+        }).start();
     }
 
     private void drawNeedle(Canvas canvas) {
@@ -598,7 +615,6 @@ public class BaseGauge extends BaseComponent {
         if (!(Math.abs(mCurrentValue - mTargetValue) > 0.01f)) {
             return;
         }
-
         if (-1 != mNeedleLastMoved) {
             final float time = (System.currentTimeMillis() - mNeedleLastMoved) / 1000.0f;
             final float direction = Math.signum(mNeedleVelocity);
@@ -607,11 +623,9 @@ public class BaseGauge extends BaseComponent {
             } else {
                 mNeedleAcceleration = 0.0f;
             }
-
             mNeedleAcceleration = 5.0f * (mTargetValue - mCurrentValue);
             mCurrentValue += mNeedleVelocity * time;
             mNeedleVelocity += mNeedleAcceleration * time;
-
             if ((mTargetValue - mCurrentValue) * direction < 0.01f * direction) {
                 mCurrentValue = mTargetValue;
                 mNeedleVelocity = 0.0f;
@@ -620,9 +634,7 @@ public class BaseGauge extends BaseComponent {
             } else {
                 mNeedleLastMoved = System.currentTimeMillis();
             }
-
-            invalidate();
-
+            postInvalidate();
         } else {
             mNeedleLastMoved = System.currentTimeMillis();
             computeCurrentValue();
@@ -762,10 +774,6 @@ public class BaseGauge extends BaseComponent {
         mTickLabelColor = a.getColor(R.styleable.Gauge_tickLabelColor, Color.WHITE);
 
         a.recycle();
-
-        addColoredRange(0, 30, Color.GREEN);
-        addColoredRange(30, 60, Color.YELLOW);
-        addColoredRange(60, 100, Color.RED);
     }
 
     public static class ColoredRange {

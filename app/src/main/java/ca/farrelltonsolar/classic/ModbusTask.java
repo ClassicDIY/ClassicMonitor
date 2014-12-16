@@ -32,10 +32,62 @@ import ca.farrelltonsolar.j2modlite.msg.ReadFileTransferResponse;
 import ca.farrelltonsolar.j2modlite.msg.ReadMultipleRegistersResponse;
 import ca.farrelltonsolar.j2modlite.procimg.Register;
 
+// Classic modbus table
+//            new Register { Address = 4115, Label = "Average battery voltage", UnitOfMeasure = "Volts", Conversion = address => U16_OneDec(address)},
+//            new Register { Address = 4116, Label = "PV input voltage", UnitOfMeasure = "Volts", Conversion = address => U16_OneDec(address)},
+//            new Register { Address = 4117, Label = "Average battery current", UnitOfMeasure = "Amps", Conversion = address => U16_OneDec(address)},
+//            new Register { Address = 4118, Label = "Average energy to the battery", UnitOfMeasure = "kWh", Conversion = address => U16_OneDec(address)},
+//            new Register { Address = 4119, Label = "Average power to the battery", UnitOfMeasure = "Watts", Conversion = address => U16(address)},
+//            new Register { Address = 4120, Label = "Battery charge state", UnitOfMeasure = "", Conversion = address => ChargeState(address)},
+//            new Register { Address = 4121, Label = "Average PV inout current", UnitOfMeasure = "Amps", Conversion = address => U16_OneDec(address)},
+//            new Register { Address = 4122, Label = "PV VOC", UnitOfMeasure = "Volts", Conversion = address => U16_OneDec(address)},
+//            new Register { Address = 4125, Label = "Daily amp hours", UnitOfMeasure = "Amp hours", Conversion = address => U16_OneDec(address)},
+//            new Register { Address = 4126, Label = "Total kWhours", UnitOfMeasure = "kWh", Conversion = address => U32_OneDec(address)},
+//            new Register { Address = 4128, Label = "Total Amp hours", UnitOfMeasure = "Amp hours", Conversion = address => U32_OneDec(address)},
+//            new Register { Address = 4130, Label = "Info flag", UnitOfMeasure = "", Conversion = address => Info(address)}
+//            new Register { Address = 4132, Label = "BATTemperature", UnitOfMeasure = "", Conversion = address => U16_OneDec(address)}
+//            new Register { Address = 4133, Label = "FETTemperature", UnitOfMeasure = "", Conversion = address => U16_OneDec(address)}
+//            new Register { Address = 4134, Label = "PCBTemperature", UnitOfMeasure = "", Conversion = address => U16_OneDec(address)}
+
+//            new Tupple { Description = "(Off) No power, waiting for power source, battery voltage over set point.", Value = 0 },
+//            new Tupple { Description = "(Absorb) Regulating battery voltage at absorb set point until the batteries are charged.", Value = 3 },
+//            new Tupple { Description = "(Bulk) Max power point tracking until absorb voltage reached.", Value = 4 },
+//            new Tupple { Description = "(Float) Battery is full and regulating battery voltage at float set point.", Value = 5 },
+//            new Tupple { Description = "(Float) Max power point tracking. Seeking float set point voltage.", Value = 6 },
+//            new Tupple { Description = "(Equalize) Regulating battery voltage at equalize set point.", Value = 7 },
+//            new Tupple { Description = "(Error) Input voltage is above maximum classic operating voltage.", Value = 10 },
+//            new Tupple { Description = "(Equalizing) Max power point tracking. Seeking equalize set point voltage.", Value = 18 }
+
+
+// TriStar modbus table
+//            new Register { Address = 1, Label = "V Scale", UnitOfMeasure = "", Conversion = address => U32(address)},
+//            new Register { Address = 3, Label = "A Scale", UnitOfMeasure = "", Conversion = address => U32(address)},
+//            new Register { Address = 25, Label = "Average battery voltage", UnitOfMeasure = "Volts", Conversion = address => VScale(address)},
+//            new Register { Address = 28, Label = "PV input voltage", UnitOfMeasure = "Volts", Conversion = address => VScale(address)},
+//            new Register { Address = 29, Label = "Average battery current", UnitOfMeasure = "Amps", Conversion = address => IScale(address)},
+//            new Register { Address = 30, Label = "Average PV current", UnitOfMeasure = "Amps", Conversion = address => IScale(address)},
+//            new Register { Address = 45, Label = "Info flag", UnitOfMeasure = "", Conversion = address => Info(address)},
+//            new Register { Address = 51, Label = "Battery charge state", UnitOfMeasure = "", Conversion = address => ChargeState(address)},
+//            new Register { Address = 58, Label = "Total kWhours", UnitOfMeasure = "kWh", Conversion = address => U16(address)},
+//            new Register { Address = 59, Label = "Average power to the battery", UnitOfMeasure = "Watts", Conversion = address => PScale(address)},
+//            new Register { Address = 69, Label = "Average energy to the battery", UnitOfMeasure = "kWh", Conversion = address => WHr(address)}
+
+//            new Tupple { Description = "(Start) System startup.", Value = 0 },
+//            new Tupple { Description = "(Night check) No power, detecting nightfall.", Value = 1 },
+//            new Tupple { Description = "(Disconnected) No power.", Value = 2 },
+//            new Tupple { Description = "(Night) No power, waiting for power source.", Value = 3 },
+//            new Tupple { Description = "(Fault) Detected fault.", Value = 4 },
+//            new Tupple { Description = "(Bulk) Max power point tracking until absorb voltage reached.", Value = 5 },
+//            new Tupple { Description = "(Absorb) Regulating battery voltage at absorb set point until the batteries are charged.", Value = 6 },
+//            new Tupple { Description = "(Float) Max power point tracking. Seeking float set point voltage.", Value = 7 },
+//            new Tupple { Description = "(Equalize) Regulating battery voltage at equalize set point.", Value = 8 },
+//            new Tupple { Description = "(Slave) State set by master charge controller.", Value = 9 }
+
 /**
  * Created by Graham on 12/12/2014.
  */
 public class ModbusTask extends TimerTask {
+    final Object lock = new Object();
 
     public ModbusTask(InetSocketAddress address, Context ctx) {
         deviceAddress = address;
@@ -57,31 +109,37 @@ public class ModbusTask extends TimerTask {
     private boolean foundWhizBangJr = false;
     private boolean foundTriStar = false;
     private boolean initialReadingLoaded = false;
+    private boolean disconnecting = false;
 
     public boolean connect() {
         boolean rVal = false;
         InetAddress inetAddress = deviceAddress.getAddress();
+        Log.d(getClass().getName(), String.format("Connecting to %s", inetAddress.toString()));
         try {
-
+            disconnect();
             modbusMaster = new ModbusTCPMaster(inetAddress, deviceAddress.getPort(), 1);
             modbusMaster.setRetries(Constants.MODBUS_RETRIES);
             modbusMaster.connect();
             if (modbusMaster.isConnected()) {
+                disconnecting = false;
                 rVal = true;
-                DefaultReadings();
             }
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (Exception e1) {
-            Log.w(getClass().getName(), String.format("Could not connect to %s", inetAddress.toString()));
+            Log.w(getClass().getName(), String.format("Could not connect to %s, ex: %s", inetAddress.toString(), e1));
         }
         return rVal;
     }
 
-
     public void disconnect() {
-        if (modbusMaster != null) {
-            modbusMaster.disconnect();
+        disconnecting = true;
+        if (isConnected()) {
+            synchronized (lock) {
+                modbusMaster.disconnect();
+                modbusMaster = null;
+            }
+            Log.d(getClass().getName(), String.format("Disconnected from %s", deviceAddress.toString()));
         }
     }
 
@@ -96,41 +154,30 @@ public class ModbusTask extends TimerTask {
     @Override
     public void run() {
         try {
-            boolean connected = isConnected();
-            if (connected == false) {
-                connected = connect();
-            }
-            if (connected) {
-                if (initialReadingLoaded == false) {
-                    initialReadingLoaded = true;
-                    if (LookForTriStar() == false) {
-                        LookForWhizBangJr();
-                        GetUnitName();
-                    }
+//            Log.d(getClass().getName(), String.format("Run on %s", deviceAddress.toString()));
+            synchronized (lock) {
+                if (disconnecting) {
+                    return;
                 }
-                GetModbusReadings();
+                boolean connected = isConnected();
+                if (connected == false) {
+                    connected = connect();
+                }
+                if (connected) {
+                    if (initialReadingLoaded == false) {
+                        initialReadingLoaded = true;
+                        if (LookForTriStar() == false) {
+                            LookForWhizBangJr();
+                            GetUnitName();
+                        }
+                    }
+                    GetModbusReadings();
+                }
             }
         } catch (Exception e1) {
-            Log.w(getClass().getName(), String.format("Could not get readings from %s", deviceAddress.toString()));
+            Log.w(getClass().getName(), String.format("Could not get readings from %s ex: %s", deviceAddress.toString(), e1));
         }
     }
-
-    private void DefaultReadings() {
-        readings.Set(RegisterName.Power, 0.0f);
-        readings.Set(RegisterName.BatVoltage, 0.0f);
-        readings.Set(RegisterName.BatCurrent, 0.0f);
-        readings.Set(RegisterName.PVVoltage, 0.0f);
-        readings.Set(RegisterName.PVCurrent, 0.0f);
-        readings.Set(RegisterName.EnergyToday, 0.0f);
-        readings.Set(RegisterName.TotalEnergy, 0.0f);
-        readings.Set(RegisterName.ChargeState, -1);
-        readings.Set(RegisterName.ConnectionState, 0);
-        readings.Set(RegisterName.SOC, 0);
-        readings.Set(RegisterName.Aux1, false);
-        readings.Set(RegisterName.Aux2, false);
-        BroadcastReadings();
-    }
-
 
     private void GetModbusReadings() throws ModbusException {
         try {
@@ -162,11 +209,14 @@ public class ModbusTask extends TimerTask {
                     readings.Set(RegisterName.EnergyToday, regRes.getRegisterValue(OffsetFor(4118)) / 10.0f);
                     readings.Set(RegisterName.TotalEnergy, regRes.getRegisterValue(OffsetFor(4126)) / 10.0f);
                     readings.Set(RegisterName.ChargeState, MSBFor(regRes.getRegisterValue(OffsetFor(4120))));
+                    readings.Set(RegisterName.BatTemperature, regRes.getRegisterValue(OffsetFor(4132)) / 10.0f);
+                    readings.Set(RegisterName.FETTemperature, regRes.getRegisterValue(OffsetFor(4133)) / 10.0f);
+                    readings.Set(RegisterName.PCBTemperature, regRes.getRegisterValue(OffsetFor(4134)) / 10.0f);
                     int infoFlag = regRes.getRegisterValue(OffsetFor(4130));
                     readings.Set(RegisterName.Aux1, (infoFlag & 0x4000) != 0);
                     readings.Set(RegisterName.Aux2, (infoFlag & 0x8000) != 0);
                 } else {
-                    Log.d(getClass().getName(), String.format("Modbus readMultipleRegisters returned null"));
+                    Log.w(getClass().getName(), String.format("Modbus readMultipleRegisters returned null"));
                     throw new ModbusException("Failed to read data from modbus");
                 }
                 if (foundWhizBangJr) {
@@ -194,14 +244,14 @@ public class ModbusTask extends TimerTask {
 
     private void BroadcastToast(String message) {
         Intent intent2 = new Intent("ca.farrelltonsolar.classic.Toast");
-        intent2.setClass(context, GaugePage.class);
+        intent2.setClass(context, GaugeFramentBase.class);
         intent2.putExtra("message", message);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent2);
     }
 
     private void BroadcastReadings() {
         Intent intent = new Intent("ca.farrelltonsolar.classic.GaugePage");
-        intent.setClass(context, GaugePage.class);
+        intent.setClass(context, GaugeFramentBase.class);
         intent.putExtra("readings", readings.GetReadings());
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
@@ -319,7 +369,7 @@ public class ModbusTask extends TimerTask {
                 }
             } else {
 
-                Log.d(getClass().getName(), String.format("Modbus readCustom returned null"));
+                Log.w(getClass().getName(), String.format("Modbus readCustom returned null"));
                 throw new ModbusException("Failed to read File Transfer data from modbus");
             }
         }
@@ -337,7 +387,7 @@ public class ModbusTask extends TimerTask {
                 }
             } else {
 
-                Log.d(getClass().getName(), String.format("Modbus readCustom returned null"));
+                Log.w(getClass().getName(), String.format("Modbus readCustom returned null"));
                 throw new ModbusException("Failed to read File Transfer data from modbus");
             }
         }
@@ -365,7 +415,7 @@ public class ModbusTask extends TimerTask {
                 }
             } else {
 
-                Log.d(getClass().getName(), String.format("Modbus readCustom returned null"));
+                Log.w(getClass().getName(), String.format("Modbus readCustom returned null"));
                 throw new ModbusException("Failed to read File Transfer data from modbus");
             }
         }
@@ -417,7 +467,7 @@ public class ModbusTask extends TimerTask {
 //                }
 //            } else {
 //
-//                Log.d(getClass().getName(), String.format("Modbus readCustom returned null"));
+//                Log.w(getClass().getName(), String.format("Modbus readCustom returned null"));
 //                throw new ModbusException("Failed to read File Transfer data from modbus");
 //            }
 //        }
