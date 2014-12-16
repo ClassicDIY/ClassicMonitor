@@ -1,14 +1,11 @@
 package ca.farrelltonsolar.classic;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -17,10 +14,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
 
 import ca.farrelltonsolar.uicomponents.SlidingTabLayout;
 import ca.farrelltonsolar.uicomponents.TabStripAdapter;
@@ -29,115 +23,33 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
 
     private NavigationDrawerFragment navigationDrawerFragment;
     private TabStripAdapter tabStripAdapter;
-    ModbusService modbusService;
-    UDPListener UDPListenerService;
-    boolean ismodbusServiceBound = false;
-    boolean isUDPListenerServiceBound = false;
-    ChargeController currentChargeController;
-    private static Gson GSON = new Gson();
-    ComplexPreferences configuration;
-    private ChargeControllers chargeControllers;
-
-    @Override
-    protected void onDestroy() {
-        if (ismodbusServiceBound) {
-            modbusService.disconnect();
-            unbindService(modbusServiceConnection);
-            Log.d(getClass().getName(), "unbindService modbusServiceConnection");
-        }
-        if (isUDPListenerServiceBound) {
-            UDPListenerService.stopListening();
-            unbindService(UDPListenerServiceConnection);
-            Log.d(getClass().getName(), "unbindService UDPListenerServiceConnection");
-        }
-        Log.d(getClass().getName(), "onDestroy");
-        super.onDestroy();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         LocalBroadcastManager.getInstance(this).registerReceiver(mUnitReceiver, new IntentFilter("ca.farrelltonsolar.classic.UnitName"));
-        LocalBroadcastManager.getInstance(this).registerReceiver(mCCReceiver, new IntentFilter("ca.farrelltonsolar.classic.AddChargeController"));
-        configuration = ComplexPreferences.getComplexPreferences(this, null, Context.MODE_PRIVATE);
-        chargeControllers = configuration.getObject("devices", ChargeControllers.class);
-        if (chargeControllers == null) { // save empty collection
-            chargeControllers = new ChargeControllers();
-            configuration.putObject("devices", chargeControllers);
-            configuration.commit();
-        }
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
-            navigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-            // Set up the drawer.
-            DrawerLayout layout = (DrawerLayout) findViewById(R.id.drawer_layout);
-            navigationDrawerFragment.setUp(R.id.navigation_drawer, layout, chargeControllers);
-            setupActionBar();
-        } else {
-            LocalBroadcastManager.getInstance(this).registerReceiver(mReadingsReceiver, new IntentFilter("ca.farrelltonsolar.classic.GaugePage"));
-            LocalBroadcastManager.getInstance(this).registerReceiver(mToastReceiver, new IntentFilter("ca.farrelltonsolar.classic.Toast"));
-        }
-        if (savedInstanceState != null) {
-            String json = savedInstanceState.getString("currentChargeController");
-            if (json != null && json.isEmpty() == false) {
-                currentChargeController = GSON.fromJson(json, ChargeController.class);
-            }
-        }
-        bindService(new Intent(this, ModbusService.class), modbusServiceConnection, Context.BIND_AUTO_CREATE);
-        bindService(new Intent(this, UDPListener.class), UDPListenerServiceConnection, Context.BIND_AUTO_CREATE);
+        navigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        // Set up the drawer.
+        DrawerLayout layout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationDrawerFragment.setUp(R.id.navigation_drawer, layout);
+        setupActionBar();
         Log.d(getClass().getName(), "onCreate");
     }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        Log.d(getClass().getName(), "onSaveInstanceState");
-        super.onSaveInstanceState(outState);
-        outState.putString("currentChargeController", GSON.toJson(currentChargeController));
-    }
-
-    private ServiceConnection modbusServiceConnection = new ServiceConnection() {
-
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            ModbusService.ModbusServiceBinder binder = (ModbusService.ModbusServiceBinder) service;
-            modbusService = binder.getService();
-            ismodbusServiceBound = true;
-            Log.d(getClass().getName(), "ModbusService ServiceConnected");
-        }
-
-        public void onServiceDisconnected(ComponentName arg0) {
-            ismodbusServiceBound = false;
-            modbusService = null;
-            Log.d(getClass().getName(), "ModbusService ServiceDisconnected");
-        }
-    };
-
-    private ServiceConnection UDPListenerServiceConnection = new ServiceConnection() {
-
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            UDPListener.UDPListenerServiceBinder binder = (UDPListener.UDPListenerServiceBinder) service;
-            UDPListenerService = binder.getService();
-            isUDPListenerServiceBound = true;
-            UDPListenerService.listen(chargeControllers);
-            Log.d(getClass().getName(), "UDPListener ServiceConnected");
-        }
-
-        public void onServiceDisconnected(ComponentName arg0) {
-            isUDPListenerServiceBound = false;
-            UDPListenerService = null;
-            Log.d(getClass().getName(), "UDPListener ServiceDisconnected");
-        }
-    };
 
     private void setupActionBar() {
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
-        tabStripAdapter = new TabStripAdapter(getSupportFragmentManager(), this,
-                (ViewPager) findViewById(R.id.pager),
-                (SlidingTabLayout) findViewById(R.id.sliding_tabs));
-        tabStripAdapter.addTab(R.string.GaugeTabTitle, GaugePage.class, null);
+        SlidingTabLayout stl = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+        stl.setDividerColors(Color.RED);
+        stl.setSelectedIndicatorColors(Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.YELLOW);
+        tabStripAdapter = new TabStripAdapter(getSupportFragmentManager(), this, (ViewPager) findViewById(R.id.pager), stl);
+        tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
+        tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
+        tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
+        tabStripAdapter.addTab(TemperatureFragment.TabTitle, TemperatureFragment.class, null);
         tabStripAdapter.addTab(R.string.CalendarTabTitle, CalendarPage.class, null);
         tabStripAdapter.addTab(R.string.ChartTabTitle, ChartPage.class, null);
         tabStripAdapter.notifyTabsChanged();
@@ -157,7 +69,6 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
         }
     };
 
-
     // Our handler for received Intents.
     private BroadcastReceiver mToastReceiver = new BroadcastReceiver() {
         @Override
@@ -165,59 +76,6 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
             Toast.makeText(context, intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
         }
     };
-
-    // Our handler for received Intents.
-    private BroadcastReceiver mReadingsReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            SetReadings(new Readings(intent.getBundleExtra("readings")));
-        }
-    };
-
-    private void SetReadings(Readings readings) {
-        try {
-            ListPage view = (ListPage) getSupportFragmentManager().findFragmentById(R.id.Power);
-            if (view != null) {
-                view.setValue(readings.GetFloat(RegisterName.Power));
-            }
-            view = (ListPage) getSupportFragmentManager().findFragmentById(R.id.PVVoltage);
-            if (view != null) {
-                view.setValue(readings.GetFloat(RegisterName.PVVoltage));
-            }
-            view = (ListPage) getSupportFragmentManager().findFragmentById(R.id.PVCurrent);
-            if (view != null) {
-                view.setValue(readings.GetFloat(RegisterName.PVCurrent));
-            }
-            view = (ListPage) getSupportFragmentManager().findFragmentById(R.id.BatteryVolts);
-            if (view != null) {
-                view.setValue(readings.GetFloat(RegisterName.BatVoltage));
-            }
-            view = (ListPage) getSupportFragmentManager().findFragmentById(R.id.BatteryCurrent);
-            if (view != null) {
-                view.setValue(readings.GetFloat(RegisterName.BatCurrent));
-            }
-            view = (ListPage) getSupportFragmentManager().findFragmentById(R.id.TotalEnergy);
-            if (view != null) {
-                view.setValue(readings.GetFloat(RegisterName.TotalEnergy));
-            }
-            view = (ListPage) getSupportFragmentManager().findFragmentById(R.id.EnergyToday);
-            if (view != null) {
-                view.setValue(readings.GetFloat(RegisterName.EnergyToday));
-            }
-            int cs = readings.GetInt(RegisterName.ChargeState);
-            TextView tview = (TextView) findViewById(R.id.ChargeStateTitle);
-            if (tview != null) {
-
-                tview.setText(MyApplication.getChargeStateTitleText(cs));
-            }
-            tview = (TextView) findViewById(R.id.ChargeState);
-            if (tview != null) {
-                tview.setText(MyApplication.getChargeStateText(cs));
-            }
-        } catch (Exception ignore) {
-
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -269,31 +127,9 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
     }
 
     @Override
-    public void onNavigationDrawerItemSelected(ChargeController device) {
-
-        if (ismodbusServiceBound) {
-            currentChargeController = device;
-            modbusService.Monitor(device);
-        } else {
-            Toast.makeText(this, "Not bound to service", Toast.LENGTH_SHORT).show();
-        }
+    public void onNavigationDrawerItemSelected(int device) {
+        MonitorApplication.monitor(device);
     }
 
-    // Our handler for received Intents.
-    private BroadcastReceiver mCCReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ChargeController cc = GSON.fromJson(intent.getStringExtra("ChargeController"), ChargeController.class);
-            navigationDrawerFragment.AddChargeController(cc);
-            chargeControllers.getControllers().add(cc);
-            configuration.putObject("devices", chargeControllers);
-            configuration.commit();
-        }
-    };
 
-    public void clearChargeControllerList() {
-        modbusService.disconnect();
-        chargeControllers.getControllers().clear();
-        UDPListenerService.listen(chargeControllers);
-    }
 }
