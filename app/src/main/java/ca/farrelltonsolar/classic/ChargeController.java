@@ -16,23 +16,37 @@
 
 package ca.farrelltonsolar.classic;
 
+import android.os.Bundle;
+
+import java.io.Serializable;
 import java.net.InetSocketAddress;
 
 /**
  * Created by Graham on 10/12/2014.
  */
-public class ChargeController {
+public class ChargeController implements Serializable {
     public ChargeController(String deviceIP, int port, boolean staticIP) {
         this.deviceIP = deviceIP;
         this.port = port;
         this.staticIP = staticIP;
     }
 
+    public ChargeController(Bundle info, String deviceIP, int port, boolean staticIP) {
+        this(deviceIP, port, staticIP);
+        setDeviceName(info.getString("UnitName"));
+        setUnitID(info.getInt("UnitID"));
+        setDeviceType((DeviceType) info.getSerializable("DeviceType"));
+        setHasWhizbang(info.getBoolean("FoundWhizbang"));
+    }
+
     public ChargeController(InetSocketAddress socketAddress) {
+        this.unitID = -1;
         this.deviceIP = socketAddress.getAddress().getHostAddress();
         this.deviceName = "";
         this.port = socketAddress.getPort();
         this.staticIP = false;
+        this.hasWhizbang = false;
+        this.deviceType = DeviceType.Unknown;
     }
 
     private int unitID;
@@ -40,6 +54,8 @@ public class ChargeController {
     private String deviceName;
     private int port;
     private boolean staticIP;
+    private boolean hasWhizbang;
+    private DeviceType deviceType;
 
     @Override
     public String toString() {
@@ -80,6 +96,22 @@ public class ChargeController {
 
     public void setUnitID(int unitID) {
         this.unitID = unitID;
+    }
+
+    public DeviceType deviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(DeviceType deviceType) {
+        this.deviceType = deviceType;
+    }
+
+    public boolean hasWhizbang() {
+        return hasWhizbang;
+    }
+
+    public void setHasWhizbang(boolean hasWhizbang) {
+        this.hasWhizbang = hasWhizbang;
     }
 
     public InetSocketAddress getInetSocketAddress() {

@@ -167,9 +167,9 @@ public class ModbusTask extends TimerTask {
                 if (connected) {
                     if (initialReadingLoaded == false) {
                         initialReadingLoaded = true;
-                        if (LookForTriStar() == false) {
+                        if (LookForTriStar() == DeviceType.Classic) {
                             LookForWhizBangJr();
-                            GetUnitName();
+                            BroadcastUnitName();
                         }
                     }
                     GetModbusReadings();
@@ -273,47 +273,22 @@ public class ModbusTask extends TimerTask {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    private void LookForWhizBangJr() {
-        try {
-            ReadMultipleRegistersResponse regRes = modbusMaster.readMultipleRegisters(4360, 12);
-            if (regRes != null) {
-                Register a = regRes.getRegister(10);
-                foundWhizBangJr = a.toShort() != 0;
-            }
-        } catch (ModbusException ignore) {
-
-        }
-    }
-
-    private boolean LookForTriStar() {
-        foundTriStar = false;
-        try {
-            ReadMultipleRegistersResponse regRes = modbusMaster.readMultipleRegisters(0, 4);
-            if (regRes != null) {
-
-                foundTriStar = regRes.getRegister(0).toShort() != 0;
-                if (foundTriStar) {
-                    float hi = (float) regRes.getRegister(0).toShort();
-                    float lo = (float) regRes.getRegister(1).toShort();
-                    lo = lo / 65536;
-                    v_pu = hi + lo;
-
-                    hi = (float) regRes.getRegister(2).toShort();
-                    lo = (float) regRes.getRegister(3).toShort();
-                    lo = lo / 65536;
-                    i_pu = hi + lo;
-                    reference = 0;
-                }
-            }
-        } catch (ModbusException ignore) {
-
-        }
-        return foundTriStar;
-    }
-
-
-    public Bundle getInfo() throws ModbusException {
+    public Bundle getChargeControllerInformation() throws ModbusException {
         Bundle result = new Bundle();
+        DeviceType deviceType = LookForTriStar();
+        result.putSerializable("DeviceType", deviceType);
+        if (deviceType == DeviceType.Classic) {
+            result.putString("UnitName", getUnitName());
+            result.putInt("UnitID", getUnitID());
+            result.putBoolean("FoundWhizbang", LookForWhizBangJr());
+        } else {
+            result.putString("UnitName", "Tristar");
+            result.putInt("UnitID", 0);
+        }
+        return result;
+    }
+
+    private String getUnitName() throws ModbusException {
         ReadMultipleRegistersResponse regRes = modbusMaster.readMultipleRegisters(4209, 4);
         if (regRes != null) {
             byte[] v0 = regRes.getRegister(0).toBytes();
@@ -331,45 +306,60 @@ public class ModbusTask extends TimerTask {
             temp[6] = v3[1];
             temp[7] = v3[0];
             String unitName = new String(temp);
-            result.putString("UnitName", unitName.trim());
+            return unitName.trim();
         }
-        regRes = modbusMaster.readMultipleRegisters(4110, 4);
-        if (regRes != null) {
-            int unitId = (regRes.getRegisterValue(1) << 16) + regRes.getRegisterValue(0);
-            result.putInt("UnitID", unitId);
-        }
-        return result;
+        return "";
     }
 
-    private void GetUnitName() {
-        try {
-            ReadMultipleRegistersResponse regRes = modbusMaster.readMultipleRegisters(4209, 4);
-            if (regRes != null) {
-                byte[] v0 = regRes.getRegister(0).toBytes();
-                byte[] v1 = regRes.getRegister(1).toBytes();
-                byte[] v2 = regRes.getRegister(2).toBytes();
-                byte[] v3 = regRes.getRegister(3).toBytes();
+    private boolean LookForWhizBangJr() throws ModbusException {
+        foundWhizBangJr = false;
+        ReadMultipleRegistersResponse regRes = modbusMaster.readMultipleRegisters(4360, 12);
+        if (regRes != null) {
+            Register a = regRes.getRegister(10);
+            foundWhizBangJr = a.toShort() != 0;
+        }
+        return foundWhizBangJr;
+    }
 
-                byte[] temp = new byte[8];
-                temp[0] = v0[1];
-                temp[1] = v0[0];
-                temp[2] = v1[1];
-                temp[3] = v1[0];
-                temp[4] = v2[1];
-                temp[5] = v2[0];
-                temp[6] = v3[1];
-                temp[7] = v3[0];
-                String unitName = new String(temp);
-                unitName = unitName.trim();
-                if (unitName.length() > 0) {
-                    Intent intent = new Intent("ca.farrelltonsolar.classic.UnitName");
-                    intent.putExtra("UnitName", unitName);
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    private DeviceType LookForTriStar() {
+        foundTriStar = false;
+        try {
+            ReadMultipleRegistersResponse regRes = modbusMaster.readMultipleRegisters(0, 4);
+            if (regRes != null) {
+                foundTriStar = regRes.getRegister(0).toShort() != 0;
+                if (foundTriStar) {
+                    float hi = (float) regRes.getRegister(0).toShort();
+                    float lo = (float) regRes.getRegister(1).toShort();
+                    lo = lo / 65536;
+                    v_pu = hi + lo;
+
+                    hi = (float) regRes.getRegister(2).toShort();
+                    lo = (float) regRes.getRegister(3).toShort();
+                    lo = lo / 65536;
+                    i_pu = hi + lo;
+                    reference = 0;
                 }
             }
-        } catch (ModbusException ignore) {
-
+        } catch (ModbusException e) {
+            Log.w(getClass().getName(), "This is probably not a Tristar!");
         }
+
+        return foundTriStar ? DeviceType.TriStar : DeviceType.Classic;
+    }
+
+    private int getUnitID() throws ModbusException {
+        int unitId = -1;
+        ReadMultipleRegistersResponse regRes = modbusMaster.readMultipleRegisters(4110, 4);
+        if (regRes != null) {
+            unitId = (regRes.getRegisterValue(1) << 16) + regRes.getRegisterValue(0);
+        }
+        return unitId;
+    }
+
+    private void BroadcastUnitName() throws ModbusException {
+        Intent intent = new Intent("ca.farrelltonsolar.classic.UnitName");
+        intent.putExtra("UnitName", getUnitName());
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     private void LoadDayLogs() throws ModbusException {
@@ -505,6 +495,7 @@ public class ModbusTask extends TimerTask {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
+    // Tristar code...
     private int OffsetFor(int address) {
         return address - reference - 1; // origin 0
     }
@@ -536,5 +527,5 @@ public class ModbusTask extends TimerTask {
         val /= 32768;
         return val;
     }
-
+    // END Tristar code...
 }

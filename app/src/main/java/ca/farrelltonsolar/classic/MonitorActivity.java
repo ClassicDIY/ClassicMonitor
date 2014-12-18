@@ -31,6 +31,7 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         LocalBroadcastManager.getInstance(this).registerReceiver(mUnitReceiver, new IntentFilter("ca.farrelltonsolar.classic.UnitName"));
+        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mMonitorReceiver, new IntentFilter("ca.farrelltonsolar.classic.MonitorChargeController"));
         navigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         // Set up the drawer.
         DrawerLayout layout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -46,7 +47,6 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
         tabStripAdapter = new TabStripAdapter(getSupportFragmentManager(), this, (ViewPager) findViewById(R.id.pager), stl);
         tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
         tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
-        tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
         tabStripAdapter.addTab(TemperatureFragment.TabTitle, TemperatureFragment.class, null);
         tabStripAdapter.addTab(R.string.CalendarTabTitle, CalendarPage.class, null);
         tabStripAdapter.addTab(R.string.ChartTabTitle, ChartPage.class, null);
@@ -58,6 +58,20 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
         @Override
         public void onReceive(Context context, Intent intent) {
             getSupportActionBar().setTitle(intent.getStringExtra("UnitName"));
+        }
+    };
+
+    protected BroadcastReceiver mMonitorReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ChargeController cc = (ChargeController) intent.getSerializableExtra("Controller");
+            if (cc.hasWhizbang()) {
+                tabStripAdapter.insertTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null, 2);
+                tabStripAdapter.notifyTabsChanged();
+            } else {
+                tabStripAdapter.removeTab(StateOfChargeFragment.class);
+                tabStripAdapter.notifyTabsChanged();
+            }
         }
     };
 

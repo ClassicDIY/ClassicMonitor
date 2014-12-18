@@ -1,8 +1,5 @@
 package ca.farrelltonsolar.classic;
 
-/**
- * Created by Graham on 01/03/14.
- */
 public class Constants {
 
     // UDP listening port for available classics on the subnet

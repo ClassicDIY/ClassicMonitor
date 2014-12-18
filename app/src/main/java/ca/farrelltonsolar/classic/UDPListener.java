@@ -235,18 +235,14 @@ public class UDPListener extends Service {
                 try {
                     if (modbus.connect()) {
                         try {
-                            Bundle info = modbus.getInfo();
+                            Bundle info = modbus.getChargeControllerInformation();
                             String unitName = info.getString("UnitName");
-                            int unitID = info.getInt("UnitID");
                             Log.d(getClass().getName(), "And it's name is: " + unitName);
                             LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(UDPListener.this);
-                            ChargeController cc = new ChargeController(socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), false);
-                            cc.setDeviceName(unitName);
-                            cc.setUnitID(unitID);
+                            ChargeController cc = new ChargeController(info, socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), false);
                             Intent pkg = new Intent("ca.farrelltonsolar.classic.AddChargeController");
                             pkg.putExtra("ChargeController", GSON.toJson(cc));
                             broadcaster.sendBroadcast(pkg);
-
                         } catch (ModbusException e) {
                             Log.d(getClass().getName(), "Failed to get unit info" + e);
                             removeFromAlreadyFoundList(socketAddress);
@@ -274,7 +270,7 @@ public class UDPListener extends Service {
                     if (modbus.connect()) {
                         try {
                             Log.d(getClass().getName(), "Updating name for: " + socketAddress.toString());
-                            Bundle info = modbus.getInfo();
+                            Bundle info = modbus.getChargeControllerInformation();
                             currentChargeControllers.update(info, socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), true);
                         } catch (ModbusException e) {
                             Log.d(getClass().getName(), "Failed to get unit info" + e);
@@ -304,7 +300,7 @@ public class UDPListener extends Service {
                         if (modbus.connect()) {
                             try {
                                 Log.d(getClass().getName(), "Updating name for: " + socketAddress.toString());
-                                Bundle info = modbus.getInfo();
+                                Bundle info = modbus.getChargeControllerInformation();
                                 currentChargeControllers.update(info, socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), false);
                             } catch (ModbusException e) {
                                 Log.d(getClass().getName(), "Failed to get unit info" + e);

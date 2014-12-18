@@ -119,6 +119,8 @@ public final class ChargeControllers {
     public void update(Bundle info, String deviceIpAddress, int port, boolean useUnitIdAsKey) {
         int unitId = info.getInt("UnitID");
         String unitName = info.getString("UnitName");
+        DeviceType deviceType = (DeviceType) info.getSerializable("DeviceType");
+        boolean hasWhizbang = info.getBoolean("FoundWhizbang");
         synchronized (lock) {
             for (ChargeController cc : devices) {
                 if (useUnitIdAsKey ? cc.unitID() == unitId : deviceIpAddress.compareTo(cc.deviceIpAddress()) == 0) {
@@ -126,6 +128,8 @@ public final class ChargeControllers {
                     cc.setDeviceName(unitName);
                     cc.setDeviceIP(deviceIpAddress);
                     cc.setPort(port);
+                    cc.setDeviceType(deviceType);
+                    cc.setHasWhizbang(hasWhizbang);
                     break;
                 }
             }

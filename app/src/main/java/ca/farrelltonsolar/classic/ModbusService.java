@@ -87,11 +87,11 @@ public class ModbusService extends Service {
 
     private void doMonitor(ChargeController controller, boolean differentCC) {
         disconnect(differentCC);
-        if (differentCC) {
-            LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(this);
-            Intent pkg = new Intent("ca.farrelltonsolar.classic.MonitorChargeController");
-            broadcaster.sendBroadcast(pkg);
-        }
+        LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(this);
+        Intent pkg = new Intent("ca.farrelltonsolar.classic.MonitorChargeController");
+        pkg.putExtra("Controller", controller);
+        pkg.putExtra("DifferentController", differentCC);
+        broadcaster.sendBroadcast(pkg);
         pollTimer = new Timer();
         task = new ModbusTask(controller, this.getBaseContext());
         pollTimer.schedule(task, 1000, Constants.MODBUS_POLL_TIME);

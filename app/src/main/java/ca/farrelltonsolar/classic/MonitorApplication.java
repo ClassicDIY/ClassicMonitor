@@ -57,7 +57,7 @@ public class MonitorApplication extends Application implements Application.Activ
         configuration = ComplexPreferences.getComplexPreferences(this, null, Context.MODE_PRIVATE);
         chargeControllers = configuration.getObject("devices", ChargeControllers.class);
         if (chargeControllers == null) { // save empty collection
-            chargeControllers = new ChargeControllers(getApplicationContext());
+            chargeControllers = new ChargeControllers(context);
         }
     }
 

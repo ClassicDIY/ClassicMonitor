@@ -72,7 +72,7 @@ public abstract class GaugeFramentBase extends Fragment implements GaugeFragment
     protected BroadcastReceiver mMonitorReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            restoreOriginalScale = true;
+            restoreOriginalScale = intent.getBooleanExtra("DifferentController", true);
         }
     };
 
