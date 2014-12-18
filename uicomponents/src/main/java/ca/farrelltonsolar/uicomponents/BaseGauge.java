@@ -61,6 +61,7 @@ public class BaseGauge extends BaseComponent {
 
     protected float mScaleStartValue;
     protected float mScaleEndValue;
+    protected float originalScaleEnd;
 
     protected float mFaceRadius;
     protected float mScaleRadius;
@@ -98,6 +99,7 @@ public class BaseGauge extends BaseComponent {
     protected Paint mReadingTextPaint;
 
     protected boolean mBiDirectional;
+    protected boolean mAutoScale;
     protected boolean mShowReading;
     protected boolean mShowScale;
     protected boolean mStaticBackgroundLoaded = false;
@@ -182,6 +184,10 @@ public class BaseGauge extends BaseComponent {
         }
     }
 
+    public void restoreOriginalScaleEnd() {
+        setScaleEnd(originalScaleEnd);
+    }
+
     public boolean getBiDirectional() {
         return mBiDirectional;
     }
@@ -189,6 +195,17 @@ public class BaseGauge extends BaseComponent {
     public void setBiDirectional(boolean val) {
         if (mBiDirectional != val) {
             mBiDirectional = val;
+            invalidateAll();
+        }
+    }
+
+    public boolean getAutoScale() {
+        return mAutoScale;
+    }
+
+    public void setAutoScale(boolean val) {
+        if (mAutoScale != val) {
+            mAutoScale = val;
             invalidateAll();
         }
     }
@@ -248,8 +265,23 @@ public class BaseGauge extends BaseComponent {
         invalidateAll();
     }
 
+    protected void autoAdjustScale(float target) {
+        setScaleEnd(getScale(getScaleEnd(), target));
+        return;
+    }
+
+    protected float getScale(float currentScaleEnd, float target) {
+        while (currentScaleEnd < target) {
+            currentScaleEnd *= 2;
+        }
+        return currentScaleEnd;
+    }
+
     public void setTargetValue(final float value) {
         if (mShowScale) {
+            if (mAutoScale) {
+                autoAdjustScale(value);
+            }
             if (mBiDirectional) {
                 if (value < -mScaleEndValue) {
                     mTargetValue = -mScaleEndValue;
@@ -509,11 +541,18 @@ public class BaseGauge extends BaseComponent {
         }
         mColoredRangePaint.setColor(mDefaultColor);
         canvas.drawArc(mScaleArc, 180 + startAngle, availableAngle, false, mColoredRangePaint);
-        for (ColoredRange range : mRanges) {
+        if (!mBiDirectional || mRanges.size() != 2) { // hack for now
+            for (ColoredRange range : mRanges) {
+                mColoredRangePaint.setColor(range.getColor());
+                double start = clockwise ? 180 + startAngle + (range.getBegin() * availableAngle / 100) : 180 + endAngle - (range.getEnd() * availableAngle / 100);
+                double sweep = (range.getEnd() - range.getBegin()) * availableAngle / 100;
+                canvas.drawArc(mScaleArc, (float) start, (float) sweep, false, mColoredRangePaint);
+            }
+        } else {
+            ColoredRange range = mRanges.get(clockwise ? 1 : 0);
             mColoredRangePaint.setColor(range.getColor());
-            double start = clockwise ? 180 + startAngle + (range.getBegin() * availableAngle / 100) : 180 + endAngle - (range.getEnd() * availableAngle / 100);
-            double sweep = (range.getEnd() - range.getBegin()) * availableAngle / 100;
-            canvas.drawArc(mScaleArc, (float) start, (float) sweep, false, mColoredRangePaint);
+            double start = clockwise ? 180 + startAngle : 180 + endAngle - availableAngle;
+            canvas.drawArc(mScaleArc, (float) start, (float) availableAngle, false, mColoredRangePaint);
         }
     }
 
@@ -606,7 +645,7 @@ public class BaseGauge extends BaseComponent {
             oval.offset((mViewWidth - oval.width()) / 2 + getPaddingLeft(), (mViewHeight * 2 - oval.height()) / 2 + getPaddingTop());
             return oval;
         } else {
-            // todo quarter
+            // todo quarter gauge
             return null;
         }
     }
@@ -657,7 +696,7 @@ public class BaseGauge extends BaseComponent {
             mTitlePosition = new PointF(0, -40); // percent of face radius from center (- indicates location above center)
             mReadingPosition = new PointF(0, 40); // percent of face radius from center
         } else if (mAvailableAngle <= 90) {
-            // todo
+            // todo quarter gauge
             mFace = Quadrant.Quarter;
         } else {
 
@@ -755,10 +794,11 @@ public class BaseGauge extends BaseComponent {
         mShowRim = a.getBoolean(R.styleable.Gauge_showRim, true);
         mShowInnerRim = a.getBoolean(R.styleable.Gauge_showInnerRim, true);
         mBiDirectional = a.getBoolean(R.styleable.Gauge_biDirectional, false);
-
+        mAutoScale = a.getBoolean(R.styleable.Gauge_autoScale, false);
         mShowScale = a.getBoolean(R.styleable.Gauge_showScale, true);
         setScaleStart(a.getInteger(R.styleable.Gauge_scaleStartValue, 0));
-        setScaleEnd(a.getInteger(R.styleable.Gauge_scaleEndValue, 100));
+        originalScaleEnd = a.getInteger(R.styleable.Gauge_scaleEndValue, 100);
+        setScaleEnd(originalScaleEnd);
         mScaleStartAngle = a.getInteger(R.styleable.Gauge_scaleStartAngle, -70);
         mScaleEndAngle = a.getInteger(R.styleable.Gauge_scaleEndAngle, 250);
         setMajorTickPercentOfMax(a.getInteger(R.styleable.Gauge_majorTickPercentOfMax, 10));

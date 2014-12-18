@@ -18,11 +18,11 @@ package ca.farrelltonsolar.classic;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.TimerTask;
 
@@ -89,8 +89,8 @@ import ca.farrelltonsolar.j2modlite.procimg.Register;
 public class ModbusTask extends TimerTask {
     final Object lock = new Object();
 
-    public ModbusTask(InetSocketAddress address, Context ctx) {
-        deviceAddress = address;
+    public ModbusTask(ChargeController cc, Context ctx) {
+        chargeController = cc;
         context = ctx;
         readings = new Readings();
         dayLogEntry = new LogEntry();
@@ -99,7 +99,7 @@ public class ModbusTask extends TimerTask {
 
     private Context context;
     private ModbusTCPMaster modbusMaster;
-    private InetSocketAddress deviceAddress;
+    private ChargeController chargeController;
     private int reference = 4100; //the reference; offset where to start reading from
     private Readings readings;
     private LogEntry dayLogEntry;
@@ -111,13 +111,13 @@ public class ModbusTask extends TimerTask {
     private boolean initialReadingLoaded = false;
     private boolean disconnecting = false;
 
-    public boolean connect() {
+    public boolean connect() throws UnknownHostException {
         boolean rVal = false;
-        InetAddress inetAddress = deviceAddress.getAddress();
+        InetAddress inetAddress = InetAddress.getByName(chargeController.deviceIpAddress());
         Log.d(getClass().getName(), String.format("Connecting to %s", inetAddress.toString()));
         try {
             disconnect();
-            modbusMaster = new ModbusTCPMaster(inetAddress, deviceAddress.getPort(), 1);
+            modbusMaster = new ModbusTCPMaster(inetAddress, chargeController.port(), 1);
             modbusMaster.setRetries(Constants.MODBUS_RETRIES);
             modbusMaster.connect();
             if (modbusMaster.isConnected()) {
@@ -127,7 +127,7 @@ public class ModbusTask extends TimerTask {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (Exception e1) {
-            Log.w(getClass().getName(), String.format("Could not connect to %s, ex: %s", inetAddress.toString(), e1));
+            Log.w(getClass().getName(), String.format("Could not connect to %s, ex: %s", chargeController.toString(), e1));
         }
         return rVal;
     }
@@ -136,10 +136,12 @@ public class ModbusTask extends TimerTask {
         disconnecting = true;
         if (isConnected()) {
             synchronized (lock) {
-                modbusMaster.disconnect();
+                if (modbusMaster != null) {
+                    modbusMaster.disconnect();
+                }
                 modbusMaster = null;
             }
-            Log.d(getClass().getName(), String.format("Disconnected from %s", deviceAddress.toString()));
+            Log.d(getClass().getName(), String.format("Disconnected from %s", chargeController.toString()));
         }
     }
 
@@ -154,7 +156,6 @@ public class ModbusTask extends TimerTask {
     @Override
     public void run() {
         try {
-//            Log.d(getClass().getName(), String.format("Run on %s", deviceAddress.toString()));
             synchronized (lock) {
                 if (disconnecting) {
                     return;
@@ -175,8 +176,24 @@ public class ModbusTask extends TimerTask {
                 }
             }
         } catch (Exception e1) {
-            Log.w(getClass().getName(), String.format("Could not get readings from %s ex: %s", deviceAddress.toString(), e1));
+            Log.w(getClass().getName(), String.format("Could not get readings from %s ex: %s", chargeController.toString(), e1));
         }
+    }
+
+    public void clearReadings() {
+        readings.Set(RegisterName.Power, 0.0f);
+        readings.Set(RegisterName.BatVoltage, 0.0f);
+        readings.Set(RegisterName.BatCurrent, 0.0f);
+        readings.Set(RegisterName.PVVoltage, 0.0f);
+        readings.Set(RegisterName.PVCurrent, 0.0f);
+        readings.Set(RegisterName.EnergyToday, 0.0f);
+        readings.Set(RegisterName.TotalEnergy, 0.0f);
+        readings.Set(RegisterName.ChargeState, -1);
+        readings.Set(RegisterName.ConnectionState, 0);
+        readings.Set(RegisterName.SOC, 0);
+        readings.Set(RegisterName.Aux1, false);
+        readings.Set(RegisterName.Aux2, false);
+        BroadcastReadings();
     }
 
     private void GetModbusReadings() throws ModbusException {
@@ -207,7 +224,7 @@ public class ModbusTask extends TimerTask {
                     readings.Set(RegisterName.PVVoltage, regRes.getRegisterValue(OffsetFor(4116)) / 10.0f);
                     readings.Set(RegisterName.PVCurrent, regRes.getRegisterValue(OffsetFor(4121)) / 10.0f);
                     readings.Set(RegisterName.EnergyToday, regRes.getRegisterValue(OffsetFor(4118)) / 10.0f);
-                    readings.Set(RegisterName.TotalEnergy, regRes.getRegisterValue(OffsetFor(4126)) / 10.0f);
+                    readings.Set(RegisterName.TotalEnergy, ((regRes.getRegisterValue(OffsetFor(4127)) << 16) + regRes.getRegisterValue(OffsetFor(4126))) / 10.0f);
                     readings.Set(RegisterName.ChargeState, MSBFor(regRes.getRegisterValue(OffsetFor(4120))));
                     readings.Set(RegisterName.BatTemperature, regRes.getRegisterValue(OffsetFor(4132)) / 10.0f);
                     readings.Set(RegisterName.FETTemperature, regRes.getRegisterValue(OffsetFor(4133)) / 10.0f);
@@ -295,9 +312,8 @@ public class ModbusTask extends TimerTask {
     }
 
 
-    public String getInfo() throws ModbusException {
-        String unitName = "";
-
+    public Bundle getInfo() throws ModbusException {
+        Bundle result = new Bundle();
         ReadMultipleRegistersResponse regRes = modbusMaster.readMultipleRegisters(4209, 4);
         if (regRes != null) {
             byte[] v0 = regRes.getRegister(0).toBytes();
@@ -314,10 +330,15 @@ public class ModbusTask extends TimerTask {
             temp[5] = v2[0];
             temp[6] = v3[1];
             temp[7] = v3[0];
-            unitName = new String(temp);
-            unitName = unitName.trim();
+            String unitName = new String(temp);
+            result.putString("UnitName", unitName.trim());
         }
-        return unitName;
+        regRes = modbusMaster.readMultipleRegisters(4110, 4);
+        if (regRes != null) {
+            int unitId = (regRes.getRegisterValue(1) << 16) + regRes.getRegisterValue(0);
+            result.putInt("UnitID", unitId);
+        }
+        return result;
     }
 
     private void GetUnitName() {
@@ -346,7 +367,6 @@ public class ModbusTask extends TimerTask {
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
             }
-
         } catch (ModbusException ignore) {
 
         }

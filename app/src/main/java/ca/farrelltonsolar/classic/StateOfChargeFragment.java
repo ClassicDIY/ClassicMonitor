@@ -42,35 +42,54 @@ public class StateOfChargeFragment extends GaugeFramentBase {
 
     public void setReadings(Readings readings) {
         try {
-
-            BaseGauge gaugeView = (BaseGauge) this.getView().findViewById(R.id.BidirectionalCurrent);
-            float batteryCurrent = readings.GetFloat(RegisterName.BatCurrent);
-            if (_bidirectionalUnitsInWatts) {
-                float batteryVolts = readings.GetFloat(RegisterName.BatVoltage);
-                gaugeView.setTargetValue(autoAdjustScale(gaugeView.getId(), batteryCurrent * batteryVolts));
-            } else {
-                gaugeView.setTargetValue(autoAdjustScale(gaugeView.getId(), batteryCurrent));
+            restoreOriginalScale();
+            View v = this.getView().findViewById(R.id.BidirectionalCurrent);
+            if (v != null) {
+                BaseGauge gaugeView = (BaseGauge) v;
+                float batteryCurrent = readings.GetFloat(RegisterName.BatCurrent);
+                if (_bidirectionalUnitsInWatts) {
+                    float batteryVolts = readings.GetFloat(RegisterName.BatVoltage);
+                    gaugeView.setTargetValue(batteryCurrent * batteryVolts);
+                } else {
+                    gaugeView.setTargetValue(batteryCurrent);
+                }
+                int socVal = readings.GetInt(RegisterName.SOC);
+                SOCGauge soc = (SOCGauge) this.getView().findViewById(R.id.SOC);
+                soc.setValue(socVal);
             }
-            int socVal = readings.GetInt(RegisterName.SOC);
-            SOCGauge soc = (SOCGauge) this.getView().findViewById(R.id.SOC);
-            soc.setValue(socVal);
         } catch (Exception ignore) {
 
         }
     }
 
     public void initializeReadings(View view, Bundle savedInstanceState) {
-        BaseGauge gaugeView = (BaseGauge) view.findViewById(R.id.BidirectionalCurrent);
-        if (_bidirectionalUnitsInWatts) {
-            gaugeView.setTitle(this.getString(R.string.BatPowerTitle));
-            gaugeView.setUnit("W");
-        } else {
-            gaugeView.setTitle(this.getString(R.string.BatCurrentTitle));
-            gaugeView.setUnit("A");
+        View v = this.getView().findViewById(R.id.BidirectionalCurrent);
+        if (v != null) {
+            BaseGauge gaugeView = (BaseGauge) v;
+            if (_bidirectionalUnitsInWatts) {
+                gaugeView.setTitle(this.getString(R.string.BatPowerTitle));
+                gaugeView.setUnit("W");
+            } else {
+                gaugeView.setTitle(this.getString(R.string.BatCurrentTitle));
+                gaugeView.setUnit("A");
+            }
+            gaugeView.setGreenRange(50, 100);
+            gaugeView.setTargetValue(0.0f);
         }
-        gaugeView.setTargetValue(0.0f);
     }
 
+    public void restoreOriginalScale() {
+        if (restoreOriginalScale) {
+            restoreOriginalScale = false;
+
+            View v = this.getView().findViewById(R.id.BidirectionalCurrent);
+            if (v != null) {
+                BaseGauge gauge = (BaseGauge) v;
+                gauge.restoreOriginalScaleEnd();
+            }
+        }
+        return;
+    }
 
     @Override
     public void onAttach(Activity activity) {

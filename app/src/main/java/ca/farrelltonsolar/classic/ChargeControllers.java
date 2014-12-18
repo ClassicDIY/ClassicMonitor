@@ -16,16 +16,23 @@
 
 package ca.farrelltonsolar.classic;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ArrayAdapter;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChargeControllers {
+public final class ChargeControllers {
     final Object lock = new Object();
+    private static Context context;
+    private int currentController = -1;
 
-    public ChargeControllers() {
+    public ChargeControllers(Context context) {
+        this.context = context;
         this.devices = new ArrayList<>();
     }
 
@@ -33,23 +40,49 @@ public class ChargeControllers {
 
     public ChargeController get(int position) {
         synchronized (lock) {
-//            if (position >= devices.size()) {
-//                position = 0;
-//            }
             return devices.get(position);
         }
+    }
+
+    public ChargeController getCurrentChargeController() {
+        synchronized (lock) {
+            if (currentController != -1 && currentController < devices.size()) {
+                return devices.get(currentController);
+            }
+        }
+        return null; // none selected
+    }
+
+    public int getCurrentControllerIndex() {
+        return currentController;
+    }
+
+    public boolean setCurrent(int position) {
+        if (position >= devices.size()) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (currentController == position) {
+            return false; // already current
+        }
+        currentController = position;
+        return true;
     }
 
     public void add(ChargeController cc) {
         synchronized (lock) {
             devices.add(cc);
         }
+        BroadcastChangeNotification();
     }
 
     public void remove(ChargeController cc) {
         synchronized (lock) {
+            if (devices.indexOf(cc) == currentController) {
+                currentController = -1;
+            }
             devices.remove(cc);
         }
+        BroadcastChangeNotification();
     }
 
     public int count() {
@@ -61,23 +94,62 @@ public class ChargeControllers {
     public void clear() {
         synchronized (lock) {
             devices.clear();
+            currentController = -1;
         }
+        BroadcastChangeNotification();
     }
 
     public void load(ArrayAdapter adapter) {
         synchronized (lock) {
-            for (ChargeController ct : devices) {
-                adapter.add(ct);
-            }
+            adapter.addAll(devices);
         }
     }
 
-    public void load(ArrayList<InetSocketAddress> arr) {
+    public void load(ArrayList<InetSocketAddress> arr, boolean staticOnly) {
         synchronized (lock) {
             for (ChargeController cc : devices) {
-                arr.add(cc.getInetSocketAddress());
+                if (!staticOnly || cc.isStaticIP()) {
+                    arr.add(cc.getInetSocketAddress());
+                }
             }
         }
     }
 
+    // update unit information
+    public void update(Bundle info, String deviceIpAddress, int port, boolean useUnitIdAsKey) {
+        int unitId = info.getInt("UnitID");
+        String unitName = info.getString("UnitName");
+        synchronized (lock) {
+            for (ChargeController cc : devices) {
+                if (useUnitIdAsKey ? cc.unitID() == unitId : deviceIpAddress.compareTo(cc.deviceIpAddress()) == 0) {
+                    cc.setUnitID(unitId);
+                    cc.setDeviceName(unitName);
+                    cc.setDeviceIP(deviceIpAddress);
+                    cc.setPort(port);
+                    break;
+                }
+            }
+        }
+        BroadcastChangeNotification();
+    }
+
+
+    public void clearDynamic() {
+        List<ChargeController> staticDevices = new ArrayList<>();
+        synchronized (lock) {
+            for (ChargeController cc : devices) {
+                if (cc.isStaticIP()) {
+                    staticDevices.add(cc);
+                }
+            }
+            devices = staticDevices;
+        }
+        BroadcastChangeNotification();
+    }
+
+    private void BroadcastChangeNotification() {
+        LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(context);
+        Intent pkg = new Intent("ca.farrelltonsolar.classic.UpdateChargeControllers");
+        broadcaster.sendBroadcast(pkg);
+    }
 }

@@ -16,7 +16,6 @@ import android.widget.Button;
 public class Settings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
 
-    private IPAddressPreference _IPAddressPreference;
     private EditTextPreference _PortPreference;
     private CheckBoxPreference _uploadToPVOutput;
     private EditTextPreference _SID;
@@ -53,7 +52,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
         try {
             _PortPreference = (EditTextPreference) findPreference(Constants.PORT_PREFERENCE);
-            _IPAddressPreference = (IPAddressPreference) findPreference(Constants.IP_ADDRESS_PREFERENCE);
+
             _uploadToPVOutput = (CheckBoxPreference) findPreference(Constants.UploadToPVOutput);
             _SID = (EditTextPreference) findPreference(Constants.SID);
             _APIKey = (EditTextPreference) findPreference(Constants.APIKey);
@@ -67,7 +66,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
                 }
             });
 
-            _IPAddressPreference.setSummary(settings.getString(Constants.IP_ADDRESS_PREFERENCE, "Static IP Address of the Classic"));
+
             _PortPreference.setSummary(settings.getString(Constants.PORT_PREFERENCE, "502"));
             _SID.setSummary(settings.getString(Constants.SID, ""));
             _APIKey.setSummary(settings.getString(Constants.APIKey, "255"));
@@ -118,9 +117,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
 
-        if (key.equals(Constants.IP_ADDRESS_PREFERENCE)) {
-            _IPAddressPreference.setSummary(settings.getString(key, ""));
-        } else if (key.equals(Constants.PORT_PREFERENCE)) {
+        if (key.equals(Constants.PORT_PREFERENCE)) {
             _PortPreference.setSummary(settings.getString(key, "502"));
 
         }

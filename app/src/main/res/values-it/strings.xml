@@ -94,5 +94,7 @@
     <string name="PCBTemperature">PCB Temperature</string>
     <string name="FETTemperature">FET Temperature</string>
     <string name="BatTemperature">Bat Temperature</string>
+    <string name="dialog_port_hint">port</string>
+    <string name="dialog_ipaddress_hint">ipAddress</string>
 
 </resources>

@@ -8,6 +8,7 @@
         <attr name="showInnerRim" format="boolean" />
         <attr name="showLeds" format="boolean" />
         <attr name="biDirectional" format="boolean" />
+        <attr name="autoScale" format="boolean" />
 
         <attr name="showScale" format="boolean" />
         <attr name="scaleStartValue" format="integer" />

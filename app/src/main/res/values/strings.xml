@@ -56,13 +56,8 @@
     <string name="CalendarFloat">(Float)</string>
     <string name="ScanSubnetCheckbox">Scan the local subnet for the Classic</string>
     <string name="ModbusPortSetting">Set Modbus Port of the Classic</string>
-    <string name="StartScanAddress">Start scanning at</string>
-    <string name="IPAddressSetting">IP Address:</string>
-    <string name="IPAddressPrompt">Enter an IP address</string>
-    <string name="StartScanIPTitle">Start Scan IP Address</string>
-    <string name="NumberOfAddressesToScan">Number of IP address to scan</string>
-    <string name="ScanPrompt">Scan:</string>
-    <string name="ScanTitle">Addresses to scan</string>
+
+
     <string name="StaticIPAddressTitle">Set IP Address of the Classic</string>
     <string name="StaticIPAddressPrompt">IP Address:</string>
     <string name="StaticIPAddressDialogTitle">Classic IP Address</string>
@@ -98,5 +93,9 @@
     <string name="PCBTemperature">PCB</string>
     <string name="FETTemperature">FET</string>
     <string name="BatTemperature">Battery</string>
+    <string name="dialog_port_hint">port number</string>
+    <string name="dialog_ipaddress_hint">IP Address</string>
+    <string name="IPAddressPrompt">Enter a static IP address</string>
+
 
 </resources>

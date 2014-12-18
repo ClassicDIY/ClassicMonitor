@@ -8,17 +8,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
 
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,12 +30,6 @@ public class MonitorApplication extends Application implements Application.Activ
     static UDPListener UDPListenerService;
     static boolean ismodbusServiceBound = false;
     static boolean isUDPListenerServiceBound = false;
-    static int currentChargeController = -1;
-
-    public static ChargeControllers getChargeControllers() {
-        return chargeControllers;
-    }
-
     private static ChargeControllers chargeControllers;
     private static Gson GSON = new Gson();
     ComplexPreferences configuration;
@@ -54,27 +44,29 @@ public class MonitorApplication extends Application implements Application.Activ
 
     public void onCreate() {
         super.onCreate();
+
         MonitorApplication.context = getApplicationContext();
+        chargeControllers = new ChargeControllers(context);
         InitializeChargeStateLookup();
         InitializeChargeStateTitleLookup();
         mLogSaver.Start();
         //mLogSaver.ResetLogs();
         Log.d(getClass().getName(), "InitializeModbus complete");
         this.registerActivityLifecycleCallbacks(this);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mCCReceiver, new IntentFilter("ca.farrelltonsolar.classic.AddChargeController"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(addChargeControllerReceiver, new IntentFilter("ca.farrelltonsolar.classic.AddChargeController"));
         configuration = ComplexPreferences.getComplexPreferences(this, null, Context.MODE_PRIVATE);
         chargeControllers = configuration.getObject("devices", ChargeControllers.class);
         if (chargeControllers == null) { // save empty collection
-            chargeControllers = new ChargeControllers();
-            configuration.putObject("devices", chargeControllers);
-            configuration.commit();
+            chargeControllers = new ChargeControllers(getApplicationContext());
         }
-
     }
-
 
     public static Context getAppContext() {
         return MonitorApplication.context;
+    }
+
+    public static ChargeControllers chargeControllers() {
+        return chargeControllers;
     }
 
     public static String getChargeStateText(int cs) {
@@ -121,10 +113,11 @@ public class MonitorApplication extends Application implements Application.Activ
             ModbusService.ModbusServiceBinder binder = (ModbusService.ModbusServiceBinder) service;
             modbusService = binder.getService();
             ismodbusServiceBound = true;
-            if (currentChargeController != -1) { // device selected before service was bound
-                modbusService.Monitor(chargeControllers.get(currentChargeController));
+            ChargeController cc = chargeControllers.getCurrentChargeController();
+            if (cc != null) { // device selected before service was bound
+                modbusService.Monitor(cc, false);
             }
-            Log.d(getClass().getName(), currentChargeController != -1 ? String.format("ModbusService ServiceConnected, monitoring device %d", currentChargeController) : "ModbusService ServiceConnected");
+            Log.d(getClass().getName(), cc != null ? String.format("ModbusService ServiceConnected, monitoring device %s", cc) : "ModbusService ServiceConnected");
         }
 
         public void onServiceDisconnected(ComponentName arg0) {
@@ -140,9 +133,7 @@ public class MonitorApplication extends Application implements Application.Activ
             UDPListener.UDPListenerServiceBinder binder = (UDPListener.UDPListenerServiceBinder) service;
             UDPListenerService = binder.getService();
             isUDPListenerServiceBound = true;
-            ArrayList<InetSocketAddress> arr = new ArrayList<>();
-            chargeControllers.load(arr);
-            UDPListenerService.listen(arr);
+            UDPListenerService.listen(chargeControllers);
             Log.d(getClass().getName(), "UDPListener ServiceConnected");
         }
 
@@ -154,14 +145,14 @@ public class MonitorApplication extends Application implements Application.Activ
     };
 
     // Our handler for received Intents.
-    private BroadcastReceiver mCCReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver addChargeControllerReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             ChargeController cc = GSON.fromJson(intent.getStringExtra("ChargeController"), ChargeController.class);
             Log.d(getClass().getName(), String.format("adding new controller to list (%s)", cc.toString()));
             chargeControllers.add(cc);
-            configuration.putObject("devices", chargeControllers);
-            configuration.commit();
+            UDPListenerService.stopListening();
+            UDPListenerService.listen(chargeControllers);
         }
     };
 
@@ -192,7 +183,7 @@ public class MonitorApplication extends Application implements Application.Activ
     public void onActivityStopped(Activity activity) {
         Log.d(getClass().getName(), "onActivityStopped");
         if (ismodbusServiceBound) {
-            modbusService.disconnect();
+            modbusService.disconnect(false);
             unbindService(modbusServiceConnection);
             Log.d(getClass().getName(), "unbindService modbusServiceConnection");
         }
@@ -203,9 +194,18 @@ public class MonitorApplication extends Application implements Application.Activ
         }
     }
 
+    private class ModbusDisconnector extends Thread {
+        @Override
+        public void run() {
+            modbusService.disconnect(false);
+        }
+    }
+
     @Override
     public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
         Log.d(getClass().getName(), "onActivitySaveInstanceState");
+        configuration.putObject("devices", chargeControllers);
+        configuration.commit();
     }
 
     @Override
@@ -213,22 +213,23 @@ public class MonitorApplication extends Application implements Application.Activ
         Log.d(getClass().getName(), "onActivityDestroyed");
     }
 
-    public static void clearChargeControllerList() {
-        modbusService.disconnect();
-        chargeControllers.clear();
-        UDPListenerService.listen(new ArrayList<InetSocketAddress>());
+    public static void clearChargeControllerList(boolean all) {
+        modbusService.disconnect(true);
+        if (all) {
+            chargeControllers.clear();
+        } else {
+            chargeControllers.clearDynamic();
+        }
+        UDPListenerService.listen(chargeControllers);
     }
 
     public static void monitor(int device) {
-        if (currentChargeController != device) {
-            if (device < 0 || device >= chargeControllers.count()) {
-                return;
-            }
-            currentChargeController = device;
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
-            settings.edit().putInt("currentChargeController", device).commit();
+        if (device < 0 || device >= chargeControllers.count()) {
+            return;
+        }
+        if (chargeControllers.setCurrent(device)) {
             if (ismodbusServiceBound) {
-                modbusService.Monitor(chargeControllers.get(device));
+                modbusService.Monitor(chargeControllers.getCurrentChargeController(), true);
             }
         }
     }

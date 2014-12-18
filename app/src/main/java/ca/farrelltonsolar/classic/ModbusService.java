@@ -18,8 +18,10 @@ package ca.farrelltonsolar.classic;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.util.Timer;
@@ -45,9 +47,13 @@ public class ModbusService extends Service {
         return mBinder;
     }
 
-    public void disconnect() {
+    public void disconnect(boolean clearReadings) {
         if (task != null) {
             task.disconnect();
+            if (clearReadings) {
+                task.clearReadings();
+            }
+            task = null;
         }
         if (pollTimer != null) {
             pollTimer.cancel();
@@ -68,20 +74,58 @@ public class ModbusService extends Service {
     @Override
     public void onDestroy() {
         Log.d(getClass().getName(), "onDestroy");
-        disconnect();
+        disconnect(false);
         super.onDestroy();
     }
 
-    public void Monitor(ChargeController controller) {
+    public void Monitor(ChargeController controller, boolean differentCC) {
         if (controller == null) {
             return;
         }
-        disconnect();
-        pollTimer = new Timer();
-        task = new ModbusTask(controller.getInetSocketAddress(), this.getBaseContext());
-        pollTimer.schedule(task, 1000, Constants.MODBUS_POLL_TIME);
-        Log.d(getClass().getName(), String.format("Monitor running on: %s", controller.toString()));
+        new MonitorLauncher(controller, differentCC).execute();
     }
 
+    private void doMonitor(ChargeController controller, boolean differentCC) {
+        disconnect(differentCC);
+        if (differentCC) {
+            LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(this);
+            Intent pkg = new Intent("ca.farrelltonsolar.classic.MonitorChargeController");
+            broadcaster.sendBroadcast(pkg);
+        }
+        pollTimer = new Timer();
+        task = new ModbusTask(controller, this.getBaseContext());
+        pollTimer.schedule(task, 1000, Constants.MODBUS_POLL_TIME);
+        Log.d(getClass().getName(), String.format("Monitor running on: %s this thread is %s", controller.toString(), Thread.currentThread().getName()));
+    }
+
+    private class MonitorLauncher extends AsyncTask<String, Void, String> {
+
+        private MonitorLauncher(ChargeController controller, boolean differentCC) {
+            this.controller = controller;
+            this.differentCC = differentCC;
+        }
+
+        ChargeController controller;
+        boolean differentCC;
+
+        @Override
+        protected String doInBackground(String... params) {
+            doMonitor(controller, differentCC);
+            return "Executed";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+    }
 
 }

@@ -37,59 +37,108 @@ public class PowerFragment extends GaugeFramentBase {
     }
 
     public void initializeReadings(View view, Bundle savedInstanceState) {
-        BaseGauge powerGauge = (BaseGauge) view.findViewById(R.id.Power);
-        powerGauge.setTargetValue(0.0f);
-        powerGauge.setGreenRange(10, 100);
-        BaseGauge gauge;
-        gauge = (BaseGauge) view.findViewById(R.id.PVVoltage);
-        gauge.setGreenRange(25.0, 75.0);
-        gauge.setTargetValue(0.0f);
-        gauge = (BaseGauge) view.findViewById(R.id.PVCurrent);
-        gauge.setTargetValue(0.0f);
-        gauge = (BaseGauge) view.findViewById(R.id.BatVoltage);
-        gauge.setGreenRange(55.0, 72.5);
-        gauge.setTargetValue(0.0f);
-        gauge = (BaseGauge) view.findViewById(R.id.BatCurrent);
-        gauge.setTargetValue(0.0f);
-        TextView tv = (TextView) this.getView().findViewById(R.id.ChargeState);
-        tv.setText(getString(R.string.NoConnection));
+        View v = view.findViewById(R.id.Power);
+        if (v != null) {
+            ((BaseGauge) v).setTargetValue(0.0f);
+            ((BaseGauge) v).setGreenRange(10, 100);
+        }
+        v = view.findViewById(R.id.PVVoltage);
+        if (v != null) {
+            ((BaseGauge) v).setGreenRange(25.0, 75.0);
+            ((BaseGauge) v).setTargetValue(0.0f);
+        }
+        v = view.findViewById(R.id.PVCurrent);
+        if (v != null) {
+            ((BaseGauge) v).setTargetValue(0.0f);
+        }
+        v = view.findViewById(R.id.BatVoltage);
+        if (v != null) {
+            ((BaseGauge) v).setGreenRange(55.0, 72.5);
+            ((BaseGauge) v).setTargetValue(0.0f);
+        }
+        v = view.findViewById(R.id.BatCurrent);
+        if (v != null) {
+            ((BaseGauge) v).setTargetValue(0.0f);
+        }
+        v = this.getView().findViewById(R.id.ChargeState);
+        if (v != null) {
+            ((TextView) v).setText(getString(R.string.NoConnection));
+        }
     }
 
     public void setReadings(Readings readings) {
         try {
-
-            SolarGauge powerGauge = (SolarGauge) this.getView().findViewById(R.id.Power);
-            powerGauge.setTargetValue(autoAdjustScale(powerGauge.getId(), readings.GetFloat(RegisterName.Power)));
-            powerGauge.setLeftLed(readings.GetBoolean(RegisterName.Aux1));
-            powerGauge.setRightLed(readings.GetBoolean(RegisterName.Aux2));
-
-            BaseGauge gauge = (BaseGauge) this.getView().findViewById(R.id.PVVoltage);
-            gauge.setTargetValue(autoAdjustScale(gauge.getId(), readings.GetFloat(RegisterName.PVVoltage)));
-            gauge = (BaseGauge) this.getView().findViewById(R.id.PVCurrent);
-            gauge.setTargetValue(autoAdjustScale(gauge.getId(), readings.GetFloat(RegisterName.PVCurrent)));
-            gauge = (BaseGauge) this.getView().findViewById(R.id.BatVoltage);
-            float bVolts = readings.GetFloat(RegisterName.BatVoltage);
-            if (bVolts > 125) { // 120 volt system!
-                gauge.setScaleEnd(200);
-                gauge.setTargetValue(bVolts);
-            } else { // 12, 24, 48, 96
-                gauge.setTargetValue(autoAdjustScale(gauge.getId(), bVolts));
+            restoreOriginalScale();
+            View v = this.getView().findViewById(R.id.Power);
+            if (v != null) {
+                ((SolarGauge) v).setTargetValue(readings.GetFloat(RegisterName.Power));
+                ((SolarGauge) v).setLeftLed(readings.GetBoolean(RegisterName.Aux1));
+                ((SolarGauge) v).setRightLed(readings.GetBoolean(RegisterName.Aux2));
             }
-            gauge = (BaseGauge) this.getView().findViewById(R.id.BatCurrent);
-            float batAmps = readings.GetFloat(RegisterName.BatCurrent);
-            if (batAmps < 0) {
-                throw new Exception("bad amps reading: " + batAmps);
+            v = this.getView().findViewById(R.id.PVVoltage);
+            if (v != null) {
+                ((BaseGauge) v).setTargetValue(readings.GetFloat(RegisterName.PVVoltage));
             }
-            gauge.setTargetValue(autoAdjustScale(gauge.getId(), batAmps));
-
-            TextView tv = (TextView) this.getView().findViewById(R.id.ChargeStateTitle);
+            v = this.getView().findViewById(R.id.PVCurrent);
+            if (v != null) {
+                ((BaseGauge) v).setTargetValue(readings.GetFloat(RegisterName.PVCurrent));
+            }
+            v = this.getView().findViewById(R.id.BatVoltage);
+            if (v != null) {
+                float bVolts = readings.GetFloat(RegisterName.BatVoltage);
+                if (bVolts > 125) { // 120 volt system!
+                    ((BaseGauge) v).setScaleEnd(200);
+                    ((BaseGauge) v).setTargetValue(bVolts);
+                } else { // 12, 24, 48, 96
+                    ((BaseGauge) v).setTargetValue(bVolts);
+                }
+            }
+            v = this.getView().findViewById(R.id.BatCurrent);
+            if (v != null) {
+                float batAmps = readings.GetFloat(RegisterName.BatCurrent);
+                ((BaseGauge) v).setTargetValue(batAmps);
+            }
             int cs = readings.GetInt(RegisterName.ChargeState);
-            tv.setText(MonitorApplication.getChargeStateTitleText(cs));
-            tv = (TextView) this.getView().findViewById(R.id.ChargeState);
-            tv.setText(MonitorApplication.getChargeStateText(cs));
+            v = this.getView().findViewById(R.id.ChargeStateTitle);
+            if (v != null) {
+
+                ((TextView) v).setText(MonitorApplication.getChargeStateTitleText(cs));
+            }
+            v = this.getView().findViewById(R.id.ChargeState);
+            if (v != null) {
+                ((TextView) v).setText(MonitorApplication.getChargeStateText(cs));
+            }
         } catch (Exception ignore) {
 
         }
+    }
+
+    protected void restoreOriginalScale() {
+        if (restoreOriginalScale) {
+            restoreOriginalScale = false;
+            View v = this.getView().findViewById(R.id.Power);
+            if (v != null) {
+                ((BaseGauge) v).restoreOriginalScaleEnd();
+            }
+            v = this.getView().findViewById(R.id.PVVoltage);
+            if (v != null) {
+                ((BaseGauge) v).restoreOriginalScaleEnd();
+            }
+            v = this.getView().findViewById(R.id.PVCurrent);
+            if (v != null) {
+
+                ((BaseGauge) v).restoreOriginalScaleEnd();
+            }
+            v = this.getView().findViewById(R.id.BatVoltage);
+            if (v != null) {
+                ((BaseGauge) v).restoreOriginalScaleEnd();
+            }
+            v = this.getView().findViewById(R.id.BatCurrent);
+            if (v != null) {
+                ((BaseGauge) v).restoreOriginalScaleEnd();
+            }
+        }
+        return;
     }
 
     @Override

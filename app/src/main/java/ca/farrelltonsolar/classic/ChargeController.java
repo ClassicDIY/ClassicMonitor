@@ -22,11 +22,24 @@ import java.net.InetSocketAddress;
  * Created by Graham on 10/12/2014.
  */
 public class ChargeController {
-    public ChargeController(String deviceIP, String deviceName, int port) {
+    public ChargeController(String deviceIP, int port, boolean staticIP) {
         this.deviceIP = deviceIP;
-        this.deviceName = deviceName;
         this.port = port;
+        this.staticIP = staticIP;
     }
+
+    public ChargeController(InetSocketAddress socketAddress) {
+        this.deviceIP = socketAddress.getAddress().getHostAddress();
+        this.deviceName = "";
+        this.port = socketAddress.getPort();
+        this.staticIP = false;
+    }
+
+    private int unitID;
+    private String deviceIP;
+    private String deviceName;
+    private int port;
+    private boolean staticIP;
 
     @Override
     public String toString() {
@@ -37,19 +50,37 @@ public class ChargeController {
         return deviceIP;
     }
 
-    private String deviceIP;
+    public void setDeviceIP(String deviceIP) {
+        this.deviceIP = deviceIP;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
 
     public String deviceName() {
         return toString();
     }
 
-    private String deviceName;
-
     public int port() {
         return port;
     }
 
-    private int port;
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public boolean isStaticIP() {
+        return staticIP;
+    }
+
+    public int unitID() {
+        return unitID;
+    }
+
+    public void setUnitID(int unitID) {
+        this.unitID = unitID;
+    }
 
     public InetSocketAddress getInetSocketAddress() {
         InetSocketAddress address = new InetSocketAddress(deviceIP, port);

@@ -9,20 +9,22 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import ca.farrelltonsolar.uicomponents.SlidingTabLayout;
 import ca.farrelltonsolar.uicomponents.TabStripAdapter;
 
-public class MonitorActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class MonitorActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, IPAddressDialog.OnIPAddressDialogInteractionListener {
 
     private NavigationDrawerFragment navigationDrawerFragment;
     private TabStripAdapter tabStripAdapter;
+    private static Gson GSON = new Gson();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +40,6 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
     }
 
     private void setupActionBar() {
-        final ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
         SlidingTabLayout stl = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         stl.setDividerColors(Color.RED);
         stl.setSelectedIndicatorColors(Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.YELLOW);
@@ -53,12 +51,6 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
         tabStripAdapter.addTab(R.string.CalendarTabTitle, CalendarPage.class, null);
         tabStripAdapter.addTab(R.string.ChartTabTitle, ChartPage.class, null);
         tabStripAdapter.notifyTabsChanged();
-    }
-
-    public void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        actionBar.setDisplayShowTitleEnabled(true);
     }
 
     // Our handler for received Intents.
@@ -88,7 +80,6 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
             getMenuInflater().inflate(R.menu.gauge_activity_actions, menu);
-            restoreActionBar();
             return true;
         }
         return super.onCreateOptionsMenu(menu);
@@ -129,6 +120,15 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
     @Override
     public void onNavigationDrawerItemSelected(int device) {
         MonitorApplication.monitor(device);
+    }
+
+
+    @Override
+    public void onAddChargeController(ChargeController cc) {
+        LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(this);
+        Intent pkg = new Intent("ca.farrelltonsolar.classic.AddChargeController");
+        pkg.putExtra("ChargeController", GSON.toJson(cc));
+        broadcaster.sendBroadcast(pkg);
     }
 
 

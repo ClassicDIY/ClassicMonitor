@@ -5,10 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -16,7 +14,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,7 +23,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -61,10 +57,9 @@ public class NavigationDrawerFragment extends Fragment {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
     private View mFragmentContainerView;
-    private static Gson GSON = new Gson();
-    private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
     private ArrayAdapter<ChargeController> adapter;
+    private static Gson GSON = new Gson();
 
     public NavigationDrawerFragment() {
     }
@@ -72,14 +67,19 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
-            mFromSavedInstanceState = true;
-        } else {
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
-            mCurrentSelectedPosition = settings.getInt("currentChargeController", -1);
-        }
+        LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver(updateChargeControllersReceiver, new IntentFilter("ca.farrelltonsolar.classic.UpdateChargeControllers"));
     }
+
+    // Our handler for received Intents.
+    private BroadcastReceiver updateChargeControllersReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            adapter.clear();
+            ChargeControllers chargeControllers = MonitorApplication.chargeControllers();
+            chargeControllers.load(adapter);
+            adapter.notifyDataSetChanged();
+        }
+    };
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -106,7 +106,7 @@ public class NavigationDrawerFragment extends Fragment {
         adapter.setNotifyOnChange(true);
         mDrawerListView.setAdapter(adapter);
         mDrawerListView.clearChoices();
-        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+        mDrawerListView.setItemChecked(MonitorApplication.chargeControllers().getCurrentControllerIndex(), true);
 
         return mDrawerListView;
     }
@@ -148,7 +148,6 @@ public class NavigationDrawerFragment extends Fragment {
                 if (!isAdded()) {
                     return;
                 }
-
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
             }
 
@@ -161,7 +160,7 @@ public class NavigationDrawerFragment extends Fragment {
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
             }
         };
-        ChargeControllers chargeControllers = MonitorApplication.getChargeControllers();
+        ChargeControllers chargeControllers = MonitorApplication.chargeControllers();
         chargeControllers.load(adapter);
         if (adapter.getCount() == 0) {
             mDrawerLayout.openDrawer(mFragmentContainerView);
@@ -174,21 +173,12 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mCCReceiver, new IntentFilter("ca.farrelltonsolar.classic.AddChargeController"));
-
-        if (mCurrentSelectedPosition != -1) {
-            if (mCallbacks != null) {
-                if (adapter != null) {
-                    if (mCurrentSelectedPosition < adapter.getCount()) {
-                        mCallbacks.onNavigationDrawerItemSelected(mCurrentSelectedPosition);
-                    }
-                }
-            }
+        if (mCallbacks != null) {
+            mCallbacks.onNavigationDrawerItemSelected(chargeControllers.getCurrentControllerIndex());
         }
     }
 
     private void selectItem(int position) {
-        mCurrentSelectedPosition = position;
         if (mDrawerListView != null) {
             mDrawerListView.setItemChecked(position, true);
         }
@@ -196,11 +186,7 @@ public class NavigationDrawerFragment extends Fragment {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
         if (mCallbacks != null) {
-            if (adapter != null) {
-                if (position < adapter.getCount()) {
-                    mCallbacks.onNavigationDrawerItemSelected(position);
-                }
-            }
+            mCallbacks.onNavigationDrawerItemSelected(position);
         }
     }
 
@@ -223,7 +209,6 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
     }
 
     @Override
@@ -251,18 +236,20 @@ public class NavigationDrawerFragment extends Fragment {
         }
 
         if (item.getItemId() == R.id.action_scan) {
-            adapter.clear();
-            MonitorApplication.clearChargeControllerList();
-
+            MonitorApplication.clearChargeControllerList(false);
             return true;
         }
+
+        if (item.getItemId() == R.id.action_clear) {
+            MonitorApplication.clearChargeControllerList(true);
+            return true;
+        }
+
         if (item.getItemId() == R.id.action_add) {
-            Toast.makeText(getActivity(), "Add static address.", Toast.LENGTH_SHORT).show();
-            ChargeController cc = new ChargeController("192.168.0.12", "Laptop", 502);
-            AddChargeController(cc);
+            IPAddressDialog dialog = new IPAddressDialog();
+            dialog.show(this.getFragmentManager(), "IPAddress");
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -273,12 +260,15 @@ public class NavigationDrawerFragment extends Fragment {
     private void showGlobalContextActionBar() {
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setTitle(R.string.network);
     }
 
     private ActionBar getActionBar() {
         return ((ActionBarActivity) getActivity()).getSupportActionBar();
+    }
+
+    public void add(ChargeController cc) {
+        adapter.add(cc);
     }
 
 
@@ -291,21 +281,4 @@ public class NavigationDrawerFragment extends Fragment {
          */
         void onNavigationDrawerItemSelected(int position);
     }
-
-    public void AddChargeController(ChargeController cc) {
-        LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(this.getActivity());
-        Intent pkg = new Intent("ca.farrelltonsolar.classic.AddChargeController");
-        pkg.putExtra("ChargeController", GSON.toJson(cc));
-        broadcaster.sendBroadcast(pkg);
-    }
-
-    private BroadcastReceiver mCCReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ChargeController cc = GSON.fromJson(intent.getStringExtra("ChargeController"), ChargeController.class);
-            Log.d(getClass().getName(), String.format("adding new controller to list (%s)", cc.toString()));
-            adapter.add(cc);
-        }
-    };
-
 }

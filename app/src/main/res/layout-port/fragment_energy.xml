@@ -20,16 +20,16 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_weight="30"
-    android:orientation="horizontal"
-    android:weightSum="100">
+    android:orientation="vertical"
+    android:weightSum="60">
 
     <ca.farrelltonsolar.uicomponents.BaseGauge
         android:id="@+id/EnergyToday"
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
         android:layout_margin="20dp"
 
-        android:layout_weight="60"
+        android:layout_weight="52"
         app:autoScale="true"
         app:gaugeTitle="@string/EnergyTodayTitle"
         app:readingPrecision="1"
@@ -42,36 +42,34 @@
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EnergyTotal"
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
         android:layout_gravity="center_vertical|top"
         android:layout_marginBottom="50dp"
         android:layout_marginLeft="50dp"
-        android:layout_weight="40">
+        android:layout_weight="8">
 
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginRight="20dp"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:weightSum="100">
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_weight="75"
-                android:orientation="vertical"
-                android:weightSum="100"></LinearLayout>
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="20"
+                android:orientation="horizontal"></LinearLayout>
 
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_weight="25"
+                android:layout_width="0dp"
+                android:layout_weight="60"
+                android:layout_height="fill_parent"
                 android:layout_gravity="center_vertical|top"
+                android:layout_marginLeft="50dp"
                 android:layout_marginRight="50dp"
-
                 android:gravity="center_vertical|top"
                 android:orientation="vertical"
                 android:weightSum="100">
@@ -82,20 +80,20 @@
                     android:layout_weight="40"
                     android:gravity="center_vertical|left"
                     android:labelFor="@+id/Value"
-                    android:shadowColor="@color/text_primary_inverse"
-                    android:shadowDx="3"
-                    android:shadowDy="2"
-                    android:shadowRadius="3"
                     android:singleLine="true"
                     android:text="@string/TotalEnergyTitle"
                     android:textColor="@color/text_primary"
-                    android:textSize="@dimen/textSizeLarge" />
+                    android:textSize="@dimen/textSizeMedium"
+                    android:shadowColor="@color/text_primary_inverse"
+                    android:shadowDx="3"
+                    android:shadowDy="2"
+                    android:shadowRadius="3" />
 
                 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
 
-                    android:layout_weight="60"
+                    android:layout_weight="75"
                     android:orientation="horizontal"
                     android:weightSum="100">
 
@@ -112,17 +110,22 @@
                         android:layout_weight="25"
                         android:gravity="center"
                         android:paddingLeft="2dp"
-                        android:shadowColor="@color/text_primary_inverse"
-                        android:shadowDx="2"
-                        android:shadowDy="2"
-                        android:shadowRadius="3"
                         android:singleLine="true"
                         android:text="@string/energy_unit"
                         android:textColor="@color/text_primary"
-                        android:textSize="@dimen/textSizeMedium" />
+                        android:textSize="@dimen/textSizeMedium"
+                        android:shadowColor="@color/text_primary_inverse"
+                        android:shadowDx="2"
+                        android:shadowDy="2"
+                        android:shadowRadius="3" />
                 </LinearLayout>
             </LinearLayout>
 
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="20"
+                android:orientation="horizontal"></LinearLayout>
         </LinearLayout>
     </FrameLayout>
 

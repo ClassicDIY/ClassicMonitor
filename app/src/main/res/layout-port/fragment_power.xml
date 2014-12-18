@@ -49,6 +49,7 @@
             app:scaleEndValue="40"
             app:scaleStartValue="0"
             app:showInnerRim="false"
+            app:autoScale="true"
             app:showReading="true" />
 
         <ca.farrelltonsolar.uicomponents.BaseGauge
@@ -66,6 +67,7 @@
             app:scaleEndValue="10"
             app:scaleStartValue="0"
             app:showInnerRim="false"
+            app:autoScale="true"
             app:showReading="true" />
 
     </LinearLayout>
@@ -89,6 +91,7 @@
             app:scaleStartValue="0"
             app:showInnerRim="false"
             app:showLeds="true"
+            app:autoScale="true"
             app:showReading="true" />
 
     </LinearLayout>
@@ -116,6 +119,7 @@
             app:scaleEndValue="20"
             app:scaleStartValue="0"
             app:showInnerRim="false"
+            app:autoScale="true"
             app:showReading="true" />
 
         <ca.farrelltonsolar.uicomponents.BaseGauge
@@ -133,6 +137,7 @@
             app:scaleEndValue="10"
             app:scaleStartValue="0"
             app:showInnerRim="false"
+            app:autoScale="true"
             app:showReading="true" />
 
 

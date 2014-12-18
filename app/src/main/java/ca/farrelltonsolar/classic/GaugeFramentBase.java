@@ -27,14 +27,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import ca.farrelltonsolar.uicomponents.BaseGauge;
-
 /**
  * Created by Graham on 14/12/2014.
  */
 public abstract class GaugeFramentBase extends Fragment implements GaugeFragmentInterface {
 
     int layoutId;
+    boolean restoreOriginalScale = false;
 
     protected GaugeFramentBase(int layoutId) {
         this.layoutId = layoutId;
@@ -51,6 +50,7 @@ public abstract class GaugeFramentBase extends Fragment implements GaugeFragment
         super.onViewCreated(view, savedInstanceState);
         initializeReadings(view, savedInstanceState);
         LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter("ca.farrelltonsolar.classic.GaugePage"));
+        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mMonitorReceiver, new IntentFilter("ca.farrelltonsolar.classic.MonitorChargeController"));
 
     }
 
@@ -59,22 +59,21 @@ public abstract class GaugeFramentBase extends Fragment implements GaugeFragment
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
-            setReadings(new Readings(intent.getBundleExtra("readings")));
+            doSetReadings(new Readings(intent.getBundleExtra("readings")));
         }
     };
 
-
-    protected float autoAdjustScale(int gaugeId, float target) {
-        BaseGauge gauge = (BaseGauge) this.getActivity().findViewById(gaugeId);
-        gauge.setScaleEnd(getScale(gauge.getScaleEnd(), target));
-        return target;
-    }
-
-    protected float getScale(float currentScaleEnd, float target) {
-        while (currentScaleEnd < target) {
-            currentScaleEnd *= 2;
+    protected void doSetReadings(Readings reading) {
+        if (this.isVisible()) {
+            setReadings(reading);
         }
-        return currentScaleEnd;
     }
+
+    protected BroadcastReceiver mMonitorReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            restoreOriginalScale = true;
+        }
+    };
 
 }

@@ -19,9 +19,9 @@ package ca.farrelltonsolar.classic;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
 import ca.farrelltonsolar.uicomponents.BaseGauge;
+import ca.farrelltonsolar.uicomponents.Odometer;
 
 /**
  * Created by Graham on 14/12/2014.
@@ -35,9 +35,12 @@ public class EnergyFragment extends GaugeFramentBase {
     }
 
     public void initializeReadings(View view, Bundle savedInstanceState) {
-        BaseGauge energyTodayGauge = (BaseGauge) view.findViewById(R.id.EnergyToday);
-        energyTodayGauge.setTargetValue(0.0f);
-        energyTodayGauge.setGreenRange(10, 100);
+        View v = this.getView().findViewById(R.id.EnergyToday);
+        if (v != null) {
+            BaseGauge energyTodayGauge = (BaseGauge) v;
+            energyTodayGauge.setTargetValue(0.0f);
+            energyTodayGauge.setGreenRange(10, 100);
+        }
     }
 
     @Override
@@ -52,15 +55,34 @@ public class EnergyFragment extends GaugeFramentBase {
 
     public void setReadings(Readings readings) {
         try {
+            View v = this.getView().findViewById(R.id.EnergyToday);
+            if (v != null) {
+                BaseGauge energyTodayGauge = (BaseGauge) v;
+                energyTodayGauge.setTargetValue(readings.GetFloat(RegisterName.EnergyToday));
 
-            BaseGauge energyTodayGauge = (BaseGauge) this.getView().findViewById(R.id.EnergyToday);
-            energyTodayGauge.setTargetValue(autoAdjustScale(energyTodayGauge.getId(), readings.GetFloat(RegisterName.EnergyToday)));
-            TextView tv = (TextView) this.getView().findViewById(R.id.EnergyTotalValue);
-            tv.setText(String.valueOf(readings.GetFloat(RegisterName.TotalEnergy)));
-
+            }
+            v = this.getView().findViewById(R.id.EnergyTotalValue);
+            if (v != null) {
+                Odometer odometer = (Odometer) v;
+                float val = readings.GetFloat(RegisterName.TotalEnergy) * 10;
+                int decval = (int) val;
+                odometer.setValue(decval);
+            }
         } catch (Exception ignore) {
 
         }
+    }
+
+    public void restoreOriginalScale() {
+        if (restoreOriginalScale) {
+            restoreOriginalScale = false;
+            View v = this.getView().findViewById(R.id.EnergyToday);
+            if (v != null) {
+                BaseGauge gauge = (BaseGauge) v;
+                gauge.restoreOriginalScaleEnd();
+            }
+        }
+        return;
     }
 
 }

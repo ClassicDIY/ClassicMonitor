@@ -26,4 +26,5 @@ public interface GaugeFragmentInterface {
     void initializeReadings(View view, Bundle savedInstanceState);
 
     void setReadings(Readings reading);
+
 }

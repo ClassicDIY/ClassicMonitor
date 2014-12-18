@@ -2,37 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="@string/NetworkCategoryTitle">
-
-        <CheckBoxPreference
-            android:key="SubnetScan"
-            android:summary="@string/ScanSubnetCheckbox"
-            android:disableDependentsState="true"
-            android:defaultValue="true" />
-
-        <EditTextPreference
-            android:dialogTitle="@string/ModbusPortSetting"
-            android:dialogMessage="Port:"
-            android:key="PortSetting"
-            android:title="Port"
-            android:inputType="numberDecimal"
-            android:digits="0123456789"
-            android:maxLength="4"
-            android:numeric="decimal"
-            android:defaultValue="502" />
-
-
-        <ca.farrelltonsolar.classic.IPAddressPreference
-            android:dialogTitle="@string/StaticIPAddressTitle"
-            android:dialogMessage="@string/StaticIPAddressPrompt"
-            android:key="IpAddress"
-            android:title="@string/StaticIPAddressDialogTitle"
-            android:summary="@string/StaticIPAddressSummary"
-            android:digits="0123456789."
-            android:maxLength="15"
-            android:defaultValue="192.168.0.6" />
-
-    </PreferenceCategory>
     <PreferenceCategory android:title="@string/GaugePreferenceTitle">
 
         <!--<EditTextPreference  android:dialogTitle="Set Poll Time in seconds"-->

@@ -7,7 +7,7 @@ public class Constants {
 
     // UDP listening port for available classics on the subnet
     public static final int CLASSIC_UDP_PORT = 4626;
-    public static final int MODBUS_RETRIES = 3;
+    public static final int MODBUS_RETRIES = 2;
     public static final int MODBUS_POLL_TIME = 2000;
 
     public static final int CLASSIC_DAILY_LOG = 5;
@@ -29,10 +29,7 @@ public class Constants {
     public static final int CLASSIC_OUTPUT_CURRENT_HOURLY_CATEGORY = 6;
     public static final int CLASSIC_ENERGY_HOURLY_CATEGORY = 7;
 
-    public static final String IP_ADDRESS_PREFERENCE = "IpAddress";
-
     public static final String PORT_PREFERENCE = "PortSetting";
-    public static final String SUBNET_SCAN_PREFERENCE = "SubnetScan";
 
     public static final String BIDIRECTIONALUNIT_PREFERENCE = "BidirectionalUnitInWatts";
 
