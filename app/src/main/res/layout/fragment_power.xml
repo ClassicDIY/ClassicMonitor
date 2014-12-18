@@ -76,15 +76,14 @@
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="30"
-        android:orientation="vertical"
-        android:weightSum="60">
+        android:orientation="vertical">
 
         <ca.farrelltonsolar.uicomponents.SolarGauge
             android:id="@+id/Power"
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
+            android:layout_height="fill_parent"
             android:layout_marginTop="10dp"
-            android:layout_weight="53"
+            android:layout_marginBottom="10dp"
 
             app:gaugeTitle="@string/PowerTitle"
             app:readingPrecision="0"
@@ -97,43 +96,6 @@
             app:autoScale="true"
             app:showReading="true" />
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_marginLeft="5dp"
-            android:layout_weight="7"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/ChargeStateTitle"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none"
-                android:shadowColor="@color/text_primary_inverse"
-                android:shadowDx="2"
-                android:shadowDy="2"
-                android:shadowRadius="3"
-                android:singleLine="true"
-                android:text="Off"
-                android:textColor="@color/text_primary"
-                android:textSize="@dimen/textSizeXLarge"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/ChargeState"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none"
-                android:shadowColor="@color/text_primary_inverse"
-                android:shadowDx="2"
-                android:shadowDy="2"
-                android:shadowRadius="3"
-                android:singleLine="true"
-                android:text="No data"
-                android:textColor="@color/text_primary"
-                android:textSize="@dimen/textSizeMedium" />
-
-        </LinearLayout>
 
     </LinearLayout>
 

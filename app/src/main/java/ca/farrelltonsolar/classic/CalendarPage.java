@@ -28,6 +28,7 @@ import java.util.Date;
  */
 public class CalendarPage extends Fragment {
 
+
     short[] mData;
     short[] mFloatData;
     private String mPageData;
@@ -48,7 +49,7 @@ public class CalendarPage extends Fragment {
         String DayNamesShort = MonitorApplication.getAppContext().getString(R.string.DayNamesShort);
         mPageData = String.format(Constants.Calendar_html, GetCSS(), MonthNames, MonthNamesShort, DayNames, DayNamesShort);
         mWebView.loadDataWithBaseURL("file:///android_asset/", mPageData, "text/html", "utf-8", null);
-        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter("ca.farrelltonsolar.classic.DayLogs"));
+        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS));
         return theView;
     }
 

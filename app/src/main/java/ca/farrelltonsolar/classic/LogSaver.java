@@ -32,6 +32,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class LogSaver {
 
+
     private Thread mLogger;
     static String pvOutput = "pvoutput.org";
 
@@ -111,7 +112,7 @@ public class LogSaver {
 
     public void Start() {
 
-        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mDayLogReceiver, new IntentFilter("ca.farrelltonsolar.classic.DayLogs"));
+        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mDayLogReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS));
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
         boolean doUpload = settings.getBoolean(Constants.UploadToPVOutput, false);
         if (doUpload) {

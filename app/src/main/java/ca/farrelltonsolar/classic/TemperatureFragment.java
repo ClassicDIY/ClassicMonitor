@@ -25,7 +25,7 @@ import ca.farrelltonsolar.uicomponents.BaseGauge;
 /**
  * Created by Graham on 14/12/2014.
  */
-public class TemperatureFragment extends GaugeFramentBase {
+public class TemperatureFragment extends ReadingFramentBase {
 
     public static int TabTitle = R.string.TemperatureTabTitle;
 

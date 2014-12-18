@@ -26,7 +26,7 @@ import ca.farrelltonsolar.uicomponents.Odometer;
 /**
  * Created by Graham on 14/12/2014.
  */
-public class EnergyFragment extends GaugeFramentBase {
+public class EnergyFragment extends ReadingFramentBase {
 
     public static int TabTitle = R.string.EnergyTabTitle;
 

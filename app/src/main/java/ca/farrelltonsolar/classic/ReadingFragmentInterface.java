@@ -22,7 +22,7 @@ import android.view.View;
 /**
  * Created by Graham on 14/12/2014.
  */
-public interface GaugeFragmentInterface {
+public interface ReadingFragmentInterface {
     void initializeReadings(View view, Bundle savedInstanceState);
 
     void setReadings(Readings reading);

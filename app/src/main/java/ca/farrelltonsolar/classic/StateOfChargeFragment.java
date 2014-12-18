@@ -28,7 +28,7 @@ import ca.farrelltonsolar.uicomponents.SOCGauge;
 /**
  * Created by Graham on 14/12/2014.
  */
-public class StateOfChargeFragment extends GaugeFramentBase {
+public class StateOfChargeFragment extends ReadingFramentBase {
 
     public static int TabTitle = R.string.StateOfChargeTabTitle;
     private boolean _bidirectionalUnitsInWatts;

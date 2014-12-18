@@ -42,7 +42,7 @@ public class ChartPage extends Fragment {
         mWebView.setWebChromeClient(new WebChromeClient());
         URL = GetHtmlPage();
         mWebView.loadUrl(URL);
-        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter("ca.farrelltonsolar.classic.MinuteLogs"));
+        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MINUTE_LOGS));
         return theView;
     }
 

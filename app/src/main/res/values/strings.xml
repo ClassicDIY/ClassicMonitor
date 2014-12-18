@@ -25,7 +25,7 @@
     <string name="EqualizeTitle">Equalize</string>
     <string name="ErrorTitle">Error</string>
     <string name="SeekingEqualizeTitle">Equalizing</string>
-    <string name="ChargeStateOffTitle">Off</string>
+    <string name="ChargeStateOffTitle">Resting</string>
     <string name="FoundClassic">Connected to Classic at address %1$s:%2$d </string>
     <string name="ClassicNotFound">Scanning local network for port %1$d</string>
     <string name="ClassicNotConnecting">Attempting to connect to %1$s:%2$d</string>

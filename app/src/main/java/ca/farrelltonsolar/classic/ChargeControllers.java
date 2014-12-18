@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class ChargeControllers {
+
     final Object lock = new Object();
     private static Context context;
     private int currentController = -1;
@@ -153,7 +154,7 @@ public final class ChargeControllers {
 
     private void BroadcastChangeNotification() {
         LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(context);
-        Intent pkg = new Intent("ca.farrelltonsolar.classic.UpdateChargeControllers");
+        Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_UPDATE_CHARGE_CONTROLLERS);
         broadcaster.sendBroadcast(pkg);
     }
 }

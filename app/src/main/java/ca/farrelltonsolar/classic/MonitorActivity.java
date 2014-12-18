@@ -24,14 +24,18 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
 
     private NavigationDrawerFragment navigationDrawerFragment;
     private TabStripAdapter tabStripAdapter;
+    private String currentUnitName = "";
+    private int currentChargeState = -1;
     private static Gson GSON = new Gson();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mUnitReceiver, new IntentFilter("ca.farrelltonsolar.classic.UnitName"));
-        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mMonitorReceiver, new IntentFilter("ca.farrelltonsolar.classic.MonitorChargeController"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mUnitReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_UNIT_NAME));
+        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mMonitorReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER));
+        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
+
         navigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         // Set up the drawer.
         DrawerLayout layout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -47,6 +51,7 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
         tabStripAdapter = new TabStripAdapter(getSupportFragmentManager(), this, (ViewPager) findViewById(R.id.pager), stl);
         tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
         tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
+        tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
         tabStripAdapter.addTab(TemperatureFragment.TabTitle, TemperatureFragment.class, null);
         tabStripAdapter.addTab(R.string.CalendarTabTitle, CalendarPage.class, null);
         tabStripAdapter.addTab(R.string.ChartTabTitle, ChartPage.class, null);
@@ -57,7 +62,7 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
     private BroadcastReceiver mUnitReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            getSupportActionBar().setTitle(intent.getStringExtra("UnitName"));
+            currentUnitName = intent.getStringExtra("UnitName");
         }
     };
 
@@ -69,8 +74,27 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
                 tabStripAdapter.insertTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null, 2);
                 tabStripAdapter.notifyTabsChanged();
             } else {
+
                 tabStripAdapter.removeTab(StateOfChargeFragment.class);
                 tabStripAdapter.notifyTabsChanged();
+            }
+        }
+    };
+
+    protected BroadcastReceiver mReadingsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle readings = intent.getBundleExtra("readings");
+            int chargeState = readings.getInt(RegisterName.ChargeState.name());
+            if (currentChargeState != chargeState) {
+                currentChargeState = chargeState;
+                String state = MonitorApplication.getChargeStateTitleText(chargeState);
+                if (state == null || state.isEmpty()) {
+                    getSupportActionBar().setTitle(currentUnitName);
+                } else {
+                    getSupportActionBar().setTitle(String.format("%s - (%s)", currentUnitName, MonitorApplication.getChargeStateTitleText(chargeState)));
+                    Toast.makeText(context, MonitorApplication.getChargeStateText(chargeState), Toast.LENGTH_LONG).show();
+                }
             }
         }
     };
@@ -140,7 +164,7 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
     @Override
     public void onAddChargeController(ChargeController cc) {
         LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(this);
-        Intent pkg = new Intent("ca.farrelltonsolar.classic.AddChargeController");
+        Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER);
         pkg.putExtra("ChargeController", GSON.toJson(cc));
         broadcaster.sendBroadcast(pkg);
     }

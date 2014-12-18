@@ -67,7 +67,7 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver(updateChargeControllersReceiver, new IntentFilter("ca.farrelltonsolar.classic.UpdateChargeControllers"));
+        LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver(updateChargeControllersReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_UPDATE_CHARGE_CONTROLLERS));
     }
 
     // Our handler for received Intents.

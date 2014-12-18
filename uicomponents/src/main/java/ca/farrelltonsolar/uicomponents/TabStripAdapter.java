@@ -48,7 +48,10 @@ public class TabStripAdapter extends FragmentPagerAdapter {
 
         private final int mTitleRes;
 
-        TabInfo(Class<?> fragmentClass, Bundle args, int titleRes) {
+        public final int mPosition;
+
+        TabInfo(int position, Class<?> fragmentClass, Bundle args, int titleRes) {
+            mPosition = position;
             mClass = fragmentClass;
             mArgs = args;
             mTitleRes = titleRes;
@@ -81,20 +84,40 @@ public class TabStripAdapter extends FragmentPagerAdapter {
                 return;
             }
         }
-        tabs.add(position, new TabInfo(fragmentClass, args, titleRes));
+        tabs.add(position, new TabInfo(position, fragmentClass, args, titleRes));
     }
 
     public void addTab(int titleRes, Class<?> fragmentClass, Bundle args) {
-        tabs.add(new TabInfo(fragmentClass, args, titleRes));
+        tabs.add(new TabInfo(tabs.size(), fragmentClass, args, titleRes));
     }
 
     public void removeTab(Class<?> fragmentClass) {
+        int position = 0;
         for (TabInfo ti : tabs) {
             if (ti.mClass.equals(fragmentClass)) {
-                tabs.remove(ti);
+                tabs.remove(position);
                 break;
             }
+            position++;
         }
+//        String tag = makeFragmentName(viewPager.getId(), getItemId(position));
+//        Fragment oldFragment = fragmentManager.findFragmentByTag(tag);
+//        if (oldFragment!= null) {
+////        remove it
+//            destroyItem(null, position, oldFragment);
+//            finishUpdate(null);
+//            viewPager.removeView(oldFragment.getView());
+//            FragmentTransaction transaction = fragmentManager.beginTransaction();
+//            transaction.remove(oldFragment);
+//            transaction.commitAllowingStateLoss();
+//            fragmentManager.executePendingTransactions();
+//        }
+    }
+
+    @Override
+    public long getItemId(int position) {
+        TabInfo tab = tabs.get(position);
+        return tab.mPosition;
     }
 
     /**
@@ -103,7 +126,7 @@ public class TabStripAdapter extends FragmentPagerAdapter {
     public void updateTab(int titleRes, Class<?> fragmentClass, Bundle args, int position) {
         if (position >= 0 && position < tabs.size()) {
             // update tab info
-            tabs.set(position, new TabInfo(fragmentClass, args, titleRes));
+            tabs.set(position, new TabInfo(position, fragmentClass, args, titleRes));
 
             // find current fragment of tab
             Fragment oldFragment = fragmentManager
@@ -111,7 +134,7 @@ public class TabStripAdapter extends FragmentPagerAdapter {
             // remove it
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.remove(oldFragment);
-            transaction.commitAllowingStateLoss();
+            transaction.commit();
             fragmentManager.executePendingTransactions();
         }
     }
@@ -120,7 +143,7 @@ public class TabStripAdapter extends FragmentPagerAdapter {
      * Notifies the adapter and tab strip that the tabs have changed.
      */
     public void notifyTabsChanged() {
-        notifyDataSetChanged();
+        super.notifyDataSetChanged();
         tabLayout.setViewPager(viewPager);
     }
 

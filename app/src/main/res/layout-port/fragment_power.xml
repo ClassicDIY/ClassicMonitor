@@ -30,7 +30,8 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="20"
+        android:layout_weight="25"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal"
         android:weightSum="6">
 
@@ -38,7 +39,6 @@
             android:id="@+id/PVVoltage"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
-            android:layout_marginTop="10dp"
             android:layout_weight="3"
 
             app:gaugeTitle="@string/PVVoltTitle"
@@ -56,7 +56,6 @@
             android:id="@+id/PVCurrent"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
-            android:layout_marginTop="10dp"
             android:layout_weight="3"
 
             app:gaugeTitle="@string/PVCurrentTitle"
@@ -72,35 +71,29 @@
 
     </LinearLayout>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <ca.farrelltonsolar.uicomponents.SolarGauge
+        android:id="@+id/Power"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="50"
-        android:orientation="vertical">
 
-        <ca.farrelltonsolar.uicomponents.SolarGauge
-            android:id="@+id/Power"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-
-            app:gaugeTitle="@string/PowerTitle"
-            app:readingPrecision="0"
-            app:readingUnit="W"
-            app:register="Power"
-            app:scaleEndValue="500"
-            app:scaleStartValue="0"
-            app:showInnerRim="false"
-            app:showLeds="true"
-            app:autoScale="true"
-            app:showReading="true" />
-
-    </LinearLayout>
+        app:gaugeTitle="@string/PowerTitle"
+        app:readingPrecision="0"
+        app:readingUnit="W"
+        app:register="Power"
+        app:scaleEndValue="500"
+        app:scaleStartValue="0"
+        app:showInnerRim="false"
+        app:showLeds="true"
+        app:autoScale="true"
+        app:showReading="true" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/container"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="20"
+        android:layout_weight="25"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal"
         android:weightSum="6">
 
@@ -108,7 +101,6 @@
             android:id="@+id/BatVoltage"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
-            android:layout_marginTop="10dp"
             android:layout_weight="3"
 
             app:gaugeTitle="@string/BatVoltsTitle"
@@ -126,7 +118,6 @@
             android:id="@+id/BatCurrent"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
-            android:layout_marginTop="10dp"
             android:layout_weight="3"
 
             app:gaugeTitle="@string/BatCurrentTitle"
@@ -140,45 +131,6 @@
             app:autoScale="true"
             app:showReading="true" />
 
-
-    </LinearLayout>
-
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_marginLeft="5dp"
-        android:layout_weight="10"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/ChargeStateTitle"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:inputType="none"
-            android:shadowColor="@color/text_primary_inverse"
-            android:shadowDx="2"
-            android:shadowDy="2"
-            android:shadowRadius="3"
-            android:singleLine="true"
-            android:text="Off"
-            android:textColor="@color/text_primary"
-            android:textSize="@dimen/textSizeXLarge"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/ChargeState"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:inputType="none"
-            android:shadowColor="@color/text_primary_inverse"
-            android:shadowDx="2"
-            android:shadowDy="2"
-            android:shadowRadius="3"
-            android:singleLine="true"
-            android:text="No data"
-            android:textColor="@color/text_primary"
-            android:textSize="@dimen/textSizeMedium" />
 
     </LinearLayout>
 

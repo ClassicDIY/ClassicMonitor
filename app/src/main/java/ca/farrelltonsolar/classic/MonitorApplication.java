@@ -53,7 +53,7 @@ public class MonitorApplication extends Application implements Application.Activ
         //mLogSaver.ResetLogs();
         Log.d(getClass().getName(), "InitializeModbus complete");
         this.registerActivityLifecycleCallbacks(this);
-        LocalBroadcastManager.getInstance(this).registerReceiver(addChargeControllerReceiver, new IntentFilter("ca.farrelltonsolar.classic.AddChargeController"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(addChargeControllerReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER));
         configuration = ComplexPreferences.getComplexPreferences(this, null, Context.MODE_PRIVATE);
         chargeControllers = configuration.getObject("devices", ChargeControllers.class);
         if (chargeControllers == null) { // save empty collection

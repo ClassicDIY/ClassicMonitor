@@ -37,6 +37,17 @@ public class Constants {
     public static final int PVOUTPUT_RATE_LIMIT = 10000; // every n milliseconds
     public static final int PVOUTPUT_RECORD_LIMIT = 20; // max uploads per session
 
+    // Intents
+    public static final String CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS = "ca.farrelltonsolar.classic.DayLogs";
+    public static final String CA_FARRELLTONSOLAR_CLASSIC_MINUTE_LOGS = "ca.farrelltonsolar.classic.MinuteLogs";
+    public static final String CA_FARRELLTONSOLAR_CLASSIC_READINGS = "ca.farrelltonsolar.classic.Readings";
+    public static final String CA_FARRELLTONSOLAR_CLASSIC_TOAST = "ca.farrelltonsolar.classic.Toast";
+    public static final String CA_FARRELLTONSOLAR_CLASSIC_UNIT_NAME = "ca.farrelltonsolar.classic.UnitName";
+    public static final String CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER = "ca.farrelltonsolar.classic.AddChargeController";
+    public static final String CA_FARRELLTONSOLAR_CLASSIC_UPDATE_CHARGE_CONTROLLERS = "ca.farrelltonsolar.classic.UpdateChargeControllers";
+    public static final String CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER = "ca.farrelltonsolar.classic.MonitorChargeController";
+
+
     public static final String Calendar_html = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n<head>\n     <title id='Description'>Calendar</title>\n" +
             "    <link rel='stylesheet' type='text/css' href='file:///android_asset/%s.css' />\n" +
             "    <script type=\"text/javascript\" src=\"file:///android_asset/jquery.min.js\"></script>\n" +

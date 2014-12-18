@@ -30,12 +30,12 @@ import android.view.ViewGroup;
 /**
  * Created by Graham on 14/12/2014.
  */
-public abstract class GaugeFramentBase extends Fragment implements GaugeFragmentInterface {
+public abstract class ReadingFramentBase extends Fragment implements ReadingFragmentInterface {
 
     int layoutId;
     boolean restoreOriginalScale = false;
 
-    protected GaugeFramentBase(int layoutId) {
+    protected ReadingFramentBase(int layoutId) {
         this.layoutId = layoutId;
     }
 
@@ -49,9 +49,8 @@ public abstract class GaugeFramentBase extends Fragment implements GaugeFragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initializeReadings(view, savedInstanceState);
-        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter("ca.farrelltonsolar.classic.GaugePage"));
-        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mMonitorReceiver, new IntentFilter("ca.farrelltonsolar.classic.MonitorChargeController"));
-
+        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
+        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mMonitorReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER));
     }
 
     // Our handler for received Intents.

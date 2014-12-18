@@ -87,6 +87,7 @@ import ca.farrelltonsolar.j2modlite.procimg.Register;
  * Created by Graham on 12/12/2014.
  */
 public class ModbusTask extends TimerTask {
+
     final Object lock = new Object();
 
     public ModbusTask(ChargeController cc, Context ctx) {
@@ -260,15 +261,15 @@ public class ModbusTask extends TimerTask {
     }
 
     private void BroadcastToast(String message) {
-        Intent intent2 = new Intent("ca.farrelltonsolar.classic.Toast");
-        intent2.setClass(context, GaugeFramentBase.class);
+        Intent intent2 = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_TOAST);
+        intent2.setClass(context, ReadingFramentBase.class);
         intent2.putExtra("message", message);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent2);
     }
 
     private void BroadcastReadings() {
-        Intent intent = new Intent("ca.farrelltonsolar.classic.GaugePage");
-        intent.setClass(context, GaugeFramentBase.class);
+        Intent intent = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS);
+        intent.setClass(context, ReadingFramentBase.class);
         intent.putExtra("readings", readings.GetReadings());
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
@@ -357,7 +358,7 @@ public class ModbusTask extends TimerTask {
     }
 
     private void BroadcastUnitName() throws ModbusException {
-        Intent intent = new Intent("ca.farrelltonsolar.classic.UnitName");
+        Intent intent = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_UNIT_NAME);
         intent.putExtra("UnitName", getUnitName());
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }

@@ -28,6 +28,7 @@ import java.util.Timer;
 
 public class ModbusService extends Service {
 
+
     private final IBinder mBinder = new ModbusServiceBinder();
     ModbusTask task;
     private Timer pollTimer;
@@ -88,7 +89,7 @@ public class ModbusService extends Service {
     private void doMonitor(ChargeController controller, boolean differentCC) {
         disconnect(differentCC);
         LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(this);
-        Intent pkg = new Intent("ca.farrelltonsolar.classic.MonitorChargeController");
+        Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER);
         pkg.putExtra("Controller", controller);
         pkg.putExtra("DifferentController", differentCC);
         broadcaster.sendBroadcast(pkg);

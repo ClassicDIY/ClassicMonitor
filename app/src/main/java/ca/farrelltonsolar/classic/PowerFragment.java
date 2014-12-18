@@ -19,7 +19,6 @@ package ca.farrelltonsolar.classic;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
 import ca.farrelltonsolar.uicomponents.BaseGauge;
 import ca.farrelltonsolar.uicomponents.SolarGauge;
@@ -28,7 +27,7 @@ import ca.farrelltonsolar.uicomponents.SolarGauge;
 /**
  * This fragment displays the power gauges
  */
-public class PowerFragment extends GaugeFramentBase {
+public class PowerFragment extends ReadingFramentBase {
 
     public static int TabTitle = R.string.PowerTabTitle;
 
@@ -60,10 +59,7 @@ public class PowerFragment extends GaugeFramentBase {
         if (v != null) {
             ((BaseGauge) v).setTargetValue(0.0f);
         }
-        v = this.getView().findViewById(R.id.ChargeState);
-        if (v != null) {
-            ((TextView) v).setText(getString(R.string.NoConnection));
-        }
+
     }
 
     public void setReadings(Readings readings) {
@@ -97,16 +93,6 @@ public class PowerFragment extends GaugeFramentBase {
             if (v != null) {
                 float batAmps = readings.GetFloat(RegisterName.BatCurrent);
                 ((BaseGauge) v).setTargetValue(batAmps);
-            }
-            int cs = readings.GetInt(RegisterName.ChargeState);
-            v = this.getView().findViewById(R.id.ChargeStateTitle);
-            if (v != null) {
-
-                ((TextView) v).setText(MonitorApplication.getChargeStateTitleText(cs));
-            }
-            v = this.getView().findViewById(R.id.ChargeState);
-            if (v != null) {
-                ((TextView) v).setText(MonitorApplication.getChargeStateText(cs));
             }
         } catch (Exception ignore) {
 

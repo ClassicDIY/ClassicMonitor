@@ -240,7 +240,7 @@ public class UDPListener extends Service {
                             Log.d(getClass().getName(), "And it's name is: " + unitName);
                             LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(UDPListener.this);
                             ChargeController cc = new ChargeController(info, socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), false);
-                            Intent pkg = new Intent("ca.farrelltonsolar.classic.AddChargeController");
+                            Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER);
                             pkg.putExtra("ChargeController", GSON.toJson(cc));
                             broadcaster.sendBroadcast(pkg);
                         } catch (ModbusException e) {
