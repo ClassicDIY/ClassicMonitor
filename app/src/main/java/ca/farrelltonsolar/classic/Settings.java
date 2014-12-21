@@ -1,9 +1,6 @@
 package ca.farrelltonsolar.classic;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -13,10 +10,9 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 
-public class Settings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class Settings extends PreferenceActivity  {
 
 
-    private EditTextPreference _PortPreference;
     private CheckBoxPreference _uploadToPVOutput;
     private EditTextPreference _SID;
     private EditTextPreference _APIKey;
@@ -37,7 +33,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             @Override
             //On click function
             public void onClick(View view) {
-                startActivity(new Intent(view.getContext(), MonitorActivity.class));
+                Settings.this.finish();
             }
         });
         final Button Apply = (Button) findViewById(R.id.Apply);
@@ -45,14 +41,12 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             @Override
             //On click function
             public void onClick(View view) {
-                startActivity(new Intent(view.getContext(), MonitorActivity.class));
+                Settings.this.finish();
             }
         });
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
         try {
-            _PortPreference = (EditTextPreference) findPreference(Constants.PORT_PREFERENCE);
-
             _uploadToPVOutput = (CheckBoxPreference) findPreference(Constants.UploadToPVOutput);
             _SID = (EditTextPreference) findPreference(Constants.SID);
             _APIKey = (EditTextPreference) findPreference(Constants.APIKey);
@@ -67,7 +61,6 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             });
 
 
-            _PortPreference.setSummary(settings.getString(Constants.PORT_PREFERENCE, "502"));
             _SID.setSummary(settings.getString(Constants.SID, ""));
             _APIKey.setSummary(settings.getString(Constants.APIKey, "255"));
             Preference button = (Preference) findPreference("ResetLogs");
@@ -83,9 +76,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             settings.edit().clear().commit();
             e.printStackTrace();
         }
-        if (!screenIsLarge()) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
+
     }
 
     private void UploadToPVOutputEnabled(boolean isEnabled) {
@@ -93,33 +84,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
         _APIKey.setEnabled(isEnabled);
     }
 
-    private boolean screenIsLarge() {
-        int screenMask = getResources().getConfiguration().screenLayout;
-        return (screenMask & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE || (screenMask & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE;
-    }
 
-    @Override
-    protected void onResume() {
 
-        super.onResume();
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
-        settings.registerOnSharedPreferenceChangeListener(this);
-    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
-        settings.unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
-
-        if (key.equals(Constants.PORT_PREFERENCE)) {
-            _PortPreference.setSummary(settings.getString(key, "502"));
-
-        }
-    }
 }

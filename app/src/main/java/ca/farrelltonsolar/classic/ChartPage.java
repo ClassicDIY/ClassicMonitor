@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +30,17 @@ import java.util.GregorianCalendar;
 public class ChartPage extends Fragment {
 
     short[] mData;
-    private String URL;
     WebView mWebView;
+    private boolean isReceiverRegistered;
+    private static Gson GSON = new Gson();
+    private String preparedMinuteLogs;
+    private String preparedLabels;
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        Log.d(getClass().getName(), hidden ? "onHiddenChanged true" : "onHiddenChanged false");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,11 +51,11 @@ public class ChartPage extends Fragment {
         webSettings.setJavaScriptEnabled(true);
         mWebView.addJavascriptInterface(new WebViewInterface(), "MainActivityInterface");
         mWebView.setWebChromeClient(new WebChromeClient());
-        URL = GetHtmlPage();
-        mWebView.loadUrl(URL);
-        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MINUTE_LOGS));
+        mWebView.loadUrl(GetHtmlPage());
         return theView;
     }
+
+
 
     private String GetHtmlPage() {
         String rVal;
@@ -64,8 +75,9 @@ public class ChartPage extends Fragment {
     }
 
     private void Refresh() {
-        WebView webView = (WebView) getView().findViewById(R.id.webView);
-        webView.loadUrl(URL);
+        if (this.isVisible()) {
+            mWebView.reload();
+        }
     }
 
     public class WebViewInterface {
@@ -77,117 +89,115 @@ public class ChartPage extends Fragment {
 
         @JavascriptInterface
         public String getMinuteLogs() {
-            String rVal = "";
-            if (mData != null && mData.length > 0) {
-                Gson gson = new Gson();
-                short[] reverseData = new short[mData.length];
-                int j = 0;
-                for (int i = mData.length - 1; i >= 0; i--) {
-                    reverseData[j++] = mData[i];
-                }
-                rVal = gson.toJson(reverseData);
-            }
-            return rVal;
+            return preparedMinuteLogs;
         }
 
         @JavascriptInterface
         public String getLabels() {
-            String rVal = "";
-            Calendar cal = new GregorianCalendar();
-            cal.roll(Calendar.HOUR_OF_DAY, true);
-            int hour;
-            int[] hours = new int[24];
-            for (int i = 0; i < 24; i++) {
-                hour = cal.get(Calendar.HOUR_OF_DAY);
-                hours[i] = hour;
-                cal.roll(Calendar.HOUR_OF_DAY, true);
+            return preparedLabels;
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!isReceiverRegistered) {
+            LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MINUTE_LOGS));
+            isReceiverRegistered = true;
+        }
+        Log.d(getClass().getName(), "onStart");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        unRegisterReceiver();
+        Log.d(getClass().getName(), "onStop");
+    }
+
+    private void unRegisterReceiver() {
+        if (isReceiverRegistered) {
+            try {
+                LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).unregisterReceiver(mReadingsReceiver);
+            } catch (IllegalArgumentException e) {
+                // Do nothing
             }
-            Gson gson = new Gson();
-            rVal = gson.toJson(hours);
-            return rVal;
-        }
-
-//        private EventObject[] LoadEventData(Date sd, Date ed) {
-//            int range = getDifferenceDays(sd, ed);
-//            Calendar calendar = Calendar.getInstance();
-//            int fromYesterday = getDifferenceDays(sd, calendar.getTime()) - 2;
-//            EventObject[] days = new EventObject[range];
-//            try {
-//                if (fromYesterday < mData.length) {
-//                    calendar.setTime(sd);
-//                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//                    for (int i = 0; i < range; i++) {
-//                        String s = sdf.format(calendar.getTime());
-//                        if (fromYesterday >= 0) {
-//                            String t = String.valueOf(mData[fromYesterday] / 10.0f) + " kWh";
-//                            if (mFloatData[fromYesterday] > 0) {
-//                                t += "\n " + MyApplication.getAppContext().getString(R.string.CalendarFloat);
-//                            }
-//                            days[i] = new EventObject(t, s);
-//                            fromYesterday--;
-//                        }
-//                        else {
-//                            days[i] = new EventObject("", s);
-//                        }
-//                        calendar.add(Calendar.DATE, 1);
-//                    }
-//                }
-//            }
-//            catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            return days;
-//        }
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            RequestChartData();
+            isReceiverRegistered = false;
         }
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (this.getUserVisibleHint()) {
-            RequestChartData();
-        }
-    }
-
-    private void RequestChartData() {
-//        Intent modbusInitIntent = new Intent("ca.farrelltonsolar.classic.ModbusControl", null, MyApplication.getAppContext(), ModbusMaster.class);
-//        modbusInitIntent.putExtra("Page", Function.MinuteLogs.ordinal());
-//        LocalBroadcastManager.getInstance(MyApplication.getAppContext()).sendBroadcast(modbusInitIntent);
-    }
-
-    // Our handler for received Intents.
-    private BroadcastReceiver mToastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Get extra data included in the Intent
-            Toast.makeText(context, intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
-        }
-    };
 
     // Our handler for received Intents.
     private BroadcastReceiver mReadingsReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // Get extra data included in the Intent
-            //SetReadings(new Readings(intent.getBundleExtra("readings")));
-
+            Log.d(getClass().getName(), "mReadingsReceiver");
             try {
                 Bundle logs = intent.getBundleExtra("logs");
                 if (logs != null) {
                     mData = logs.getShortArray(String.valueOf(Constants.CLASSIC_POWER_HOURLY_CATEGORY));
                 }
-                Refresh();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            unRegisterReceiver();
+
+            Log.d(getClass().getName(), "PageLoader");
+            new PageLoader().execute();
+            Log.d(getClass().getName(), "Chart received logs from classic");
         }
     };
 
+    public void prepareMinuteLogs() {
+        if (mData != null && mData.length > 0) {
+            short[] reverseData = new short[mData.length];
+            int j = 0;
+            for (int i = mData.length - 1; i >= 0; i--) {
+                reverseData[j++] = mData[i];
+            }
+            preparedMinuteLogs = GSON.toJson(reverseData);
+        }
+        return;
+    }
+
+    public void prepareLabels() {
+        Calendar cal = new GregorianCalendar();
+        cal.roll(Calendar.HOUR_OF_DAY, true);
+        int hour;
+        int[] hours = new int[24];
+        for (int i = 0; i < 24; i++) {
+            hour = cal.get(Calendar.HOUR_OF_DAY);
+            hours[i] = hour;
+            cal.roll(Calendar.HOUR_OF_DAY, true);
+        }
+        Gson gson = new Gson();
+        preparedLabels = gson.toJson(hours);
+        return;
+    }
+
+    private class PageLoader extends AsyncTask<String, Void, String> {
+        private PageLoader() {
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            prepareMinuteLogs();
+            prepareLabels();
+            Log.d(getClass().getName(), "Chart prep done");
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.d(getClass().getName(), "Chart loadUrl");
+            mWebView.reload();
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+    }
 }

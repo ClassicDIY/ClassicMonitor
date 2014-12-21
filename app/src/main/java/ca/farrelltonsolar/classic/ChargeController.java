@@ -57,6 +57,8 @@ public class ChargeController implements Serializable {
     private boolean hasWhizbang;
     private DeviceType deviceType;
 
+    private boolean bidirectionalUnitsInWatts;
+
     @Override
     public String toString() {
         return deviceName == null || deviceName.isEmpty() ? deviceIP == null || deviceIP.isEmpty() ? "ChargeController" : deviceIP : deviceName;
@@ -112,6 +114,14 @@ public class ChargeController implements Serializable {
 
     public void setHasWhizbang(boolean hasWhizbang) {
         this.hasWhizbang = hasWhizbang;
+    }
+
+    public boolean isBidirectionalUnitsInWatts() {
+        return bidirectionalUnitsInWatts;
+    }
+
+    public void setBidirectionalUnitsInWatts(boolean bidirectionalUnitsInWatts) {
+        this.bidirectionalUnitsInWatts = bidirectionalUnitsInWatts;
     }
 
     public InetSocketAddress getInetSocketAddress() {

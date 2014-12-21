@@ -16,11 +16,11 @@
 
 package ca.farrelltonsolar.classic;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 
 import ca.farrelltonsolar.uicomponents.BaseGauge;
 import ca.farrelltonsolar.uicomponents.SOCGauge;
@@ -31,23 +31,21 @@ import ca.farrelltonsolar.uicomponents.SOCGauge;
 public class StateOfChargeFragment extends ReadingFramentBase {
 
     public static int TabTitle = R.string.StateOfChargeTabTitle;
-    private boolean _bidirectionalUnitsInWatts;
+    private boolean bidirectionalUnitsInWatts;
 
     public StateOfChargeFragment() {
 
         super(R.layout.fragment_state_of_charge);
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
-        _bidirectionalUnitsInWatts = settings.getBoolean(Constants.BIDIRECTIONALUNIT_PREFERENCE, false);
-    }
+        bidirectionalUnitsInWatts = MonitorApplication.chargeControllers().getCurrentChargeController().isBidirectionalUnitsInWatts();
+}
 
     public void setReadings(Readings readings) {
         try {
-            restoreOriginalScale();
             View v = this.getView().findViewById(R.id.BidirectionalCurrent);
             if (v != null) {
                 BaseGauge gaugeView = (BaseGauge) v;
                 float batteryCurrent = readings.GetFloat(RegisterName.BatCurrent);
-                if (_bidirectionalUnitsInWatts) {
+                if (bidirectionalUnitsInWatts) {
                     float batteryVolts = readings.GetFloat(RegisterName.BatVoltage);
                     gaugeView.setTargetValue(batteryCurrent * batteryVolts);
                 } else {
@@ -62,42 +60,80 @@ public class StateOfChargeFragment extends ReadingFramentBase {
         }
     }
 
+    @Override
+    public void monitoringDifferentChargeController() {
+        bidirectionalUnitsInWatts = MonitorApplication.chargeControllers().getCurrentChargeController().isBidirectionalUnitsInWatts();
+        View v = this.getView().findViewById(R.id.BidirectionalCurrent);
+        if (v != null) {
+            BaseGauge gauge = (BaseGauge) v;
+            gauge.restoreOriginalScaleEnd();
+            setupGauge(gauge);
+        }
+
+    }
+
     public void initializeReadings(View view, Bundle savedInstanceState) {
         View v = this.getView().findViewById(R.id.BidirectionalCurrent);
         if (v != null) {
+
             BaseGauge gaugeView = (BaseGauge) v;
-            if (_bidirectionalUnitsInWatts) {
-                gaugeView.setTitle(this.getString(R.string.BatPowerTitle));
-                gaugeView.setUnit("W");
-            } else {
-                gaugeView.setTitle(this.getString(R.string.BatCurrentTitle));
-                gaugeView.setUnit("A");
-            }
-            gaugeView.setGreenRange(50, 100);
-            gaugeView.setTargetValue(0.0f);
-        }
-    }
+            if (gaugeView != null) {
 
-    public void restoreOriginalScale() {
-        if (restoreOriginalScale) {
-            restoreOriginalScale = false;
-
-            View v = this.getView().findViewById(R.id.BidirectionalCurrent);
-            if (v != null) {
-                BaseGauge gauge = (BaseGauge) v;
-                gauge.restoreOriginalScaleEnd();
+                gaugeView.setOnClickListener(GetClickListener(container));
+                setupGauge(gaugeView);
             }
         }
-        return;
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    private void setupGauge(BaseGauge gaugeView) {
+        if (bidirectionalUnitsInWatts) {
+            gaugeView.setTitle(this.getString(R.string.BatPowerTitle));
+            gaugeView.setUnit("W");
+        } else {
+            gaugeView.setTitle(this.getString(R.string.BatCurrentTitle));
+            gaugeView.setUnit("A");
+        }
+        gaugeView.setGreenRange(50, 100);
+        gaugeView.setTargetValue(0.0f);
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
+    private View.OnClickListener GetClickListener(final ViewGroup container) {
+        return new View.OnClickListener() {
+
+            @Override
+            public void onClick(final View v) {
+                Animation animation = new AlphaAnimation(1.0f, 0.0f);
+                animation.setDuration(500);
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationEnd(Animation arg0) {
+                        bidirectionalUnitsInWatts = !bidirectionalUnitsInWatts;
+                        MonitorApplication.chargeControllers().getCurrentChargeController().setBidirectionalUnitsInWatts(bidirectionalUnitsInWatts);
+                        BaseGauge gauge = (BaseGauge) v;
+                        if (gauge != null) {
+                            setupGauge(gauge);
+                            gauge.restoreOriginalScaleEnd();
+                        }
+                        Animation animation2 = new AlphaAnimation(0.0f, 1.0f);
+                        animation2.setDuration(500);
+                        v.startAnimation(animation2);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation arg0) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                    @Override
+                    public void onAnimationStart(Animation arg0) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                });
+                v.startAnimation(animation);
+            }
+        };
     }
 }

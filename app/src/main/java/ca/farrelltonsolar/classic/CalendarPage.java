@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ public class CalendarPage extends Fragment {
     short[] mFloatData;
     private String mPageData;
     WebView mWebView;
+    private boolean isReceiverRegistered;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,8 +50,7 @@ public class CalendarPage extends Fragment {
         String DayNames = MonitorApplication.getAppContext().getString(R.string.DayNames);
         String DayNamesShort = MonitorApplication.getAppContext().getString(R.string.DayNamesShort);
         mPageData = String.format(Constants.Calendar_html, GetCSS(), MonthNames, MonthNamesShort, DayNames, DayNamesShort);
-        mWebView.loadDataWithBaseURL("file:///android_asset/", mPageData, "text/html", "utf-8", null);
-        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS));
+
         return theView;
     }
 
@@ -70,8 +71,9 @@ public class CalendarPage extends Fragment {
     }
 
     private void Refresh() {
-        WebView webView = (WebView) getView().findViewById(R.id.webView);
-        webView.loadDataWithBaseURL("file:///android_asset/", mPageData, "text/html", "utf-8", null);
+        if (this.isVisible()) {
+            mWebView.loadDataWithBaseURL("file:///android_asset/", mPageData, "text/html", "utf-8", null);
+        }
     }
 
     public class WebViewInterface {
@@ -141,36 +143,34 @@ public class CalendarPage extends Fragment {
         }
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            RequestCalendarData();
-        }
-    }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (this.getUserVisibleHint()) {
-            RequestCalendarData();
+    public void onStart() {
+        super.onStart();
+        if (!isReceiverRegistered) {
+            LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS));
+            isReceiverRegistered = true;
         }
+        Log.d(getClass().getName(), "onStart");
     }
 
-    private void RequestCalendarData() {
-//        Intent modbusInitIntent = new Intent("ca.farrelltonsolar.classic.ModbusControl", null, MyApplication.getAppContext(), ModbusMaster.class);
-//        modbusInitIntent.putExtra("Page", Function.DayLogs.ordinal());
-//        LocalBroadcastManager.getInstance(MyApplication.getAppContext()).sendBroadcast(modbusInitIntent);
+    @Override
+    public void onStop() {
+        super.onStop();
+        unregisterReceiver();
+        Log.d(getClass().getName(), "onStop");
     }
 
-    // Our handler for received Intents.
-    private BroadcastReceiver mToastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Get extra data included in the Intent
-            Toast.makeText(context, intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
+    private void unregisterReceiver() {
+        if (isReceiverRegistered) {
+            try {
+                LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).unregisterReceiver(mReadingsReceiver);
+            } catch (IllegalArgumentException e) {
+                // Do nothing
+            }
+            isReceiverRegistered = false;
         }
-    };
+    }
 
     // Our handler for received Intents.
     private BroadcastReceiver mReadingsReceiver = new BroadcastReceiver() {
@@ -185,10 +185,13 @@ public class CalendarPage extends Fragment {
                     mData = logs.getShortArray(String.valueOf(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY));
                     mFloatData = logs.getShortArray(String.valueOf(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY));
                 }
-                Refresh();
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            unregisterReceiver();
+            Log.d(getClass().getName(), "Calendar received logs from classic");
+            Refresh();
         }
     };
 

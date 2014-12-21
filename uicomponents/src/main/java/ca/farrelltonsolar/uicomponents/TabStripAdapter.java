@@ -58,8 +58,14 @@ public class TabStripAdapter extends FragmentPagerAdapter {
         }
     }
 
-    public TabStripAdapter(FragmentManager fm, Context context, ViewPager pager,
-                           SlidingTabLayout tabs) {
+    public TabStripAdapter(FragmentManager fm, Context context, ViewPager pager, SlidingTabLayout tabs, ViewPager.OnPageChangeListener pageChangeListener) {
+        this(fm,  context,  pager,  tabs);
+        if (pageChangeListener != null) {
+            tabLayout.setOnPageChangeListener(pageChangeListener);
+        }
+    }
+
+    public TabStripAdapter(FragmentManager fm, Context context, ViewPager pager, SlidingTabLayout tabs) {
         super(fm);
         fragmentManager = fm;
         this.context = context;

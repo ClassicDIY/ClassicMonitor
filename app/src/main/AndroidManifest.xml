@@ -40,10 +40,6 @@
             android:name=".About"
             android:label="@string/About"
             android:parentActivityName=".MonitorActivity" />
-        <activity
-            android:name=".BigSOC"
-            android:label="SOC"
-            android:parentActivityName=".MonitorActivity" />
 
         <service
             android:name=".ModbusService"

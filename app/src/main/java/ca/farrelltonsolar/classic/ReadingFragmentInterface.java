@@ -27,4 +27,6 @@ public interface ReadingFragmentInterface {
 
     void setReadings(Readings reading);
 
+    void monitoringDifferentChargeController();
+
 }

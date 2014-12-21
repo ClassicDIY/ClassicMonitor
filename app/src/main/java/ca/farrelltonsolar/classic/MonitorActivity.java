@@ -4,8 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -20,27 +22,25 @@ import com.google.gson.Gson;
 import ca.farrelltonsolar.uicomponents.SlidingTabLayout;
 import ca.farrelltonsolar.uicomponents.TabStripAdapter;
 
-public class MonitorActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, IPAddressDialog.OnIPAddressDialogInteractionListener {
+public class MonitorActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, IPAddressDialog.OnIPAddressDialogInteractionListener, ViewPager.OnPageChangeListener {
 
     private NavigationDrawerFragment navigationDrawerFragment;
     private TabStripAdapter tabStripAdapter;
     private String currentUnitName = "";
     private int currentChargeState = -1;
     private static Gson GSON = new Gson();
+    private boolean isReceiverRegistered;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mUnitReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_UNIT_NAME));
-        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mMonitorReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER));
-        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
-
         navigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         // Set up the drawer.
         DrawerLayout layout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationDrawerFragment.setUp(R.id.navigation_drawer, layout);
         setupActionBar();
+        registerPreferencesChangeListener();
         Log.d(getClass().getName(), "onCreate");
     }
 
@@ -48,15 +48,31 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
         SlidingTabLayout stl = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         stl.setDividerColors(Color.RED);
         stl.setSelectedIndicatorColors(Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.YELLOW);
-        tabStripAdapter = new TabStripAdapter(getSupportFragmentManager(), this, (ViewPager) findViewById(R.id.pager), stl);
+        tabStripAdapter = new TabStripAdapter(getSupportFragmentManager(), this, (ViewPager) findViewById(R.id.pager), stl, this);
         tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
         tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
         tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
         tabStripAdapter.addTab(TemperatureFragment.TabTitle, TemperatureFragment.class, null);
         tabStripAdapter.addTab(R.string.CalendarTabTitle, CalendarPage.class, null);
-        tabStripAdapter.addTab(R.string.ChartTabTitle, ChartPage.class, null);
+        tabStripAdapter.addTab(R.string.ChartTabTitle, HourLogChart.class, null);
         tabStripAdapter.notifyTabsChanged();
     }
+    private void registerPreferencesChangeListener(){
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
+        SharedPreferences.OnSharedPreferenceChangeListener listener =new SharedPreferences.OnSharedPreferenceChangeListener(){
+            public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key){
+//                if (key.equals(Constants.PREF_KEY_GUI_NICKNAME)) {
+//                    PeerManager.instance().clear();
+//                }
+//                else       if (key.equals(Constants.PREF_KEY_NETWORK_USE_MULTICAST) || key.equals(Constants.PREF_KEY_NETWORK_USE_BROADCAST)) {
+//                    resetLocalNetworkProcessors();
+//                }
+                Log.d(getClass().getName(), "OnSharedPreferenceChangeListener " + key);
+            }
+        };
+        settings.registerOnSharedPreferenceChangeListener(listener);
+    }
+
 
     // Our handler for received Intents.
     private BroadcastReceiver mUnitReceiver = new BroadcastReceiver() {
@@ -99,25 +115,10 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
         }
     };
 
-    // Our handler for received Intents.
-    private BroadcastReceiver mToastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context, intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
-        }
-    };
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (navigationDrawerFragment == null) {
-            getMenuInflater().inflate(R.menu.gauge_activity_actions, menu);
-            return true;
-        }
-        if (!navigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.gauge_activity_actions, menu);
+        if (navigationDrawerFragment == null || !navigationDrawerFragment.isDrawerOpen()) {
+            getMenuInflater().inflate(R.menu.shared_activity_menu, menu);
             return true;
         }
         return super.onCreateOptionsMenu(menu);
@@ -133,6 +134,7 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
         switch (id) {
             case R.id.action_settings:
                 startActivityForResult(new Intent(this, Settings.class), 0);
+
                 handled = true;
                 break;
             case R.id.action_about:
@@ -144,15 +146,31 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
     }
 
     @Override
-    protected void onPause() {
-        Log.d(getClass().getName(), "onPause");
-        super.onPause();
+    public void onStart() {
+        super.onStart();
+        if (!isReceiverRegistered) {
+            LocalBroadcastManager.getInstance(this).registerReceiver(mUnitReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_UNIT_NAME));
+            LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mMonitorReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER));
+            LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
+            isReceiverRegistered = true;
+        }
+        Log.d(getClass().getName(), "onStart");
     }
 
     @Override
-    protected void onResume() {
-        Log.d(getClass().getName(), "onResume");
-        super.onResume();
+    public void onStop() {
+        super.onStop();
+        if (isReceiverRegistered) {
+            try {
+                LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).unregisterReceiver(mUnitReceiver);
+                LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).unregisterReceiver(mMonitorReceiver);
+                LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).unregisterReceiver(mReadingsReceiver);
+            } catch (IllegalArgumentException e) {
+                // Do nothing
+            }
+            isReceiverRegistered = false;
+        }
+        Log.d(getClass().getName(), "onStop");
     }
 
     @Override
@@ -169,5 +187,18 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
         broadcaster.sendBroadcast(pkg);
     }
 
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
 }

@@ -95,7 +95,7 @@ public class ModbusService extends Service {
         broadcaster.sendBroadcast(pkg);
         pollTimer = new Timer();
         task = new ModbusTask(controller, this.getBaseContext());
-        pollTimer.schedule(task, 1000, Constants.MODBUS_POLL_TIME);
+        pollTimer.schedule(task, 100, Constants.MODBUS_POLL_TIME);
         Log.d(getClass().getName(), String.format("Monitor running on: %s this thread is %s", controller.toString(), Thread.currentThread().getName()));
     }
 

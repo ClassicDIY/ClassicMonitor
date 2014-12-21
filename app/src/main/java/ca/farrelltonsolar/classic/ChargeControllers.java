@@ -106,12 +106,17 @@ public final class ChargeControllers {
         }
     }
 
-    public void load(ArrayList<InetSocketAddress> arr, boolean staticOnly) {
+    public void load(ArrayList<InetSocketAddress> arr, boolean staticOnly, boolean includeCurrent) {
         synchronized (lock) {
+            int index = 0;
             for (ChargeController cc : devices) {
-                if (!staticOnly || cc.isStaticIP()) {
+                if ((index == currentController && includeCurrent)) {
                     arr.add(cc.getInetSocketAddress());
                 }
+                else if (!staticOnly || cc.isStaticIP()) {
+                    arr.add(cc.getInetSocketAddress());
+                }
+                index++;
             }
         }
     }

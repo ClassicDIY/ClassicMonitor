@@ -23,6 +23,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,8 @@ import android.view.ViewGroup;
 public abstract class ReadingFramentBase extends Fragment implements ReadingFragmentInterface {
 
     int layoutId;
-    boolean restoreOriginalScale = false;
+    private boolean isReceiverRegistered;
+    protected ViewGroup container;
 
     protected ReadingFramentBase(int layoutId) {
         this.layoutId = layoutId;
@@ -41,16 +43,41 @@ public abstract class ReadingFramentBase extends Fragment implements ReadingFrag
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        this.container = container;
         View theView = inflater.inflate(layoutId, container, false);
         return theView;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (isReceiverRegistered) {
+            try {
+                LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).unregisterReceiver(mReadingsReceiver);
+                LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).unregisterReceiver(mMonitorReceiver);
+            } catch (IllegalArgumentException e) {
+                // Do nothing
+            }
+            isReceiverRegistered = false;
+        }
+        Log.d(getClass().getName(), "onStop");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!isReceiverRegistered) {
+            LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
+            LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mMonitorReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER));
+            isReceiverRegistered = true;
+        }
+        Log.d(getClass().getName(), "onStart");
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initializeReadings(view, savedInstanceState);
-        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
-        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mMonitorReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER));
     }
 
     // Our handler for received Intents.
@@ -71,7 +98,10 @@ public abstract class ReadingFramentBase extends Fragment implements ReadingFrag
     protected BroadcastReceiver mMonitorReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            restoreOriginalScale = intent.getBooleanExtra("DifferentController", true);
+            boolean monitoringDifferentChargeController = intent.getBooleanExtra("DifferentController", true);
+            if (monitoringDifferentChargeController) {
+                monitoringDifferentChargeController();
+            }
         }
     };
 

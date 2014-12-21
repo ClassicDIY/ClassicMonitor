@@ -172,10 +172,10 @@ public class UDPListener extends Service {
             packet = new DatagramPacket(buffer, buffer.length);
             int sleepTime = 1000;
             try {
-                currentChargeControllers.load(alreadyFoundList, false);
+                currentChargeControllers.load(alreadyFoundList, false, true);
                 ArrayList<InetSocketAddress> staticAddressList = new ArrayList<>();
-                currentChargeControllers.load(staticAddressList, true);
-                currentChargeControllers.load(alreadyUpdatedList, true); // don't update as a result of the UDP datagram from a static classic
+                currentChargeControllers.load(staticAddressList, true, false);
+                currentChargeControllers.load(alreadyUpdatedList, true, true); // don't update as a result of the UDP datagram from a static classic
                 Runnable sr = new StaticNameUpdaterThread(staticAddressList);
                 new Thread(sr).start();
                 do {

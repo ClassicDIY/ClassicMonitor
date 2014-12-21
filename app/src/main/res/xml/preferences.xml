@@ -2,33 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="@string/GaugePreferenceTitle">
-
-        <!--<EditTextPreference  android:dialogTitle="Set Poll Time in seconds"-->
-        <!--android:dialogMessage="Poll Time:"-->
-        <!--android:key="PollTime"-->
-        <!--android:title="Poll Time"-->
-        <!--android:inputType="numberDecimal"-->
-        <!--android:numeric="decimal"-->
-        <!--android:digits="0123456789"-->
-        <!--android:maxLength="2"-->
-        <!--android:defaultValue="2"/>-->
-
-        <CheckBoxPreference
-            android:key="BidirectionalUnitInWatts"
-            android:summary="@string/bi_directional_gauge_units"
-            android:disableDependentsState="false"
-            android:defaultValue="false" />
-
-        <CheckBoxPreference
-            android:key="LockScale"
-            android:summary="@string/LockScale"
-            android:disableDependentsState="false"
-            android:defaultValue="false" />
-
-
-    </PreferenceCategory>
-
     <PreferenceCategory android:title="@string/PVOutputPreferenceTitle">
 
         <CheckBoxPreference

@@ -64,7 +64,6 @@ public class PowerFragment extends ReadingFramentBase {
 
     public void setReadings(Readings readings) {
         try {
-            restoreOriginalScale();
             View v = this.getView().findViewById(R.id.Power);
             if (v != null) {
                 ((SolarGauge) v).setTargetValue(readings.GetFloat(RegisterName.Power));
@@ -99,30 +98,27 @@ public class PowerFragment extends ReadingFramentBase {
         }
     }
 
-    protected void restoreOriginalScale() {
-        if (restoreOriginalScale) {
-            restoreOriginalScale = false;
-            View v = this.getView().findViewById(R.id.Power);
-            if (v != null) {
-                ((BaseGauge) v).restoreOriginalScaleEnd();
-            }
-            v = this.getView().findViewById(R.id.PVVoltage);
-            if (v != null) {
-                ((BaseGauge) v).restoreOriginalScaleEnd();
-            }
-            v = this.getView().findViewById(R.id.PVCurrent);
-            if (v != null) {
+    public void monitoringDifferentChargeController() {
+        View v = this.getView().findViewById(R.id.Power);
+        if (v != null) {
+            ((BaseGauge) v).restoreOriginalScaleEnd();
+        }
+        v = this.getView().findViewById(R.id.PVVoltage);
+        if (v != null) {
+            ((BaseGauge) v).restoreOriginalScaleEnd();
+        }
+        v = this.getView().findViewById(R.id.PVCurrent);
+        if (v != null) {
 
-                ((BaseGauge) v).restoreOriginalScaleEnd();
-            }
-            v = this.getView().findViewById(R.id.BatVoltage);
-            if (v != null) {
-                ((BaseGauge) v).restoreOriginalScaleEnd();
-            }
-            v = this.getView().findViewById(R.id.BatCurrent);
-            if (v != null) {
-                ((BaseGauge) v).restoreOriginalScaleEnd();
-            }
+            ((BaseGauge) v).restoreOriginalScaleEnd();
+        }
+        v = this.getView().findViewById(R.id.BatVoltage);
+        if (v != null) {
+            ((BaseGauge) v).restoreOriginalScaleEnd();
+        }
+        v = this.getView().findViewById(R.id.BatCurrent);
+        if (v != null) {
+            ((BaseGauge) v).restoreOriginalScaleEnd();
         }
         return;
     }

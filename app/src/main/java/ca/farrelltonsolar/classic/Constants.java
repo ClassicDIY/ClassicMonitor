@@ -7,8 +7,10 @@ public class Constants {
     public static final int MODBUS_RETRIES = 2;
     public static final int MODBUS_POLL_TIME = 2000;
 
-    public static final int CLASSIC_DAILY_LOG = 5;
-    public static final int CLASSIC_MINUTE_LOG = 6;
+    public static final int MODBUS_FILE_MEMORY= 4;
+    public static final int MODBUS_FILE_DAILIES_LOG = 5;
+    public static final int MODBUS_FILE_MINUTES_LOG = 6;
+    public static final int MODBUS_FILE_TIME_DATE_RISE_SET = 7;
 
     public static final int CLASSIC_KWHOUR_DAILY_CATEGORY = 0;
     public static final int CLASSIC_FLOAT_TIME_DAILY_CATEGORY = 2;

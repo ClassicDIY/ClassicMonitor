@@ -24,6 +24,7 @@ import android.util.Log;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.GregorianCalendar;
 import java.util.TimerTask;
 
 import ca.farrelltonsolar.j2modlite.ModbusException;
@@ -129,6 +130,8 @@ public class ModbusTask extends TimerTask {
             e.printStackTrace();
         } catch (Exception e1) {
             Log.w(getClass().getName(), String.format("Could not connect to %s, ex: %s", chargeController.toString(), e1));
+            disconnecting = false;
+            modbusMaster = null;
         }
         return rVal;
     }
@@ -156,8 +159,9 @@ public class ModbusTask extends TimerTask {
 
     @Override
     public void run() {
-        try {
-            synchronized (lock) {
+        synchronized (lock) {
+            try {
+
                 if (disconnecting) {
                     return;
                 }
@@ -174,10 +178,30 @@ public class ModbusTask extends TimerTask {
                         }
                     }
                     GetModbusReadings();
+                    if (dayLogEntry.GetLogs().isEmpty()) {
+                        LoadDayLogs();
+                    } else {
+                        BroadcastLogs("ca.farrelltonsolar.classic.DayLogs", dayLogEntry);
+                    }
+                    if (minuteLogEntry.GetLogs().isEmpty()) {
+                        LoadMinuteLogs();
+                    } else {
+                        BroadcastLogs("ca.farrelltonsolar.classic.MinuteLogs", minuteLogEntry);
+                    }
+                }
+
+            } catch (Exception e1) {
+                if (isConnected()) {
+                        if (modbusMaster != null) {
+                            modbusMaster.disconnect();
+                        }
+                        modbusMaster = null;
+                    Log.w(getClass().getName(), String.format("Could not get readings, disconnected from %s due to exceptionex: %s", chargeController.toString(), e1));
+                }
+                else {
+                    Log.w(getClass().getName(), String.format("Could not get readings from %s, was disconnected ex: %s", chargeController.toString(), e1));
                 }
             }
-        } catch (Exception e1) {
-            Log.w(getClass().getName(), String.format("Could not get readings from %s ex: %s", chargeController.toString(), e1));
         }
     }
 
@@ -368,7 +392,7 @@ public class ModbusTask extends TimerTask {
         short[] mWattHourLog = new short[512];
         short[] mFloatLog = new short[512];
         while (day < 365) {
-            ReadFileTransferResponse regRes = modbusMaster.readFileTransfer(day, Constants.CLASSIC_KWHOUR_DAILY_CATEGORY, Constants.CLASSIC_DAILY_LOG);
+            ReadFileTransferResponse regRes = modbusMaster.readFileTransfer(day, Constants.CLASSIC_KWHOUR_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG);
             if (regRes != null) {
                 int count = regRes.getWordCount();
                 if (count > 0) {
@@ -386,7 +410,7 @@ public class ModbusTask extends TimerTask {
         }
         day = 0;
         while (day < 365) {
-            ReadFileTransferResponse regRes = modbusMaster.readFileTransfer(day, Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY, Constants.CLASSIC_DAILY_LOG);
+            ReadFileTransferResponse regRes = modbusMaster.readFileTransfer(day, Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG);
             if (regRes != null) {
                 int count = regRes.getWordCount();
                 if (count > 0) {
@@ -407,83 +431,116 @@ public class ModbusTask extends TimerTask {
     }
 
     private void LoadMinuteLogs() throws ModbusException {
-        int minute = 0;
-        short[] mWattLog = new short[1024];
-        int d = 0;
-        while (minute < 1024) {
-            ReadFileTransferResponse regRes = modbusMaster.readFileTransfer(minute, Constants.CLASSIC_POWER_HOURLY_CATEGORY, Constants.CLASSIC_MINUTE_LOG);
+        try {
+            int requiredEntries = ReadMinuteLogTimestamps(); // sum of minutes log up to 24 hours
+            minuteLogEntry.Set("CLASSIC_POWER_HOURLY_CATEGORY", ReadLogs(requiredEntries, Constants.CLASSIC_POWER_HOURLY_CATEGORY, 1));
+            minuteLogEntry.Set("CLASSIC_INPUT_VOLTAGE_HOURLY_CATEGORY", ReadLogs(requiredEntries, Constants.CLASSIC_INPUT_VOLTAGE_HOURLY_CATEGORY, 10));
+            minuteLogEntry.Set("CLASSIC_BATTERY_VOLTAGE_HOURLY_CATEGORY", ReadLogs(requiredEntries, Constants.CLASSIC_BATTERY_VOLTAGE_HOURLY_CATEGORY, 10));
+            minuteLogEntry.Set("CLASSIC_OUTPUT_CURRENT_HOURLY_CATEGORY", ReadLogs(requiredEntries, Constants.CLASSIC_OUTPUT_CURRENT_HOURLY_CATEGORY, 10));
+            minuteLogEntry.Set("CLASSIC_ENERGY_HOURLY_CATEGORY", ReadLogs(requiredEntries, Constants.CLASSIC_ENERGY_HOURLY_CATEGORY, 1));
+            minuteLogEntry.Set("CLASSIC_CHARGE_STATE_HOURLY_CATEGORY", ReadLogs(requiredEntries, Constants.CLASSIC_CHARGE_STATE_HOURLY_CATEGORY, 256));
+            Log.d(getClass().getName(), "Completed reading minute logs");
+        } catch (Exception ex) {
+            Log.w(getClass().getName(), String.format("LoadMinuteLogs failed ex: %s", ex));
+        }
+    }
+
+    private float[] ReadLogs(int requiredEntries, int category, int factor) throws ModbusException {
+        int index = 0;
+        float[] buffer = new float[requiredEntries];
+        while (index < requiredEntries) {
+            ReadFileTransferResponse regRes = modbusMaster.readFileTransfer(index, category, Constants.MODBUS_FILE_MINUTES_LOG);
             if (regRes != null) {
                 int count = regRes.getWordCount();
                 if (count > 0) {
-                    if (count >= 1024) {
-                        break;
-                    }
                     int j = count - 1;
                     for (int i = 0; i < count; i++, j--) {
-                        mWattLog[i + minute] = registerToShort(regRes.getRegister(j).toBytes());
+                        if (i + index > requiredEntries - 1) {
+                            break;
+                        }
+                        buffer[i + index] = registerToShort(regRes.getRegister(j).toBytes())/factor;
                     }
-                    minute += count;
+                    index += count;
                 }
             } else {
-
-                Log.w(getClass().getName(), String.format("Modbus readCustom returned null"));
-                throw new ModbusException("Failed to read File Transfer data from modbus");
+                Log.w(getClass().getName(), String.format("Modbus ReadLogs failed to get category: %d", category));
+                break;
+//                throw new ModbusException("Failed to read File Transfer data from modbus");
             }
         }
-        short[] mHourlyWattLog = new short[24];
 
-        // calculate the hourly power average, assume each entry is at a 5 minute interval (/12)
-        int v = 12;
-        int w = 0;
-        int sum = 0;
-        for (int k = 0; k < mWattLog.length; k++) {
-            if (v > 0) {
-                sum += mWattLog[k];
-                v--;
-            } else {
-                mHourlyWattLog[w++] = (short) (sum / 12);
-                sum = 0;
-                v = 12;
-                if (w >= mHourlyWattLog.length) {
-                    break;
-                }
-            }
-        }
-        minuteLogEntry.Set(Constants.CLASSIC_POWER_HOURLY_CATEGORY, mHourlyWattLog);
-        //LoadMinuteTimestamps();
+        return buffer;
     }
 
+    private int ReadMinuteLogTimestamps() throws ModbusException {
+        final int bufferSize = 1440; // assume max of one entry per minute for 20 hrs
+        int requiredEntries = 0;
+        int index = 0;
+        short lasMinute;
+        short currentMinute = -1;
+        short minuteSum = 0;
+        int minuteStamp = 0;
+        int hourStamp = 0;
+        short[] buffer = new short[bufferSize];
+        while (index < bufferSize) {
+            ReadFileTransferResponse regRes = modbusMaster.readFileTransfer(index, Constants.CLASSIC_TIMESTAMP_HIGH_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG);
+            if (regRes != null) {
+                int count = regRes.getWordCount();
+                if (count > 0) {
+                    int j = count - 1;
+                    for (int i = 0; i < count; i++, j--) {
+                        lasMinute = currentMinute;
+                        if (i + index > bufferSize - 1) {
+                            break;
+                        }
+                        short val = registerToShort(regRes.getRegister(j).toBytes());
+                        short min = (short) (val & 0x003f);
+                        short hour = (short) ((val >> 6) & 0x001f);
+                        currentMinute = (short)(min + hour * 60);
 
-//    private void LoadMinuteTimestamps() throws ModbusException {
-//        int minute = 0;
-//        short[] mMinuteTimestampLog = new short[512];
-//        short[] mHourTimestampLog = new short[512];
-//        while (minute < 512) {
-//            ReadFileTransferResponse regRes = _modbusMaster.readFileTransfer(minute, Constants.CLASSIC_TIMESTAMP_HIGH_HOURLY_CATEGORY, Constants.CLASSIC_MINUTE_LOG);
-//            if (regRes != null) {
-//                int count = regRes.getWordCount();
-//                if (count > 0) {
-//                    if (count >= 512) {
-//                        break;
-//                    }
-//                    int j = count - 1;
-//                    for (int i = 0; i < count; i++, j--) {
-//                        short val = registerToShort(regRes.getRegister(j).toBytes());
-//                        short min = (short) (val & 0x003f);
-//                        short hour = (short) (val  >> 6);
-//                        mMinuteTimestampLog[i + minute] = min;
-//                        mHourTimestampLog[i + minute] = hour;
-//                    }
-//                    minute += count;
-//                }
-//            } else {
-//
-//                Log.w(getClass().getName(), String.format("Modbus readCustom returned null"));
+                        if (lasMinute != -1) {
+                            if (currentMinute > lasMinute)
+                            {
+                                lasMinute += 1440; // roll over midnight
+                            }
+                            minuteSum += lasMinute - currentMinute;
+                            buffer[i + index] = minuteSum;
+                            if (minuteSum > 1440) { //minutes in 24 hours
+                                requiredEntries = i + index; // output buffer size required
+                                index = bufferSize; //exit while
+                                break; //exit for
+                            }
+                        }
+                        else {
+                            minuteStamp = min;
+                            hourStamp = hour;
+                        }
+                    }
+                    index += count;
+                }
+            } else {
+                Log.w(getClass().getName(), String.format("Modbus ReadLogs failed to get timestamps"));
+                break;
 //                throw new ModbusException("Failed to read File Transfer data from modbus");
-//            }
-//        }
-//        _minuteLogEntry.Set(Constants.CLASSIC_TIMESTAMP_HIGH_HOURLY_CATEGORY, mMinuteTimestampLog);
-//    }
+            }
+        }
+        short[] output = new short[requiredEntries];
+        System.arraycopy(buffer, 0, output, 0, requiredEntries);
+        minuteLogEntry.Set(Constants.CLASSIC_TIMESTAMP_HIGH_HOURLY_CATEGORY, output);
+        ReadFileTransferResponse regRes = modbusMaster.readFileTransfer(0, Constants.CLASSIC_TIMESTAMP_LOW_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG);
+        if (regRes != null) {
+            int count = regRes.getWordCount();
+            if (count > 0) {
+                short val = registerToShort(regRes.getRegister(count - 1).toBytes());
+                short month = (short) (val & 0x000f);
+                short day = (short) ((val >> 4) & 0x001f);
+                short year = (short) ((val >> 9) & 0x007e);
+                GregorianCalendar logDate = new GregorianCalendar(year + 2000, month - 1, day, hourStamp, minuteStamp);
+                minuteLogEntry.setLogDate(logDate);
+            }
+        }
+        return requiredEntries;
+    }
 
     private static short registerToShort(byte[] bytes) {
         return (short) ((bytes[1] << 8) | (bytes[0] & 0xff));
@@ -491,7 +548,6 @@ public class ModbusTask extends TimerTask {
 
     private void BroadcastLogs(String action, LogEntry logEntry) {
         Intent intent = new Intent(action);
-        intent.setClass(context, CalendarPage.class);
         intent.putExtra("logs", logEntry.GetLogs());
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }

@@ -73,14 +73,11 @@ public class EnergyFragment extends ReadingFramentBase {
         }
     }
 
-    public void restoreOriginalScale() {
-        if (restoreOriginalScale) {
-            restoreOriginalScale = false;
-            View v = this.getView().findViewById(R.id.EnergyToday);
-            if (v != null) {
-                BaseGauge gauge = (BaseGauge) v;
-                gauge.restoreOriginalScaleEnd();
-            }
+    public void monitoringDifferentChargeController() {
+        View v = this.getView().findViewById(R.id.EnergyToday);
+        if (v != null) {
+            BaseGauge gauge = (BaseGauge) v;
+            gauge.restoreOriginalScaleEnd();
         }
         return;
     }
