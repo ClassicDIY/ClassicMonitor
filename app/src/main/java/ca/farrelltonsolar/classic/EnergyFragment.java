@@ -58,13 +58,13 @@ public class EnergyFragment extends ReadingFramentBase {
             View v = this.getView().findViewById(R.id.EnergyToday);
             if (v != null) {
                 BaseGauge energyTodayGauge = (BaseGauge) v;
-                energyTodayGauge.setTargetValue(readings.GetFloat(RegisterName.EnergyToday));
+                energyTodayGauge.setTargetValue(readings.getFloat(RegisterName.EnergyToday));
 
             }
             v = this.getView().findViewById(R.id.EnergyTotalValue);
             if (v != null) {
                 Odometer odometer = (Odometer) v;
-                float val = readings.GetFloat(RegisterName.TotalEnergy) * 10;
+                float val = readings.getFloat(RegisterName.TotalEnergy) * 10;
                 int decval = (int) val;
                 odometer.setValue(decval);
             }

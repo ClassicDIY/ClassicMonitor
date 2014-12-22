@@ -66,21 +66,21 @@ public class PowerFragment extends ReadingFramentBase {
         try {
             View v = this.getView().findViewById(R.id.Power);
             if (v != null) {
-                ((SolarGauge) v).setTargetValue(readings.GetFloat(RegisterName.Power));
-                ((SolarGauge) v).setLeftLed(readings.GetBoolean(RegisterName.Aux1));
-                ((SolarGauge) v).setRightLed(readings.GetBoolean(RegisterName.Aux2));
+                ((SolarGauge) v).setTargetValue(readings.getFloat(RegisterName.Power));
+                ((SolarGauge) v).setLeftLed(readings.getBoolean(RegisterName.Aux1));
+                ((SolarGauge) v).setRightLed(readings.getBoolean(RegisterName.Aux2));
             }
             v = this.getView().findViewById(R.id.PVVoltage);
             if (v != null) {
-                ((BaseGauge) v).setTargetValue(readings.GetFloat(RegisterName.PVVoltage));
+                ((BaseGauge) v).setTargetValue(readings.getFloat(RegisterName.PVVoltage));
             }
             v = this.getView().findViewById(R.id.PVCurrent);
             if (v != null) {
-                ((BaseGauge) v).setTargetValue(readings.GetFloat(RegisterName.PVCurrent));
+                ((BaseGauge) v).setTargetValue(readings.getFloat(RegisterName.PVCurrent));
             }
             v = this.getView().findViewById(R.id.BatVoltage);
             if (v != null) {
-                float bVolts = readings.GetFloat(RegisterName.BatVoltage);
+                float bVolts = readings.getFloat(RegisterName.BatVoltage);
                 if (bVolts > 125) { // 120 volt system!
                     ((BaseGauge) v).setScaleEnd(200);
                     ((BaseGauge) v).setTargetValue(bVolts);
@@ -90,7 +90,7 @@ public class PowerFragment extends ReadingFramentBase {
             }
             v = this.getView().findViewById(R.id.BatCurrent);
             if (v != null) {
-                float batAmps = readings.GetFloat(RegisterName.BatCurrent);
+                float batAmps = readings.getFloat(RegisterName.BatCurrent);
                 ((BaseGauge) v).setTargetValue(batAmps);
             }
         } catch (Exception ignore) {

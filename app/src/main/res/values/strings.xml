@@ -97,6 +97,15 @@
     <string name="dialog_ipaddress_hint">IP Address</string>
     <string name="IPAddressPrompt">Enter a static IP address</string>
 
+    <string name="DayLogTabTitle">Day log calendar</string>
+    <string name="Sunday">"Sunday"</string>
+    <string name="Monday">"Monday"</string>
+    <string name="Tuesday">"Tuesday"</string>
+    <string name="Wednesday">"Wednesday"</string>
+    <string name="Thursday">"Thursday"</string>
+    <string name="Friday">"Friday"</string>
+    <string name="Saturday">"Saturday"</string>
+
     <string name="select_chart">Choose a chart</string>
     <string-array name="minute_log_chart_selection">
         <item>Power</item>

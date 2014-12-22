@@ -1,53 +1,71 @@
 package ca.farrelltonsolar.classic;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 
+import java.io.Serializable;
 import java.util.GregorianCalendar;
 
-public class LogEntry {
-    private Bundle _logs;
+public class LogEntry implements Serializable {
+    private Bundle logs;
     GregorianCalendar logDate;
-    int  logInterval;
 
     public LogEntry() {
-        _logs = new Bundle();
+        logs = new Bundle();
     }
 
     public void setLogDate(GregorianCalendar logDate) {
         this.logDate = logDate;
-        _logs.putSerializable("LogDate", logDate);
+        logs.putSerializable("LogDate", logDate);
     }
 
     public GregorianCalendar getLogDate() {
         return logDate;
     }
 
-    public Bundle get_logs() {
-        return _logs;
+    public boolean isEmpty() {
+        return logs.isEmpty();
     }
 
-    public Bundle GetLogs() {
-        return _logs;
+    public Bundle getLogs() {
+        return logs;
     }
 
-    public void Set(int category, short[] data) {
-        _logs.putShortArray(String.valueOf(category), data);
+    public void set(int category, short[] data) {
+        logs.putShortArray(String.valueOf(category), data);
         return;
     }
 
-    public void Set(String category, short[] data) {
-        _logs.putShortArray(category, data);
+    public void set(int category, float[] data) {
+        logs.putFloatArray(String.valueOf(category), data);
         return;
     }
 
-    public void Set(String category, float[] data) {
-        _logs.putFloatArray(category, data);
+    public void set(String category, short[] data) {
+        logs.putShortArray(category, data);
         return;
     }
 
-    public short[] Get(int category) {
-        return _logs.getShortArray(String.valueOf(category));
+    public void set(String category, float[] data) {
+        logs.putFloatArray(category, data);
+        return;
     }
 
+    public short[] getShortArray(int category) {
+        return logs.getShortArray(String.valueOf(category));
+    }
 
+    public float[] getFloatArray(int category) {
+        return logs.getFloatArray(String.valueOf(category));
+    }
+
+    public void broadcastLogs(Context context, String action) {
+        if (!logs.isEmpty()) {
+            Intent intent = new Intent(action);
+            intent.putExtra("logs", this);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        }
+    }
 }

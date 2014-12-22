@@ -159,9 +159,10 @@ public class ModbusTask extends TimerTask {
 
     @Override
     public void run() {
-        synchronized (lock) {
-            try {
 
+//        Log.d(getClass().getName(), "begin run");
+        try {
+            synchronized (lock) {
                 if (disconnecting) {
                     return;
                 }
@@ -178,47 +179,59 @@ public class ModbusTask extends TimerTask {
                         }
                     }
                     GetModbusReadings();
-                    if (dayLogEntry.GetLogs().isEmpty()) {
-                        LoadDayLogs();
-                    } else {
-                        BroadcastLogs("ca.farrelltonsolar.classic.DayLogs", dayLogEntry);
-                    }
-                    if (minuteLogEntry.GetLogs().isEmpty()) {
-                        LoadMinuteLogs();
-                    } else {
-                        BroadcastLogs("ca.farrelltonsolar.classic.MinuteLogs", minuteLogEntry);
-                    }
-                }
+                    if (!foundTriStar) {
+                        if (dayLogEntry.isEmpty()) {
+                            try {
+                                LoadDayLogs();
+                            } catch (Exception ex) {
+                                Log.w(getClass().getName(), String.format("Failed to load Day logs due to exception ex: %s", ex));
+                                dayLogEntry = new LogEntry();
+                            }
 
-            } catch (Exception e1) {
-                if (isConnected()) {
-                        if (modbusMaster != null) {
-                            modbusMaster.disconnect();
                         }
-                        modbusMaster = null;
-                    Log.w(getClass().getName(), String.format("Could not get readings, disconnected from %s due to exceptionex: %s", chargeController.toString(), e1));
-                }
-                else {
-                    Log.w(getClass().getName(), String.format("Could not get readings from %s, was disconnected ex: %s", chargeController.toString(), e1));
+                        if (minuteLogEntry.isEmpty()) {
+                            try {
+                                LoadMinuteLogs();
+                            } catch (Exception ex) {
+                                Log.w(getClass().getName(), String.format("Failed to load Minute logs due to exception ex: %s", ex));
+                                minuteLogEntry = new LogEntry();
+                            }
+                        }
+                    }
                 }
             }
+            dayLogEntry.broadcastLogs(context, Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS);
+            minuteLogEntry.broadcastLogs(context, Constants.CA_FARRELLTONSOLAR_CLASSIC_MINUTE_LOGS);
+
+        } catch (Exception e1) {
+            if (isConnected()) {
+                if (modbusMaster != null) {
+                    modbusMaster.disconnect();
+                }
+                modbusMaster = null;
+                Log.w(getClass().getName(), String.format("Could not get readings, disconnected from %s due to exception ex: %s", chargeController.toString(), e1));
+            } else {
+                Log.w(getClass().getName(), String.format("Could not get readings from %s, was disconnected ex: %s", chargeController.toString(), e1));
+            }
         }
+//        Log.d(getClass().getName(), "end run");
+
     }
 
     public void clearReadings() {
-        readings.Set(RegisterName.Power, 0.0f);
-        readings.Set(RegisterName.BatVoltage, 0.0f);
-        readings.Set(RegisterName.BatCurrent, 0.0f);
-        readings.Set(RegisterName.PVVoltage, 0.0f);
-        readings.Set(RegisterName.PVCurrent, 0.0f);
-        readings.Set(RegisterName.EnergyToday, 0.0f);
-        readings.Set(RegisterName.TotalEnergy, 0.0f);
-        readings.Set(RegisterName.ChargeState, -1);
-        readings.Set(RegisterName.ConnectionState, 0);
-        readings.Set(RegisterName.SOC, 0);
-        readings.Set(RegisterName.Aux1, false);
-        readings.Set(RegisterName.Aux2, false);
-        BroadcastReadings();
+        readings.set(RegisterName.Power, 0.0f);
+        readings.set(RegisterName.BatVoltage, 0.0f);
+        readings.set(RegisterName.BatCurrent, 0.0f);
+        readings.set(RegisterName.PVVoltage, 0.0f);
+        readings.set(RegisterName.PVCurrent, 0.0f);
+        readings.set(RegisterName.EnergyToday, 0.0f);
+        readings.set(RegisterName.TotalEnergy, 0.0f);
+        readings.set(RegisterName.ChargeState, -1);
+        readings.set(RegisterName.ConnectionState, 0);
+        readings.set(RegisterName.SOC, 0);
+        readings.set(RegisterName.Aux1, false);
+        readings.set(RegisterName.Aux2, false);
+        readings.broadcastReadings(context, Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS);
     }
 
     private void GetModbusReadings() throws ModbusException {
@@ -227,14 +240,14 @@ public class ModbusTask extends TimerTask {
                 ReadMultipleRegistersResponse regRes = modbusMaster.readMultipleRegisters(0, 80);
                 if (regRes != null) {
 
-                    readings.Set(RegisterName.BatVoltage, VScale(regRes.getRegisterValue(OffsetFor(25))));
-                    readings.Set(RegisterName.PVVoltage, VScale(regRes.getRegisterValue(OffsetFor(28))));
-                    readings.Set(RegisterName.BatCurrent, IScale(regRes.getRegisterValue(OffsetFor(29))));
-                    readings.Set(RegisterName.PVCurrent, IScale(regRes.getRegisterValue(OffsetFor(30))));
+                    readings.set(RegisterName.BatVoltage, VScale(regRes.getRegisterValue(OffsetFor(25))));
+                    readings.set(RegisterName.PVVoltage, VScale(regRes.getRegisterValue(OffsetFor(28))));
+                    readings.set(RegisterName.BatCurrent, IScale(regRes.getRegisterValue(OffsetFor(29))));
+                    readings.set(RegisterName.PVCurrent, IScale(regRes.getRegisterValue(OffsetFor(30))));
 
-                    readings.Set(RegisterName.Power, PScale(regRes.getRegisterValue(OffsetFor(59))));
-                    readings.Set(RegisterName.EnergyToday, WHr(regRes.getRegisterValue(OffsetFor(69))));
-                    readings.Set(RegisterName.TotalEnergy, regRes.getRegisterValue(OffsetFor(58)));
+                    readings.set(RegisterName.Power, PScale(regRes.getRegisterValue(OffsetFor(59))));
+                    readings.set(RegisterName.EnergyToday, WHr(regRes.getRegisterValue(OffsetFor(69))));
+                    readings.set(RegisterName.TotalEnergy, regRes.getRegisterValue(OffsetFor(58)));
 
                 }
             } else {
@@ -242,21 +255,21 @@ public class ModbusTask extends TimerTask {
                 if (regRes != null) {
                     if (!foundWhizBangJr) {
                         Register a = regRes.getRegister(OffsetFor(4117));
-                        readings.Set(RegisterName.BatCurrent, a.toShort() / 10.0f);
+                        readings.set(RegisterName.BatCurrent, a.toShort() / 10.0f);
                     }
-                    readings.Set(RegisterName.Power, (float) regRes.getRegisterValue(OffsetFor(4119)));
-                    readings.Set(RegisterName.BatVoltage, regRes.getRegisterValue(OffsetFor(4115)) / 10.0f);
-                    readings.Set(RegisterName.PVVoltage, regRes.getRegisterValue(OffsetFor(4116)) / 10.0f);
-                    readings.Set(RegisterName.PVCurrent, regRes.getRegisterValue(OffsetFor(4121)) / 10.0f);
-                    readings.Set(RegisterName.EnergyToday, regRes.getRegisterValue(OffsetFor(4118)) / 10.0f);
-                    readings.Set(RegisterName.TotalEnergy, ((regRes.getRegisterValue(OffsetFor(4127)) << 16) + regRes.getRegisterValue(OffsetFor(4126))) / 10.0f);
-                    readings.Set(RegisterName.ChargeState, MSBFor(regRes.getRegisterValue(OffsetFor(4120))));
-                    readings.Set(RegisterName.BatTemperature, regRes.getRegisterValue(OffsetFor(4132)) / 10.0f);
-                    readings.Set(RegisterName.FETTemperature, regRes.getRegisterValue(OffsetFor(4133)) / 10.0f);
-                    readings.Set(RegisterName.PCBTemperature, regRes.getRegisterValue(OffsetFor(4134)) / 10.0f);
+                    readings.set(RegisterName.Power, (float) regRes.getRegisterValue(OffsetFor(4119)));
+                    readings.set(RegisterName.BatVoltage, regRes.getRegisterValue(OffsetFor(4115)) / 10.0f);
+                    readings.set(RegisterName.PVVoltage, regRes.getRegisterValue(OffsetFor(4116)) / 10.0f);
+                    readings.set(RegisterName.PVCurrent, regRes.getRegisterValue(OffsetFor(4121)) / 10.0f);
+                    readings.set(RegisterName.EnergyToday, regRes.getRegisterValue(OffsetFor(4118)) / 10.0f);
+                    readings.set(RegisterName.TotalEnergy, ((regRes.getRegisterValue(OffsetFor(4127)) << 16) + regRes.getRegisterValue(OffsetFor(4126))) / 10.0f);
+                    readings.set(RegisterName.ChargeState, MSBFor(regRes.getRegisterValue(OffsetFor(4120))));
+                    readings.set(RegisterName.BatTemperature, regRes.getRegisterValue(OffsetFor(4132)) / 10.0f);
+                    readings.set(RegisterName.FETTemperature, regRes.getRegisterValue(OffsetFor(4133)) / 10.0f);
+                    readings.set(RegisterName.PCBTemperature, regRes.getRegisterValue(OffsetFor(4134)) / 10.0f);
                     int infoFlag = regRes.getRegisterValue(OffsetFor(4130));
-                    readings.Set(RegisterName.Aux1, (infoFlag & 0x4000) != 0);
-                    readings.Set(RegisterName.Aux2, (infoFlag & 0x8000) != 0);
+                    readings.set(RegisterName.Aux1, (infoFlag & 0x4000) != 0);
+                    readings.set(RegisterName.Aux2, (infoFlag & 0x8000) != 0);
                 } else {
                     Log.w(getClass().getName(), String.format("Modbus readMultipleRegisters returned null"));
                     throw new ModbusException("Failed to read data from modbus");
@@ -265,15 +278,15 @@ public class ModbusTask extends TimerTask {
                     ReadMultipleRegistersResponse regRes2 = modbusMaster.readMultipleRegisters(4360, 16);
                     if (regRes2 != null) {
                         Register a = regRes2.getRegister(10);
-                        readings.Set(RegisterName.BatCurrent, a.toShort() / 10.0f);
+                        readings.set(RegisterName.BatCurrent, a.toShort() / 10.0f);
                         Register soc = regRes2.getRegister(12);
                         short socVal = soc.toShort();
-                        readings.Set(RegisterName.SOC, socVal);
+                        readings.set(RegisterName.SOC, socVal);
                     }
                 }
-                readings.Set(RegisterName.BiDirectional, foundWhizBangJr);
+                readings.set(RegisterName.BiDirectional, foundWhizBangJr);
             }
-            BroadcastReadings();
+            readings.broadcastReadings(context, Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS);
 
         } catch (ModbusException e) {
             e.printStackTrace();
@@ -289,13 +302,6 @@ public class ModbusTask extends TimerTask {
         intent2.setClass(context, ReadingFramentBase.class);
         intent2.putExtra("message", message);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent2);
-    }
-
-    private void BroadcastReadings() {
-        Intent intent = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS);
-        intent.setClass(context, ReadingFramentBase.class);
-        intent.putExtra("readings", readings.GetReadings());
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     public Bundle getChargeControllerInformation() throws ModbusException {
@@ -388,68 +394,40 @@ public class ModbusTask extends TimerTask {
     }
 
     private void LoadDayLogs() throws ModbusException {
-        int day = 0;
-        short[] mWattHourLog = new short[512];
-        short[] mFloatLog = new short[512];
-        while (day < 365) {
-            ReadFileTransferResponse regRes = modbusMaster.readFileTransfer(day, Constants.CLASSIC_KWHOUR_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG);
-            if (regRes != null) {
-                int count = regRes.getWordCount();
-                if (count > 0) {
-                    int j = count - 1;
-                    for (int i = 0; i < count; i++, j--) {
-                        mWattHourLog[j + day] = registerToShort(regRes.getRegister(i).toBytes());
-                    }
-                    day += count;
-                }
-            } else {
-
-                Log.w(getClass().getName(), String.format("Modbus readCustom returned null"));
-                throw new ModbusException("Failed to read File Transfer data from modbus");
-            }
+        dayLogEntry.set(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_KWHOUR_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
+        dayLogEntry.set(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
+        try {
+            dayLogEntry.set(Constants.CLASSIC_HIGH_POWER_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_HIGH_POWER_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
+            dayLogEntry.set(Constants.CLASSIC_HIGH_TEMP_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_HIGH_TEMP_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
+            dayLogEntry.set(Constants.CLASSIC_HIGH_PV_VOLT_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_HIGH_PV_VOLT_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
+            dayLogEntry.set(Constants.CLASSIC_HIGH_BATTERY_VOLT_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_HIGH_BATTERY_VOLT_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
         }
-        day = 0;
-        while (day < 365) {
-            ReadFileTransferResponse regRes = modbusMaster.readFileTransfer(day, Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG);
-            if (regRes != null) {
-                int count = regRes.getWordCount();
-                if (count > 0) {
-                    int j = count - 1;
-                    for (int i = 0; i < count; i++, j--) {
-                        mFloatLog[j + day] = registerToShort(regRes.getRegister(i).toBytes());
-                    }
-                    day += count;
-                }
-            } else {
-
-                Log.w(getClass().getName(), String.format("Modbus readCustom returned null"));
-                throw new ModbusException("Failed to read File Transfer data from modbus");
-            }
+        catch (Exception ex){
+            Log.w(getClass().getName(), String.format("LoadDayLogs failed, but did get power & float series ex: %s", ex));
         }
-        dayLogEntry.Set(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY, mWattHourLog);
-        dayLogEntry.Set(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY, mFloatLog);
+
     }
 
     private void LoadMinuteLogs() throws ModbusException {
         try {
             int requiredEntries = ReadMinuteLogTimestamps(); // sum of minutes log up to 24 hours
-            minuteLogEntry.Set("CLASSIC_POWER_HOURLY_CATEGORY", ReadLogs(requiredEntries, Constants.CLASSIC_POWER_HOURLY_CATEGORY, 1));
-            minuteLogEntry.Set("CLASSIC_INPUT_VOLTAGE_HOURLY_CATEGORY", ReadLogs(requiredEntries, Constants.CLASSIC_INPUT_VOLTAGE_HOURLY_CATEGORY, 10));
-            minuteLogEntry.Set("CLASSIC_BATTERY_VOLTAGE_HOURLY_CATEGORY", ReadLogs(requiredEntries, Constants.CLASSIC_BATTERY_VOLTAGE_HOURLY_CATEGORY, 10));
-            minuteLogEntry.Set("CLASSIC_OUTPUT_CURRENT_HOURLY_CATEGORY", ReadLogs(requiredEntries, Constants.CLASSIC_OUTPUT_CURRENT_HOURLY_CATEGORY, 10));
-            minuteLogEntry.Set("CLASSIC_ENERGY_HOURLY_CATEGORY", ReadLogs(requiredEntries, Constants.CLASSIC_ENERGY_HOURLY_CATEGORY, 1));
-            minuteLogEntry.Set("CLASSIC_CHARGE_STATE_HOURLY_CATEGORY", ReadLogs(requiredEntries, Constants.CLASSIC_CHARGE_STATE_HOURLY_CATEGORY, 256));
+            minuteLogEntry.set(Constants.CLASSIC_POWER_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_POWER_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 1));
+            minuteLogEntry.set(Constants.CLASSIC_INPUT_VOLTAGE_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_INPUT_VOLTAGE_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 10));
+            minuteLogEntry.set(Constants.CLASSIC_BATTERY_VOLTAGE_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_BATTERY_VOLTAGE_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 10));
+            minuteLogEntry.set(Constants.CLASSIC_OUTPUT_CURRENT_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_OUTPUT_CURRENT_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 10));
+            minuteLogEntry.set(Constants.CLASSIC_ENERGY_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_ENERGY_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 1));
+            minuteLogEntry.set(Constants.CLASSIC_CHARGE_STATE_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_CHARGE_STATE_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 256));
             Log.d(getClass().getName(), "Completed reading minute logs");
         } catch (Exception ex) {
             Log.w(getClass().getName(), String.format("LoadMinuteLogs failed ex: %s", ex));
         }
     }
 
-    private float[] ReadLogs(int requiredEntries, int category, int factor) throws ModbusException {
+    private float[] ReadLogs(int requiredEntries, int category, int device, int factor) throws ModbusException {
         int index = 0;
         float[] buffer = new float[requiredEntries];
         while (index < requiredEntries) {
-            ReadFileTransferResponse regRes = modbusMaster.readFileTransfer(index, category, Constants.MODBUS_FILE_MINUTES_LOG);
+            ReadFileTransferResponse regRes = modbusMaster.readFileTransfer(index, category, device);
             if (regRes != null) {
                 int count = regRes.getWordCount();
                 if (count > 0) {
@@ -458,7 +436,7 @@ public class ModbusTask extends TimerTask {
                         if (i + index > requiredEntries - 1) {
                             break;
                         }
-                        buffer[i + index] = registerToShort(regRes.getRegister(j).toBytes())/factor;
+                        buffer[i + index] = registerToShort(regRes.getRegister(j).toBytes()) / factor;
                     }
                     index += count;
                 }
@@ -496,11 +474,10 @@ public class ModbusTask extends TimerTask {
                         short val = registerToShort(regRes.getRegister(j).toBytes());
                         short min = (short) (val & 0x003f);
                         short hour = (short) ((val >> 6) & 0x001f);
-                        currentMinute = (short)(min + hour * 60);
+                        currentMinute = (short) (min + hour * 60);
 
                         if (lasMinute != -1) {
-                            if (currentMinute > lasMinute)
-                            {
+                            if (currentMinute > lasMinute) {
                                 lasMinute += 1440; // roll over midnight
                             }
                             minuteSum += lasMinute - currentMinute;
@@ -510,8 +487,7 @@ public class ModbusTask extends TimerTask {
                                 index = bufferSize; //exit while
                                 break; //exit for
                             }
-                        }
-                        else {
+                        } else {
                             minuteStamp = min;
                             hourStamp = hour;
                         }
@@ -526,7 +502,7 @@ public class ModbusTask extends TimerTask {
         }
         short[] output = new short[requiredEntries];
         System.arraycopy(buffer, 0, output, 0, requiredEntries);
-        minuteLogEntry.Set(Constants.CLASSIC_TIMESTAMP_HIGH_HOURLY_CATEGORY, output);
+        minuteLogEntry.set(Constants.CLASSIC_TIMESTAMP_HIGH_HOURLY_CATEGORY, output);
         ReadFileTransferResponse regRes = modbusMaster.readFileTransfer(0, Constants.CLASSIC_TIMESTAMP_LOW_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG);
         if (regRes != null) {
             int count = regRes.getWordCount();
@@ -546,11 +522,7 @@ public class ModbusTask extends TimerTask {
         return (short) ((bytes[1] << 8) | (bytes[0] & 0xff));
     }
 
-    private void BroadcastLogs(String action, LogEntry logEntry) {
-        Intent intent = new Intent(action);
-        intent.putExtra("logs", logEntry.GetLogs());
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-    }
+
 
     // Tristar code...
     private int OffsetFor(int address) {

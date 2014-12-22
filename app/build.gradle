@@ -33,7 +33,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':j2modlite')
     compile project(':uicomponents')
-
+    compile files('libs/joda-time-2.6.jar')
 }
 
 repositories{

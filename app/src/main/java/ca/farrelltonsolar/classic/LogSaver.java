@@ -61,7 +61,7 @@ public class LogSaver {
     private BroadcastReceiver mDayLogReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Bundle logs = intent.getBundleExtra("logs");
+            LogEntry logs = (LogEntry)intent.getSerializableExtra("logs");
             Date logDate = LogDate();
             if (logDate != null) {
                 Calendar rightNow = Calendar.getInstance();
@@ -85,9 +85,9 @@ public class LogSaver {
         }
     };
 
-    private void SaveLogs(Bundle logs) {
+    private void SaveLogs(LogEntry logs) {
         String updatedLogFilename = GetFileName();
-        save(logs, updatedLogFilename);
+        save(logs.getLogs(), updatedLogFilename);
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
         String fName = settings.getString("LogDate", "");
         if (fName.length() > 0) {

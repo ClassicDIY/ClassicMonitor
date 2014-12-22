@@ -48,7 +48,7 @@ import ca.farrelltonsolar.uicomponents.ValueLabelAdapter;
 /**
  * Created by Graham on 19/12/2014.
  */
-public class HourLogChart extends Fragment implements AdapterView.OnItemSelectedListener {
+public class HourLogChart extends Fragment {
 
     private boolean isReceiverRegistered;
     ChartView chartView;
@@ -148,36 +148,25 @@ public class HourLogChart extends Fragment implements AdapterView.OnItemSelected
     private BroadcastReceiver mReadingsReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(getClass().getName(), "mReadingsReceiver");
             try {
-                Bundle logs = intent.getBundleExtra("logs");
+                LogEntry logs = (LogEntry)intent.getSerializableExtra("logs");
                 if (logs != null) {
                     unRegisterReceiver();
                     new ChartLoader(logs).execute();
-                    Log.d(getClass().getName(), String.format("Chart received logs from classic %s", Thread.currentThread().getName()));
+                    Log.d(getClass().getName(), String.format("Hour Log Chart received logs from classic %s", Thread.currentThread().getName()));
                 }
             } catch (Exception e) {
-                Log.w(getClass().getName(), String.format("Chart failed to load logs %s ex: %s", Thread.currentThread().getName(), e));
+                Log.w(getClass().getName(), String.format("Hour Log Chart failed to load logs %s ex: %s", Thread.currentThread().getName(), e));
             }
 
         }
     };
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
-
     private class ChartLoader extends AsyncTask<String, Void, String> {
-        private ChartLoader(Bundle logs) {
+        private ChartLoader(LogEntry logs) {
             this.logs = logs;
         }
-        Bundle logs;
+        LogEntry logs;
         LinearSeries seriesPower;
         LinearSeries seriesInputVoltage;
         LinearSeries seriesBatteryVoltage;
@@ -187,13 +176,13 @@ public class HourLogChart extends Fragment implements AdapterView.OnItemSelected
 
         @Override
         protected String doInBackground(String... params) {
-            short[] timeStamps = logs.getShortArray(String.valueOf(Constants.CLASSIC_TIMESTAMP_HIGH_HOURLY_CATEGORY));
-            seriesPower = getLinearSeries(timeStamps, logs.getFloatArray("CLASSIC_POWER_HOURLY_CATEGORY"));
-            seriesInputVoltage = getLinearSeries(timeStamps, logs.getFloatArray("CLASSIC_INPUT_VOLTAGE_HOURLY_CATEGORY"));
-            seriesBatteryVoltage = getLinearSeries(timeStamps, logs.getFloatArray("CLASSIC_BATTERY_VOLTAGE_HOURLY_CATEGORY"));
-            seriesOutputCurrent = getLinearSeries(timeStamps, logs.getFloatArray("CLASSIC_OUTPUT_CURRENT_HOURLY_CATEGORY"));
-            seriesChargeState = getLinearSeries(timeStamps, logs.getFloatArray("CLASSIC_CHARGE_STATE_HOURLY_CATEGORY"));
-            seriesEnergy = getLinearSeries(timeStamps, logs.getFloatArray("CLASSIC_ENERGY_HOURLY_CATEGORY"));
+            short[] timeStamps = logs.getShortArray(Constants.CLASSIC_TIMESTAMP_HIGH_HOURLY_CATEGORY);
+            seriesPower = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_POWER_HOURLY_CATEGORY));
+            seriesInputVoltage = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_INPUT_VOLTAGE_HOURLY_CATEGORY));
+            seriesBatteryVoltage = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_BATTERY_VOLTAGE_HOURLY_CATEGORY));
+            seriesOutputCurrent = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_OUTPUT_CURRENT_HOURLY_CATEGORY));
+            seriesChargeState = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_CHARGE_STATE_HOURLY_CATEGORY));
+            seriesEnergy = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_ENERGY_HOURLY_CATEGORY));
             Log.d(getClass().getName(), String.format("Chart doInBackground completed %s", Thread.currentThread().getName()));
             return "";
         }

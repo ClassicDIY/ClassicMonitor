@@ -54,6 +54,7 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
         tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
         tabStripAdapter.addTab(TemperatureFragment.TabTitle, TemperatureFragment.class, null);
         tabStripAdapter.addTab(R.string.CalendarTabTitle, CalendarPage.class, null);
+        tabStripAdapter.addTab(R.string.DayLogTabTitle, DayLogCalendar.class, null);
         tabStripAdapter.addTab(R.string.ChartTabTitle, HourLogChart.class, null);
         tabStripAdapter.notifyTabsChanged();
     }

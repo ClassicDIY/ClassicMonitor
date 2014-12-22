@@ -30,8 +30,8 @@ import java.util.Date;
 public class CalendarPage extends Fragment {
 
 
-    short[] mData;
-    short[] mFloatData;
+    float[] mData;
+    float[] mFloatData;
     private String mPageData;
     WebView mWebView;
     private boolean isReceiverRegistered;
@@ -180,10 +180,10 @@ public class CalendarPage extends Fragment {
             //SetReadings(new Readings(intent.getBundleExtra("readings")));
 
             try {
-                Bundle logs = intent.getBundleExtra("logs");
+                LogEntry logs = (LogEntry)intent.getSerializableExtra("logs");
                 if (logs != null) {
-                    mData = logs.getShortArray(String.valueOf(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY));
-                    mFloatData = logs.getShortArray(String.valueOf(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY));
+                    mData = logs.getFloatArray(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY);
+                    mFloatData = logs.getFloatArray(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY);
                 }
 
             } catch (Exception e) {

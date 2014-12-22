@@ -50,15 +50,15 @@ public class TemperatureFragment extends ReadingFramentBase {
         try {
 
             BaseGauge gaugeView = (BaseGauge) this.getView().findViewById(R.id.BatTemperature);
-            float batteryTemp = reading.GetFloat(RegisterName.BatTemperature);
+            float batteryTemp = reading.getFloat(RegisterName.BatTemperature);
             gaugeView.setTargetValue(batteryTemp);
 
             gaugeView = (BaseGauge) this.getView().findViewById(R.id.FETTemperature);
-            float fetTemp = reading.GetFloat(RegisterName.FETTemperature);
+            float fetTemp = reading.getFloat(RegisterName.FETTemperature);
             gaugeView.setTargetValue(fetTemp);
 
             gaugeView = (BaseGauge) this.getView().findViewById(R.id.PCBTemperature);
-            float pcbTemp = reading.GetFloat(RegisterName.PCBTemperature);
+            float pcbTemp = reading.getFloat(RegisterName.PCBTemperature);
             gaugeView.setTargetValue(pcbTemp);
 
         } catch (Exception ignore) {

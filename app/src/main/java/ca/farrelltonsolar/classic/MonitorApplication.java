@@ -161,20 +161,27 @@ public class MonitorApplication extends Application implements Application.Activ
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+
         Log.d(getClass().getName(), "onActivityCreated");
     }
 
     @Override
+    public void onActivityDestroyed(Activity activity) {
+        Log.d(getClass().getName(), "onActivityDestroyed");
+    }
+
+    @Override
     public void onActivityStarted(Activity activity) {
+        if (activity.getLocalClassName().equals("MonitorActivity")) {
+            bindService(new Intent(this, ModbusService.class), modbusServiceConnection, Context.BIND_AUTO_CREATE);
+            bindService(new Intent(this, UDPListener.class), UDPListenerServiceConnection, Context.BIND_AUTO_CREATE);
+        }
         Log.d(getClass().getName(), "onActivityStarted");
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
         Log.d(getClass().getName(), "onActivityResumed");
-        bindService(new Intent(this, ModbusService.class), modbusServiceConnection, Context.BIND_AUTO_CREATE);
-        bindService(new Intent(this, UDPListener.class), UDPListenerServiceConnection, Context.BIND_AUTO_CREATE);
-
     }
 
     @Override
@@ -184,24 +191,23 @@ public class MonitorApplication extends Application implements Application.Activ
 
     @Override
     public void onActivityStopped(Activity activity) {
+        if (activity.getLocalClassName().equals("MonitorActivity")) {
+            try {
+                if (ismodbusServiceBound) {
+                    modbusService.disconnect(false);
+                    unbindService(modbusServiceConnection);
+                    Log.d(getClass().getName(), "unbindService modbusServiceConnection");
+                }
+                if (isUDPListenerServiceBound) {
+                    UDPListenerService.stopListening();
+                    unbindService(UDPListenerServiceConnection);
+                    Log.d(getClass().getName(), "unbindService UDPListenerServiceConnection");
+                }
+            } catch (Exception ex) {
+                Log.w(getClass().getName(), "onActivityDestroyed exception ex: " + ex);
+            }
+        }
         Log.d(getClass().getName(), "onActivityStopped");
-        if (ismodbusServiceBound) {
-            modbusService.disconnect(false);
-            unbindService(modbusServiceConnection);
-            Log.d(getClass().getName(), "unbindService modbusServiceConnection");
-        }
-        if (isUDPListenerServiceBound) {
-            UDPListenerService.stopListening();
-            unbindService(UDPListenerServiceConnection);
-            Log.d(getClass().getName(), "unbindService UDPListenerServiceConnection");
-        }
-    }
-
-    private class ModbusDisconnector extends Thread {
-        @Override
-        public void run() {
-            modbusService.disconnect(false);
-        }
     }
 
     @Override
@@ -211,10 +217,6 @@ public class MonitorApplication extends Application implements Application.Activ
         configuration.commit();
     }
 
-    @Override
-    public void onActivityDestroyed(Activity activity) {
-        Log.d(getClass().getName(), "onActivityDestroyed");
-    }
 
     public static void clearChargeControllerList(boolean all) {
         modbusService.disconnect(true);

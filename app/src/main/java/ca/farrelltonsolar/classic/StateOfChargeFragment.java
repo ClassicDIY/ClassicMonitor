@@ -44,14 +44,14 @@ public class StateOfChargeFragment extends ReadingFramentBase {
             View v = this.getView().findViewById(R.id.BidirectionalCurrent);
             if (v != null) {
                 BaseGauge gaugeView = (BaseGauge) v;
-                float batteryCurrent = readings.GetFloat(RegisterName.BatCurrent);
+                float batteryCurrent = readings.getFloat(RegisterName.BatCurrent);
                 if (bidirectionalUnitsInWatts) {
-                    float batteryVolts = readings.GetFloat(RegisterName.BatVoltage);
+                    float batteryVolts = readings.getFloat(RegisterName.BatVoltage);
                     gaugeView.setTargetValue(batteryCurrent * batteryVolts);
                 } else {
                     gaugeView.setTargetValue(batteryCurrent);
                 }
-                int socVal = readings.GetInt(RegisterName.SOC);
+                int socVal = readings.getInt(RegisterName.SOC);
                 SOCGauge soc = (SOCGauge) this.getView().findViewById(R.id.SOC);
                 soc.setValue(socVal);
             }
