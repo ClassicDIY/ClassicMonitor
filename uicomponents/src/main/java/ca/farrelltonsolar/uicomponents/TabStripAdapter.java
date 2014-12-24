@@ -23,6 +23,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -49,6 +50,12 @@ public class TabStripAdapter extends FragmentPagerAdapter {
         private final int mTitleRes;
 
         public final int mPosition;
+
+        @Override
+        protected void finalize() throws Throwable {
+            Log.d(getClass().getName(), "TabStripAdapter finalized");
+            super.finalize();
+        }
 
         TabInfo(int position, Class<?> fragmentClass, Bundle args, int titleRes) {
             mPosition = position;
@@ -106,18 +113,18 @@ public class TabStripAdapter extends FragmentPagerAdapter {
             }
             position++;
         }
-//        String tag = makeFragmentName(viewPager.getId(), getItemId(position));
-//        Fragment oldFragment = fragmentManager.findFragmentByTag(tag);
-//        if (oldFragment!= null) {
-////        remove it
-//            destroyItem(null, position, oldFragment);
-//            finishUpdate(null);
-//            viewPager.removeView(oldFragment.getView());
-//            FragmentTransaction transaction = fragmentManager.beginTransaction();
-//            transaction.remove(oldFragment);
-//            transaction.commitAllowingStateLoss();
-//            fragmentManager.executePendingTransactions();
-//        }
+        String tag = makeFragmentName(viewPager.getId(), getItemId(position));
+        Fragment oldFragment = fragmentManager.findFragmentByTag(tag);
+        if (oldFragment!= null) {
+//        remove it
+            destroyItem(null, position, oldFragment);
+            finishUpdate(null);
+            viewPager.removeView(oldFragment.getView());
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.remove(oldFragment);
+            transaction.commitAllowingStateLoss();
+            fragmentManager.executePendingTransactions();
+        }
     }
 
     @Override

@@ -74,7 +74,7 @@ public class HourLogChart extends Fragment {
     public void onStart() {
         super.onStart();
         if (!isReceiverRegistered) {
-            LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MINUTE_LOGS));
+            LocalBroadcastManager.getInstance(HourLogChart.this.getActivity()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MINUTE_LOGS));
             isReceiverRegistered = true;
         }
         Log.d(getClass().getName(), "onStart");
@@ -136,7 +136,7 @@ public class HourLogChart extends Fragment {
     private void unRegisterReceiver() {
         if (isReceiverRegistered) {
             try {
-                LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).unregisterReceiver(mReadingsReceiver);
+                LocalBroadcastManager.getInstance(HourLogChart.this.getActivity()).unregisterReceiver(mReadingsReceiver);
             } catch (IllegalArgumentException e) {
                 // Do nothing
             }

@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014. FarrelltonSolar
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package ca.farrelltonsolar.classic;
 
 import android.app.Activity;
@@ -26,41 +42,42 @@ public class MonitorApplication extends Application implements Application.Activ
 
     static Map<Integer, String> _chargeStates = new HashMap<Integer, String>();
     static Map<Integer, String> _chargeStateTitles = new HashMap<Integer, String>();
-    static ModbusService modbusService;
     static UDPListener UDPListenerService;
-    static boolean ismodbusServiceBound = false;
     static boolean isUDPListenerServiceBound = false;
     private static ChargeControllers chargeControllers;
     private static Gson GSON = new Gson();
     ComplexPreferences configuration;
 
-    private static LogSaver mLogSaver = new LogSaver();
-
     @Override
-    public void onTerminate() {
-        super.onTerminate();
-        mLogSaver.Terminate();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(addChargeControllerReceiver);
-        Log.d(getClass().getName(), "onTerminate complete");
+    protected void finalize() throws Throwable {
+        try {
+            if (isUDPListenerServiceBound) {
+                UDPListenerService.stopListening();
+                unbindService(UDPListenerServiceConnection);
+            }
+        } catch (Exception ex) {
+            Log.w(getClass().getName(), "onActivityDestroyed exception ex: " + ex);
+        }
+        super.finalize();
     }
 
     public void onCreate() {
         super.onCreate();
 
         MonitorApplication.context = getApplicationContext();
-        chargeControllers = new ChargeControllers(context);
         InitializeChargeStateLookup();
         InitializeChargeStateTitleLookup();
-        mLogSaver.Start();
-        //mLogSaver.ResetLogs();
-
-        this.registerActivityLifecycleCallbacks(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(addChargeControllerReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER));
         configuration = ComplexPreferences.getComplexPreferences(this, null, Context.MODE_PRIVATE);
         chargeControllers = configuration.getObject("devices", ChargeControllers.class);
         if (chargeControllers == null) { // save empty collection
             chargeControllers = new ChargeControllers(context);
         }
+        if (chargeControllers.uploadToPVOutput()) {
+            startService(new Intent(this, PVOutputService.class)); // start PVOutputService intent service
+        }
+        this.registerActivityLifecycleCallbacks(this);
+        bindService(new Intent(this, UDPListener.class), UDPListenerServiceConnection, Context.BIND_AUTO_CREATE);
         Log.d(getClass().getName(), "onCreate complete");
     }
 
@@ -110,26 +127,6 @@ public class MonitorApplication extends Application implements Application.Activ
         _chargeStateTitles.put(18, getString(R.string.SeekingEqualizeTitle));
     }
 
-    private ServiceConnection modbusServiceConnection = new ServiceConnection() {
-
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            ModbusService.ModbusServiceBinder binder = (ModbusService.ModbusServiceBinder) service;
-            modbusService = binder.getService();
-            ismodbusServiceBound = true;
-            ChargeController cc = chargeControllers.getCurrentChargeController();
-            if (cc != null) { // device selected before service was bound
-                modbusService.Monitor(cc, false);
-            }
-            Log.d(getClass().getName(), cc != null ? String.format("ModbusService ServiceConnected, monitoring device %s", cc) : "ModbusService ServiceConnected");
-        }
-
-        public void onServiceDisconnected(ComponentName arg0) {
-            ismodbusServiceBound = false;
-            modbusService = null;
-            Log.d(getClass().getName(), "ModbusService ServiceDisconnected");
-        }
-    };
-
     private ServiceConnection UDPListenerServiceConnection = new ServiceConnection() {
 
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -151,7 +148,7 @@ public class MonitorApplication extends Application implements Application.Activ
     private BroadcastReceiver addChargeControllerReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            ChargeController cc = GSON.fromJson(intent.getStringExtra("ChargeController"), ChargeController.class);
+            ChargeControllerInfo cc = GSON.fromJson(intent.getStringExtra("ChargeController"), ChargeController.class);
             Log.d(getClass().getName(), String.format("adding new controller to list (%s)", cc.toString()));
             chargeControllers.add(cc);
             UDPListenerService.stopListening();
@@ -159,67 +156,7 @@ public class MonitorApplication extends Application implements Application.Activ
         }
     };
 
-    @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-
-        Log.d(getClass().getName(), "onActivityCreated");
-    }
-
-    @Override
-    public void onActivityDestroyed(Activity activity) {
-        Log.d(getClass().getName(), "onActivityDestroyed");
-    }
-
-    @Override
-    public void onActivityStarted(Activity activity) {
-        if (activity.getLocalClassName().equals("MonitorActivity")) {
-            bindService(new Intent(this, ModbusService.class), modbusServiceConnection, Context.BIND_AUTO_CREATE);
-            bindService(new Intent(this, UDPListener.class), UDPListenerServiceConnection, Context.BIND_AUTO_CREATE);
-        }
-        Log.d(getClass().getName(), "onActivityStarted");
-    }
-
-    @Override
-    public void onActivityResumed(Activity activity) {
-        Log.d(getClass().getName(), "onActivityResumed");
-    }
-
-    @Override
-    public void onActivityPaused(Activity activity) {
-        Log.d(getClass().getName(), "onActivityPaused");
-    }
-
-    @Override
-    public void onActivityStopped(Activity activity) {
-        if (activity.getLocalClassName().equals("MonitorActivity")) {
-            try {
-                if (ismodbusServiceBound) {
-                    modbusService.disconnect(false);
-                    unbindService(modbusServiceConnection);
-                    Log.d(getClass().getName(), "unbindService modbusServiceConnection");
-                }
-                if (isUDPListenerServiceBound) {
-                    UDPListenerService.stopListening();
-                    unbindService(UDPListenerServiceConnection);
-                    Log.d(getClass().getName(), "unbindService UDPListenerServiceConnection");
-                }
-            } catch (Exception ex) {
-                Log.w(getClass().getName(), "onActivityDestroyed exception ex: " + ex);
-            }
-        }
-        Log.d(getClass().getName(), "onActivityStopped");
-    }
-
-    @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-        Log.d(getClass().getName(), "onActivitySaveInstanceState");
-        configuration.putObject("devices", chargeControllers);
-        configuration.commit();
-    }
-
-
     public static void clearChargeControllerList(boolean all) {
-        modbusService.disconnect(true);
         if (all) {
             chargeControllers.clear();
         } else {
@@ -228,14 +165,52 @@ public class MonitorApplication extends Application implements Application.Activ
         UDPListenerService.listen(chargeControllers);
     }
 
-    public static void monitor(int device) {
+    public static void monitorChargeController(int device) {
         if (device < 0 || device >= chargeControllers.count()) {
             return;
         }
         if (chargeControllers.setCurrent(device)) {
-            if (ismodbusServiceBound) {
-                modbusService.Monitor(chargeControllers.getCurrentChargeController(), true);
-            }
+            LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(context);
+            Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER);
+            pkg.putExtra("DifferentController", true);
+            broadcaster.sendBroadcast(pkg); //notify activity
         }
+    }
+
+    @Override
+    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+
+    }
+
+    @Override
+    public void onActivityStarted(Activity activity) {
+
+    }
+
+    @Override
+    public void onActivityResumed(Activity activity) {
+
+    }
+
+    @Override
+    public void onActivityPaused(Activity activity) {
+
+    }
+
+    @Override
+    public void onActivityStopped(Activity activity) {
+        Log.d(getClass().getName(), "saving charegController settings");
+        configuration.putObject("devices", chargeControllers);
+        configuration.commit();
+    }
+
+    @Override
+    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+    }
+
+    @Override
+    public void onActivityDestroyed(Activity activity) {
+
     }
 }

@@ -1,13 +1,30 @@
+/*
+ * Copyright (c) 2014. FarrelltonSolar
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package ca.farrelltonsolar.classic;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -17,19 +34,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
 import ca.farrelltonsolar.uicomponents.SlidingTabLayout;
 import ca.farrelltonsolar.uicomponents.TabStripAdapter;
 
-public class MonitorActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, IPAddressDialog.OnIPAddressDialogInteractionListener, ViewPager.OnPageChangeListener {
+public class MonitorActivity extends ActionBarActivity {
 
     private NavigationDrawerFragment navigationDrawerFragment;
     private TabStripAdapter tabStripAdapter;
     private String currentUnitName = "";
     private int currentChargeState = -1;
-    private static Gson GSON = new Gson();
     private boolean isReceiverRegistered;
+    private SlidingTabLayout stl;
+    private ViewPager viewPager;
+    static boolean ismodbusServiceBound = false;
+    ModbusService modbusService;
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,41 +62,27 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
         // Set up the drawer.
         DrawerLayout layout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationDrawerFragment.setUp(R.id.navigation_drawer, layout);
+        stl = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+        stl.setDividerColors(Color.RED);
+        stl.setSelectedIndicatorColors(Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.YELLOW);
+        viewPager = (ViewPager) findViewById(R.id.pager);
         setupActionBar();
-        registerPreferencesChangeListener();
         Log.d(getClass().getName(), "onCreate");
     }
 
     private void setupActionBar() {
-        SlidingTabLayout stl = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
-        stl.setDividerColors(Color.RED);
-        stl.setSelectedIndicatorColors(Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.YELLOW);
-        tabStripAdapter = new TabStripAdapter(getSupportFragmentManager(), this, (ViewPager) findViewById(R.id.pager), stl, this);
+
+        tabStripAdapter = new TabStripAdapter(getSupportFragmentManager(), this, viewPager, stl, null);
         tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
         tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
-        tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
+        if (MonitorApplication.chargeControllers().getCurrentChargeController().hasWhizbang()) {
+            tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
+        }
         tabStripAdapter.addTab(TemperatureFragment.TabTitle, TemperatureFragment.class, null);
-        tabStripAdapter.addTab(R.string.CalendarTabTitle, CalendarPage.class, null);
         tabStripAdapter.addTab(R.string.DayLogTabTitle, DayLogCalendar.class, null);
         tabStripAdapter.addTab(R.string.ChartTabTitle, HourLogChart.class, null);
         tabStripAdapter.notifyTabsChanged();
     }
-    private void registerPreferencesChangeListener(){
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
-        SharedPreferences.OnSharedPreferenceChangeListener listener =new SharedPreferences.OnSharedPreferenceChangeListener(){
-            public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key){
-//                if (key.equals(Constants.PREF_KEY_GUI_NICKNAME)) {
-//                    PeerManager.instance().clear();
-//                }
-//                else       if (key.equals(Constants.PREF_KEY_NETWORK_USE_MULTICAST) || key.equals(Constants.PREF_KEY_NETWORK_USE_BROADCAST)) {
-//                    resetLocalNetworkProcessors();
-//                }
-                Log.d(getClass().getName(), "OnSharedPreferenceChangeListener " + key);
-            }
-        };
-        settings.registerOnSharedPreferenceChangeListener(listener);
-    }
-
 
     // Our handler for received Intents.
     private BroadcastReceiver mUnitReceiver = new BroadcastReceiver() {
@@ -86,14 +95,10 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
     protected BroadcastReceiver mMonitorReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            ChargeController cc = (ChargeController) intent.getSerializableExtra("Controller");
-            if (cc.hasWhizbang()) {
-                tabStripAdapter.insertTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null, 2);
-                tabStripAdapter.notifyTabsChanged();
-            } else {
-
-                tabStripAdapter.removeTab(StateOfChargeFragment.class);
-                tabStripAdapter.notifyTabsChanged();
+            boolean differentController = intent.getBooleanExtra("DifferentController", false);
+            if (differentController) {
+                MonitorActivity.this.finish();
+                MonitorActivity.this.startActivity(getIntent());
             }
         }
     };
@@ -147,59 +152,58 @@ public class MonitorActivity extends ActionBarActivity implements NavigationDraw
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         if (!isReceiverRegistered) {
             LocalBroadcastManager.getInstance(this).registerReceiver(mUnitReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_UNIT_NAME));
-            LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mMonitorReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER));
-            LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
+            LocalBroadcastManager.getInstance(MonitorActivity.this).registerReceiver(mMonitorReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER));
+            LocalBroadcastManager.getInstance(MonitorActivity.this).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
             isReceiverRegistered = true;
         }
-        Log.d(getClass().getName(), "onStart");
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    protected void onPause() {
         if (isReceiverRegistered) {
             try {
-                LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).unregisterReceiver(mUnitReceiver);
-                LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).unregisterReceiver(mMonitorReceiver);
-                LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).unregisterReceiver(mReadingsReceiver);
+                LocalBroadcastManager.getInstance(MonitorActivity.this).unregisterReceiver(mUnitReceiver);
+                LocalBroadcastManager.getInstance(MonitorActivity.this).unregisterReceiver(mMonitorReceiver);
+                LocalBroadcastManager.getInstance(MonitorActivity.this).unregisterReceiver(mReadingsReceiver);
             } catch (IllegalArgumentException e) {
                 // Do nothing
             }
             isReceiverRegistered = false;
         }
-        Log.d(getClass().getName(), "onStop");
+        super.onPause();
     }
 
     @Override
-    public void onNavigationDrawerItemSelected(int device) {
-        MonitorApplication.monitor(device);
-    }
-
-
-    @Override
-    public void onAddChargeController(ChargeController cc) {
-        LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(this);
-        Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER);
-        pkg.putExtra("ChargeController", GSON.toJson(cc));
-        broadcaster.sendBroadcast(pkg);
+    public void onStart() {
+        super.onStart();
+        bindService(new Intent(this, ModbusService.class), modbusServiceConnection, Context.BIND_AUTO_CREATE);
+        Log.d(getClass().getName(), String.format("onStart thread is %s", Thread.currentThread().getName()));
     }
 
     @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+    protected void onStop() {
+        Log.d(getClass().getName(), String.format("onStop thread is %s", Thread.currentThread().getName()));
+        unbindService(modbusServiceConnection);
+        super.onStop();
     }
 
-    @Override
-    public void onPageSelected(int position) {
+    private ServiceConnection modbusServiceConnection = new ServiceConnection() {
 
-    }
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            Log.d(getClass().getName(), "ModbusService ServiceConnected");
+            ModbusService.ModbusServiceBinder binder = (ModbusService.ModbusServiceBinder) service;
+            modbusService = binder.getService();
 
-    @Override
-    public void onPageScrollStateChanged(int state) {
+            modbusService.monitorChargeController(MonitorApplication.chargeControllers().getCurrentChargeController());
+        }
 
-    }
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.d(getClass().getName(), "ModbusService ServiceDisconnected");
+            modbusService = null;
+        }
+    };
 }

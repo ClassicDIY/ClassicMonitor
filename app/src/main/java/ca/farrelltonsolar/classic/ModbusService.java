@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.util.Timer;
@@ -30,8 +29,8 @@ public class ModbusService extends Service {
 
 
     private final IBinder mBinder = new ModbusServiceBinder();
-    ModbusTask task;
     private Timer pollTimer;
+    ModbusTask task;
 
     public ModbusService() {
     }
@@ -44,16 +43,16 @@ public class ModbusService extends Service {
 
     @Override
     public IBinder onBind(Intent arg0) {
-        //Init();
+        Log.d(getClass().getName(), "onBind");
         return mBinder;
     }
 
-    public void disconnect(boolean clearReadings) {
+    public void stopMonitoringChargeController() {
         if (task != null) {
-            task.disconnect();
-            if (clearReadings) {
-                task.clearReadings();
-            }
+            Log.d(getClass().getName(), "before disconnect");
+            Disconnector d = new Disconnector(task);
+            d.execute();
+            Log.d(getClass().getName(), "after disconnect");
             task = null;
         }
         if (pollTimer != null) {
@@ -69,30 +68,26 @@ public class ModbusService extends Service {
 
     @Override
     public void onCreate() {
+        Log.d(getClass().getName(), "onCreate");
         super.onCreate();
     }
 
     @Override
     public void onDestroy() {
         Log.d(getClass().getName(), "onDestroy");
-        disconnect(false);
+        stopMonitoringChargeController();
         super.onDestroy();
     }
 
-    public void Monitor(ChargeController controller, boolean differentCC) {
+    public void monitorChargeController(ChargeController controller) {
         if (controller == null) {
             return;
         }
-        new MonitorLauncher(controller, differentCC).execute();
+        new MonitorLauncher(controller).execute();
     }
 
-    private void doMonitor(ChargeController controller, boolean differentCC) {
-        disconnect(differentCC);
-        LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(this);
-        Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER);
-        pkg.putExtra("Controller", controller);
-        pkg.putExtra("DifferentController", differentCC);
-        broadcaster.sendBroadcast(pkg);
+    private void doMonitor(ChargeController controller) {
+        stopMonitoringChargeController();
         pollTimer = new Timer();
         task = new ModbusTask(controller, this.getBaseContext());
         pollTimer.schedule(task, 100, Constants.MODBUS_POLL_TIME);
@@ -101,17 +96,15 @@ public class ModbusService extends Service {
 
     private class MonitorLauncher extends AsyncTask<String, Void, String> {
 
-        private MonitorLauncher(ChargeController controller, boolean differentCC) {
+        private MonitorLauncher(ChargeController controller) {
             this.controller = controller;
-            this.differentCC = differentCC;
         }
 
         ChargeController controller;
-        boolean differentCC;
 
         @Override
         protected String doInBackground(String... params) {
-            doMonitor(controller, differentCC);
+            doMonitor(controller);
             return "Executed";
         }
 
@@ -126,6 +119,22 @@ public class ModbusService extends Service {
 
         @Override
         protected void onProgressUpdate(Void... values) {
+        }
+    }
+
+    private class Disconnector extends AsyncTask<String, Void, String> {
+
+        private Disconnector(ModbusTask task) {
+            this.task = task;
+        }
+
+        ModbusTask task;
+
+        @Override
+        protected String doInBackground(String... params) {
+            task.disconnect();
+            task = null;
+            return null;
         }
     }
 

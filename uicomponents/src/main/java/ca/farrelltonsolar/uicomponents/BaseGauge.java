@@ -61,7 +61,6 @@ public class BaseGauge extends BaseComponent {
 
     protected float mScaleStartValue;
     protected float mScaleEndValue;
-    protected float originalScaleEnd;
 
     protected float mFaceRadius;
     protected float mScaleRadius;
@@ -182,10 +181,6 @@ public class BaseGauge extends BaseComponent {
                 mScaleStartValue = mScaleEndValue - 1;
             invalidateAll();
         }
-    }
-
-    public void restoreOriginalScaleEnd() {
-        setScaleEnd(originalScaleEnd);
     }
 
     public boolean getBiDirectional() {
@@ -797,8 +792,7 @@ public class BaseGauge extends BaseComponent {
         mAutoScale = a.getBoolean(R.styleable.Gauge_autoScale, false);
         mShowScale = a.getBoolean(R.styleable.Gauge_showScale, true);
         setScaleStart(a.getInteger(R.styleable.Gauge_scaleStartValue, 0));
-        originalScaleEnd = a.getInteger(R.styleable.Gauge_scaleEndValue, 100);
-        setScaleEnd(originalScaleEnd);
+        setScaleEnd(a.getInteger(R.styleable.Gauge_scaleEndValue, 100));
         mScaleStartAngle = a.getInteger(R.styleable.Gauge_scaleStartAngle, -70);
         mScaleEndAngle = a.getInteger(R.styleable.Gauge_scaleEndAngle, 250);
         setMajorTickPercentOfMax(a.getInteger(R.styleable.Gauge_majorTickPercentOfMax, 10));

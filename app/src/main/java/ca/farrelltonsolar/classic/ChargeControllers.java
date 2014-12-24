@@ -31,13 +31,18 @@ public final class ChargeControllers {
     final Object lock = new Object();
     private static Context context;
     private int currentController = -1;
+    private String APIKey = "";
+    private boolean uploadToPVOutput;
+    private List<ChargeController> devices;
+
+    // default ctor for de-serialization
+    public ChargeControllers() {
+    }
 
     public ChargeControllers(Context context) {
         this.context = context;
         this.devices = new ArrayList<>();
     }
-
-    private List<ChargeController> devices;
 
     public ChargeController get(int position) {
         synchronized (lock) {
@@ -55,23 +60,28 @@ public final class ChargeControllers {
     }
 
     public int getCurrentControllerIndex() {
-        return currentController;
+        synchronized (lock) {
+            return currentController;
+        }
     }
 
     public boolean setCurrent(int position) {
         if (position >= devices.size()) {
             throw new IndexOutOfBoundsException();
         }
-        if (currentController == position) {
-            return false; // already current
+        synchronized (lock) {
+            if (currentController == position) {
+                return false; // already current
+            }
+            currentController = position;
         }
-        currentController = position;
         return true;
     }
 
-    public void add(ChargeController cc) {
+    public void add(ChargeControllerInfo ccInfo) {
+        ChargeController newCC = new ChargeController(ccInfo);
         synchronized (lock) {
-            devices.add(cc);
+            devices.add(newCC);
         }
         BroadcastChangeNotification();
     }
@@ -161,5 +171,37 @@ public final class ChargeControllers {
         LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(context);
         Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_UPDATE_CHARGE_CONTROLLERS);
         broadcaster.sendBroadcast(pkg);
+    }
+
+    public String aPIKey() {
+        synchronized (lock) {
+            return APIKey;
+        }
+    }
+
+    public void setAPIKey(String APIKey) {
+        synchronized (lock) {
+            this.APIKey = APIKey;
+        }
+    }
+
+
+    public Boolean uploadToPVOutput() {
+        synchronized (lock) {
+            return uploadToPVOutput;
+        }
+    }
+
+    public void setUploadToPVOutput(Boolean uploadToPVOutput) {
+        synchronized (lock) {
+            this.uploadToPVOutput = uploadToPVOutput;
+        }
+    }
+
+
+    public void resetPVOutputLogs() {
+        for (ChargeController cc : devices) {
+            cc.resetPVOutputLogs();
+        }
     }
 }

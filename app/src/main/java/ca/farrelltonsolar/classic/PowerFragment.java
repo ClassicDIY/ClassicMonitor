@@ -98,31 +98,6 @@ public class PowerFragment extends ReadingFramentBase {
         }
     }
 
-    public void monitoringDifferentChargeController() {
-        View v = this.getView().findViewById(R.id.Power);
-        if (v != null) {
-            ((BaseGauge) v).restoreOriginalScaleEnd();
-        }
-        v = this.getView().findViewById(R.id.PVVoltage);
-        if (v != null) {
-            ((BaseGauge) v).restoreOriginalScaleEnd();
-        }
-        v = this.getView().findViewById(R.id.PVCurrent);
-        if (v != null) {
-
-            ((BaseGauge) v).restoreOriginalScaleEnd();
-        }
-        v = this.getView().findViewById(R.id.BatVoltage);
-        if (v != null) {
-            ((BaseGauge) v).restoreOriginalScaleEnd();
-        }
-        v = this.getView().findViewById(R.id.BatCurrent);
-        if (v != null) {
-            ((BaseGauge) v).restoreOriginalScaleEnd();
-        }
-        return;
-    }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

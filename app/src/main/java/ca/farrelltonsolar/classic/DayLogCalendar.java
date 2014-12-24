@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014. FarrelltonSolar
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package ca.farrelltonsolar.classic;
 
 import android.content.BroadcastReceiver;
@@ -74,7 +90,7 @@ public class DayLogCalendar extends Fragment {
     public void onStart() {
         super.onStart();
         if (!isReceiverRegistered) {
-            LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS));
+            LocalBroadcastManager.getInstance(DayLogCalendar.this.getActivity()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS));
             isReceiverRegistered = true;
         }
         Log.d(getClass().getName(), "onStart");
@@ -89,7 +105,7 @@ public class DayLogCalendar extends Fragment {
     private void unRegisterReceiver() {
         if (isReceiverRegistered) {
             try {
-                LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).unregisterReceiver(mReadingsReceiver);
+                LocalBroadcastManager.getInstance(DayLogCalendar.this.getActivity()).unregisterReceiver(mReadingsReceiver);
             } catch (IllegalArgumentException e) {
                 // Do nothing
             }

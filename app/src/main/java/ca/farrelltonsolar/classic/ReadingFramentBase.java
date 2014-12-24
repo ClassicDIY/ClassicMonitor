@@ -53,8 +53,7 @@ public abstract class ReadingFramentBase extends Fragment implements ReadingFrag
         super.onStop();
         if (isReceiverRegistered) {
             try {
-                LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).unregisterReceiver(mReadingsReceiver);
-                LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).unregisterReceiver(mMonitorReceiver);
+                LocalBroadcastManager.getInstance(ReadingFramentBase.this.getActivity()).unregisterReceiver(mReadingsReceiver);
             } catch (IllegalArgumentException e) {
                 // Do nothing
             }
@@ -67,8 +66,7 @@ public abstract class ReadingFramentBase extends Fragment implements ReadingFrag
     public void onStart() {
         super.onStart();
         if (!isReceiverRegistered) {
-            LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
-            LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mMonitorReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER));
+            LocalBroadcastManager.getInstance(ReadingFramentBase.this.getActivity()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
             isReceiverRegistered = true;
         }
         Log.d(getClass().getName(), "onStart");
@@ -95,14 +93,5 @@ public abstract class ReadingFramentBase extends Fragment implements ReadingFrag
         }
     }
 
-    protected BroadcastReceiver mMonitorReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            boolean monitoringDifferentChargeController = intent.getBooleanExtra("DifferentController", true);
-            if (monitoringDifferentChargeController) {
-                monitoringDifferentChargeController();
-            }
-        }
-    };
 
 }

@@ -36,8 +36,11 @@ public class StateOfChargeFragment extends ReadingFramentBase {
     public StateOfChargeFragment() {
 
         super(R.layout.fragment_state_of_charge);
-        bidirectionalUnitsInWatts = MonitorApplication.chargeControllers().getCurrentChargeController().isBidirectionalUnitsInWatts();
-}
+        ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
+        if (cc != null) {
+            bidirectionalUnitsInWatts = cc.isBidirectionalUnitsInWatts();
+        }
+    }
 
     public void setReadings(Readings readings) {
         try {
@@ -58,18 +61,6 @@ public class StateOfChargeFragment extends ReadingFramentBase {
         } catch (Exception ignore) {
 
         }
-    }
-
-    @Override
-    public void monitoringDifferentChargeController() {
-        bidirectionalUnitsInWatts = MonitorApplication.chargeControllers().getCurrentChargeController().isBidirectionalUnitsInWatts();
-        View v = this.getView().findViewById(R.id.BidirectionalCurrent);
-        if (v != null) {
-            BaseGauge gauge = (BaseGauge) v;
-            gauge.restoreOriginalScaleEnd();
-            setupGauge(gauge);
-        }
-
     }
 
     public void initializeReadings(View view, Bundle savedInstanceState) {
@@ -108,11 +99,13 @@ public class StateOfChargeFragment extends ReadingFramentBase {
                     @Override
                     public void onAnimationEnd(Animation arg0) {
                         bidirectionalUnitsInWatts = !bidirectionalUnitsInWatts;
-                        MonitorApplication.chargeControllers().getCurrentChargeController().setBidirectionalUnitsInWatts(bidirectionalUnitsInWatts);
+                        ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
+                        if (cc != null) {
+                            cc.setBidirectionalUnitsInWatts(bidirectionalUnitsInWatts);
+                        }
                         BaseGauge gauge = (BaseGauge) v;
                         if (gauge != null) {
                             setupGauge(gauge);
-                            gauge.restoreOriginalScaleEnd();
                         }
                         Animation animation2 = new AlphaAnimation(0.0f, 1.0f);
                         animation2.setDuration(500);
@@ -121,14 +114,10 @@ public class StateOfChargeFragment extends ReadingFramentBase {
 
                     @Override
                     public void onAnimationRepeat(Animation arg0) {
-                        // TODO Auto-generated method stub
-
                     }
 
                     @Override
                     public void onAnimationStart(Animation arg0) {
-                        // TODO Auto-generated method stub
-
                     }
 
                 });

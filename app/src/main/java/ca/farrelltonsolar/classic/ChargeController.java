@@ -18,115 +18,182 @@ package ca.farrelltonsolar.classic;
 
 import android.os.Bundle;
 
-import java.io.Serializable;
 import java.net.InetSocketAddress;
 
 /**
  * Created by Graham on 10/12/2014.
+ * Thread safe ChargeController used to save settings of each device
  */
-public class ChargeController implements Serializable {
+public class ChargeController extends ChargeControllerInfo {
+
+    final Object lock = new Object();
+    private String logDate; //date logs from classic were recorded for upload to PVOutput.org
+    private String uploadDate; // last date the logs were uploaded to pvoutput.org
+    private String SID; // pvoutput system id
+    private boolean bidirectionalUnitsInWatts;
+
+    public ChargeController() {
+        super();
+
+    }
+
     public ChargeController(String deviceIP, int port, boolean staticIP) {
-        this.deviceIP = deviceIP;
-        this.port = port;
-        this.staticIP = staticIP;
+        super(deviceIP, port, staticIP);
     }
 
     public ChargeController(Bundle info, String deviceIP, int port, boolean staticIP) {
-        this(deviceIP, port, staticIP);
-        setDeviceName(info.getString("UnitName"));
-        setUnitID(info.getInt("UnitID"));
-        setDeviceType((DeviceType) info.getSerializable("DeviceType"));
-        setHasWhizbang(info.getBoolean("FoundWhizbang"));
+        super(info, deviceIP, port, staticIP);
     }
 
     public ChargeController(InetSocketAddress socketAddress) {
-        this.unitID = -1;
-        this.deviceIP = socketAddress.getAddress().getHostAddress();
-        this.deviceName = "";
-        this.port = socketAddress.getPort();
-        this.staticIP = false;
-        this.hasWhizbang = false;
-        this.deviceType = DeviceType.Unknown;
+        super(socketAddress);
     }
 
-    private int unitID;
-    private String deviceIP;
-    private String deviceName;
-    private int port;
-    private boolean staticIP;
-    private boolean hasWhizbang;
-    private DeviceType deviceType;
+    public ChargeController(ChargeControllerInfo ccInfo) {
+        super(ccInfo.deviceIpAddress(), ccInfo.port(), ccInfo.isStaticIP());
+        super.setDeviceType(ccInfo.deviceType());
+        super.setUnitID(ccInfo.unitID());
+        super.setHasWhizbang(ccInfo.hasWhizbang());
 
-    private boolean bidirectionalUnitsInWatts;
+    }
 
     @Override
-    public String toString() {
-        return deviceName == null || deviceName.isEmpty() ? deviceIP == null || deviceIP.isEmpty() ? "ChargeController" : deviceIP : deviceName;
-    }
-
     public String deviceIpAddress() {
-        return deviceIP;
+        synchronized (lock) {
+            return super.deviceIpAddress();
+        }
     }
 
     public void setDeviceIP(String deviceIP) {
-        this.deviceIP = deviceIP;
+        synchronized (lock) {
+            super.setDeviceIP(deviceIP);
+        }
     }
 
     public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName;
+        synchronized (lock) {
+            super.setDeviceName(deviceName);
+        }
     }
 
     public String deviceName() {
-        return toString();
+        synchronized (lock) {
+            return toString();
+        }
     }
 
     public int port() {
-        return port;
+        synchronized (lock) {
+            return super.port();
+        }
     }
 
     public void setPort(int port) {
-        this.port = port;
+        synchronized (lock) {
+            super.setPort(port);
+        }
     }
 
     public boolean isStaticIP() {
-        return staticIP;
+        synchronized (lock) {
+            return super.isStaticIP();
+        }
     }
 
     public int unitID() {
-        return unitID;
+        synchronized (lock) {
+            return super.unitID();
+        }
     }
 
     public void setUnitID(int unitID) {
-        this.unitID = unitID;
+        synchronized (lock) {
+            super.setUnitID(unitID);
+        }
     }
 
     public DeviceType deviceType() {
-        return deviceType;
+        synchronized (lock) {
+            return super.deviceType();
+        }
     }
 
     public void setDeviceType(DeviceType deviceType) {
-        this.deviceType = deviceType;
+        synchronized (lock) {
+            super.setDeviceType(deviceType);
+        }
     }
 
     public boolean hasWhizbang() {
-        return hasWhizbang;
+        synchronized (lock) {
+            return super.hasWhizbang();
+        }
     }
 
     public void setHasWhizbang(boolean hasWhizbang) {
-        this.hasWhizbang = hasWhizbang;
+        synchronized (lock) {
+            super.setHasWhizbang(hasWhizbang);
+        }
     }
 
     public boolean isBidirectionalUnitsInWatts() {
-        return bidirectionalUnitsInWatts;
+        synchronized (lock) {
+            return bidirectionalUnitsInWatts;
+        }
     }
 
     public void setBidirectionalUnitsInWatts(boolean bidirectionalUnitsInWatts) {
-        this.bidirectionalUnitsInWatts = bidirectionalUnitsInWatts;
+        synchronized (lock) {
+            this.bidirectionalUnitsInWatts = bidirectionalUnitsInWatts;
+        }
     }
 
-    public InetSocketAddress getInetSocketAddress() {
-        InetSocketAddress address = new InetSocketAddress(deviceIP, port);
-        return address;
+    public String getSID() {
+        synchronized (lock) {
+            return SID;
+        }
+    }
+
+    public void setSID(String SID) {
+        synchronized (lock) {
+            this.SID = SID;
+        }
+    }
+
+    public String logDate() {
+        synchronized (lock) {
+            return logDate;
+        }
+    }
+
+    public void setLogDate(String logDate) {
+        synchronized (lock) {
+            this.logDate = logDate;
+        }
+    }
+
+
+    public String uploadDate() {
+        synchronized (lock) {
+            return uploadDate;
+        }
+    }
+
+    public void setUploadDate(String uploadDate) {
+        synchronized (lock) {
+            this.uploadDate = uploadDate;
+        }
+    }
+
+    public void resetPVOutputLogs() {
+        String fname = logDate();
+        if (fname.length() > 0) {
+            MonitorApplication.getAppContext().deleteFile(fname);
+        }
+        synchronized (lock) {
+            uploadDate = "";
+            logDate = "";
+        }
     }
 }
 

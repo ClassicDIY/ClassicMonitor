@@ -97,6 +97,7 @@ public class ModbusTask extends TimerTask {
         readings = new Readings();
         dayLogEntry = new LogEntry();
         minuteLogEntry = new LogEntry();
+        Log.d(getClass().getName(), String.format("ModbusTask created thread is %s", Thread.currentThread().getName()));
     }
 
     private Context context;
@@ -116,22 +117,21 @@ public class ModbusTask extends TimerTask {
     public boolean connect() throws UnknownHostException {
         boolean rVal = false;
         InetAddress inetAddress = InetAddress.getByName(chargeController.deviceIpAddress());
-        Log.d(getClass().getName(), String.format("Connecting to %s", inetAddress.toString()));
+        Log.d(getClass().getName(), String.format("Connecting to %s  (%s)", chargeController.toString(), inetAddress.toString()));
         try {
             disconnect();
             modbusMaster = new ModbusTCPMaster(inetAddress, chargeController.port(), 1);
             modbusMaster.setRetries(Constants.MODBUS_RETRIES);
             modbusMaster.connect();
             if (modbusMaster.isConnected()) {
-                disconnecting = false;
                 rVal = true;
             }
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
         } catch (Exception e1) {
             Log.w(getClass().getName(), String.format("Could not connect to %s, ex: %s", chargeController.toString(), e1));
-            disconnecting = false;
             modbusMaster = null;
+        }
+        finally {
+            disconnecting = false;
         }
         return rVal;
     }
@@ -158,9 +158,22 @@ public class ModbusTask extends TimerTask {
     }
 
     @Override
+    protected void finalize() throws Throwable {
+        Log.d(getClass().getName(), "ModbusTask finalized");
+        super.finalize();
+    }
+
+    @Override
+    public boolean cancel() {
+        disconnect();
+        Log.d(getClass().getName(), String.format("ModbusTask cancel thread is %s", Thread.currentThread().getName()));
+        return super.cancel();
+    }
+
+    @Override
     public void run() {
 
-//        Log.d(getClass().getName(), "begin run");
+//        Log.d(getClass().getName(), String.format("ModbusTask begin run on thread is %s", Thread.currentThread().getName()));
         try {
             synchronized (lock) {
                 if (disconnecting) {
@@ -289,10 +302,10 @@ public class ModbusTask extends TimerTask {
             readings.broadcastReadings(context, Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS);
 
         } catch (ModbusException e) {
-            e.printStackTrace();
+            Log.w(getClass().getName(), String.format("GetModbusReadings ModbusException ex: %s"), e);
             throw e;
         } catch (Exception all) {
-            all.printStackTrace();
+            Log.w(getClass().getName(), String.format("GetModbusReadings Exception ex: %s", all));
             throw new ModbusException(all.getMessage());
         }
     }
@@ -401,11 +414,9 @@ public class ModbusTask extends TimerTask {
             dayLogEntry.set(Constants.CLASSIC_HIGH_TEMP_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_HIGH_TEMP_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
             dayLogEntry.set(Constants.CLASSIC_HIGH_PV_VOLT_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_HIGH_PV_VOLT_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
             dayLogEntry.set(Constants.CLASSIC_HIGH_BATTERY_VOLT_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_HIGH_BATTERY_VOLT_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             Log.w(getClass().getName(), String.format("LoadDayLogs failed, but did get power & float series ex: %s", ex));
         }
-
     }
 
     private void LoadMinuteLogs() throws ModbusException {
@@ -419,7 +430,7 @@ public class ModbusTask extends TimerTask {
             minuteLogEntry.set(Constants.CLASSIC_CHARGE_STATE_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_CHARGE_STATE_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 256));
             Log.d(getClass().getName(), "Completed reading minute logs");
         } catch (Exception ex) {
-            Log.w(getClass().getName(), String.format("LoadMinuteLogs failed ex: %s", ex));
+//            Log.w(getClass().getName(), String.format("LoadMinuteLogs failed ex: %s", ex));
         }
     }
 
@@ -521,7 +532,6 @@ public class ModbusTask extends TimerTask {
     private static short registerToShort(byte[] bytes) {
         return (short) ((bytes[1] << 8) | (bytes[0] & 0xff));
     }
-
 
 
     // Tristar code...

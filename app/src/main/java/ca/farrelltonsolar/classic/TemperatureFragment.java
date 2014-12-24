@@ -67,11 +67,6 @@ public class TemperatureFragment extends ReadingFramentBase {
     }
 
     @Override
-    public void monitoringDifferentChargeController() {
-
-    }
-
-    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
     }

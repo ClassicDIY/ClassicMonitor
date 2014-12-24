@@ -1,12 +1,27 @@
+/*
+ * Copyright (c) 2014. FarrelltonSolar
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package ca.farrelltonsolar.classic;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -41,13 +56,19 @@ public class Settings extends PreferenceActivity  {
             @Override
             //On click function
             public void onClick(View view) {
+                MonitorApplication.chargeControllers().setUploadToPVOutput(_uploadToPVOutput.isChecked());
+                MonitorApplication.chargeControllers().setAPIKey(_APIKey.getText());
+                ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
+                if (cc != null) {
+                    cc.setSID(_SID.getText());
+                }
                 Settings.this.finish();
             }
         });
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(MonitorApplication.getAppContext());
         try {
             _uploadToPVOutput = (CheckBoxPreference) findPreference(Constants.UploadToPVOutput);
+            _uploadToPVOutput.setChecked(MonitorApplication.chargeControllers().uploadToPVOutput());
             _SID = (EditTextPreference) findPreference(Constants.SID);
             _APIKey = (EditTextPreference) findPreference(Constants.APIKey);
             UploadToPVOutputEnabled(_uploadToPVOutput.isChecked());
@@ -60,21 +81,22 @@ public class Settings extends PreferenceActivity  {
                 }
             });
 
-
-            _SID.setSummary(settings.getString(Constants.SID, ""));
-            _APIKey.setSummary(settings.getString(Constants.APIKey, "255"));
+            ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
+            if (cc != null) {
+                _SID.setSummary(cc.getSID());
+            }
+            _APIKey.setSummary(MonitorApplication.chargeControllers().aPIKey());
             Preference button = (Preference) findPreference("ResetLogs");
             button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference arg0) {
-                    LogSaver.ResetLogs();
+                    MonitorApplication.chargeControllers().resetPVOutputLogs();
                     return true;
                 }
             });
 
-        } catch (Exception e) {
-            settings.edit().clear().commit();
-            e.printStackTrace();
+        } catch (Exception ex) {
+            Log.w(getClass().getName(), String.format("settings failed ex: %s", ex));
         }
 
     }

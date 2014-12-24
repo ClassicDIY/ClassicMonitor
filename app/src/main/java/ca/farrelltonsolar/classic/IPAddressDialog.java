@@ -16,23 +16,25 @@
 
 package ca.farrelltonsolar.classic;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+import com.google.gson.Gson;
+
 import java.util.regex.Pattern;
 
 public class IPAddressDialog extends DialogFragment {
-
-    private OnIPAddressDialogInteractionListener mListener;
     static private final String IPV4_REGEX = "(([0-1]?[0-9]{1,2}\\.)|(2[0-4][0-9]\\.)|(25[0-5]\\.)){3}(([0-1]?[0-9]{1,2})|(2[0-4][0-9])|(25[0-5]))";
     static private Pattern IPV4_PATTERN = Pattern.compile(IPV4_REGEX);
+    private static Gson GSON = new Gson();
 
     public static IPAddressDialog newInstance(int title) {
         IPAddressDialog frag = new IPAddressDialog();
@@ -63,21 +65,20 @@ public class IPAddressDialog extends DialogFragment {
 
         builder.setPositiveButton(R.string.ApplyButton, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                if (mListener != null) {
-                    String port = ((EditText) getDialog().findViewById(R.id.port)).getText().toString();
-                    String edAddress = ((EditText) getDialog().findViewById(R.id.ipAddress)).getText().toString();
-
-                    if (!port.isEmpty() && !edAddress.isEmpty()) {
-                        if (IPV4_PATTERN.matcher(edAddress).matches()) {
-                            ChargeController cc = new ChargeController(edAddress, Integer.valueOf(port), true);
-                            mListener.onAddChargeController(cc);
-                            dialog.dismiss();
-                        }
+                String port = ((EditText) getDialog().findViewById(R.id.port)).getText().toString();
+                String edAddress = ((EditText) getDialog().findViewById(R.id.ipAddress)).getText().toString();
+                if (!port.isEmpty() && !edAddress.isEmpty()) {
+                    if (IPV4_PATTERN.matcher(edAddress).matches()) {
+                        ChargeControllerInfo cc = new ChargeControllerInfo(edAddress, Integer.valueOf(port), true);
+                        LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(IPAddressDialog.this.getActivity());
+                        Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER);
+                        pkg.putExtra("ChargeController", GSON.toJson(cc));
+                        broadcaster.sendBroadcast(pkg);
+                        dialog.dismiss();
                     }
                 }
             }
-        })
-                .setNegativeButton(R.string.CancelButton, new DialogInterface.OnClickListener() {
+        }).setNegativeButton(R.string.CancelButton, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog
                     }
@@ -91,23 +92,6 @@ public class IPAddressDialog extends DialogFragment {
         super.onDismiss(dialog);
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnIPAddressDialogInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -119,7 +103,7 @@ public class IPAddressDialog extends DialogFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnIPAddressDialogInteractionListener {
-        public void onAddChargeController(ChargeController cc);
+        public void onAddChargeController(ChargeControllerInfo cc);
     }
 
 }
