@@ -18,10 +18,14 @@ package ca.farrelltonsolar.classic;
 
 public class Constants {
 
+    public static final boolean DEVELOPER_MODE = true;
+
     // UDP listening port for available classics on the subnet
     public static final int CLASSIC_UDP_PORT = 4626;
     public static final int MODBUS_RETRIES = 2;
     public static final int MODBUS_POLL_TIME = 2000;
+    public static final int UDPListener_Maximum_Sleep_Time = 6000;
+    public static final int UDPListener_Minimum_Sleep_Time = 100;
 
     public static final int MODBUS_FILE_MEMORY= 4;
     public static final int MODBUS_FILE_DAILIES_LOG = 5;
@@ -61,7 +65,6 @@ public class Constants {
     public static final String CA_FARRELLTONSOLAR_CLASSIC_MINUTE_LOGS = "ca.farrelltonsolar.classic.MinuteLogs";
     public static final String CA_FARRELLTONSOLAR_CLASSIC_READINGS = "ca.farrelltonsolar.classic.Readings";
     public static final String CA_FARRELLTONSOLAR_CLASSIC_TOAST = "ca.farrelltonsolar.classic.Toast";
-    public static final String CA_FARRELLTONSOLAR_CLASSIC_UNIT_NAME = "ca.farrelltonsolar.classic.UnitName";
     public static final String CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER = "ca.farrelltonsolar.classic.AddChargeController";
     public static final String CA_FARRELLTONSOLAR_CLASSIC_UPDATE_CHARGE_CONTROLLERS = "ca.farrelltonsolar.classic.UpdateChargeControllers";
     public static final String CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER = "ca.farrelltonsolar.classic.MonitorChargeController";

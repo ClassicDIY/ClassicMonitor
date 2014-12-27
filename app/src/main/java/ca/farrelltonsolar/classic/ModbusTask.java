@@ -23,6 +23,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.GregorianCalendar;
 import java.util.TimerTask;
@@ -34,21 +35,21 @@ import ca.farrelltonsolar.j2modlite.msg.ReadMultipleRegistersResponse;
 import ca.farrelltonsolar.j2modlite.procimg.Register;
 
 // Classic modbus table
-//            new Register { Address = 4115, Label = "Average battery voltage", UnitOfMeasure = "Volts", Conversion = address => U16_OneDec(address)},
-//            new Register { Address = 4116, Label = "PV input voltage", UnitOfMeasure = "Volts", Conversion = address => U16_OneDec(address)},
-//            new Register { Address = 4117, Label = "Average battery current", UnitOfMeasure = "Amps", Conversion = address => U16_OneDec(address)},
-//            new Register { Address = 4118, Label = "Average energy to the battery", UnitOfMeasure = "kWh", Conversion = address => U16_OneDec(address)},
-//            new Register { Address = 4119, Label = "Average power to the battery", UnitOfMeasure = "Watts", Conversion = address => U16(address)},
-//            new Register { Address = 4120, Label = "Battery charge state", UnitOfMeasure = "", Conversion = address => ChargeState(address)},
-//            new Register { Address = 4121, Label = "Average PV inout current", UnitOfMeasure = "Amps", Conversion = address => U16_OneDec(address)},
-//            new Register { Address = 4122, Label = "PV VOC", UnitOfMeasure = "Volts", Conversion = address => U16_OneDec(address)},
-//            new Register { Address = 4125, Label = "Daily amp hours", UnitOfMeasure = "Amp hours", Conversion = address => U16_OneDec(address)},
-//            new Register { Address = 4126, Label = "Total kWhours", UnitOfMeasure = "kWh", Conversion = address => U32_OneDec(address)},
-//            new Register { Address = 4128, Label = "Total Amp hours", UnitOfMeasure = "Amp hours", Conversion = address => U32_OneDec(address)},
-//            new Register { Address = 4130, Label = "Info flag", UnitOfMeasure = "", Conversion = address => Info(address)}
-//            new Register { Address = 4132, Label = "BATTemperature", UnitOfMeasure = "", Conversion = address => U16_OneDec(address)}
-//            new Register { Address = 4133, Label = "FETTemperature", UnitOfMeasure = "", Conversion = address => U16_OneDec(address)}
-//            new Register { Address = 4134, Label = "PCBTemperature", UnitOfMeasure = "", Conversion = address => U16_OneDec(address)}
+//            new Register { Address = 4115, Label = "Average battery voltage", UnitOfMeasure = "Volts", Conversion = socketAddress => U16_OneDec(socketAddress)},
+//            new Register { Address = 4116, Label = "PV input voltage", UnitOfMeasure = "Volts", Conversion = socketAddress => U16_OneDec(socketAddress)},
+//            new Register { Address = 4117, Label = "Average battery current", UnitOfMeasure = "Amps", Conversion = socketAddress => U16_OneDec(socketAddress)},
+//            new Register { Address = 4118, Label = "Average energy to the battery", UnitOfMeasure = "kWh", Conversion = socketAddress => U16_OneDec(socketAddress)},
+//            new Register { Address = 4119, Label = "Average power to the battery", UnitOfMeasure = "Watts", Conversion = socketAddress => U16(socketAddress)},
+//            new Register { Address = 4120, Label = "Battery charge state", UnitOfMeasure = "", Conversion = socketAddress => ChargeState(socketAddress)},
+//            new Register { Address = 4121, Label = "Average PV inout current", UnitOfMeasure = "Amps", Conversion = socketAddress => U16_OneDec(socketAddress)},
+//            new Register { Address = 4122, Label = "PV VOC", UnitOfMeasure = "Volts", Conversion = socketAddress => U16_OneDec(socketAddress)},
+//            new Register { Address = 4125, Label = "Daily amp hours", UnitOfMeasure = "Amp hours", Conversion = socketAddress => U16_OneDec(socketAddress)},
+//            new Register { Address = 4126, Label = "Total kWhours", UnitOfMeasure = "kWh", Conversion = socketAddress => U32_OneDec(socketAddress)},
+//            new Register { Address = 4128, Label = "Total Amp hours", UnitOfMeasure = "Amp hours", Conversion = socketAddress => U32_OneDec(socketAddress)},
+//            new Register { Address = 4130, Label = "Info flag", UnitOfMeasure = "", Conversion = socketAddress => Info(socketAddress)}
+//            new Register { Address = 4132, Label = "BATTemperature", UnitOfMeasure = "", Conversion = socketAddress => U16_OneDec(socketAddress)}
+//            new Register { Address = 4133, Label = "FETTemperature", UnitOfMeasure = "", Conversion = socketAddress => U16_OneDec(socketAddress)}
+//            new Register { Address = 4134, Label = "PCBTemperature", UnitOfMeasure = "", Conversion = socketAddress => U16_OneDec(socketAddress)}
 
 //            new Tupple { Description = "(Off) No power, waiting for power source, battery voltage over set point.", Value = 0 },
 //            new Tupple { Description = "(Absorb) Regulating battery voltage at absorb set point until the batteries are charged.", Value = 3 },
@@ -61,17 +62,17 @@ import ca.farrelltonsolar.j2modlite.procimg.Register;
 
 
 // TriStar modbus table
-//            new Register { Address = 1, Label = "V Scale", UnitOfMeasure = "", Conversion = address => U32(address)},
-//            new Register { Address = 3, Label = "A Scale", UnitOfMeasure = "", Conversion = address => U32(address)},
-//            new Register { Address = 25, Label = "Average battery voltage", UnitOfMeasure = "Volts", Conversion = address => VScale(address)},
-//            new Register { Address = 28, Label = "PV input voltage", UnitOfMeasure = "Volts", Conversion = address => VScale(address)},
-//            new Register { Address = 29, Label = "Average battery current", UnitOfMeasure = "Amps", Conversion = address => IScale(address)},
-//            new Register { Address = 30, Label = "Average PV current", UnitOfMeasure = "Amps", Conversion = address => IScale(address)},
-//            new Register { Address = 45, Label = "Info flag", UnitOfMeasure = "", Conversion = address => Info(address)},
-//            new Register { Address = 51, Label = "Battery charge state", UnitOfMeasure = "", Conversion = address => ChargeState(address)},
-//            new Register { Address = 58, Label = "Total kWhours", UnitOfMeasure = "kWh", Conversion = address => U16(address)},
-//            new Register { Address = 59, Label = "Average power to the battery", UnitOfMeasure = "Watts", Conversion = address => PScale(address)},
-//            new Register { Address = 69, Label = "Average energy to the battery", UnitOfMeasure = "kWh", Conversion = address => WHr(address)}
+//            new Register { Address = 1, Label = "V Scale", UnitOfMeasure = "", Conversion = socketAddress => U32(socketAddress)},
+//            new Register { Address = 3, Label = "A Scale", UnitOfMeasure = "", Conversion = socketAddress => U32(socketAddress)},
+//            new Register { Address = 25, Label = "Average battery voltage", UnitOfMeasure = "Volts", Conversion = socketAddress => VScale(socketAddress)},
+//            new Register { Address = 28, Label = "PV input voltage", UnitOfMeasure = "Volts", Conversion = socketAddress => VScale(socketAddress)},
+//            new Register { Address = 29, Label = "Average battery current", UnitOfMeasure = "Amps", Conversion = socketAddress => IScale(socketAddress)},
+//            new Register { Address = 30, Label = "Average PV current", UnitOfMeasure = "Amps", Conversion = socketAddress => IScale(socketAddress)},
+//            new Register { Address = 45, Label = "Info flag", UnitOfMeasure = "", Conversion = socketAddress => Info(socketAddress)},
+//            new Register { Address = 51, Label = "Battery charge state", UnitOfMeasure = "", Conversion = socketAddress => ChargeState(socketAddress)},
+//            new Register { Address = 58, Label = "Total kWhours", UnitOfMeasure = "kWh", Conversion = socketAddress => U16(socketAddress)},
+//            new Register { Address = 59, Label = "Average power to the battery", UnitOfMeasure = "Watts", Conversion = socketAddress => PScale(socketAddress)},
+//            new Register { Address = 69, Label = "Average energy to the battery", UnitOfMeasure = "kWh", Conversion = socketAddress => WHr(socketAddress)}
 
 //            new Tupple { Description = "(Start) System startup.", Value = 0 },
 //            new Tupple { Description = "(Night check) No power, detecting nightfall.", Value = 1 },
@@ -90,19 +91,9 @@ import ca.farrelltonsolar.j2modlite.procimg.Register;
 public class ModbusTask extends TimerTask {
 
     final Object lock = new Object();
-
-    public ModbusTask(ChargeController cc, Context ctx) {
-        chargeController = cc;
-        context = ctx;
-        readings = new Readings();
-        dayLogEntry = new LogEntry();
-        minuteLogEntry = new LogEntry();
-        Log.d(getClass().getName(), String.format("ModbusTask created thread is %s", Thread.currentThread().getName()));
-    }
-
     private Context context;
     private ModbusTCPMaster modbusMaster;
-    private ChargeController chargeController;
+    private ChargeControllerInfo chargeControllerInfo;
     private int reference = 4100; //the reference; offset where to start reading from
     private Readings readings;
     private LogEntry dayLogEntry;
@@ -114,20 +105,38 @@ public class ModbusTask extends TimerTask {
     private boolean initialReadingLoaded = false;
     private boolean disconnecting = false;
 
+    public ModbusTask(InetSocketAddress socketAddress, Context ctx) {
+        chargeControllerInfo = new ChargeControllerInfo(socketAddress);
+        init(ctx);
+    }
+
+    public ModbusTask(ChargeControllerInfo cc, Context ctx) {
+        chargeControllerInfo = cc;
+        init(ctx);
+    }
+
+    private void init(Context ctx) {
+        context = ctx;
+        readings = new Readings();
+        dayLogEntry = new LogEntry();
+        minuteLogEntry = new LogEntry();
+        Log.d(getClass().getName(), String.format("ModbusTask created thread is %s", Thread.currentThread().getName()));
+    }
+
     public boolean connect() throws UnknownHostException {
         boolean rVal = false;
-        InetAddress inetAddress = InetAddress.getByName(chargeController.deviceIpAddress());
-        Log.d(getClass().getName(), String.format("Connecting to %s  (%s)", chargeController.toString(), inetAddress.toString()));
+        InetAddress inetAddress = InetAddress.getByName(chargeControllerInfo.deviceIpAddress());
+        Log.d(getClass().getName(), String.format("Connecting to %s  (%s)", chargeControllerInfo.toString(), inetAddress.toString()));
         try {
             disconnect();
-            modbusMaster = new ModbusTCPMaster(inetAddress, chargeController.port(), 1);
+            modbusMaster = new ModbusTCPMaster(inetAddress, chargeControllerInfo.port(), 1);
             modbusMaster.setRetries(Constants.MODBUS_RETRIES);
             modbusMaster.connect();
             if (modbusMaster.isConnected()) {
                 rVal = true;
             }
         } catch (Exception e1) {
-            Log.w(getClass().getName(), String.format("Could not connect to %s, ex: %s", chargeController.toString(), e1));
+            Log.w(getClass().getName(), String.format("Could not connect to %s, ex: %s", chargeControllerInfo.toString(), e1));
             modbusMaster = null;
         }
         finally {
@@ -145,7 +154,7 @@ public class ModbusTask extends TimerTask {
                 }
                 modbusMaster = null;
             }
-            Log.d(getClass().getName(), String.format("Disconnected from %s", chargeController.toString()));
+            Log.d(getClass().getName(), String.format("Disconnected from %s", chargeControllerInfo.toString()));
         }
     }
 
@@ -186,9 +195,9 @@ public class ModbusTask extends TimerTask {
                 if (connected) {
                     if (initialReadingLoaded == false) {
                         initialReadingLoaded = true;
+                        chargeControllerInfo.setIsReachable(true);
                         if (LookForTriStar() == DeviceType.Classic) {
                             LookForWhizBangJr();
-                            BroadcastUnitName();
                         }
                     }
                     GetModbusReadings();
@@ -222,9 +231,9 @@ public class ModbusTask extends TimerTask {
                     modbusMaster.disconnect();
                 }
                 modbusMaster = null;
-                Log.w(getClass().getName(), String.format("Could not get readings, disconnected from %s due to exception ex: %s", chargeController.toString(), e1));
+                Log.w(getClass().getName(), String.format("Could not get readings, disconnected from %s due to exception ex: %s", chargeControllerInfo.toString(), e1));
             } else {
-                Log.w(getClass().getName(), String.format("Could not get readings from %s, was disconnected ex: %s", chargeController.toString(), e1));
+                Log.w(getClass().getName(), String.format("Could not get readings from %s, was disconnected ex: %s", chargeControllerInfo.toString(), e1));
             }
         }
 //        Log.d(getClass().getName(), "end run");
@@ -260,7 +269,7 @@ public class ModbusTask extends TimerTask {
 
                     readings.set(RegisterName.Power, PScale(regRes.getRegisterValue(OffsetFor(59))));
                     readings.set(RegisterName.EnergyToday, WHr(regRes.getRegisterValue(OffsetFor(69))));
-                    readings.set(RegisterName.TotalEnergy, regRes.getRegisterValue(OffsetFor(58)));
+                    readings.set(RegisterName.TotalEnergy, (float)regRes.getRegisterValue(OffsetFor(58)));
 
                 }
             } else {
@@ -398,12 +407,6 @@ public class ModbusTask extends TimerTask {
             unitId = (regRes.getRegisterValue(1) << 16) + regRes.getRegisterValue(0);
         }
         return unitId;
-    }
-
-    private void BroadcastUnitName() throws ModbusException {
-        Intent intent = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_UNIT_NAME);
-        intent.putExtra("UnitName", getUnitName());
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     private void LoadDayLogs() throws ModbusException {

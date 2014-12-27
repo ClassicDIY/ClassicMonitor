@@ -70,6 +70,7 @@ public class IPAddressDialog extends DialogFragment {
                 if (!port.isEmpty() && !edAddress.isEmpty()) {
                     if (IPV4_PATTERN.matcher(edAddress).matches()) {
                         ChargeControllerInfo cc = new ChargeControllerInfo(edAddress, Integer.valueOf(port), true);
+                        cc.setIsReachable(false);
                         LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(IPAddressDialog.this.getActivity());
                         Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER);
                         pkg.putExtra("ChargeController", GSON.toJson(cc));

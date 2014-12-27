@@ -16,8 +16,6 @@
 
 package ca.farrelltonsolar.classic;
 
-import android.os.Bundle;
-
 import java.net.InetSocketAddress;
 
 /**
@@ -32,17 +30,9 @@ public class ChargeController extends ChargeControllerInfo {
     private String SID; // pvoutput system id
     private boolean bidirectionalUnitsInWatts;
 
+    // default ctor for de-serialization
     public ChargeController() {
         super();
-
-    }
-
-    public ChargeController(String deviceIP, int port, boolean staticIP) {
-        super(deviceIP, port, staticIP);
-    }
-
-    public ChargeController(Bundle info, String deviceIP, int port, boolean staticIP) {
-        super(info, deviceIP, port, staticIP);
     }
 
     public ChargeController(InetSocketAddress socketAddress) {
@@ -64,15 +54,15 @@ public class ChargeController extends ChargeControllerInfo {
         }
     }
 
-    public void setDeviceIP(String deviceIP) {
+    public boolean setDeviceIP(String deviceIP) {
         synchronized (lock) {
-            super.setDeviceIP(deviceIP);
+            return super.setDeviceIP(deviceIP);
         }
     }
 
-    public void setDeviceName(String deviceName) {
+    public boolean setDeviceName(String deviceName) {
         synchronized (lock) {
-            super.setDeviceName(deviceName);
+            return super.setDeviceName(deviceName);
         }
     }
 
@@ -88,9 +78,9 @@ public class ChargeController extends ChargeControllerInfo {
         }
     }
 
-    public void setPort(int port) {
+    public boolean setPort(int port) {
         synchronized (lock) {
-            super.setPort(port);
+            return  super.setPort(port);
         }
     }
 
@@ -106,9 +96,9 @@ public class ChargeController extends ChargeControllerInfo {
         }
     }
 
-    public void setUnitID(int unitID) {
+    public boolean setUnitID(int unitID) {
         synchronized (lock) {
-            super.setUnitID(unitID);
+            return super.setUnitID(unitID);
         }
     }
 
@@ -118,9 +108,9 @@ public class ChargeController extends ChargeControllerInfo {
         }
     }
 
-    public void setDeviceType(DeviceType deviceType) {
+    public boolean setDeviceType(DeviceType deviceType) {
         synchronized (lock) {
-            super.setDeviceType(deviceType);
+            return super.setDeviceType(deviceType);
         }
     }
 
@@ -130,9 +120,9 @@ public class ChargeController extends ChargeControllerInfo {
         }
     }
 
-    public void setHasWhizbang(boolean hasWhizbang) {
+    public boolean setHasWhizbang(boolean hasWhizbang) {
         synchronized (lock) {
-            super.setHasWhizbang(hasWhizbang);
+            return super.setHasWhizbang(hasWhizbang);
         }
     }
 

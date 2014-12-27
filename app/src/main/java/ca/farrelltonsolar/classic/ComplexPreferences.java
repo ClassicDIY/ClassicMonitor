@@ -22,8 +22,15 @@ package ca.farrelltonsolar.classic;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
+import android.util.Log;
 
 import com.google.gson.Gson;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.Map;
 
 public class ComplexPreferences {
 
@@ -32,12 +39,13 @@ public class ComplexPreferences {
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
     private static Gson GSON = new Gson();
-
+    private String namePreferences;
 
     private ComplexPreferences(Context context, String namePreferences, int mode) {
         this.context = context;
         if (namePreferences == null || namePreferences.equals("")) {
             namePreferences = context.getPackageName() + "_complexPreferences";
+            this.namePreferences = namePreferences;
         }
         preferences = context.getSharedPreferences(namePreferences, mode);
         editor = preferences.edit();
@@ -67,7 +75,9 @@ public class ComplexPreferences {
     }
 
     public void commit() {
+
         editor.commit();
+        saveSharedPreferences();
     }
 
     public <T> T getObject(String key, Class<T> a) {
@@ -84,5 +94,30 @@ public class ComplexPreferences {
         }
     }
 
+    private void saveSharedPreferences()
+    {
+        File myPath = new File(Environment.getExternalStorageDirectory().toString());
+        File myFile = new File(myPath, this.namePreferences);
 
+        try
+        {
+            FileWriter fw = new FileWriter(myFile);
+            PrintWriter pw = new PrintWriter(fw);
+
+            Map<String,?> prefsMap = preferences.getAll();
+
+            for(Map.Entry<String,?> entry : prefsMap.entrySet())
+            {
+                pw.println(entry.getKey() + ": " + entry.getValue().toString());
+            }
+
+            pw.close();
+            fw.close();
+        }
+        catch (Exception e)
+        {
+            // what a terrible failure...
+            Log.wtf(getClass().getName(), e.toString());
+        }
+    }
 }

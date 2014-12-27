@@ -49,10 +49,8 @@ public class ModbusService extends Service {
 
     public void stopMonitoringChargeController() {
         if (task != null) {
-            Log.d(getClass().getName(), "before disconnect");
             Disconnector d = new Disconnector(task);
-            d.execute();
-            Log.d(getClass().getName(), "after disconnect");
+            d.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             task = null;
         }
         if (pollTimer != null) {
@@ -83,43 +81,11 @@ public class ModbusService extends Service {
         if (controller == null) {
             return;
         }
-        new MonitorLauncher(controller).execute();
-    }
-
-    private void doMonitor(ChargeController controller) {
         stopMonitoringChargeController();
         pollTimer = new Timer();
         task = new ModbusTask(controller, this.getBaseContext());
         pollTimer.schedule(task, 100, Constants.MODBUS_POLL_TIME);
         Log.d(getClass().getName(), String.format("Monitor running on: %s this thread is %s", controller.toString(), Thread.currentThread().getName()));
-    }
-
-    private class MonitorLauncher extends AsyncTask<String, Void, String> {
-
-        private MonitorLauncher(ChargeController controller) {
-            this.controller = controller;
-        }
-
-        ChargeController controller;
-
-        @Override
-        protected String doInBackground(String... params) {
-            doMonitor(controller);
-            return "Executed";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-        }
     }
 
     private class Disconnector extends AsyncTask<String, Void, String> {

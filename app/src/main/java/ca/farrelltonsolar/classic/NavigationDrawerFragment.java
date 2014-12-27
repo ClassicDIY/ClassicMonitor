@@ -36,7 +36,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 /**
@@ -69,7 +68,7 @@ public class NavigationDrawerFragment extends Fragment {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
     private View mFragmentContainerView;
-    private ArrayAdapter<ChargeControllerInfo> adapter;
+    private NavigationDrawerArrayAdapter adapter;
 
     public NavigationDrawerFragment() {
     }
@@ -109,11 +108,10 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
-
-        adapter = new ArrayAdapter<>(
+        adapter = new NavigationDrawerArrayAdapter(
                 getActionBar().getThemedContext(),
                 R.layout.drawer_list_item_activated,
-                android.R.id.text1);
+                R.id.DeviceName);
         adapter.setNotifyOnChange(true);
 
         // Create a ListView-specific touch listener. ListViews are given special treatment because
@@ -131,7 +129,7 @@ public class NavigationDrawerFragment extends Fragment {
                             @Override
                             public void onDismiss(ListView listView, int[] reverseSortedPositions) {
                                 for (int position : reverseSortedPositions) {
-                                    adapter.remove(adapter.getItem(position));
+                                    MonitorApplication.chargeControllers().remove(adapter.getItem(position));
                                 }
                                 adapter.notifyDataSetChanged();
                             }
@@ -213,13 +211,7 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     private void selectItem(int position) {
-        if (mDrawerListView != null) {
-            mDrawerListView.setItemChecked(position, true);
-        }
-        if (mDrawerLayout != null) {
-            mDrawerLayout.closeDrawer(mFragmentContainerView);
-        }
-        MonitorApplication.monitorChargeController(position);
+        MonitorApplication.chargeControllers().openIfReachable(position);
     }
 
     @Override

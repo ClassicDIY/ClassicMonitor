@@ -90,6 +90,7 @@
     <string name="EnergyTabTitle">Energy</string>
     <string name="StateOfChargeTabTitle">State of Charge</string>
     <string name="TemperatureTabTitle">Temperature</string>
+    <string name="InfoTabTitle">Info</string>
     <string name="PCBTemperature">PCB</string>
     <string name="FETTemperature">FET</string>
     <string name="BatTemperature">Battery</string>

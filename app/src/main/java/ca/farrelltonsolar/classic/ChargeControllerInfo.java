@@ -33,7 +33,13 @@ public class ChargeControllerInfo implements Serializable {
     private int port;
     private boolean staticIP;
     private boolean hasWhizbang;
+    private boolean isCurrent;
     private DeviceType deviceType;
+    private boolean isReachable;
+
+    // default ctor for de-serialization
+    public ChargeControllerInfo() {
+    }
 
     public ChargeControllerInfo(String deviceIP, int port, boolean staticIP) {
         this.deviceIP = deviceIP;
@@ -41,8 +47,9 @@ public class ChargeControllerInfo implements Serializable {
         this.staticIP = staticIP;
     }
 
-    public ChargeControllerInfo(Bundle info, String deviceIP, int port, boolean staticIP) {
-        this(deviceIP, port, staticIP);
+    public ChargeControllerInfo(Bundle info, String deviceIP, int port) {
+        this(deviceIP, port, false);
+        setIsReachable(true);
         setDeviceName(info.getString("UnitName"));
         setUnitID(info.getInt("UnitID"));
         setDeviceType((DeviceType) info.getSerializable("DeviceType"));
@@ -59,25 +66,25 @@ public class ChargeControllerInfo implements Serializable {
         this.deviceType = DeviceType.Unknown;
     }
 
-    public ChargeControllerInfo() {
-
-    }
-
     @Override
     public String toString() {
         return deviceName == null || deviceName.isEmpty() ? deviceIP == null || deviceIP.isEmpty() ? "ChargeController" : deviceIP : deviceName;
     }
 
     public String deviceIpAddress() {
-            return deviceIP;
+        return deviceIP;
     }
 
-    public void setDeviceIP(String deviceIP) {
-            this.deviceIP = deviceIP;
+    public boolean setDeviceIP(String deviceIP) {
+        boolean rVal = this.deviceIP != deviceIP;
+        this.deviceIP = deviceIP;
+        return rVal;
     }
 
-    public void setDeviceName(String deviceName) {
-            this.deviceName = deviceName;
+    public boolean setDeviceName(String deviceName) {
+        boolean rVal = this.deviceName != deviceName;
+        this.deviceName = deviceName;
+        return rVal;
     }
 
     public String deviceName() {
@@ -85,43 +92,70 @@ public class ChargeControllerInfo implements Serializable {
     }
 
     public int port() {
-            return port;
+        return port;
     }
 
-    public void setPort(int port) {
-            this.port = port;
+    public boolean setPort(int port) {
+        boolean rVal = this.port != port;
+        this.port = port;
+        return rVal;
     }
 
     public boolean isStaticIP() {
-            return staticIP;
+        return staticIP;
     }
 
     public int unitID() {
-            return unitID;
+        return unitID;
     }
 
-    public void setUnitID(int unitID) {
-            this.unitID = unitID;
+    public boolean setUnitID(int unitID) {
+        boolean rval = this.unitID != unitID;
+        this.unitID = unitID;
+        return rval;
     }
 
     public DeviceType deviceType() {
-            return deviceType;
+        return deviceType;
     }
 
-    public void setDeviceType(DeviceType deviceType) {
-            this.deviceType = deviceType;
+    public boolean setDeviceType(DeviceType deviceType) {
+        boolean rVal = this.deviceType != deviceType;
+        this.deviceType = deviceType;
+        return rVal;
     }
 
     public boolean hasWhizbang() {
-            return hasWhizbang;
+        return hasWhizbang;
     }
 
-    public void setHasWhizbang(boolean hasWhizbang) {
-            this.hasWhizbang = hasWhizbang;
+    public boolean setHasWhizbang(boolean hasWhizbang) {
+        boolean rVal = this.hasWhizbang != hasWhizbang;
+        this.hasWhizbang = hasWhizbang;
+        return rVal;
     }
 
     public InetSocketAddress getInetSocketAddress() {
-            return new InetSocketAddress(deviceIP, port);
+        return new InetSocketAddress(deviceIP, port);
     }
+
+    public boolean isCurrent() {
+        return isCurrent;
+    }
+
+    public void setIsCurrent(boolean isCurrent) {
+        this.isCurrent = isCurrent;
+    }
+
+    public boolean isReachable() {
+        return isReachable;
+    }
+
+    public boolean setIsReachable(boolean isReachable) {
+        boolean rVal = this.isReachable != isReachable;
+        this.isReachable = isReachable;
+        return rVal;
+    }
+
 }
 

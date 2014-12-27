@@ -26,6 +26,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.StrictMode;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -65,6 +66,9 @@ public class MonitorApplication extends Application implements Application.Activ
         super.onCreate();
 
         MonitorApplication.context = getApplicationContext();
+        if (Constants.DEVELOPER_MODE) {
+            StrictMode.enableDefaults();
+        }
         InitializeChargeStateLookup();
         InitializeChargeStateTitleLookup();
         LocalBroadcastManager.getInstance(this).registerReceiver(addChargeControllerReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER));

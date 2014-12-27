@@ -152,7 +152,7 @@ public class HourLogChart extends Fragment {
                 LogEntry logs = (LogEntry)intent.getSerializableExtra("logs");
                 if (logs != null) {
                     unRegisterReceiver();
-                    new ChartLoader(logs).execute();
+                    new ChartLoader(logs).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     Log.d(getClass().getName(), String.format("Hour Log Chart received logs from classic %s", Thread.currentThread().getName()));
                 }
             } catch (Exception e) {
