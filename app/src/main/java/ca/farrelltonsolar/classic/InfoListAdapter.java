@@ -47,8 +47,10 @@ public class InfoListAdapter extends ArrayAdapter<Pair> {
         TextView title = (TextView) view.findViewById(R.id.info_title);
         TextView value = (TextView) view.findViewById(R.id.info_value);
         Pair item = getItem(position);
-        title.setText(item.first.toString());
-        value.setText(item.second.toString());
+        if (item != null) {
+            title.setText(item.first != null ? item.first.toString() : "");
+            value.setText(item.second != null ? item.second.toString() : "");
+        }
         return view;
     }
 }

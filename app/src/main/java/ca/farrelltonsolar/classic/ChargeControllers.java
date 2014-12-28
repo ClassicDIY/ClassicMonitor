@@ -18,14 +18,11 @@ package ca.farrelltonsolar.classic;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,7 +132,9 @@ public final class ChargeControllers {
                     arr.add(cc.getInetSocketAddress());
                 }
                 else if (!staticOnly || cc.isStaticIP()) {
-                    arr.add(cc.getInetSocketAddress());
+                    if (!cc.isCurrent()) {
+                        arr.add(cc.getInetSocketAddress());
+                    }
                 }
             }
         }
@@ -239,54 +238,6 @@ public final class ChargeControllers {
     public void resetPVOutputLogs() {
         for (ChargeController cc : devices) {
             cc.resetPVOutputLogs();
-        }
-    }
-
-    public boolean openIfReachable(int position) {
-        if (position < 0 || position >= count()) {
-            return false;
-        }
-        boolean rVal = false;
-        ChargeController cc = get(position);
-        if (cc.isReachable()) {
-            rVal = true;
-            MonitorApplication.monitorChargeController(position);
-        } else {
-            new CheckReachableTask(cc, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
-        return rVal;
-    }
-
-    class CheckReachableTask extends AsyncTask<Void, Void, Boolean> {
-        int position;
-        ChargeController cc;
-        CheckReachableTask(ChargeController cc, int position) {
-            this.position = position;
-            this.cc = cc;
-        }
-
-        protected Boolean doInBackground(Void... x) {
-            boolean rVal = false;
-            if (cc != null) {
-                try {
-                    Socket socket = new Socket();
-                    socket.connect(cc.getInetSocketAddress(), 500);
-                    socket.close();
-                    rVal = true;
-                } catch (Exception e) {
-                    Log.w(getClass().getName(), String.format("CheckReachableTask failed to connect to %s, ex: %s", cc.toString(), e));
-                }
-            }
-            return rVal;
-        }
-
-        protected void onPostExecute(Boolean result) {
-            if (cc != null) {
-                cc.setIsReachable(result);
-                if (result) {
-                    MonitorApplication.monitorChargeController(position);
-                }
-            }
         }
     }
 }

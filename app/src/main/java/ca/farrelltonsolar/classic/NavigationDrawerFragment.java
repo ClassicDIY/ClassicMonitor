@@ -142,7 +142,10 @@ public class NavigationDrawerFragment extends Fragment {
 
         mDrawerListView.setAdapter(adapter);
         mDrawerListView.clearChoices();
-        mDrawerListView.setItemChecked(MonitorApplication.chargeControllers().getCurrentControllerIndex(), true);
+        int currentCC = MonitorApplication.chargeControllers().getCurrentControllerIndex();
+        if (currentCC != -1) {
+            mDrawerListView.setItemChecked(currentCC, true);
+        }
 
         return mDrawerListView;
     }
@@ -196,8 +199,9 @@ public class NavigationDrawerFragment extends Fragment {
             }
         };
         ChargeControllers chargeControllers = MonitorApplication.chargeControllers();
+        int currentCC = chargeControllers.getCurrentControllerIndex();
         chargeControllers.load(adapter);
-        if (adapter.getCount() == 0) {
+        if (adapter.getCount() == 0 || currentCC == -1) {
             mDrawerLayout.openDrawer(mFragmentContainerView);
         }
         // Defer code dependent on restoration of previous instance state.
@@ -211,7 +215,7 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     private void selectItem(int position) {
-        MonitorApplication.chargeControllers().openIfReachable(position);
+        MonitorApplication.monitorChargeController(position);
     }
 
     @Override

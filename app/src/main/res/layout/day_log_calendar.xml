@@ -1,169 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    >
+    android:orientation="vertical">
+
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/header"
-        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/header_background"
-        >
+        android:orientation="horizontal">
+
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="left"
-            >
+            android:gravity="left">
+
             <TextView
                 android:id="@+id/previous"
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
+                android:clickable="true"
+                android:gravity="center_horizontal"
                 android:padding="5dp"
                 android:paddingLeft="5dp"
-                android:textSize="@dimen/textSizeXLarge"
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                android:gravity="center_horizontal"
                 android:text="&lt;&lt;"
-                android:clickable="true"
-                />
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeXLarge"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/title"
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_toRightOf="@+id/previous"
+            android:gravity="center_horizontal"
             android:padding="5dp"
             android:paddingLeft="5dp"
+            android:textColor="@color/white"
             android:textSize="@dimen/textSizeXLarge"
             android:textStyle="bold"
-            android:textColor="@color/white"
-            android:gravity="center_horizontal"
-            android:layout_toRightOf="@+id/previous"
 
             />
+
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
             android:layout_toRightOf="@+id/title"
-            >
+            android:gravity="right">
+
             <TextView
                 android:id="@+id/next"
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
+                android:clickable="true"
+                android:gravity="center_horizontal"
                 android:padding="5dp"
                 android:paddingLeft="5dp"
-                android:textSize="@dimen/textSizeXLarge"
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                android:gravity="center_horizontal"
                 android:text=">>"
-                android:clickable="true"
-                />
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeXLarge"
+                android:textStyle="bold" />
         </LinearLayout>
 
     </RelativeLayout>
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/headerlayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:weightSum="7"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_centerHorizontal="true"
-            android:textSize="@dimen/textSizeMedium"
-            android:textStyle="bold"
-            android:textColor="@color/black_54"
-            android:gravity="center_horizontal"
-            android:text="@string/Sunday"
-            />
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_centerHorizontal="true"
-            android:textSize="@dimen/textSizeMedium"
-            android:textStyle="bold"
-            android:textColor="@color/black_54"
-            android:gravity="center_horizontal"
-            android:text="@string/Monday"
-            />
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_centerHorizontal="true"
-            android:textSize="@dimen/textSizeMedium"
-            android:textStyle="bold"
-            android:textColor="@color/black_54"
-            android:gravity="center_horizontal"
-            android:text="@string/Tuesday"
-            />
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_centerHorizontal="true"
-            android:textSize="@dimen/textSizeMedium"
-            android:textStyle="bold"
-            android:textColor="@color/black_54"
-            android:gravity="center_horizontal"
-            android:text="@string/Wednesday"
-            />
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_centerHorizontal="true"
-            android:textSize="@dimen/textSizeMedium"
-            android:textStyle="bold"
-            android:textColor="@color/black_54"
-            android:gravity="center_horizontal"
-            android:text="@string/Thursday"
-            />
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_centerHorizontal="true"
-            android:textSize="@dimen/textSizeMedium"
-            android:textStyle="bold"
-            android:textColor="@color/black_54"
-            android:gravity="center_horizontal"
-            android:text="@string/Friday"
-            />
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_centerHorizontal="true"
-            android:textSize="@dimen/textSizeMedium"
-            android:textStyle="bold"
-            android:textColor="@color/black_54"
-            android:gravity="center_horizontal"
-            android:text="@string/Saturday"
-            />
-
-</LinearLayout>
+        android:orientation="horizontal"
+        android:weightSum="7">
+    </LinearLayout>
 
     <GridView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/gridview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-
-        android:numColumns="7"
-        android:verticalSpacing="2dp"
+        android:layout_below="@id/headerlayout"
+        android:gravity="center"
         android:horizontalSpacing="2dp"
+        android:numColumns="7"
         android:stretchMode="columnWidth"
 
-        android:gravity="center"
-        />
+        android:verticalSpacing="2dp" />
 </LinearLayout>

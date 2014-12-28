@@ -303,7 +303,7 @@ public class UDPListener extends Service {
 
             public StaticNameUpdaterThread(ArrayList<InetSocketAddress> val) {
                 staticList = val;
-                for(InetSocketAddress cc : staticList) staticListClone.add(cc);
+                for (InetSocketAddress cc : staticList) staticListClone.add(cc);
             }
 
             private void updatedStatic(InetSocketAddress socketAddress) {
@@ -346,7 +346,8 @@ public class UDPListener extends Service {
                     } catch (InterruptedException e) {
                         break;
                     }
-                } while (GetRunning() && anythingToCheck() );
+                } while (GetRunning() && anythingToCheck());
+                Log.d(getClass().getName(), "StaticNameUpdaterThread has contacted all static devices" );
             }
 
             class CheckReachableThread implements Runnable {
@@ -360,28 +361,29 @@ public class UDPListener extends Service {
                 public void run() {
                     try {
                         Socket socket = new Socket();
-                        socket.connect(socketAddress, 500);
+                        socket.connect(socketAddress, 5000);
                         socket.close();
-                        ModbusTask modbus = new ModbusTask(socketAddress, UDPListener.this);
-                        try {
-                            if (modbus.connect()) {
-                                try {
-                                    Log.d(getClass().getName(), "Updating name for: " + socketAddress.toString());
-                                    Bundle info = modbus.getChargeControllerInformation();
-                                    currentChargeControllers.update(info, socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), false);
-                                    updatedStatic(socketAddress);
-                                } catch (ModbusException e) {
-                                    Log.d(getClass().getName(), "Failed to get unit info" + e);
-                                } finally {
-                                    modbus.disconnect();
-                                }
+                    } catch (IOException e) {
+                        return;
+                    }
+                    ModbusTask modbus = new ModbusTask(socketAddress, UDPListener.this);
+                    try {
+                        if (modbus.connect()) {
+                            try {
+                                Log.d(getClass().getName(), "Updating name for: " + socketAddress.toString());
+                                Bundle info = modbus.getChargeControllerInformation();
+                                currentChargeControllers.update(info, socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), false);
+                                updatedStatic(socketAddress);
+                            } catch (ModbusException e) {
+                                Log.d(getClass().getName(), "Failed to get unit info" + e);
+                            } finally {
+                                modbus.disconnect();
                             }
-                        } catch (Exception e) {
-                            Log.d(getClass().getName(), String.format("Failed to connect to &s ex:%s", socketAddress.toString(), e));
                         }
                     } catch (Exception e) {
-
+                        Log.d(getClass().getName(), String.format("Failed to connect to &s ex:%s", socketAddress.toString(), e));
                     }
+
                 }
             }
         }

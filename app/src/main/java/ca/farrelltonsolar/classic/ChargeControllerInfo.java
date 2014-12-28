@@ -36,6 +36,11 @@ public class ChargeControllerInfo implements Serializable {
     private boolean isCurrent;
     private DeviceType deviceType;
     private boolean isReachable;
+    private String model;
+    private String macAddress;
+    private float lastVOC;
+    private String appVersion;
+    private String netVersion;
 
     // default ctor for de-serialization
     public ChargeControllerInfo() {
@@ -157,5 +162,52 @@ public class ChargeControllerInfo implements Serializable {
         return rVal;
     }
 
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setMacAddress(String macAddress) {
+        this.macAddress = macAddress;
+    }
+
+    public String getMacAddress() {
+        return macAddress;
+    }
+
+    public void setLastVOC(float lastVOC) {
+        this.lastVOC = lastVOC;
+    }
+
+    public float getLastVOC() {
+        return lastVOC;
+    }
+
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
+    }
+
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    public void setNetVersion(String netVersion) {
+        this.netVersion = netVersion;
+    }
+
+    public String getNetVersion() {
+        return netVersion;
+    }
+
+    public void updateBoilerPlate(Bundle info) {
+        setModel(info.getString("model"));
+        setMacAddress(info.getString("macAddress"));
+        setLastVOC(info.getFloat("lastVOC"));
+        setAppVersion(info.getString("appVersion"));
+        setNetVersion(info.getString("netVersion"));
+    }
 }
 

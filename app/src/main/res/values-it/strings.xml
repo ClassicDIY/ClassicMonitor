@@ -43,7 +43,7 @@
     <string name="CancelButton">annullare</string>
     <string name="GaugeTabTitle">Gauge</string>
     <string name="CalendarTabTitle">calendario</string>
-    <string name="ChartTabTitle">grafico</string>
+    <string name="HourChartTabTitle">grafico</string>
     <string name="BatteryVoltageScaleSettingDialogTitle">Tensione della batteria Gauge Scala</string>
     <string name="BatteryCurrentGaugeScaleSettingDialogTitle">Battery Gauge scala corrente</string>
     <string name="PowerGaugeScaleSettingDialogTitle">Potenza Gauge Scala</string>
@@ -96,5 +96,12 @@
     <string name="BatTemperature">Bat Temperature</string>
     <string name="dialog_port_hint">port</string>
     <string name="dialog_ipaddress_hint">ipAddress</string>
+    <string name="info_model_title">Model:</string>
+    <string name="info_mac_title">MAC Address:</string>
+    <string name="info_unitid_title">Unit ID:</string>
+    <string name="info_ipaddress_title">IP Address:</string>
+    <string name="info_classic_rev_title">Classic Rev:</string>
+    <string name="info_network_rev_title">Network Rev:</string>
+    <string name="info_last_voc_title">Last VOC:</string>
 
 </resources>

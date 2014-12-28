@@ -53,10 +53,10 @@ public class NavigationDrawerArrayAdapter extends ArrayAdapter<ChargeControllerI
         super(context, resource, textViewResourceId, objects);
     }
 
-    @Override
-    public boolean isEnabled(int position) {
-        return getItem(position).isReachable();
-    }
+//    @Override
+//    public boolean isEnabled(int position) {
+//        return getItem(position).isReachable();
+//    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

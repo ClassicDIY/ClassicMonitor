@@ -17,41 +17,26 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="10"
-    android:orientation="horizontal"
-    android:paddingLeft="20sp"
-    android:weightSum="100">
-
+    android:layout_height="match_parent"
+    android:orientation="vertical">
     <TextView
-        android:layout_width="0dp"
+        android:id="@+id/dayLabel_day"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="40"
-        android:id="@+id/info_title"
         android:inputType="none"
         android:singleLine="true"
-        android:labelFor="@+id/info_value"
-        android:textColor="@color/text_primary"
-        android:shadowColor="@color/text_primary_inverse"
-        android:shadowDx="2"
-        android:shadowDy="2"
-        android:shadowRadius="3"
-        android:textSize="@dimen/textSizeLarge"
-        android:gravity="right"
-        android:textStyle="italic" />
-
+        android:textSize="@dimen/textSizeMedium"
+        android:textAlignment="gravity"
+        android:gravity="center" />
     <TextView
-        android:id="@+id/info_value"
-        android:layout_width="0dp"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="60"
+        android:id="@+id/dayLabel_date"
         android:inputType="none"
+        android:textSize="@dimen/textSizeMedium"
         android:singleLine="true"
-        android:textColor="@color/text_primary_inverse"
-        android:shadowColor="@color/text_primary"
-        android:shadowDx="2"
-        android:shadowDy="2"
-        android:shadowRadius="3"
-        android:textSize="@dimen/textSizeXLarge"
-        android:paddingLeft="10sp" />
+        android:textAlignment="gravity"
+        android:gravity="center" />
+
+
 </LinearLayout>

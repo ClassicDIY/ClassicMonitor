@@ -32,12 +32,17 @@ public class InfoFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
         if (cc != null) {
-            Pair[] data = new Pair[5];
-            data[0] = new Pair("Name:", cc.deviceName());
-            data[1] = new Pair("Type:", cc.deviceType().toString());
-            data[2] = new Pair("IP Address:", cc.deviceIpAddress());
-            data[3] = new Pair("Unit ID:", cc.unitID());
-            data[4] = new Pair("Port:", cc.port());
+            Pair[] data = new Pair[8];
+            data[0] = new Pair<>(getString(R.string.info_model_title), cc.getModel());
+            data[1] = new Pair<>(getString(R.string.info_mac_title), cc.getMacAddress());
+            data[2] = new Pair<>(getString(R.string.info_unitid_title), String.format("%04x %04x", (cc.unitID() >> 16) & 0xffff , cc.unitID() & 0xffff).toUpperCase());
+            data[3] = new Pair<>(getString(R.string.info_ipaddress_title), String.format("%s:%s", cc.deviceIpAddress(), cc.port()));
+            data[4] = new Pair<>(getString(R.string.info_classic_rev_title), cc.getAppVersion());
+            data[5] = new Pair<>(getString(R.string.info_network_rev_title),cc.getNetVersion());
+
+            data[6] = new Pair<>(getString(R.string.info_last_voc_title), String.format("%1.1f", cc.getLastVOC()));
+
+
             InfoListAdapter adapter = new InfoListAdapter(inflater.getContext(), data);
             setListAdapter(adapter);
         }

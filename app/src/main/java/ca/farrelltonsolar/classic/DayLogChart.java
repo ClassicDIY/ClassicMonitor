@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *         http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,6 +34,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ import ca.farrelltonsolar.uicomponents.ValueLabelAdapter;
 /**
  * Created by Graham on 19/12/2014.
  */
-public class HourLogChart extends Fragment {
+public class DayLogChart extends Fragment {
 
     private boolean isReceiverRegistered;
     ChartView chartView;
@@ -58,14 +59,15 @@ public class HourLogChart extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View theView = inflater.inflate(R.layout.hour_logs_chart, container, false);
+        View theView = inflater.inflate(R.layout.day_logs_chart, container, false);
         // Find the chart view
         chartView = (ChartView) theView.findViewById(R.id.chart_view);
 
         LabelAdapter left = new ValueLabelAdapter(this.getActivity(), ValueLabelAdapter.LabelOrientation.VERTICAL, "%.1f");
-        LabelAdapter bottom = new HourLabelAdapter(this.getActivity(), ValueLabelAdapter.LabelOrientation.HORIZONTAL);
+        LabelAdapter bottom = new DayLabelAdapter(this.getActivity(), ValueLabelAdapter.LabelOrientation.HORIZONTAL);
         chartView.setLeftLabelAdapter(left);
         chartView.setBottomLabelAdapter(bottom);
+
         setHasOptionsMenu(true);
         return theView;
     }
@@ -74,7 +76,7 @@ public class HourLogChart extends Fragment {
     public void onStart() {
         super.onStart();
         if (!isReceiverRegistered) {
-            LocalBroadcastManager.getInstance(HourLogChart.this.getActivity()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MINUTE_LOGS));
+            LocalBroadcastManager.getInstance(DayLogChart.this.getActivity()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS));
             isReceiverRegistered = true;
         }
         Log.d(getClass().getName(), "onStart");
@@ -97,14 +99,16 @@ public class HourLogChart extends Fragment {
         super.onSaveInstanceState(outState);
     }
 
-    private void setupSpinner( MenuItem item )
-    {
+    private void setupSpinner(MenuItem item) {
         item.setVisible(true);
         item.setActionView(R.layout.action_chart_select);
         View view = MenuItemCompat.getActionView(item);
-        if (view instanceof Spinner)
-        {
+        if (view instanceof Spinner) {
             Spinner spinner = (Spinner) view;
+            String[] itemArray = getResources().getStringArray(R.array.day_log_chart_selection);
+            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, itemArray); //selected item will look like a spinner set from XML
+            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(spinnerArrayAdapter);
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
                 @Override
@@ -136,7 +140,7 @@ public class HourLogChart extends Fragment {
     private void unRegisterReceiver() {
         if (isReceiverRegistered) {
             try {
-                LocalBroadcastManager.getInstance(HourLogChart.this.getActivity()).unregisterReceiver(mReadingsReceiver);
+                LocalBroadcastManager.getInstance(DayLogChart.this.getActivity()).unregisterReceiver(mReadingsReceiver);
             } catch (IllegalArgumentException e) {
                 // Do nothing
             }
@@ -149,7 +153,7 @@ public class HourLogChart extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
-                LogEntry logs = (LogEntry)intent.getSerializableExtra("logs");
+                LogEntry logs = (LogEntry) intent.getSerializableExtra("logs");
                 if (logs != null) {
                     unRegisterReceiver();
                     new ChartLoader(logs).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -166,36 +170,36 @@ public class HourLogChart extends Fragment {
         private ChartLoader(LogEntry logs) {
             this.logs = logs;
         }
+
         LogEntry logs;
-        LinearSeries seriesPower;
-        LinearSeries seriesInputVoltage;
-        LinearSeries seriesBatteryVoltage;
-        LinearSeries seriesOutputCurrent;
-        LinearSeries seriesChargeState;
         LinearSeries seriesEnergy;
+        LinearSeries seriesHighPower;
+        LinearSeries seriesHighTemperature;
+        LinearSeries seriesHighPvVolts;
+        LinearSeries seriesHighBatteryVolts;
+        LinearSeries seriesFloatTime;
 
         @Override
         protected String doInBackground(String... params) {
-            short[] timeStamps = logs.getShortArray(Constants.CLASSIC_TIMESTAMP_HIGH_HOURLY_CATEGORY);
-            seriesPower = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_POWER_HOURLY_CATEGORY));
-            seriesInputVoltage = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_INPUT_VOLTAGE_HOURLY_CATEGORY));
-            seriesBatteryVoltage = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_BATTERY_VOLTAGE_HOURLY_CATEGORY));
-            seriesOutputCurrent = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_OUTPUT_CURRENT_HOURLY_CATEGORY));
-            seriesChargeState = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_CHARGE_STATE_HOURLY_CATEGORY));
-            seriesEnergy = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_ENERGY_HOURLY_CATEGORY));
+            seriesEnergy = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY), 10);
+            seriesHighPower = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_POWER_DAILY_CATEGORY), 1);
+            seriesHighTemperature = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_TEMP_DAILY_CATEGORY), 10);
+            seriesHighPvVolts = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_PV_VOLT_DAILY_CATEGORY), 10);
+            seriesHighBatteryVolts = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_BATTERY_VOLT_DAILY_CATEGORY), 10);
+            seriesFloatTime = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY), 1);
             Log.d(getClass().getName(), String.format("Chart doInBackground completed %s", Thread.currentThread().getName()));
             return "";
         }
 
         @Override
         protected void onPostExecute(String result) {
-            mSeries.add(seriesPower);
-            mSeries.add(seriesInputVoltage);
-            mSeries.add(seriesBatteryVoltage);
-            mSeries.add(seriesOutputCurrent);
-            mSeries.add(seriesChargeState);
             mSeries.add(seriesEnergy);
-            chartView.addSeries(seriesPower);
+            mSeries.add(seriesHighPower);
+            mSeries.add(seriesHighTemperature);
+            mSeries.add(seriesHighPvVolts);
+            mSeries.add(seriesHighBatteryVolts);
+            mSeries.add(seriesFloatTime);
+            chartView.addSeries(seriesEnergy);
             Log.d(getClass().getName(), String.format("Chart onPostExecute completed %s", Thread.currentThread().getName()));
         }
 
@@ -208,22 +212,14 @@ public class HourLogChart extends Fragment {
         }
     }
 
-    private LinearSeries getLinearSeries(short[] timeStamps, float[] yAxis) {
+    private LinearSeries getLinearSeries(float[] yAxis, float factor) {
         // Create the data points
         LinearSeries series = new LinearSeries();
         series.setLineColor(Color.YELLOW);
         series.setLineWidth(4);
-        if (timeStamps != null && yAxis != null && yAxis.length >= timeStamps.length ) {
-            short offset = 1440; // 24 hrs ago
-            for (int i = 0; i < timeStamps.length; i++) {
-                short t = timeStamps[i];
-                t = (short)(offset - t);
-                series.addPoint(new LinearSeries.LinearPoint(t, yAxis[i]));
-            }
-        }
-        else {
-            for (double i = 0d; i <= (2d * Math.PI); i += 0.1d) {
-                series.addPoint(new LinearSeries.LinearPoint(i, Math.sin(i))); // test pattern
+        if (yAxis != null && yAxis.length >= 24) {
+            for (int i = 0; i < 24; i++) {
+                series.addPoint(new LinearSeries.LinearPoint(i, yAxis[i] / factor));
             }
         }
         return series;

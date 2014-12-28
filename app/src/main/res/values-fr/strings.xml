@@ -43,7 +43,7 @@
     <string name="CancelButton">Annuler</string>
     <string name="GaugeTabTitle">Cadrant</string>
     <string name="CalendarTabTitle">Calendrier</string>
-    <string name="ChartTabTitle">Graphique</string>
+    <string name="HourChartTabTitle">Graphique</string>
     <string name="BatteryVoltageScaleSettingDialogTitle">Echelle du cadrant de tension au batterie</string>
     <string name="BatteryCurrentGaugeScaleSettingDialogTitle">Echelle du cadrant de courant au batterie</string>
     <string name="PowerGaugeScaleSettingDialogTitle">Echelle du cadrant de puissance</string>
@@ -92,5 +92,12 @@
     <string name="BatTemperature">Bat Temperature</string>
     <string name="dialog_port_hint">port</string>
     <string name="dialog_ipaddress_hint">ipAddress</string>
+    <string name="info_model_title">Model:</string>
+    <string name="info_mac_title">MAC Address:</string>
+    <string name="info_unitid_title">Unit ID:</string>
+    <string name="info_ipaddress_title">IP Address:</string>
+    <string name="info_classic_rev_title">Classic Rev:</string>
+    <string name="info_network_rev_title">Network Rev:</string>
+    <string name="info_last_voc_title">Last VOC:</string>
 
 </resources>

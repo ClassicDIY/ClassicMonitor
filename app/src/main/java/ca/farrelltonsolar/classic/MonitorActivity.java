@@ -83,12 +83,12 @@ public class MonitorActivity extends ActionBarActivity {
             }
             tabStripAdapter.addTab(TemperatureFragment.TabTitle, TemperatureFragment.class, null);
             tabStripAdapter.addTab(R.string.DayLogTabTitle, DayLogCalendar.class, null);
-            tabStripAdapter.addTab(R.string.ChartTabTitle, HourLogChart.class, null);
+            tabStripAdapter.addTab(R.string.DayChartTabTitle, DayLogChart.class, null);
+            tabStripAdapter.addTab(R.string.HourChartTabTitle, HourLogChart.class, null);
             tabStripAdapter.addTab(R.string.InfoTabTitle, InfoFragment.class, null);
         } else if (cc != null && cc.deviceType() == DeviceType.TriStar) {
             currentUnitName = cc.deviceName();
             tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
-            tabStripAdapter.addTab(R.string.InfoTabTitle, InfoFragment.class, null);
         } else {
             currentUnitName = "Demo";
             tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
@@ -96,7 +96,8 @@ public class MonitorActivity extends ActionBarActivity {
             tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
             tabStripAdapter.addTab(TemperatureFragment.TabTitle, TemperatureFragment.class, null);
             tabStripAdapter.addTab(R.string.DayLogTabTitle, DayLogCalendar.class, null);
-            tabStripAdapter.addTab(R.string.ChartTabTitle, HourLogChart.class, null);
+            tabStripAdapter.addTab(R.string.DayChartTabTitle, DayLogChart.class, null);
+            tabStripAdapter.addTab(R.string.HourChartTabTitle, HourLogChart.class, null);
             tabStripAdapter.addTab(R.string.InfoTabTitle, InfoFragment.class, null);
         }
         tabStripAdapter.notifyTabsChanged();
@@ -165,18 +166,33 @@ public class MonitorActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         if (!isReceiverRegistered) {
-            LocalBroadcastManager.getInstance(MonitorActivity.this).registerReceiver(mMonitorReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER));
-            LocalBroadcastManager.getInstance(MonitorActivity.this).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
+            LocalBroadcastManager.getInstance(this).registerReceiver(mMonitorReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER));
+            LocalBroadcastManager.getInstance(this).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
+            LocalBroadcastManager.getInstance(this).registerReceiver(updateChargeControllersReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_UPDATE_CHARGE_CONTROLLERS));
             isReceiverRegistered = true;
         }
     }
+
+    private BroadcastReceiver updateChargeControllersReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController(); // cc got removed?
+            if (cc == null) {
+                if (modbusService != null && modbusService.isInService()) {
+                    modbusService.stopMonitoringChargeController();
+                    MonitorActivity.this.finish();
+                    MonitorActivity.this.startActivity(getIntent());
+                }
+            }
+        }
+    };
 
     @Override
     protected void onPause() {
         if (isReceiverRegistered) {
             try {
-                LocalBroadcastManager.getInstance(MonitorActivity.this).unregisterReceiver(mMonitorReceiver);
-                LocalBroadcastManager.getInstance(MonitorActivity.this).unregisterReceiver(mReadingsReceiver);
+                LocalBroadcastManager.getInstance(this).unregisterReceiver(mMonitorReceiver);
+                LocalBroadcastManager.getInstance(this).unregisterReceiver(mReadingsReceiver);
             } catch (IllegalArgumentException e) {
                 // Do nothing
             }
@@ -187,15 +203,14 @@ public class MonitorActivity extends ActionBarActivity {
 
     @Override
     public void onStart() {
+        Log.d(getClass().getName(), String.format("onStart thread is %s", Thread.currentThread().getName()));
         super.onStart();
         bindService(new Intent(this, ModbusService.class), modbusServiceConnection, Context.BIND_AUTO_CREATE);
-        Log.d(getClass().getName(), String.format("onStart thread is %s", Thread.currentThread().getName()));
     }
 
     @Override
     protected void onStop() {
         Log.d(getClass().getName(), String.format("onStop thread is %s", Thread.currentThread().getName()));
-        modbusService.stopMonitoringChargeController();
         unbindService(modbusServiceConnection);
         super.onStop();
     }

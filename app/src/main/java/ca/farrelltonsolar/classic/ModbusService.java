@@ -47,17 +47,6 @@ public class ModbusService extends Service {
         return mBinder;
     }
 
-    public void stopMonitoringChargeController() {
-        if (task != null) {
-            Disconnector d = new Disconnector(task);
-            d.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            task = null;
-        }
-        if (pollTimer != null) {
-            pollTimer.cancel();
-        }
-    }
-
     public class ModbusServiceBinder extends Binder {
         ModbusService getService() {
             return ModbusService.this;
@@ -86,6 +75,22 @@ public class ModbusService extends Service {
         task = new ModbusTask(controller, this.getBaseContext());
         pollTimer.schedule(task, 100, Constants.MODBUS_POLL_TIME);
         Log.d(getClass().getName(), String.format("Monitor running on: %s this thread is %s", controller.toString(), Thread.currentThread().getName()));
+    }
+
+    public void stopMonitoringChargeController() {
+        if (task != null) {
+            Log.d(getClass().getName(), String.format("stopMonitoringChargeController: %s this thread is %s", task.chargeController().toString(), Thread.currentThread().getName()));
+            Disconnector d = new Disconnector(task);
+            d.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            task = null;
+        }
+        if (pollTimer != null) {
+            pollTimer.cancel();
+        }
+    }
+
+    public Boolean isInService() {
+        return task != null;
     }
 
     private class Disconnector extends AsyncTask<String, Void, String> {

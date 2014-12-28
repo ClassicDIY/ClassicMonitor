@@ -38,19 +38,19 @@
     <string name="PowerTitle">Power</string>
     <string name="SettingsLabel">Settings</string>
     <string name="About">About</string>
-    <string name="DoneButton">Done</string>
+
     <string name="ApplyButton">Apply</string>
     <string name="CancelButton">Cancel</string>
-    <string name="GaugeTabTitle">Gauge</string>
-    <string name="CalendarTabTitle">Calendar</string>
-    <string name="ChartTabTitle">Chart</string>
+
+    <string name="HourChartTabTitle">Hour Log Chart</string>
+    <string name="DayChartTabTitle">Day Log Chart</string>
     <string name="BatteryVoltageScaleSettingDialogTitle">Battery Voltage Gauge Scale</string>
     <string name="BatteryCurrentGaugeScaleSettingDialogTitle">Battery Current Gauge Scale</string>
     <string name="PowerGaugeScaleSettingDialogTitle">Power Gauge Scale</string>
     <string name="BatteryVoltageScaleSettingTitle">Battery Voltage Scale</string>
     <string name="BatteryCurrentGaugeScaleSettingTitle">Battery Current Scale</string>
     <string name="PowerGaugeScaleSettingTitle">Power Scale</string>
-    <string name="bi_directional_gauge_units">Display bi-Directional gauge units in watts</string>
+
     <string name="Calendar">Calendar</string>
     <string name="LockScale">Lock Scale</string>
     <string name="CalendarFloat">(Float)</string>
@@ -73,19 +73,12 @@
     <string name="NetworkCategoryTitle">Connection Settings</string>
     <string name="GaugePreferenceTitle">Gauges</string>
     <string name="PVOutputPreferenceTitle">PVOutput</string>
-    <string name="MonthNames">\'January\',\'February\',\'March\',\'April\',\'May\',\'June\',\'July\',\'August\',\'September\',\'October\',\'November\',\'December\'</string>
-    <string name="MonthNamesShort">\'Jan\',\'Feb\',\'Mar\',\'Apr\',\'May\',\'Jun\',\'Jul\',\'Aug\',\'Sep\',\'Oct\',\'Nov\',\'Dec\'</string>
-    <string name="DayNames">\'Sunday\',\'Monday\',\'Tuesday\',\'Wednesday\',\'Thursday\',\'Friday\',\'Saturday\'</string>
-    <string name="DayNamesShort">\'Sun\',\'Mon\',\'Tue\',\'Wed\',\'Thu\',\'Fri\',\'Sat\'</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="title_section1">Device 1</string>
-    <string name="title_section2">Device 2</string>
-    <string name="title_section3">Device 3</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="network">Network</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="PowerTabTitle">Power</string>
     <string name="EnergyTabTitle">Energy</string>
     <string name="StateOfChargeTabTitle">State of Charge</string>
@@ -94,25 +87,35 @@
     <string name="PCBTemperature">PCB</string>
     <string name="FETTemperature">FET</string>
     <string name="BatTemperature">Battery</string>
+
     <string name="dialog_port_hint">port number</string>
     <string name="dialog_ipaddress_hint">IP Address</string>
     <string name="IPAddressPrompt">Enter a static IP address</string>
 
     <string name="DayLogTabTitle">Day log calendar</string>
-    <string name="Sunday">"Sunday"</string>
-    <string name="Monday">"Monday"</string>
-    <string name="Tuesday">"Tuesday"</string>
-    <string name="Wednesday">"Wednesday"</string>
-    <string name="Thursday">"Thursday"</string>
-    <string name="Friday">"Friday"</string>
-    <string name="Saturday">"Saturday"</string>
 
     <string name="select_chart">Choose a chart</string>
+    <string name="info_model_title">Model:</string>
+    <string name="info_mac_title">MAC Address:</string>
+    <string name="info_unitid_title">Unit ID:</string>
+    <string name="info_ipaddress_title">IP Address:</string>
+    <string name="info_classic_rev_title">Classic Rev:</string>
+    <string name="info_network_rev_title">Network Rev:</string>
+    <string name="info_last_voc_title">Last VOC:</string>
     <string-array name="minute_log_chart_selection">
         <item>Power</item>
         <item>PV Voltage</item>
         <item>Battery Voltage</item>
         <item>Battery Current</item>
         <item>Energy</item>
+    </string-array>
+
+    <string-array name="day_log_chart_selection">
+        <item>Energy</item>
+        <item>High Power</item>
+        <item>High Temperature</item>
+        <item>High PV Volts</item>
+        <item>High Battery Volts</item>
+        <item>Float Time</item>
     </string-array>
 </resources>

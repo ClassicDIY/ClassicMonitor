@@ -203,7 +203,7 @@ public class MonitorApplication extends Application implements Application.Activ
 
     @Override
     public void onActivityStopped(Activity activity) {
-        Log.d(getClass().getName(), "saving charegController settings");
+        Log.d(getClass().getName(), "saving chargeController settings");
         configuration.putObject("devices", chargeControllers);
         configuration.commit();
     }

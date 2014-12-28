@@ -20,16 +20,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
 /**
  * Created by Graham on 21/12/2014.
@@ -74,6 +79,21 @@ public class DayLogCalendar extends Fragment {
 
             }
         });
+        View linearLayout =  theView.findViewById(R.id.headerlayout);
+        DateTime days = month;
+
+        for (int i = 0; i < 7; i++) {
+            int d = ((i + 6) % 7) +1;
+            days = days.withDayOfWeek(d);
+            TextView aDay = new TextView(theView.getContext());
+            aDay.setText(DateTimeFormat.forPattern("E").print(days));
+            aDay.setGravity(Gravity.CENTER);
+            aDay.setTextColor(Color.BLACK);
+            aDay.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+            ((LinearLayout) linearLayout).addView(aDay);
+
+        }
+
         return theView;
     }
 

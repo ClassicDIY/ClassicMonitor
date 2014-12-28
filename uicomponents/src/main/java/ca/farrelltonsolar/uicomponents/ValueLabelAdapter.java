@@ -52,7 +52,7 @@ public class ValueLabelAdapter extends LabelAdapter {
             return convertView;
         }
         labelTextView.setGravity(Gravity.CENTER);
-		labelTextView.setPadding(8, 0, 8, 0);
+		labelTextView.setPadding(2, 0, 2, 0);
 		labelTextView.setText(String.format(format, getItem(position)));
         labelTextView.setTextColor(labelColor());
 		return convertView;
