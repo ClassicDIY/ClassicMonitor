@@ -103,28 +103,19 @@ public class MonitorApplication extends Application implements Application.Activ
     }
 
     private void InitializeMessageLookup() {
-        messages.put(0x00000001, new Pair(Severity.alert, "Classic Over Temperature"));
-        messages.put(0x00000002, new Pair(Severity.alert, "Classic EEprom read/write found an error"));
-//        messages.put(0x00000008, new Pair(Severity.info, "Equalize Charge stage Active")); // not vis
-        //messages.put(0x00000080, new Pair(Severity.info, "Battery Voltage is less than EQ Voltage (EQ MPPT)")); // not vis
-        messages.put(0x00000100, new Pair(Severity.info, "Input Voltage (PV) is lower than battery voltage."));
-        messages.put(0x00000200, new Pair(Severity.warning, "User current limit or internal temperature current limit reached."));
-        messages.put(0x00000400, new Pair(Severity.warning, "Hyper Voc PV input voltage is above maximum Classic input rating."));
-//        messages.put(0x00002000, new Pair(Severity.info, "Battery temperature sensor installed.")); // not vis
-        messages.put(0x00004000, new Pair(Severity.info, "Aux 1 ON (aux 1 connector has voltage or relay is closed)."));
-        messages.put(0x00008000, new Pair(Severity.info, "Aux 2 ON (aux 2 connector has voltage present)."));
-        messages.put(0x00010000, new Pair(Severity.alert, "Ground Fault detected."));
-        messages.put(0x00020000, new Pair(Severity.alert, "DEFCON 4: FET Drive Error."));
-        messages.put(0x00040000, new Pair(Severity.alert, "Arc Fault occurred."));
-        messages.put(0x00100000, new Pair(Severity.alert, "DEFCON 3: FET Error."));
-//        messages.put(0x00080000, new Pair(Severity.info, "Negative battery current (backfeed out of PV input).")); // nos vis
-        messages.put(0x00400000, new Pair(Severity.warning, "Partial Shade detected during SOLAR sweep."));
-//        messages.put(0x01000000, new Pair(Severity.alert, "(VERY low battery) battery voltage is lower than 8.0 Volts.")); // not vis
-//        messages.put(0x02000000, new Pair(Severity.info, "Stack Jumper is NOT installed.")); // not vis
-//        messages.put(0x04000000, new Pair(Severity.info, "EQ Finished.")); // not vis
-        messages.put(0x08000000, new Pair(Severity.warning, "Temperature sensor is shorted."));
-//        messages.put(0x40000000, new Pair(Severity.info, "PV input terminals are less than 1.0 volt.")); // not vis
-
+        messages.put(0x00000001, new Pair(Severity.alert, getString(R.string.info_message_1)));
+        messages.put(0x00000002, new Pair(Severity.alert, getString(R.string.info_message_2)));
+        messages.put(0x00000100, new Pair(Severity.info, getString(R.string.info_message_100)));
+        messages.put(0x00000200, new Pair(Severity.warning, getString(R.string.info_message_200)));
+        messages.put(0x00000400, new Pair(Severity.warning, getString(R.string.info_message_400)));
+        messages.put(0x00004000, new Pair(Severity.info, getString(R.string.info_message_4000)));
+        messages.put(0x00008000, new Pair(Severity.info, getString(R.string.info_message_8000)));
+        messages.put(0x00010000, new Pair(Severity.alert, getString(R.string.info_message_10000)));
+        messages.put(0x00020000, new Pair(Severity.alert, getString(R.string.info_message_20000)));
+        messages.put(0x00040000, new Pair(Severity.alert, getString(R.string.info_message_40000)));
+        messages.put(0x00100000, new Pair(Severity.alert, getString(R.string.info_message_100000)));
+        messages.put(0x00400000, new Pair(Severity.warning, getString(R.string.info_message_400000)));
+        messages.put(0x08000000, new Pair(Severity.warning, getString(R.string.info_message_8000000)));
     }
 
     public static Context getAppContext() {
