@@ -23,6 +23,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.io.File;
 import java.util.Timer;
 
 public class ModbusService extends Service {
@@ -45,6 +46,11 @@ public class ModbusService extends Service {
     public IBinder onBind(Intent arg0) {
         Log.d(getClass().getName(), "onBind");
         return mBinder;
+    }
+
+    @Override
+    public File getCacheDir() {
+        return super.getCacheDir();
     }
 
     public class ModbusServiceBinder extends Binder {
@@ -78,15 +84,16 @@ public class ModbusService extends Service {
     }
 
     public void stopMonitoringChargeController() {
+        if (pollTimer != null) {
+            pollTimer.cancel();
+        }
         if (task != null) {
             Log.d(getClass().getName(), String.format("stopMonitoringChargeController: %s this thread is %s", task.chargeController().toString(), Thread.currentThread().getName()));
             Disconnector d = new Disconnector(task);
             d.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             task = null;
         }
-        if (pollTimer != null) {
-            pollTimer.cancel();
-        }
+
     }
 
     public Boolean isInService() {

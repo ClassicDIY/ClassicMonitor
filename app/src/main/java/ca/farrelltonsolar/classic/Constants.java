@@ -18,7 +18,7 @@ package ca.farrelltonsolar.classic;
 
 public class Constants {
 
-    public static final boolean DEVELOPER_MODE = true;
+    public static final boolean DEVELOPER_MODE = false;
 
     // UDP listening port for available classics on the subnet
     public static final int CLASSIC_UDP_PORT = 4626;

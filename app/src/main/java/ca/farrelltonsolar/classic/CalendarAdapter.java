@@ -29,6 +29,8 @@ import org.joda.time.Days;
 
 import java.util.ArrayList;
 
+import me.grantland.widget.AutofitHelper;
+
 
 /**
  * Created by Graham on 21/12/2014.
@@ -109,6 +111,7 @@ public class CalendarAdapter extends BaseAdapter {
         TextView hiTemp = (TextView) v.findViewById(R.id.hiTemp);
         TextView hiPVVolt = (TextView) v.findViewById(R.id.hiPVVolt);
         TextView hiBatVolt = (TextView) v.findViewById(R.id.hiBatVolt);
+
         if (position >= firstDayOfFirstWeek && position <= lastDayOfMonth + firstDayOfFirstWeek) {
             try {
 
@@ -149,6 +152,13 @@ public class CalendarAdapter extends BaseAdapter {
                             hiBatVolt.setText(t);
                         }
                     }
+
+                    AutofitHelper.create(stateView);
+                    AutofitHelper.create(floatView);
+                    AutofitHelper.create(hiPower);
+                    AutofitHelper.create(hiTemp);
+                    AutofitHelper.create(hiPVVolt);
+                    AutofitHelper.create(hiBatVolt);
                 }
                 else {
                     stateView.setText("");
@@ -158,7 +168,9 @@ public class CalendarAdapter extends BaseAdapter {
                     hiPVVolt.setText("");
                     hiBatVolt.setText("");
                 }
+
                 dayView.setText(days[position]);
+                AutofitHelper.create(dayView);
                 // mark current day as focused
                 if (cellDate.compareTo(today) == 0) {
                     v.setBackgroundResource(R.drawable.item_background_focused);

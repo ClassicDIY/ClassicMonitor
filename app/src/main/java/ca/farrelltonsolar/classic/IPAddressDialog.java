@@ -74,6 +74,7 @@ public class IPAddressDialog extends DialogFragment {
                         LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(IPAddressDialog.this.getActivity());
                         Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER);
                         pkg.putExtra("ChargeController", GSON.toJson(cc));
+                        pkg.putExtra("ForceRefresh", true);
                         broadcaster.sendBroadcast(pkg);
                         dialog.dismiss();
                     }

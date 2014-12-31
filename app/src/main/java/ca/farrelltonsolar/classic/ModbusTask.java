@@ -22,13 +22,15 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.util.GregorianCalendar;
 import java.util.TimerTask;
 
 import ca.farrelltonsolar.j2modlite.ModbusException;
+import ca.farrelltonsolar.j2modlite.ModbusIOException;
 import ca.farrelltonsolar.j2modlite.facade.ModbusTCPMaster;
 import ca.farrelltonsolar.j2modlite.msg.ReadFileTransferResponse;
 import ca.farrelltonsolar.j2modlite.msg.ReadMultipleRegistersResponse;
@@ -103,12 +105,6 @@ public class ModbusTask extends TimerTask {
     private boolean foundWhizBangJr = false;
     private boolean foundTriStar = false;
     private boolean initialReadingLoaded = false;
-    private boolean disconnecting = false;
-
-    public ModbusTask(InetSocketAddress socketAddress, Context ctx) {
-        chargeControllerInfo = new ChargeControllerInfo(socketAddress);
-        init(ctx);
-    }
 
     public ModbusTask(ChargeControllerInfo cc, Context ctx) {
         chargeControllerInfo = cc;
@@ -142,22 +138,22 @@ public class ModbusTask extends TimerTask {
         } catch (Exception e1) {
             Log.w(getClass().getName(), String.format("Could not connect to %s, ex: %s", chargeControllerInfo.toString(), e1));
             modbusMaster = null;
-        } finally {
-            disconnecting = false;
+            MonitorApplication.chargeControllers().setReachable(chargeControllerInfo.deviceIpAddress(), chargeControllerInfo.port(), false);
         }
         return rVal;
     }
 
     public void disconnect() {
-        disconnecting = true;
+        boolean didDisconnect = false;
         if (isConnected()) {
             synchronized (lock) {
                 if (modbusMaster != null) {
                     modbusMaster.disconnect();
+                    didDisconnect = true;
                 }
                 modbusMaster = null;
             }
-            Log.d(getClass().getName(), String.format("Disconnected from %s", chargeControllerInfo.toString()));
+            Log.d(getClass().getName(), didDisconnect ? String.format("Disconnected from %s", chargeControllerInfo.toString()) : String.format("Tried to Disconnect from %s but did not complete", chargeControllerInfo.toString()));
         }
         clearReadings();
     }
@@ -185,13 +181,9 @@ public class ModbusTask extends TimerTask {
 
     @Override
     public void run() {
-
         Log.d(getClass().getName(), String.format("ModbusTask begin run for %s on thread is %s", chargeControllerInfo.toString(), Thread.currentThread().getName()));
         try {
             synchronized (lock) {
-                if (disconnecting) {
-                    return;
-                }
                 boolean connected = isConnected();
                 if (connected == false) {
                     connected = connect();
@@ -199,7 +191,7 @@ public class ModbusTask extends TimerTask {
                 if (connected) {
                     if (initialReadingLoaded == false) {
                         initialReadingLoaded = true;
-                        chargeControllerInfo.setIsReachable(true);
+                        MonitorApplication.chargeControllers().setReachable(chargeControllerInfo.deviceIpAddress(), chargeControllerInfo.port(), true);
                         if (lookForTriStar() == DeviceType.Classic) {
                             lookForWhizBangJr();
                             loadBoilerPlateInfo();
@@ -208,20 +200,21 @@ public class ModbusTask extends TimerTask {
                     GetModbusReadings();
                     if (!foundTriStar) {
                         if (dayLogEntry.isEmpty()) {
-                            try {
+                            loadDayLogs();
+                        }
+                        else {
+                            DateTime logDate = dayLogEntry.getLogDate();
+                            if (logDate.isBefore(DateTime.now().withTimeAtStartOfDay())) { // still good?
                                 loadDayLogs();
-                            } catch (Exception ex) {
-                                Log.w(getClass().getName(), String.format("Failed to load Day logs due to exception ex: %s", ex));
-                                dayLogEntry = new LogEntry();
                             }
-
                         }
                         if (minuteLogEntry.isEmpty()) {
-                            try {
+                            loadMinuteLogs();
+                        }
+                        else {
+                            DateTime logDate = minuteLogEntry.getLogDate();
+                            if (logDate.isBefore(DateTime.now().minusHours(1))) { // still good?
                                 loadMinuteLogs();
-                            } catch (Exception ex) {
-                                Log.w(getClass().getName(), String.format("Failed to load Minute logs due to exception ex: %s", ex));
-                                minuteLogEntry = new LogEntry();
                             }
                         }
                     }
@@ -231,15 +224,8 @@ public class ModbusTask extends TimerTask {
             }
 
         } catch (Exception e1) {
-            if (isConnected()) {
-                if (modbusMaster != null) {
-                    modbusMaster.disconnect();
-                }
-                modbusMaster = null;
-                Log.w(getClass().getName(), String.format("Could not get readings, disconnected from %s due to exception ex: %s", chargeControllerInfo.toString(), e1));
-            } else {
-                Log.w(getClass().getName(), String.format("Could not get readings from %s, was disconnected ex: %s", chargeControllerInfo.toString(), e1));
-            }
+            Log.w(getClass().getName(), String.format("Failed to run due to exception ex: %s", e1));
+            disconnect();
         }
 //        Log.d(getClass().getName(), "end run");
 
@@ -291,6 +277,7 @@ public class ModbusTask extends TimerTask {
                     readings.set(RegisterName.EnergyToday, regRes.getRegisterValue(OffsetFor(4118)) / 10.0f);
                     readings.set(RegisterName.TotalEnergy, ((regRes.getRegisterValue(OffsetFor(4127)) << 16) + regRes.getRegisterValue(OffsetFor(4126))) / 10.0f);
                     readings.set(RegisterName.ChargeState, MSBFor(regRes.getRegisterValue(OffsetFor(4120))));
+                    readings.set(RegisterName.InfoFlagsBits, ((regRes.getRegisterValue(OffsetFor(4131)) << 16) + regRes.getRegisterValue(OffsetFor(4130))));
                     readings.set(RegisterName.BatTemperature, regRes.getRegisterValue(OffsetFor(4132)) / 10.0f);
                     readings.set(RegisterName.FETTemperature, regRes.getRegisterValue(OffsetFor(4133)) / 10.0f);
                     readings.set(RegisterName.PCBTemperature, regRes.getRegisterValue(OffsetFor(4134)) / 10.0f);
@@ -316,7 +303,7 @@ public class ModbusTask extends TimerTask {
             readings.broadcastReadings(context, Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS);
 
         } catch (ModbusException e) {
-            Log.w(getClass().getName(), String.format("GetModbusReadings ModbusException ex: %s"), e);
+            Log.w(getClass().getName(), String.format("GetModbusReadings ModbusException ex: %s", e));
             throw e;
         } catch (Exception all) {
             Log.w(getClass().getName(), String.format("GetModbusReadings Exception ex: %s", all));
@@ -357,22 +344,29 @@ public class ModbusTask extends TimerTask {
 
     private void loadBoilerPlateInfo() {
         try {
-            Bundle result = new Bundle();
             ReadMultipleRegistersResponse regRes = null;
-
             regRes = modbusMaster.readMultipleRegisters(4100, 32);
 
             if (regRes != null) {
                 short reg1 = (short) regRes.getRegisterValue(0);
                 String model = String.format("Classic %d (rev %d)", reg1 & 0x00ff, reg1 >> 8);
-                result.putString("model", model);
+                chargeControllerInfo.setModel(model);
+                int buildYear = regRes.getRegisterValue(1);
+                int buildMonthDay = regRes.getRegisterValue(2);
+                DateTime buildDate = new DateTime(buildYear, (buildMonthDay >> 8), (buildMonthDay & 0x00ff), 0, 0);
+                chargeControllerInfo.setBuildDate(DateTimeFormat.fullDate().print(buildDate));
                 short reg6 = (short) regRes.getRegisterValue(5);
                 short reg7 = (short) regRes.getRegisterValue(6);
                 short reg8 = (short) regRes.getRegisterValue(7);
-                String macAddress = String.format("%d:%d:%d:%d:%d:%d", reg8 >> 8, reg8 & 0x00ff, reg7 >> 8, reg7 & 0x00ff, reg6 >> 8, reg6 & 0x00ff);
-                result.putString("macAddress", macAddress);
+                String macAddress = String.format("%02x:%02x:%02x:%02x:%02x:%02x", reg8 >> 8, reg8 & 0x00ff, reg7 >> 8, reg7 & 0x00ff, reg6 >> 8, reg6 & 0x00ff);
+                chargeControllerInfo.setMacAddress(macAddress);
                 float reg22 = (float) regRes.getRegisterValue(21);
-                result.putFloat("lastVOC", reg22 / 10);
+                chargeControllerInfo.setLastVOC(reg22 / 10);
+            }
+            regRes = modbusMaster.readMultipleRegisters(4244, 2);
+            if (regRes != null) {
+                short reg4245 = (short) regRes.getRegisterValue(0);
+                chargeControllerInfo.setNominalBatteryVoltage(reg4245);
             }
             regRes = modbusMaster.readMultipleRegisters(16386, 4);
             if (regRes != null) {
@@ -380,10 +374,9 @@ public class ModbusTask extends TimerTask {
                 short reg16388 = (short) regRes.getRegisterValue(1);
                 short reg16389 = (short) regRes.getRegisterValue(2);
                 short reg16390 = (short) regRes.getRegisterValue(3);
-                result.putString("appVersion", String.format("%d", (reg16388 << 16) + reg16387));
-                result.putString("netVersion", String.format("%d", (reg16390 << 16) + reg16389));
+                chargeControllerInfo.setAppVersion(String.format("%d", (reg16388 << 16) + reg16387));
+                chargeControllerInfo.setNetVersion(String.format("%d", (reg16390 << 16) + reg16389));
             }
-            chargeControllerInfo.updateBoilerPlate(result);
         } catch (Exception e) {
             Log.w(getClass().getName(), "loadBoilerPlateInfo failed ex: %s", e);
         }
@@ -442,27 +435,62 @@ public class ModbusTask extends TimerTask {
                 }
             }
         } catch (ModbusException e) {
-            Log.w(getClass().getName(), "This is probably not a Tristar!");
+            Log.d(getClass().getName(), "This is probably not a Tristar!");
         }
 
         return foundTriStar ? DeviceType.TriStar : DeviceType.Classic;
     }
 
     private void loadDayLogs() throws ModbusException {
-        dayLogEntry.set(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_KWHOUR_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
-        dayLogEntry.set(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
+        String dayLogCacheName = "dayLogs_" + String.format("%08x", chargeControllerInfo.unitID()).toUpperCase();
         try {
+            Bundle dayLogs = BundleCache.getInstance(context).getBundle(dayLogCacheName);
+            if (dayLogs != null && dayLogs.size() > 0) {
+                dayLogEntry = new LogEntry(dayLogs);
+                DateTime logDate = dayLogEntry.getLogDate();
+                if (logDate.isAfter(DateTime.now().withTimeAtStartOfDay())) { // still good?
+                    return;
+                }
+                Log.d(getClass().getName(), "DayLog cache stale, reload data from modbus");
+            }
+            dayLogEntry.set(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_KWHOUR_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
+            dayLogEntry.set(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
             dayLogEntry.set(Constants.CLASSIC_HIGH_POWER_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_HIGH_POWER_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
             dayLogEntry.set(Constants.CLASSIC_HIGH_TEMP_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_HIGH_TEMP_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
             dayLogEntry.set(Constants.CLASSIC_HIGH_PV_VOLT_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_HIGH_PV_VOLT_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
             dayLogEntry.set(Constants.CLASSIC_HIGH_BATTERY_VOLT_DAILY_CATEGORY, ReadLogs(365, Constants.CLASSIC_HIGH_BATTERY_VOLT_DAILY_CATEGORY, Constants.MODBUS_FILE_DAILIES_LOG, 1));
+            Log.d(getClass().getName(), "Completed reading Day logs");
+            dayLogEntry.setLogDate(DateTime.now());
+            BundleCache.getInstance(context).putBundle(dayLogCacheName, dayLogEntry.getLogs());
+        } catch (ModbusIOException ex) {
+            if (ex.isEOF()) {
+                Log.w(getClass().getName(), String.format("loadDayLogs reached EOF ex: %s", ex));
+                dayLogEntry.setLogDate(DateTime.now());
+                BundleCache.getInstance(context).putBundle(dayLogCacheName, dayLogEntry.getLogs());
+                return;
+            }
+            BundleCache.getInstance(context).clearCache(dayLogCacheName);
+            dayLogEntry = new LogEntry();
+            Log.w(getClass().getName(), String.format("loadDayLogs failed ex: %s", ex));
         } catch (Exception ex) {
-            Log.w(getClass().getName(), String.format("LoadDayLogs failed, but did get power & float series ex: %s", ex));
+            BundleCache.getInstance(context).clearCache(dayLogCacheName);
+            dayLogEntry = new LogEntry();
+            Log.w(getClass().getName(), String.format("loadDayLogs failed ex: %s", ex));
         }
     }
 
     private void loadMinuteLogs() throws ModbusException {
+        String minuteLogCacheName = "minuteLog_" + String.format("%08x", chargeControllerInfo.unitID()).toUpperCase();
         try {
+            Bundle minuteLog = BundleCache.getInstance(context).getBundle(minuteLogCacheName);
+            if (minuteLog != null && minuteLog.size() > 0) {
+                minuteLogEntry = new LogEntry(minuteLog);
+                DateTime logDate = minuteLogEntry.getLogDate();
+                if (logDate.isAfter(DateTime.now().minusHours(1))) { // still good?
+                    return;
+                }
+                Log.d(getClass().getName(), "MinuteLog cache stale, reload data from modbus");
+            }
             int requiredEntries = ReadMinuteLogTimestamps(); // sum of minutes log up to 24 hours
             minuteLogEntry.set(Constants.CLASSIC_POWER_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_POWER_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 1));
             minuteLogEntry.set(Constants.CLASSIC_INPUT_VOLTAGE_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_INPUT_VOLTAGE_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 10));
@@ -471,8 +499,23 @@ public class ModbusTask extends TimerTask {
             minuteLogEntry.set(Constants.CLASSIC_ENERGY_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_ENERGY_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 1));
             minuteLogEntry.set(Constants.CLASSIC_CHARGE_STATE_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_CHARGE_STATE_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 256));
             Log.d(getClass().getName(), "Completed reading minute logs");
+            minuteLogEntry.setLogDate(DateTime.now());
+            BundleCache.getInstance(context).putBundle(minuteLogCacheName, minuteLogEntry.getLogs());
+        } catch (ModbusIOException ex) {
+            if (ex.isEOF()) {
+                Log.w(getClass().getName(), String.format("loadMinuteLogs reached EOF ex: %s", ex));
+                minuteLogEntry.setLogDate(DateTime.now());
+                BundleCache.getInstance(context).putBundle(minuteLogCacheName, minuteLogEntry.getLogs());
+                return;
+            }
+            BundleCache.getInstance(context).clearCache(minuteLogCacheName);
+            minuteLogEntry = new LogEntry();
+            Log.w(getClass().getName(), String.format("loadDayLogs failed ex: %s", ex));
+
         } catch (Exception ex) {
-//            Log.w(getClass().getName(), String.format("LoadMinuteLogs failed ex: %s", ex));
+            BundleCache.getInstance(context).clearCache(minuteLogCacheName);
+            minuteLogEntry = new LogEntry();
+            Log.w(getClass().getName(), String.format("LoadMinuteLogs failed ex: %s", ex));
         }
     }
 
@@ -556,18 +599,6 @@ public class ModbusTask extends TimerTask {
         short[] output = new short[requiredEntries];
         System.arraycopy(buffer, 0, output, 0, requiredEntries);
         minuteLogEntry.set(Constants.CLASSIC_TIMESTAMP_HIGH_HOURLY_CATEGORY, output);
-        ReadFileTransferResponse regRes = modbusMaster.readFileTransfer(0, Constants.CLASSIC_TIMESTAMP_LOW_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG);
-        if (regRes != null) {
-            int count = regRes.getWordCount();
-            if (count > 0) {
-                short val = registerToShort(regRes.getRegister(count - 1).toBytes());
-                short month = (short) (val & 0x000f);
-                short day = (short) ((val >> 4) & 0x001f);
-                short year = (short) ((val >> 9) & 0x007e);
-                GregorianCalendar logDate = new GregorianCalendar(year + 2000, month - 1, day, hourStamp, minuteStamp);
-                minuteLogEntry.setLogDate(logDate);
-            }
-        }
         return requiredEntries;
     }
 

@@ -151,7 +151,7 @@ public final class BitVector {
     public final boolean getBit(int index)
             throws IndexOutOfBoundsException {
         index = translateIndex(index);
-        //Log.d(Modbus.LOG_TAG_MODBUS, "Get bit #" + index);
+        //Log.d(getClass().getName(), "Get bit #" + index);
         return (
                 (m_Data[byteIndex(index)]
                         & (0x01 << bitIndex(index))) != 0
@@ -171,7 +171,7 @@ public final class BitVector {
     public final void setBit(int index, boolean b)
             throws IndexOutOfBoundsException {
         index = translateIndex(index);
-        //Log.d(Modbus.LOG_TAG_MODBUS, "Set bit #"+index);
+        //Log.d(getClass().getName(), "Set bit #"+index);
         int value = ((b) ? 1 : 0);
         int byteNum = byteIndex(index);
         int bitNum = bitIndex(index);

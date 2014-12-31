@@ -37,6 +37,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -69,6 +70,7 @@ public class NavigationDrawerFragment extends Fragment {
     private ListView mDrawerListView;
     private View mFragmentContainerView;
     private NavigationDrawerArrayAdapter adapter;
+    private ProgressBar rootDrawerProgressBar;
 
     public NavigationDrawerFragment() {
     }
@@ -100,8 +102,11 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mDrawerListView = (ListView) inflater.inflate(
-                R.layout.fragment_navigation_drawer, container, false);
+//        mDrawerListView = (ListView) inflater.inflate(
+//                R.layout.fragment_navigation_drawer, container, false);
+        View drawer = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+        rootDrawerProgressBar = (ProgressBar)drawer.findViewById(R.id.root_progressbar);
+        mDrawerListView = (ListView) drawer.findViewById(R.id.drawer_list);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -147,7 +152,7 @@ public class NavigationDrawerFragment extends Fragment {
             mDrawerListView.setItemChecked(currentCC, true);
         }
 
-        return mDrawerListView;
+        return drawer;
     }
 
     public boolean isDrawerOpen() {
@@ -201,6 +206,7 @@ public class NavigationDrawerFragment extends Fragment {
         ChargeControllers chargeControllers = MonitorApplication.chargeControllers();
         int currentCC = chargeControllers.getCurrentControllerIndex();
         chargeControllers.load(adapter);
+        rootDrawerProgressBar.setVisibility(adapter.getCount() == 0 ? View.VISIBLE : View.INVISIBLE);
         if (adapter.getCount() == 0 || currentCC == -1) {
             mDrawerLayout.openDrawer(mFragmentContainerView);
         }

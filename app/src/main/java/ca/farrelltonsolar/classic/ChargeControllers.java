@@ -28,12 +28,10 @@ import java.util.List;
 
 public final class ChargeControllers {
 
-    final Object lock = new Object();
     private static Context context;
-
     private String APIKey = "";
     private boolean uploadToPVOutput;
-    private List<ChargeController> devices;
+    private List<ChargeController> devices = new ArrayList<>();
 
     // default ctor for de-serialization
     public ChargeControllers() {
@@ -41,17 +39,16 @@ public final class ChargeControllers {
 
     public ChargeControllers(Context context) {
         this.context = context;
-        this.devices = new ArrayList<>();
     }
 
     public ChargeController get(int position) {
-        synchronized (lock) {
+        synchronized (devices) {
             return devices.get(position);
         }
     }
 
     public ChargeController getCurrentChargeController() {
-        synchronized (lock) {
+        synchronized (devices) {
             for (ChargeController cc : devices) {
                 if (cc.isCurrent()) {
                     return cc;
@@ -62,7 +59,7 @@ public final class ChargeControllers {
     }
 
     public int getCurrentControllerIndex() {
-        synchronized (lock) {
+        synchronized (devices) {
             for (int index = 0; index < devices.size(); index++) {
                 if (devices.get(index).isCurrent()) {
                     return index;
@@ -76,7 +73,7 @@ public final class ChargeControllers {
         if (position >= devices.size()) {
             throw new IndexOutOfBoundsException();
         }
-        synchronized (lock) {
+        synchronized (devices) {
             for (int index = 0; index < devices.size(); index++) {
                 ChargeController cc = devices.get(index);
                 if (cc.isCurrent() && index == position) {
@@ -93,40 +90,40 @@ public final class ChargeControllers {
 
     public void add(ChargeControllerInfo ccInfo) {
         ChargeController newCC = new ChargeController(ccInfo);
-        synchronized (lock) {
+        synchronized (devices) {
             devices.add(newCC);
         }
         BroadcastChangeNotification();
     }
 
     public void remove(ChargeControllerInfo cc) {
-        synchronized (lock) {
+        synchronized (devices) {
             devices.remove(cc);
         }
         BroadcastChangeNotification();
     }
 
     public int count() {
-        synchronized (lock) {
+        synchronized (devices) {
             return devices.size();
         }
     }
 
     public void clear() {
-        synchronized (lock) {
+        synchronized (devices) {
             devices.clear();
         }
         BroadcastChangeNotification();
     }
 
     public void load(ArrayAdapter adapter) {
-        synchronized (lock) {
+        synchronized (devices) {
             adapter.addAll(devices);
         }
     }
 
     public void load(ArrayList<InetSocketAddress> arr, boolean staticOnly, boolean includeCurrent) {
-        synchronized (lock) {
+        synchronized (devices) {
             for (ChargeController cc : devices) {
                 if (includeCurrent && cc.isCurrent()) {
                     arr.add(cc.getInetSocketAddress());
@@ -147,7 +144,7 @@ public final class ChargeControllers {
         DeviceType deviceType = (DeviceType) info.getSerializable("DeviceType");
         boolean hasWhizbang = info.getBoolean("FoundWhizbang");
         boolean updated = false;
-        synchronized (lock) {
+        synchronized (devices) {
             for (ChargeController cc : devices) {
                 if (useUnitIdAsKey ? cc.unitID() == unitId : deviceIpAddress.compareTo(cc.deviceIpAddress()) == 0) {
                     if (cc.setUnitID(unitId)) {
@@ -180,21 +177,24 @@ public final class ChargeControllers {
         }
     }
 
-    public void setUnreachable(String deviceIpAddress, int port) {
-        synchronized (lock) {
+    public void setReachable(String deviceIpAddress, int port, boolean state) {
+        boolean updated = false;
+        synchronized (devices) {
             for (ChargeController cc : devices) {
                 if (deviceIpAddress.compareTo(cc.deviceIpAddress()) == 0 && port == cc.port()) {
-                    cc.setIsReachable(false);
+                    updated = cc.setIsReachable(state);
                     break;
                 }
             }
         }
-        BroadcastChangeNotification();
+        if (updated) {
+            BroadcastChangeNotification();
+        }
     }
 
     public void clearDynamic() {
         List<ChargeController> staticDevices = new ArrayList<>();
-        synchronized (lock) {
+        synchronized (devices) {
             for (ChargeController cc : devices) {
                 if (cc.isStaticIP()) {
                     staticDevices.add(cc);
@@ -212,25 +212,25 @@ public final class ChargeControllers {
     }
 
     public String aPIKey() {
-        synchronized (lock) {
+        synchronized (devices) {
             return APIKey;
         }
     }
 
     public void setAPIKey(String APIKey) {
-        synchronized (lock) {
+        synchronized (devices) {
             this.APIKey = APIKey;
         }
     }
 
     public Boolean uploadToPVOutput() {
-        synchronized (lock) {
+        synchronized (devices) {
             return uploadToPVOutput;
         }
     }
 
     public void setUploadToPVOutput(Boolean uploadToPVOutput) {
-        synchronized (lock) {
+        synchronized (devices) {
             this.uploadToPVOutput = uploadToPVOutput;
         }
     }

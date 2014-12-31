@@ -42,24 +42,16 @@ public static *** wtf(...);
 -keep class com.google.gson.stream.** { *; }
 
 # Application classes that will be serialized/deserialized over Gson
--keep class ca.farrelltonsolar.classic.CalendarPage$DateRange { *; }
+-keep class ca.farrelltonsolar.classic.DeviceType { *; }
+-keep class ca.farrelltonsolar.classic.ChargeControllerInfo { *; }
+
+
 
 ##---------------End: proguard configuration for Gson  ----------
 
--keep public class ca.farrelltonsolar.classic.CalendarPage$WebViewInterface
--keep public class * implements ca.farrelltonsolar.classic.CalendarPage$WebViewInterface
--keepclassmembers class ca.farrelltonsolar.classic.CalendarPage$WebViewInterface {
-    <methods>;
-}
--keepclassmembers class ca.farrelltonsolar.classic.CalendarPage$EventObject {
-    public *;
-}
--keepclassmembers class ca.farrelltonsolar.classic.CalendarPage$WebViewInterface {
-    public *;
-    private *;
-}
+-dontwarn org.joda.convert.**
+-dontwarn javax.xml.bind.DatatypeConverter
 -keepclassmembers class * {
     @android.webkit.JavascriptInterface <methods>;
 }
 
--libraryjars /libs/gson-2.2.4.jar

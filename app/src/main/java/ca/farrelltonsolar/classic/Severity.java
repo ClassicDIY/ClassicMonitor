@@ -16,23 +16,11 @@
 
 package ca.farrelltonsolar.classic;
 
-public enum RegisterName {
-    Power,
-    BatVoltage,
-    BatCurrent,
-    PVVoltage,
-    PVCurrent,
-    EnergyToday,
-    TotalEnergy,
-    ChargeState,
-    ConnectionState,
-    BiDirectional,
-    SOC,
-    Aux1,
-    Aux2,
-    BatTemperature,
-    FETTemperature,
-    PCBTemperature,
-    InfoFlagsBits
-
+/**
+ * Created by Graham on 29/12/2014.
+ */
+public enum Severity {
+    info,
+    warning,
+    alert
 }

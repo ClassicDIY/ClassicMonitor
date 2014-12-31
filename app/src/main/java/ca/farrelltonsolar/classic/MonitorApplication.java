@@ -24,11 +24,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.StrictMode;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.util.Pair;
 
 import com.google.gson.Gson;
 
@@ -41,13 +43,16 @@ import java.util.Map;
 public class MonitorApplication extends Application implements Application.ActivityLifecycleCallbacks {
     private static Context context;
 
-    static Map<Integer, String> _chargeStates = new HashMap<Integer, String>();
-    static Map<Integer, String> _chargeStateTitles = new HashMap<Integer, String>();
+    static Map<Integer, String> chargeStates = new HashMap<Integer, String>();
+    static Map<Integer, String> chargeStateTitles = new HashMap<Integer, String>();
+    static Map<Integer, Pair<Severity, String>> messages = new HashMap<Integer, Pair<Severity, String>>();
     static UDPListener UDPListenerService;
     static boolean isUDPListenerServiceBound = false;
     private static ChargeControllers chargeControllers;
     private static Gson GSON = new Gson();
     ComplexPreferences configuration;
+    WifiManager.WifiLock wifiLock;
+
 
     @Override
     protected void finalize() throws Throwable {
@@ -71,6 +76,7 @@ public class MonitorApplication extends Application implements Application.Activ
         }
         InitializeChargeStateLookup();
         InitializeChargeStateTitleLookup();
+        InitializeMessageLookup();
         LocalBroadcastManager.getInstance(this).registerReceiver(addChargeControllerReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER));
         configuration = ComplexPreferences.getComplexPreferences(this, null, Context.MODE_PRIVATE);
         chargeControllers = configuration.getObject("devices", ChargeControllers.class);
@@ -82,7 +88,43 @@ public class MonitorApplication extends Application implements Application.Activ
         }
         this.registerActivityLifecycleCallbacks(this);
         bindService(new Intent(this, UDPListener.class), UDPListenerServiceConnection, Context.BIND_AUTO_CREATE);
+        WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+        if (wifi != null){
+            wifiLock = wifi.createWifiLock("ClassicMonitor");
+        }
         Log.d(getClass().getName(), "onCreate complete");
+    }
+
+    public static Pair<Severity, String> getMessage(int cs) {
+        if (messages.containsKey(cs)) {
+            return messages.get(cs);
+        }
+        return null;
+    }
+
+    private void InitializeMessageLookup() {
+        messages.put(0x00000001, new Pair(Severity.alert, "Classic Over Temperature"));
+        messages.put(0x00000002, new Pair(Severity.alert, "Classic EEprom read/write found an error"));
+//        messages.put(0x00000008, new Pair(Severity.info, "Equalize Charge stage Active")); // not vis
+        //messages.put(0x00000080, new Pair(Severity.info, "Battery Voltage is less than EQ Voltage (EQ MPPT)")); // not vis
+        messages.put(0x00000100, new Pair(Severity.info, "Input Voltage (PV) is lower than battery voltage."));
+        messages.put(0x00000200, new Pair(Severity.warning, "User current limit or internal temperature current limit reached."));
+        messages.put(0x00000400, new Pair(Severity.warning, "Hyper Voc PV input voltage is above maximum Classic input rating."));
+//        messages.put(0x00002000, new Pair(Severity.info, "Battery temperature sensor installed.")); // not vis
+        messages.put(0x00004000, new Pair(Severity.info, "Aux 1 ON (aux 1 connector has voltage or relay is closed)."));
+        messages.put(0x00008000, new Pair(Severity.info, "Aux 2 ON (aux 2 connector has voltage present)."));
+        messages.put(0x00010000, new Pair(Severity.alert, "Ground Fault detected."));
+        messages.put(0x00020000, new Pair(Severity.alert, "DEFCON 4: FET Drive Error."));
+        messages.put(0x00040000, new Pair(Severity.alert, "Arc Fault occurred."));
+        messages.put(0x00100000, new Pair(Severity.alert, "DEFCON 3: FET Error."));
+//        messages.put(0x00080000, new Pair(Severity.info, "Negative battery current (backfeed out of PV input).")); // nos vis
+        messages.put(0x00400000, new Pair(Severity.warning, "Partial Shade detected during SOLAR sweep."));
+//        messages.put(0x01000000, new Pair(Severity.alert, "(VERY low battery) battery voltage is lower than 8.0 Volts.")); // not vis
+//        messages.put(0x02000000, new Pair(Severity.info, "Stack Jumper is NOT installed.")); // not vis
+//        messages.put(0x04000000, new Pair(Severity.info, "EQ Finished.")); // not vis
+        messages.put(0x08000000, new Pair(Severity.warning, "Temperature sensor is shorted."));
+//        messages.put(0x40000000, new Pair(Severity.info, "PV input terminals are less than 1.0 volt.")); // not vis
+
     }
 
     public static Context getAppContext() {
@@ -94,41 +136,41 @@ public class MonitorApplication extends Application implements Application.Activ
     }
 
     public static String getChargeStateText(int cs) {
-        if (_chargeStates.containsKey(cs)) {
-            return _chargeStates.get(cs);
+        if (chargeStates.containsKey(cs)) {
+            return chargeStates.get(cs);
         }
         return "";
     }
 
     public static String getChargeStateTitleText(int cs) {
-        if (_chargeStateTitles.containsKey(cs)) {
-            return _chargeStateTitles.get(cs);
+        if (chargeStateTitles.containsKey(cs)) {
+            return chargeStateTitles.get(cs);
         }
         return "";
     }
 
     private void InitializeChargeStateLookup() {
-        _chargeStates.put(-1, getString(R.string.NoConnection));
-        _chargeStates.put(0, getString(R.string.ChargeStateOff));
-        _chargeStates.put(3, getString(R.string.Absorb));
-        _chargeStates.put(4, getString(R.string.Bulk));
-        _chargeStates.put(5, getString(R.string.Float));
-        _chargeStates.put(6, getString(R.string.Tracking));
-        _chargeStates.put(7, getString(R.string.Equalize));
-        _chargeStates.put(10, getString(R.string.Error));
-        _chargeStates.put(18, getString(R.string.SeekingEqualize));
+        chargeStates.put(-1, getString(R.string.NoConnection));
+        chargeStates.put(0, getString(R.string.RestingDescription));
+        chargeStates.put(3, getString(R.string.AbsorbDescription));
+        chargeStates.put(4, getString(R.string.BulkMPPTDescription));
+        chargeStates.put(5, getString(R.string.FloatDescription));
+        chargeStates.put(6, getString(R.string.FloatMPPTDescription));
+        chargeStates.put(7, getString(R.string.EqualizeDescription));
+        chargeStates.put(10, getString(R.string.HyperVocDescription));
+        chargeStates.put(18, getString(R.string.EqMPPTDescription));
     }
 
     private void InitializeChargeStateTitleLookup() {
-        _chargeStateTitles.put(-1, "");
-        _chargeStateTitles.put(0, getString(R.string.ChargeStateOffTitle));
-        _chargeStateTitles.put(3, getString(R.string.AbsorbTitle));
-        _chargeStateTitles.put(4, getString(R.string.BulkTitle));
-        _chargeStateTitles.put(5, getString(R.string.FloatTitle));
-        _chargeStateTitles.put(6, getString(R.string.TrackingTitle));
-        _chargeStateTitles.put(7, getString(R.string.EqualizeTitle));
-        _chargeStateTitles.put(10, getString(R.string.ErrorTitle));
-        _chargeStateTitles.put(18, getString(R.string.SeekingEqualizeTitle));
+        chargeStateTitles.put(-1, "");
+        chargeStateTitles.put(0, getString(R.string.RestingTitle));
+        chargeStateTitles.put(3, getString(R.string.AbsorbTitle));
+        chargeStateTitles.put(4, getString(R.string.BulkMPPTTitle));
+        chargeStateTitles.put(5, getString(R.string.FloatTitle));
+        chargeStateTitles.put(6, getString(R.string.FloatMPPTTitle));
+        chargeStateTitles.put(7, getString(R.string.EqualizeTitle));
+        chargeStateTitles.put(10, getString(R.string.HyperVocTitle));
+        chargeStateTitles.put(18, getString(R.string.EqMpptTitle));
     }
 
     private ServiceConnection UDPListenerServiceConnection = new ServiceConnection() {
@@ -153,10 +195,13 @@ public class MonitorApplication extends Application implements Application.Activ
         @Override
         public void onReceive(Context context, Intent intent) {
             ChargeControllerInfo cc = GSON.fromJson(intent.getStringExtra("ChargeController"), ChargeController.class);
+            boolean doRefresh = intent.getBooleanExtra("ForceRefresh", true);
             Log.d(getClass().getName(), String.format("adding new controller to list (%s)", cc.toString()));
             chargeControllers.add(cc);
-            UDPListenerService.stopListening();
-            UDPListenerService.listen(chargeControllers);
+            if (doRefresh) {
+                UDPListenerService.stopListening();
+                UDPListenerService.listen(chargeControllers);
+            }
         }
     };
 
@@ -183,7 +228,16 @@ public class MonitorApplication extends Application implements Application.Activ
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+        if (wifiLock != null) {
+            wifiLock.acquire();
+        }
+    }
 
+    @Override
+    public void onActivityDestroyed(Activity activity) {
+        if (wifiLock != null) {
+            wifiLock.release();
+        }
     }
 
     @Override
@@ -204,8 +258,10 @@ public class MonitorApplication extends Application implements Application.Activ
     @Override
     public void onActivityStopped(Activity activity) {
         Log.d(getClass().getName(), "saving chargeController settings");
-        configuration.putObject("devices", chargeControllers);
-        configuration.commit();
+        if (configuration != null) {
+            configuration.putObject("devices", chargeControllers);
+            configuration.commit();
+        }
     }
 
     @Override
@@ -213,8 +269,4 @@ public class MonitorApplication extends Application implements Application.Activ
 
     }
 
-    @Override
-    public void onActivityDestroyed(Activity activity) {
-
-    }
 }

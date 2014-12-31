@@ -89,7 +89,7 @@ public class TCPMasterConnection {
      */
     public synchronized void connect() throws Exception {
         if (!isConnected()) {
-            Log.d(Modbus.LOG_TAG_MODBUS, "connect()");
+            Log.d(getClass().getName(), "connect()");
             m_Socket = new Socket(m_Address, m_Port);
             m_Socket.setReuseAddress(true);
             //m_Socket.setSoLinger(true, 50);
@@ -142,7 +142,7 @@ public class TCPMasterConnection {
             try {
                 m_ModbusTransport.close();
             } catch (IOException ex) {
-                Log.d(Modbus.LOG_TAG_MODBUS, "close()");
+                Log.w(getClass().getName(), "close()");
             }
             m_Connected = false;
         }

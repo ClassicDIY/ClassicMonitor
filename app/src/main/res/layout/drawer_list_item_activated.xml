@@ -20,34 +20,54 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="9dp"
     android:padding="5dp">
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="100"
-        android:orientation="horizontal"
         android:background="?android:attr/activatedBackgroundIndicator"
+        android:orientation="horizontal"
         android:weightSum="100">
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/DeviceName"
-        android:layout_width="0dp"
-        android:layout_weight="90"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceListItem"
-        android:gravity="center_vertical"
-        android:textColor="@color/material_blue_grey_800"
-        android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
-        android:paddingRight="?android:attr/listPreferredItemPaddingRight"
 
-        android:minHeight="?android:attr/listPreferredItemHeightLarge" />
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/DeviceName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="90"
+            android:gravity="center_vertical"
+            android:minHeight="?android:attr/listPreferredItemHeightLarge"
+            android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
+            android:paddingRight="?android:attr/listPreferredItemPaddingRight"
+            android:textAppearance="?android:attr/textAppearanceListItem"
 
-    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/NoConnection"
-        android:layout_width="0dp"
-        android:layout_weight="10"
-        android:alpha=".75"
-        android:visibility="invisible"
-        android:src="@drawable/warning"
-        android:layout_height="wrap_content" />
+            android:textColor="@color/material_blue_grey_800" />
+
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="10">
+
+
+            <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/NoConnection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:alpha=".75"
+                android:src="@drawable/warning"
+                android:visibility="invisible" />
+
+            <ProgressBar xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/progressbar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:visibility="invisible"
+                android:indeterminateDrawable="@drawable/pinkprogress"/>
+
+
+        </FrameLayout>
     </LinearLayout>
 </FrameLayout>

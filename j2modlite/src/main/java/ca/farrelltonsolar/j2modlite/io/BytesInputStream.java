@@ -79,7 +79,7 @@ public class BytesInputStream
    * @param data a byte array with data to be read.
    */
   public void reset(byte[] data) {
-   // Log.d(Modbus.LOG_TAG_MODBUS, "reset(byte[])::count=" + count + " pos=" + pos);
+   // Log.d(getClass().getName(), "reset(byte[])::count=" + count + " pos=" + pos);
     pos = 0;
     mark = 0;
     buf = data;
@@ -98,7 +98,7 @@ public class BytesInputStream
     mark = 0;
     count = length;
     buf = data;
-    //Log.d(Modbus.LOG_TAG_MODBUS, "reset(byte[],int)::count=" + count + " pos=" + pos);
+    //Log.d(getClass().getName(), "reset(byte[],int)::count=" + count + " pos=" + pos);
   }//reset
 
   /**
@@ -108,7 +108,7 @@ public class BytesInputStream
    * @param length the length of the buffer to be considered.
    */
   public void reset(int length) {
-    //Log.d(Modbus.LOG_TAG_MODBUS, "reset(int)::count=" + count + " pos=" + pos);
+    //Log.d(getClass().getName(), "reset(int)::count=" + count + " pos=" + pos);
     pos = 0;
     count = length;
   }//reset

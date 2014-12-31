@@ -212,6 +212,7 @@ public class UDPListener extends Service {
                         }
                     } catch (SocketTimeoutException iox) {
                         // expect a timeout exception when no classic on the network
+//                        Log.w(getClass().getName(), "SocketTimeoutException: " + iox);
                     } catch (IOException ex) {
                         if (socket != null && socket.isClosed()) {
                             break;
@@ -226,8 +227,10 @@ public class UDPListener extends Service {
             } catch (Exception e) {
                 Log.w(getClass().getName(), "mListener Exception: " + e);
             } finally {
-                socket.close();
-                socket.disconnect();
+                if (socket != null) {
+                    socket.close();
+                    socket.disconnect();
+                }
                 Log.d(getClass().getName(), "closed socket and disconnected");
             }
             Log.d(getClass().getName(), "mListener exiting");
@@ -242,18 +245,20 @@ public class UDPListener extends Service {
 
             @Override
             public void run() {
-                ModbusTask modbus = new ModbusTask(socketAddress, UDPListener.this);
+                ChargeControllerInfo cc = new ChargeControllerInfo(socketAddress);
+                LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(UDPListener.this);
+                Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER);
+                pkg.putExtra("ForceRefresh", false);
+                pkg.putExtra("ChargeController", GSON.toJson(cc));
+                broadcaster.sendBroadcast(pkg);
+                ModbusTask modbus = new ModbusTask(cc, UDPListener.this);
                 try {
                     if (modbus.connect()) {
                         try {
                             Bundle info = modbus.getChargeControllerInformation();
                             String unitName = info.getString("UnitName");
                             Log.d(getClass().getName(), "And it's name is: " + unitName);
-                            LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(UDPListener.this);
-                            ChargeControllerInfo cc = new ChargeControllerInfo(info, socketAddress.getAddress().getHostAddress(), socketAddress.getPort());
-                            Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER);
-                            pkg.putExtra("ChargeController", GSON.toJson(cc));
-                            broadcaster.sendBroadcast(pkg);
+                            currentChargeControllers.update(info, socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), false);
                         } catch (ModbusException e) {
                             Log.d(getClass().getName(), "Failed to get unit info" + e);
                             removeFromAlreadyFoundList(socketAddress);
@@ -276,7 +281,8 @@ public class UDPListener extends Service {
 
             @Override
             public void run() {
-                ModbusTask modbus = new ModbusTask(socketAddress, UDPListener.this);
+                ChargeControllerInfo cc = new ChargeControllerInfo(socketAddress);
+                ModbusTask modbus = new ModbusTask(cc, UDPListener.this);
                 try {
                     if (modbus.connect()) {
                         try {
@@ -291,7 +297,7 @@ public class UDPListener extends Service {
                         }
                     }
                 } catch (UnknownHostException e) {
-                    currentChargeControllers.setUnreachable(socketAddress.getAddress().getHostAddress(), socketAddress.getPort());
+                    currentChargeControllers.setReachable(socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), false);
                     Log.d(getClass().getName(), String.format("Failed to connect to &s ex:%s", socketAddress.toString(), e));
                 }
             }
@@ -366,7 +372,8 @@ public class UDPListener extends Service {
                     } catch (IOException e) {
                         return;
                     }
-                    ModbusTask modbus = new ModbusTask(socketAddress, UDPListener.this);
+                    ChargeControllerInfo cc = new ChargeControllerInfo(socketAddress);
+                    ModbusTask modbus = new ModbusTask(cc, UDPListener.this);
                     try {
                         if (modbus.connect()) {
                             try {

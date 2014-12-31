@@ -21,24 +21,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 
+import org.joda.time.DateTime;
+
 import java.io.Serializable;
-import java.util.GregorianCalendar;
 
 public class LogEntry implements Serializable {
     private Bundle logs;
-    GregorianCalendar logDate;
+
+    public LogEntry(Bundle logs) {
+        this.logs = logs;
+    }
 
     public LogEntry() {
         logs = new Bundle();
     }
 
-    public void setLogDate(GregorianCalendar logDate) {
-        this.logDate = logDate;
+    public void setLogDate(DateTime logDate) {
         logs.putSerializable("LogDate", logDate);
     }
 
-    public GregorianCalendar getLogDate() {
-        return logDate;
+    public DateTime getLogDate() {
+        return (DateTime)logs.getSerializable("LogDate");
     }
 
     public boolean isEmpty() {

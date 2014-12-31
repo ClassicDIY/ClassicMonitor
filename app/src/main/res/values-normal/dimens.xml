@@ -2,7 +2,7 @@
     <dimen name="textSizeXLarge">14sp</dimen>
     <dimen name="textSizeLarge">10sp</dimen>
     <dimen name="textSizeMedium">9sp</dimen>
-    <dimen name="textSizeSmall">8sp</dimen>
+    <dimen name="textSizeSmall">7sp</dimen>
 
     <dimen name="SOCBarWidth">2sp</dimen>
     <dimen name="SOCRimWidth">4sp</dimen>

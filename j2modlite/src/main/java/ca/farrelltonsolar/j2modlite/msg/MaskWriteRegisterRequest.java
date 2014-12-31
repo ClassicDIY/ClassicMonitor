@@ -183,17 +183,17 @@ public final class MaskWriteRegisterRequest extends ModbusRequest {
 			 * applied to set them.
 			 */
             int value = register.getValue();
-            Log.d(Modbus.LOG_TAG_MODBUS, "original value = " + value);
+            Log.d(getClass().getName(), "original value = " + value);
 
-            Log.d(Modbus.LOG_TAG_MODBUS, "and = " + m_AndMask + ", or = " + m_OrMask);
+            Log.d(getClass().getName(), "and = " + m_AndMask + ", or = " + m_OrMask);
             value = (value & m_AndMask) | m_OrMask;
-            Log.d(Modbus.LOG_TAG_MODBUS, "new value = " + value);
+            Log.d(getClass().getName(), "new value = " + value);
 			
 			/*
 			 * Store the modified value back where it came from.
 			 */
             register.setValue(value);
-            Log.d(Modbus.LOG_TAG_MODBUS, "Done.");
+            Log.d(getClass().getName(), "Done.");
         } catch (IllegalAddressException iaex) {
             return createExceptionResponse(Modbus.ILLEGAL_ADDRESS_EXCEPTION);
         }

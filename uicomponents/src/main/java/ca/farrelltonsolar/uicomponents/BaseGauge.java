@@ -411,6 +411,9 @@ public class BaseGauge extends BaseComponent {
     private void updateSizes() {
         if (!isInEditMode()) {
             mMajorTickStepValue = (float) ((mScaleEndValue - mScaleStartValue) * mMajorTickPercentOfMax / 100);
+            if (mMajorTickStepValue < 1) {
+                mMajorTickStepValue = 1;
+            }
             mMajorTicksLength = mScaleRadius * 0.1f;
             mMinorTicksLength = mMajorTicksLength / 2.5f;
             float titleSize = mTitleHeightPercentOfRadius * mFaceRadius / 100;

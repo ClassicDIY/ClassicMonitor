@@ -193,7 +193,7 @@ public class HourLogChart extends Fragment {
             mSeries.add(seriesInputVoltage);
             mSeries.add(seriesBatteryVoltage);
             mSeries.add(seriesOutputCurrent);
-            mSeries.add(seriesChargeState);
+//            mSeries.add(seriesChargeState);
             mSeries.add(seriesEnergy);
             chartView.addSeries(seriesPower);
             Log.d(getClass().getName(), String.format("Chart onPostExecute completed %s", Thread.currentThread().getName()));

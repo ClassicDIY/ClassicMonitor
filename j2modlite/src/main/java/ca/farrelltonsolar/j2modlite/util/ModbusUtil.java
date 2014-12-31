@@ -417,7 +417,7 @@ public final class ModbusUtil {
         sbuf.append('.');
       }
     }
-    //DEBUG:Log.d(Modbus.LOG_TAG_MODBUS, sbuf.toString());
+    //DEBUG:Log.d(getClass().getName(), sbuf.toString());
     return InetAddress.getByName(sbuf.toString());
   }//getAddressFromBytes
   */

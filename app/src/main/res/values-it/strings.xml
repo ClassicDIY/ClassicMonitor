@@ -2,100 +2,85 @@
 <resources>
 
     <string name="app_name">Classic</string>
-    <string name="action_settings">Impostazioni</string>
-    <string name="EnergyTodayTitle">Energia Oggi</string>
-    <string name="TotalEnergyTitle">Energia Total</string>
-    <string name="energy_unit">kWh</string>
-    <string name="power_unit">Watts</string>
-    <string name="volt_unit">Volts</string>
-    <string name="amp_unit">Amps</string>
-    <string name="ChargeState">carica Stato</string>
-    <string name="Absorb">Regolare la tensione della batteria a assorbire set point.</string>
-    <string name="Bulk">Inseguimento del punto di potenza massima fino a assorbire la tensione raggiunta.</string>
-    <string name="Float">La batteria è piena e regolare la tensione della batteria al set point galleggiante.</string>
-    <string name="Tracking">Monitoraggio Max power point. Cerco galleggiante set point di tensione.</string>
-    <string name="Equalize">Regolare la tensione della batteria al set point di equalizzazione.</string>
-    <string name="Error">Tensione di ingresso supera la tensione di esercizio massima classico.</string>
-    <string name="SeekingEqualize">Monitoraggio Max power point. Cerco pareggiare tensione set point.</string>
-    <string name="ChargeStateOff">Nessun potere, in attesa di fonte di energia.</string>
-    <string name="AbsorbTitle">assorbire</string>
-    <string name="BulkTitle">massa</string>
-    <string name="FloatTitle">Fluttuare</string>
-    <string name="TrackingTitle">Fluttuare</string>
-    <string name="EqualizeTitle">pareggiare</string>
-    <string name="ErrorTitle">errore</string>
-    <string name="SeekingEqualizeTitle">equalizzazione</string>
-    <string name="ChargeStateOffTitle">spento</string>
-    <string name="FoundClassic">Collegato al Classic all\'indirizzo %1$s:%2$d </string>
-    <string name="ClassicNotFound">Scansione di rete locale per la porta %1$d</string>
-    <string name="ClassicNotConnecting">Tentativo di connessione a %1$s:%2$d</string>
-    <string name="NoConnection">Nessuna connessione</string>
-    <string name="PVVoltTitle">PV Volt</string>
-    <string name="PVCurrentTitle">PV corrente</string>
-    <string name="BatVoltsTitle">Battery Volt</string>
-    <string name="BatCurrentTitle">corrente della batteria</string>
-    <string name="BatPowerTitle">Alimentazione a batteria</string>
-    <string name="PowerTitle">potenza</string>
-    <string name="SettingsLabel">Impostazioni</string>
-    <string name="About">circa</string>
-    <string name="DoneButton">Fatto</string>
-    <string name="ApplyButton">applicare</string>
-    <string name="CancelButton">annullare</string>
-    <string name="GaugeTabTitle">Gauge</string>
-    <string name="CalendarTabTitle">calendario</string>
-    <string name="HourChartTabTitle">grafico</string>
-    <string name="BatteryVoltageScaleSettingDialogTitle">Tensione della batteria Gauge Scala</string>
-    <string name="BatteryCurrentGaugeScaleSettingDialogTitle">Battery Gauge scala corrente</string>
-    <string name="PowerGaugeScaleSettingDialogTitle">Potenza Gauge Scala</string>
-    <string name="BatteryVoltageScaleSettingTitle">Tensione della batteria Scala</string>
-    <string name="BatteryCurrentGaugeScaleSettingTitle">Batteria scala corrente</string>
-    <string name="PowerGaugeScaleSettingTitle">Potenza Scala</string>
-    <string name="bi_directional_gauge_units">Visualizzare unità calibro bi-direzionali in watt</string>
-    <string name="Calendar">calendario</string>
-    <string name="LockScale">Scale di blocco</string>
-    <string name="CalendarFloat">(Fluttuare)</string>
-    <string name="ScanSubnetCheckbox">Eseguire la scansione del subnet locale per il Classic</string>
-    <string name="ModbusPortSetting">Set porta Modbus del Classic</string>
-    <string name="StartScanAddress">Inizia la scansione a</string>
-    <string name="IPAddressSetting">Indirizzo IP:</string>
-    <string name="IPAddressPrompt">Immettere un indirizzo IP</string>
-    <string name="StartScanIPTitle">Inizia Indirizzo IP Scan</string>
-    <string name="NumberOfAddressesToScan">Numero di indirizzi IP per la scansione</string>
-    <string name="ScanPrompt">scansione:</string>
-    <string name="ScanTitle">Indirizzi di scansione</string>
-    <string name="StaticIPAddressTitle">Impostare l\'indirizzo IP del Classic</string>
-    <string name="StaticIPAddressPrompt">Indirizzo IP:</string>
-    <string name="StaticIPAddressDialogTitle">Indirizzo IP Classic</string>
-    <string name="StaticIPAddressSummary">Indirizzo IP statico del Classic</string>
-    <string name="UploadLogsSummary">Upload Logs Per PVOutput</string>
+
+    <string name="AbsorbDescription">Regulating battery voltage at absorb set point.</string>
+    <string name="BulkMPPTDescription">Max power point tracking until absorb voltage reached.</string>
+    <string name="FloatDescription">Battery is full and regulating battery voltage at float set point.</string>
+    <string name="FloatMPPTDescription">Max power point tracking. Seeking float set point voltage.</string>
+    <string name="EqualizeDescription">Regulating battery voltage at equalize set point.</string>
+    <string name="HyperVocDescription">Input voltage is above maximum classic operating voltage.</string>
+    <string name="EqMPPTDescription">Max power point tracking. Seeking equalize set point voltage.</string>
+    <string name="RestingDescription">No power, waiting for power source.</string>
+
+    <string name="AbsorbTitle">Absorb</string>
+    <string name="BulkMPPTTitle">Bulk MPPT</string>
+    <string name="FloatTitle">Float</string>
+    <string name="FloatMPPTTitle">Float MPPT</string>
+    <string name="EqualizeTitle">Equalized</string>
+    <string name="HyperVocTitle">HyperVoc</string>
+    <string name="EqMpptTitle">Equalizing</string>
+    <string name="RestingTitle">Resting</string>
+
+    <string name="FoundClassic">Connected to Classic at address %1$s:%2$d </string>
+    <string name="ClassicNotFound">Scanning local network for port %1$d</string>
+    <string name="ClassicNotConnecting">Attempting to connect to %1$s:%2$d</string>
+    <string name="NoConnection">No connection</string>
+
+    <string name="SettingsLabel">Settings</string>
+    <string name="About">About</string>
+
+    <string name="ApplyButton">Apply</string>
+    <string name="CancelButton">Cancel</string>
+
+    <string name="dialog_port_hint">port number</string>
+    <string name="dialog_ipaddress_hint">IP Address</string>
+    <string name="IPAddressPrompt">Enter a static IP address</string>
+
+    <string name="UploadLogsSummary">Upload Logs To PVOutput</string>
     <string name="APIKeyTitle">API Key</string>
     <string name="APIKeyPrompt">API Key:</string>
     <string name="APIKeyDialogTitle">API Key</string>
     <string name="SIDDialogTitle">SID</string>
     <string name="SIDDialogMessage">SID:</string>
     <string name="SIDTitle">SID</string>
-    <string name="ClearLogsTitle">Cancella i log registrati</string>
-    <string name="NetworkCategoryTitle">Impostazioni di connessione</string>
-    <string name="GaugePreferenceTitle">Calibri</string>
+    <string name="ClearLogsTitle">Clear recorded logs</string>
     <string name="PVOutputPreferenceTitle">PVOutput</string>
 
-    <string name="MonthNames">\'Gennaio\',\'Febbraio\',\'Marzo\',\'Aprile\',\'Maggio\',\'Giugno\',\'Luglio\',\'Agosto\',\'Settembre\',\'Ottobre\',\'Novembre\',\'Dicembre\'</string>
-
-    <string name="MonthNamesShort">\'genn\',\'febbr\',\'mar\',\'apr\',\'magg\',\'giugno\',\'luglio\',\'ag\',\'sett\',\'ott\',\'nov\',\'dic\'</string>
-
-    <string name="DayNames">\'Domenica\',\'Lunedi\',\'Martedì\',\'Mercoledì\',\'Giovedi\',\'Venerdì\',\'Sabato\'</string>
-
-    <string name="DayNamesShort">\'do\',\'lun\',\'mar\',\'mer\',\'gio\',\'ven\',\'sab\'</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="network">Network</string>
+
     <string name="PowerTabTitle">Power</string>
     <string name="EnergyTabTitle">Energy</string>
     <string name="StateOfChargeTabTitle">State of Charge</string>
     <string name="TemperatureTabTitle">Temperature</string>
-    <string name="PCBTemperature">PCB Temperature</string>
-    <string name="FETTemperature">FET Temperature</string>
-    <string name="BatTemperature">Bat Temperature</string>
-    <string name="dialog_port_hint">port</string>
-    <string name="dialog_ipaddress_hint">ipAddress</string>
+    <string name="DayLogTabTitle">Day log calendar</string>
+    <string name="DayChartTabTitle">Day Log Chart</string>
+    <string name="HourChartTabTitle">Hour Log Chart</string>
+    <string name="InfoTabTitle">Info</string>
+    <string name="MessagesTabTitle">Messages</string>
+
+    <string name="PVVoltTitle">PV Volts</string>
+    <string name="PVCurrentTitle">PV Current</string>
+    <string name="BatVoltsTitle">Battery Volts</string>
+    <string name="BatCurrentTitle">Battery Current</string>
+    <string name="BatPowerTitle">Battery Power</string>
+    <string name="PowerTitle">Power</string>
+
+    <string name="EnergyTodayTitle">Energy Today</string>
+    <string name="TotalEnergyTitle">Total Energy</string>
+    <string name="energy_unit">kWh</string>
+    <string name="power_unit">Watts</string>
+    <string name="volt_unit">Volts</string>
+    <string name="amp_unit">Amps</string>
+
+    <string name="PCBTemperature">PCB</string>
+    <string name="FETTemperature">FET</string>
+    <string name="BatTemperature">Battery</string>
+
+    <string name="Calendar">Calendar</string>
+    <string name="CalendarFloat">(Float)</string>
+
     <string name="info_model_title">Model:</string>
     <string name="info_mac_title">MAC Address:</string>
     <string name="info_unitid_title">Unit ID:</string>
@@ -103,5 +88,23 @@
     <string name="info_classic_rev_title">Classic Rev:</string>
     <string name="info_network_rev_title">Network Rev:</string>
     <string name="info_last_voc_title">Last VOC:</string>
+    <string name="info_build_date_title">Software Build Date</string>
+
+    <string-array name="minute_log_chart_selection">
+        <item>Power</item>
+        <item>PV Voltage</item>
+        <item>Battery Voltage</item>
+        <item>Battery Current</item>
+        <item>Energy</item>
+    </string-array>
+
+    <string-array name="day_log_chart_selection">
+        <item>Energy</item>
+        <item>High Power</item>
+        <item>High Temperature</item>
+        <item>High PV Volts</item>
+        <item>High Battery Volts</item>
+        <item>Float Time</item>
+    </string-array>
 
 </resources>

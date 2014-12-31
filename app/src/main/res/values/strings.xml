@@ -2,66 +2,40 @@
 <resources>
 
     <string name="app_name">Classic</string>
-    <string name="action_settings">Settings</string>
-    <string name="EnergyTodayTitle">Energy Today</string>
-    <string name="TotalEnergyTitle">Total Energy</string>
-    <string name="energy_unit">kWh</string>
-    <string name="power_unit">Watts</string>
-    <string name="volt_unit">Volts</string>
-    <string name="amp_unit">Amps</string>
-    <string name="ChargeState">Charge State</string>
-    <string name="Absorb">Regulating battery voltage at absorb set point.</string>
-    <string name="Bulk">Max power point tracking until absorb voltage reached.</string>
-    <string name="Float">Battery is full and regulating battery voltage at float set point.</string>
-    <string name="Tracking">Max power point tracking. Seeking float set point voltage.</string>
-    <string name="Equalize">Regulating battery voltage at equalize set point.</string>
-    <string name="Error">Input voltage is above maximum classic operating voltage.</string>
-    <string name="SeekingEqualize">Max power point tracking. Seeking equalize set point voltage.</string>
-    <string name="ChargeStateOff">No power, waiting for power source.</string>
+
+    <string name="AbsorbDescription">Regulating battery voltage at absorb set point.</string>
+    <string name="BulkMPPTDescription">Max power point tracking until absorb voltage reached.</string>
+    <string name="FloatDescription">Battery is full and regulating battery voltage at float set point.</string>
+    <string name="FloatMPPTDescription">Max power point tracking. Seeking float set point voltage.</string>
+    <string name="EqualizeDescription">Regulating battery voltage at equalize set point.</string>
+    <string name="HyperVocDescription">Input voltage is above maximum classic operating voltage.</string>
+    <string name="EqMPPTDescription">Max power point tracking. Seeking equalize set point voltage.</string>
+    <string name="RestingDescription">No power, waiting for power source.</string>
+
     <string name="AbsorbTitle">Absorb</string>
-    <string name="BulkTitle">Bulk</string>
+    <string name="BulkMPPTTitle">Bulk MPPT</string>
     <string name="FloatTitle">Float</string>
-    <string name="TrackingTitle">Float</string>
-    <string name="EqualizeTitle">Equalize</string>
-    <string name="ErrorTitle">Error</string>
-    <string name="SeekingEqualizeTitle">Equalizing</string>
-    <string name="ChargeStateOffTitle">Resting</string>
+    <string name="FloatMPPTTitle">Float MPPT</string>
+    <string name="EqualizeTitle">Equalized</string>
+    <string name="HyperVocTitle">HyperVoc</string>
+    <string name="EqMpptTitle">Equalizing</string>
+    <string name="RestingTitle">Resting</string>
+
     <string name="FoundClassic">Connected to Classic at address %1$s:%2$d </string>
     <string name="ClassicNotFound">Scanning local network for port %1$d</string>
     <string name="ClassicNotConnecting">Attempting to connect to %1$s:%2$d</string>
     <string name="NoConnection">No connection</string>
-    <string name="PVVoltTitle">PV Volts</string>
-    <string name="PVCurrentTitle">PV Current</string>
-    <string name="BatVoltsTitle">Battery Volts</string>
-    <string name="BatCurrentTitle">Battery Current</string>
-    <string name="BatPowerTitle">Battery Power</string>
-    <string name="PowerTitle">Power</string>
+
     <string name="SettingsLabel">Settings</string>
     <string name="About">About</string>
 
     <string name="ApplyButton">Apply</string>
     <string name="CancelButton">Cancel</string>
 
-    <string name="HourChartTabTitle">Hour Log Chart</string>
-    <string name="DayChartTabTitle">Day Log Chart</string>
-    <string name="BatteryVoltageScaleSettingDialogTitle">Battery Voltage Gauge Scale</string>
-    <string name="BatteryCurrentGaugeScaleSettingDialogTitle">Battery Current Gauge Scale</string>
-    <string name="PowerGaugeScaleSettingDialogTitle">Power Gauge Scale</string>
-    <string name="BatteryVoltageScaleSettingTitle">Battery Voltage Scale</string>
-    <string name="BatteryCurrentGaugeScaleSettingTitle">Battery Current Scale</string>
-    <string name="PowerGaugeScaleSettingTitle">Power Scale</string>
+    <string name="dialog_port_hint">port number</string>
+    <string name="dialog_ipaddress_hint">IP Address</string>
+    <string name="IPAddressPrompt">Enter a static IP address</string>
 
-    <string name="Calendar">Calendar</string>
-    <string name="LockScale">Lock Scale</string>
-    <string name="CalendarFloat">(Float)</string>
-    <string name="ScanSubnetCheckbox">Scan the local subnet for the Classic</string>
-    <string name="ModbusPortSetting">Set Modbus Port of the Classic</string>
-
-
-    <string name="StaticIPAddressTitle">Set IP Address of the Classic</string>
-    <string name="StaticIPAddressPrompt">IP Address:</string>
-    <string name="StaticIPAddressDialogTitle">Classic IP Address</string>
-    <string name="StaticIPAddressSummary">Static IP Address of the Classic</string>
     <string name="UploadLogsSummary">Upload Logs To PVOutput</string>
     <string name="APIKeyTitle">API Key</string>
     <string name="APIKeyPrompt">API Key:</string>
@@ -70,31 +44,43 @@
     <string name="SIDDialogMessage">SID:</string>
     <string name="SIDTitle">SID</string>
     <string name="ClearLogsTitle">Clear recorded logs</string>
-    <string name="NetworkCategoryTitle">Connection Settings</string>
-    <string name="GaugePreferenceTitle">Gauges</string>
     <string name="PVOutputPreferenceTitle">PVOutput</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_example">Example action</string>
     <string name="network">Network</string>
 
     <string name="PowerTabTitle">Power</string>
     <string name="EnergyTabTitle">Energy</string>
     <string name="StateOfChargeTabTitle">State of Charge</string>
     <string name="TemperatureTabTitle">Temperature</string>
+    <string name="DayLogTabTitle">Day log calendar</string>
+    <string name="DayChartTabTitle">Day Log Chart</string>
+    <string name="HourChartTabTitle">Hour Log Chart</string>
     <string name="InfoTabTitle">Info</string>
+    <string name="MessagesTabTitle">Messages</string>
+
+    <string name="PVVoltTitle">PV Volts</string>
+    <string name="PVCurrentTitle">PV Current</string>
+    <string name="BatVoltsTitle">Battery Volts</string>
+    <string name="BatCurrentTitle">Battery Current</string>
+    <string name="BatPowerTitle">Battery Power</string>
+    <string name="PowerTitle">Power</string>
+
+    <string name="EnergyTodayTitle">Energy Today</string>
+    <string name="TotalEnergyTitle">Total Energy</string>
+    <string name="energy_unit">kWh</string>
+    <string name="power_unit">Watts</string>
+    <string name="volt_unit">Volts</string>
+    <string name="amp_unit">Amps</string>
+
     <string name="PCBTemperature">PCB</string>
     <string name="FETTemperature">FET</string>
     <string name="BatTemperature">Battery</string>
 
-    <string name="dialog_port_hint">port number</string>
-    <string name="dialog_ipaddress_hint">IP Address</string>
-    <string name="IPAddressPrompt">Enter a static IP address</string>
+    <string name="Calendar">Calendar</string>
+    <string name="CalendarFloat">(Float)</string>
 
-    <string name="DayLogTabTitle">Day log calendar</string>
-
-    <string name="select_chart">Choose a chart</string>
     <string name="info_model_title">Model:</string>
     <string name="info_mac_title">MAC Address:</string>
     <string name="info_unitid_title">Unit ID:</string>
@@ -102,6 +88,8 @@
     <string name="info_classic_rev_title">Classic Rev:</string>
     <string name="info_network_rev_title">Network Rev:</string>
     <string name="info_last_voc_title">Last VOC:</string>
+    <string name="info_build_date_title">Software Build Date</string>
+
     <string-array name="minute_log_chart_selection">
         <item>Power</item>
         <item>PV Voltage</item>
@@ -118,4 +106,5 @@
         <item>High Battery Volts</item>
         <item>Float Time</item>
     </string-array>
+
 </resources>

@@ -46,13 +46,7 @@ public class MonitorActivity extends ActionBarActivity {
     private boolean isReceiverRegistered;
     private SlidingTabLayout stl;
     private ViewPager viewPager;
-    static boolean ismodbusServiceBound = false;
     ModbusService modbusService;
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +80,7 @@ public class MonitorActivity extends ActionBarActivity {
             tabStripAdapter.addTab(R.string.DayChartTabTitle, DayLogChart.class, null);
             tabStripAdapter.addTab(R.string.HourChartTabTitle, HourLogChart.class, null);
             tabStripAdapter.addTab(R.string.InfoTabTitle, InfoFragment.class, null);
+            tabStripAdapter.addTab(R.string.MessagesTabTitle, MessageFragment.class, null);
         } else if (cc != null && cc.deviceType() == DeviceType.TriStar) {
             currentUnitName = cc.deviceName();
             tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
@@ -99,6 +94,7 @@ public class MonitorActivity extends ActionBarActivity {
             tabStripAdapter.addTab(R.string.DayChartTabTitle, DayLogChart.class, null);
             tabStripAdapter.addTab(R.string.HourChartTabTitle, HourLogChart.class, null);
             tabStripAdapter.addTab(R.string.InfoTabTitle, InfoFragment.class, null);
+            tabStripAdapter.addTab(R.string.MessagesTabTitle, MessageFragment.class, null);
         }
         tabStripAdapter.notifyTabsChanged();
     }
@@ -109,6 +105,7 @@ public class MonitorActivity extends ActionBarActivity {
             boolean differentController = intent.getBooleanExtra("DifferentController", false);
             if (differentController) {
                 MonitorActivity.this.finish();
+                System.gc();
                 MonitorActivity.this.startActivity(getIntent());
             }
         }
@@ -136,6 +133,7 @@ public class MonitorActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         if (navigationDrawerFragment == null || !navigationDrawerFragment.isDrawerOpen()) {
             getMenuInflater().inflate(R.menu.shared_activity_menu, menu);
+            currentChargeState = -1; // reload title
             return true;
         }
         return super.onCreateOptionsMenu(menu);

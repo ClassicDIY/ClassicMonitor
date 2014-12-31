@@ -39,6 +39,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
@@ -115,7 +116,7 @@ public class ModbusTCPTransport implements ModbusTransport {
             int transactionID = -1;
             int protocolID = -1;
             int unitID;
-            int fupnctionCode;
+            int functionCode;
             m_ByteOut.reset();
             if (!headless) {
                 transactionID = msg.getTransactionID();
@@ -127,8 +128,8 @@ public class ModbusTCPTransport implements ModbusTransport {
             }
             unitID = msg.getUnitID();
             m_ByteOut.writeByte(unitID);
-            fupnctionCode = msg.getFunctionCode();
-            m_ByteOut.writeByte(fupnctionCode);
+            functionCode = msg.getFunctionCode();
+            m_ByteOut.writeByte(functionCode);
             if (message != null && message.length > 0)
                 m_ByteOut.write(message);
 
@@ -136,16 +137,15 @@ public class ModbusTCPTransport implements ModbusTransport {
             m_Output.flush();
             int count = m_ByteOut.size();
             int requestlength = msg.getOutputLength();
-            Log.d(Modbus.LOG_TAG_MODBUS+"_DATA", String.format("writeMessage transaction %d, protocol %d, function %d, count %d, outputLength %d", transactionID, protocolID, fupnctionCode, count, requestlength));
-            Log.d(Modbus.LOG_TAG_MODBUS+"_DATA", "Sent: " + ModbusUtil.toHex(m_ByteOut.toByteArray()));
-            Log.d(Modbus.LOG_TAG_MODBUS+"_DATA", "Sent (HexMessage): " + msg.getHexMessage());
+            Log.d(getClass().getName(), String.format("writeMessage transaction %d, protocol %d, function %d, count %d, outputLength %d", transactionID, protocolID, functionCode, count, requestlength));
+            Log.d(getClass().getName()+"_DATA", "Sent: " + ModbusUtil.toHex(m_ByteOut.toByteArray()));
 
             // write more sophisticated exception handling
         } catch (SocketException ex) {
-            Log.d(Modbus.LOG_TAG_MODBUS, "writeMessage SocketException " + ex.getMessage());
+            Log.w(getClass().getName(), "writeMessage SocketException " + ex.getMessage());
             throw new ModbusIOException("I/O exception - failed to write.");
         } catch (Exception ex) {
-            Log.d(Modbus.LOG_TAG_MODBUS, "writeMessage Exception " + ex.getMessage());
+            Log.w(getClass().getName(), "writeMessage Exception " + ex.getMessage());
             throw new ModbusIOException("I/O exception - failed to write.");
         }
     }
@@ -166,11 +166,12 @@ public class ModbusTCPTransport implements ModbusTransport {
 					 * All Modbus TCP transactions start with 6 bytes. Get them.
 					 */
 
-                    if (m_Input.read(buffer, 0, 6) == -1)
-                        throw new ModbusIOException(
-                                "Premature end of stream (Header truncated).");
+                    if (m_Input.read(buffer, 0, 6) == -1) {
+                        Log.w(getClass().getName(), "Premature end of stream ");
+                        throw new ModbusIOException("Premature end of stream (Header truncated).");
+                    }
 
-                    Log.d(Modbus.LOG_TAG_MODBUS+"_DATA", "Read header: " + ModbusUtil.toHex(buffer, 0, 6));
+                    Log.d(getClass().getName()+"_DATA", "Read header: " + ModbusUtil.toHex(buffer, 0, 6));
                     /*
 					 * The transaction ID is the first word (offset 0) in the
 					 * data that was just read. It will be echoed back to the
@@ -193,8 +194,8 @@ public class ModbusTCPTransport implements ModbusTransport {
                     m_ByteIn.reset();
                     m_ByteIn.skip(7);
                     int function = m_ByteIn.readUnsignedByte();
-                    Log.d(Modbus.LOG_TAG_MODBUS+"_DATA", String.format("readResponse transaction %d, protocol %d, function %d, count %d", transaction, protocol, function, count));
-                    Log.d(Modbus.LOG_TAG_MODBUS+"_DATA", "Read: " + ModbusUtil.toHex(buffer, 0, count + 6));
+                    Log.d(getClass().getName(), String.format("readResponse transaction %d, protocol %d, function %d, count %d", transaction, protocol, function, count));
+                    Log.d(getClass().getName()+"_DATA", "Read: " + ModbusUtil.toHex(buffer, 0, count + 6));
                     response = ModbusResponse.createModbusResponse(function);
 
 					/*
@@ -225,12 +226,16 @@ public class ModbusTCPTransport implements ModbusTransport {
             }
             return response;
         } catch (SocketTimeoutException ex) {
-            Log.d(Modbus.LOG_TAG_MODBUS, String.format("Modbus: Timeout reading response. ex: %s", ex));
+            Log.w(getClass().getName(), String.format("Modbus: Timeout reading response. ex: %s", ex));
             throw new ModbusIOException("Timeout reading response");
+        } catch (EOFException ex) {
+            Log.w(getClass().getName(), String.format("Modbus: EOFException - failed to read. ex: %s", ex));
+            throw new ModbusIOException(true);
         } catch (Exception ex) {
-            Log.d(Modbus.LOG_TAG_MODBUS, String.format("Modbus: I/O exception - failed to read. ex: %s", ex));
+            Log.w(getClass().getName(), String.format("Modbus: I/O exception - failed to read. ex: %s", ex));
             throw new ModbusIOException("I/O exception - failed to read.");
         }
+
     }
 
     /**
@@ -275,7 +280,7 @@ public class ModbusTCPTransport implements ModbusTransport {
             setSocket(socket);
             socket.setSoTimeout(m_Timeout);
         } catch (IOException ex) {
-            Log.d(Modbus.LOG_TAG_MODBUS, "ModbusTCPTransport::Socket invalid.");
+            Log.w(getClass().getName(), "ModbusTCPTransport::Socket invalid.");
             throw new IllegalStateException("Socket invalid.");
         }
     }
@@ -304,13 +309,13 @@ public class ModbusTCPTransport implements ModbusTransport {
 //					int transaction = ModbusUtil.registerToShort(buffer, 0);
 //					int protocol = ModbusUtil.registerToShort(buffer, 2);
 //					int count = ModbusUtil.registerToShort(buffer, 4);
-//                        Log.d(Modbus.LOG_TAG_MODBUS, String.format("readRequest transaction %d, protocol %d, count %d", transaction, protocol,  count));
+//                        Log.d(getClass().getName(), String.format("readRequest transaction %d, protocol %d, count %d", transaction, protocol,  count));
 //					if (m_Input.read(buffer, 6, count) == -1)
 //						throw new ModbusIOException(
 //								"Premature end of stream (Message truncated).");
 //
 
-//						Log.d(Modbus.LOG_TAG_MODBUS, "Read: " + ModbusUtil.toHex(buffer, 0, count + 6));
+//						Log.d(getClass().getName(), "Read: " + ModbusUtil.toHex(buffer, 0, count + 6));
 //
 //					m_ByteIn.reset(buffer, (6 + count));
 //					m_ByteIn.skip(6);
@@ -346,7 +351,7 @@ public class ModbusTCPTransport implements ModbusTransport {
 //					 * proper error correction and recovery.
 //					 */
 //					m_Input.readShort();
-//						Log.d(Modbus.LOG_TAG_MODBUS, "Read: "	+ req.getHexMessage());
+//						Log.d(getClass().getName(), "Read: "	+ req.getHexMessage());
 //				}
 //			}
 //			return req;

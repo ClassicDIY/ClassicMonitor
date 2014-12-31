@@ -204,7 +204,7 @@ public class ModbusTCPTransaction implements ModbusTransaction {
                         m_Response = m_IO.readResponse();
 
                         if (m_Response.getTransactionID() != m_Request.getTransactionID()) {
-                            Log.d(Modbus.LOG_TAG_MODBUS, "Wrong transactionId, expected " + m_Request.getTransactionID() +
+                            Log.w(getClass().getName(), "Wrong transactionId, expected " + m_Request.getTransactionID() +
                                     ", got " + m_Response.getTransactionID());
                             m_Response = null;
                         }
@@ -220,30 +220,34 @@ public class ModbusTCPTransaction implements ModbusTransaction {
                     break;
                 }
             } catch (ModbusIOException ex) {
-                Log.d(Modbus.LOG_TAG_MODBUS, "ModbusTCPTransaction.execute ModbusIOException " + ex.getMessage());
-                if (!m_Connection.isConnected()) {
-                    try {
-                        m_Connection.connect();
-                        Log.d(Modbus.LOG_TAG_MODBUS, "ModbusTCPTransaction.execute RECONNECTED");
-                    } catch (Exception e) {
-                        /*
-                         * Nope, fail this transaction.
-						 */
-                        Log.d(Modbus.LOG_TAG_MODBUS, "ModbusTCPTransaction.execute FAILED TO RECONNECT");
-                        throw new ModbusIOException("Connection lost.");
-                    }
-                }
-                if (retryCounter >= retryLimit) {
-                    Log.d(Modbus.LOG_TAG_MODBUS, "ModbusTCPTransaction.execute Exceeded retry limit.");
-                    throw new ModbusIOException("Executing transaction failed (tried " + m_Retries + " times)");
-                } else {
-                    retryCounter++;
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+//                if (ex.isEOF()) {
+//                    throw ex;
+//                }
+                Log.w(getClass().getName(), "ModbusTCPTransaction.execute ModbusIOException " + ex);
+                throw ex;
+//                if (!m_Connection.isConnected()) {
+//                    try {
+//                        m_Connection.connect();
+//                        Log.w(getClass().getName(), "ModbusTCPTransaction.execute RECONNECTED");
+//                    } catch (Exception e) {
+//                        /*
+//                         * Nope, fail this transaction.
+//						 */
+//                        Log.w(getClass().getName(), "ModbusTCPTransaction.execute FAILED TO RECONNECT");
+//                        throw new ModbusIOException("Connection lost.");
+//                    }
+//                }
+//                if (retryCounter >= retryLimit) {
+//                    Log.w(getClass().getName(), "ModbusTCPTransaction.execute Exceeded retry limit.");
+//                    throw new ModbusIOException("Executing transaction failed (tried " + m_Retries + " times)");
+//                } else {
+//                    retryCounter++;
+//                    try {
+//                        Thread.sleep(100);
+//                    } catch (InterruptedException e) {
+//                        Log.w(getClass().getName(), "ModbusTCPTransaction InterruptedException." + e);
+//                    }
+//                }
             }
         }
 
@@ -280,8 +284,8 @@ public class ModbusTCPTransaction implements ModbusTransaction {
             return;
 
         if (m_Request.getTransactionID() != m_Response.getTransactionID()) {
-            Log.d(Modbus.LOG_TAG_MODBUS, "ModbusTCPTransaction Transaction ID mismatch.");
-
+            Log.w(getClass().getName(), "ModbusTCPTransaction Wrong transactionId, expected " + m_Request.getTransactionID() +
+                    ", got " + m_Response.getTransactionID());
             throw new ModbusException("Transaction ID mismatch");
         }
     }

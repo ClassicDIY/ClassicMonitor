@@ -35,12 +35,30 @@ public class ChargeControllerInfo implements Serializable {
     private boolean hasWhizbang;
     private boolean isCurrent;
     private DeviceType deviceType;
-    private boolean isReachable;
-    private String model;
-    private String macAddress;
-    private float lastVOC;
-    private String appVersion;
-    private String netVersion;
+    private transient boolean isReachable;
+    private transient String model;
+    private transient String macAddress;
+    private transient float lastVOC;
+    private transient String appVersion;
+    private transient String netVersion;
+    private transient String buildDate;
+    private transient int nominalBatteryVoltage;
+
+    public int getNominalBatteryVoltage() {
+        return nominalBatteryVoltage;
+    }
+
+    public void setNominalBatteryVoltage(int nominalBatteryVoltage) {
+        this.nominalBatteryVoltage = nominalBatteryVoltage;
+    }
+
+    public String getBuildDate() {
+        return buildDate;
+    }
+
+    public void setBuildDate(String buildDate) {
+        this.buildDate = buildDate;
+    }
 
     // default ctor for de-serialization
     public ChargeControllerInfo() {
@@ -49,16 +67,8 @@ public class ChargeControllerInfo implements Serializable {
     public ChargeControllerInfo(String deviceIP, int port, boolean staticIP) {
         this.deviceIP = deviceIP;
         this.port = port;
+        this.deviceType = DeviceType.Unknown;
         this.staticIP = staticIP;
-    }
-
-    public ChargeControllerInfo(Bundle info, String deviceIP, int port) {
-        this(deviceIP, port, false);
-        setIsReachable(true);
-        setDeviceName(info.getString("UnitName"));
-        setUnitID(info.getInt("UnitID"));
-        setDeviceType((DeviceType) info.getSerializable("DeviceType"));
-        setHasWhizbang(info.getBoolean("FoundWhizbang"));
     }
 
     public ChargeControllerInfo(InetSocketAddress socketAddress) {

@@ -133,6 +133,7 @@
             android:layout_weight="3"
 
             app:gaugeTitle="@string/BatCurrentTitle"
+            app:majorTickPercentOfMax="5"
             app:readingPrecision="1"
             app:readingUnit="A"
             app:register="BatCurrent"
