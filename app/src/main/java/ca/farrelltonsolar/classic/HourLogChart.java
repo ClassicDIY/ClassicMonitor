@@ -57,11 +57,9 @@ public class HourLogChart extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View theView = inflater.inflate(R.layout.hour_logs_chart, container, false);
         // Find the chart view
         chartView = (ChartView) theView.findViewById(R.id.chart_view);
-
         LabelAdapter left = new ValueLabelAdapter(this.getActivity(), ValueLabelAdapter.LabelOrientation.VERTICAL, "%.1f");
         LabelAdapter bottom = new HourLabelAdapter(this.getActivity(), ValueLabelAdapter.LabelOrientation.HORIZONTAL);
         chartView.setLeftLabelAdapter(left);
@@ -87,16 +85,6 @@ public class HourLogChart extends Fragment {
         Log.d(getClass().getName(), "onStop");
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
     private void setupSpinner( MenuItem item )
     {
         item.setVisible(true);
@@ -105,13 +93,16 @@ public class HourLogChart extends Fragment {
         if (view instanceof Spinner)
         {
             Spinner spinner = (Spinner) view;
+            spinner.setSelection(MonitorApplication.chargeControllers().getCurrentChargeController().getHourLogMenuSelection());
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     chartView.clearSeries();
-                    if (position < mSeries.size())
+                    if (position < mSeries.size()) {
+                        MonitorApplication.chargeControllers().getCurrentChargeController().setHourLogMenuSelection(position);
                         chartView.addSeries(mSeries.get(position));
+                    }
                 }
 
                 @Override
@@ -128,8 +119,6 @@ public class HourLogChart extends Fragment {
         inflater.inflate(R.menu.chart_menu, menu); // inflate the menu
         MenuItem shareItem = menu.findItem(R.id.chart_preferences);
         setupSpinner(shareItem);
-
-
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -195,21 +184,19 @@ public class HourLogChart extends Fragment {
             mSeries.add(seriesOutputCurrent);
 //            mSeries.add(seriesChargeState);
             mSeries.add(seriesEnergy);
-            chartView.addSeries(seriesPower);
+            int currentSelection = MonitorApplication.chargeControllers().getCurrentChargeController().getHourLogMenuSelection();
+            if (currentSelection >= mSeries.size()) {
+                currentSelection = 0;
+                MonitorApplication.chargeControllers().getCurrentChargeController().setHourLogMenuSelection(0);
+            }
+            chartView.addSeries(mSeries.get(currentSelection));
             Log.d(getClass().getName(), String.format("Chart onPostExecute completed %s", Thread.currentThread().getName()));
-        }
-
-        @Override
-        protected void onPreExecute() {
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
         }
     }
 
     private LinearSeries getLinearSeries(short[] timeStamps, float[] yAxis) {
         // Create the data points
+        boolean pointsAdded = false;
         LinearSeries series = new LinearSeries();
         series.setLineColor(Color.YELLOW);
         series.setLineWidth(4);
@@ -219,9 +206,10 @@ public class HourLogChart extends Fragment {
                 short t = timeStamps[i];
                 t = (short)(offset - t);
                 series.addPoint(new LinearSeries.LinearPoint(t, yAxis[i]));
+                pointsAdded = true;
             }
         }
-        else {
+        if (pointsAdded == false) { // default to test pattern
             for (double i = 0d; i <= (2d * Math.PI); i += 0.1d) {
                 series.addPoint(new LinearSeries.LinearPoint(i, Math.sin(i))); // test pattern
             }

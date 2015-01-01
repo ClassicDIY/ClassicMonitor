@@ -449,6 +449,7 @@ public class ModbusTask extends TimerTask {
                 dayLogEntry = new LogEntry(dayLogs);
                 DateTime logDate = dayLogEntry.getLogDate();
                 if (logDate.isAfter(DateTime.now().withTimeAtStartOfDay())) { // still good?
+                    Log.d(getClass().getName(), "DayLog cache still good to go");
                     return;
                 }
                 Log.d(getClass().getName(), "DayLog cache stale, reload data from modbus");
@@ -487,6 +488,7 @@ public class ModbusTask extends TimerTask {
                 minuteLogEntry = new LogEntry(minuteLog);
                 DateTime logDate = minuteLogEntry.getLogDate();
                 if (logDate.isAfter(DateTime.now().minusHours(1))) { // still good?
+                    Log.d(getClass().getName(), "MinuteLog cache still good to go");
                     return;
                 }
                 Log.d(getClass().getName(), "MinuteLog cache stale, reload data from modbus");

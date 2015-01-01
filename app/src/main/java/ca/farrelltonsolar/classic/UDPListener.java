@@ -48,7 +48,6 @@ public class UDPListener extends Service {
     private static Gson GSON = new Gson();
     private ListenerThread mListener;
 
-
     public UDPListener() {
     }
 
@@ -61,6 +60,37 @@ public class UDPListener extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+    @Override
+    public void onDestroy() {
+        stopListening();
+        super.onDestroy();
+        Log.d(getClass().getName(), "onDestroy");
+    }
+
+    public void listen(ChargeControllers currentCCs) {
+        stopListening();
+        mListener = new ListenerThread(currentCCs);
+        mListener.setUncaughtExceptionHandler(setUncaughtExceptionHandler);
+        mListener.start();
+        Log.d(getClass().getName(), "UDP Listener running");
+    }
+
+    private Thread.UncaughtExceptionHandler setUncaughtExceptionHandler = new Thread.UncaughtExceptionHandler() {
+
+        @Override
+        public void uncaughtException(Thread thread, Throwable ex) {
+            Log.wtf(getClass().getName(), String.format("UDPListener thread uncaughtException ex: %s on thread %s", ex, thread.getName()));
+        }
+    };
+
+    public void stopListening() {
+        if (mListener != null) {
+            mListener.SetRunning(false);
+            mListener = null;
+            Log.d(getClass().getName(), "stopListening");
+        }
     }
 
 
@@ -111,12 +141,6 @@ public class UDPListener extends Service {
             return rVal;
         }
 
-        private void removeFromAlreadyFoundList(InetSocketAddress socketAddress) {
-            synchronized (lock) {
-                alreadyFoundList.remove(socketAddress);
-            }
-        }
-
         private void removeFromAlreadyUpdatedList(InetSocketAddress socketAddress) {
             synchronized (lock) {
                 alreadyUpdatedList.remove(socketAddress);
@@ -144,10 +168,6 @@ public class UDPListener extends Service {
             }
         }
 
-        public ListenerThread() {
-            super();
-        }
-
         @Override
         public void run() {
             int sleepTime = Constants.UDPListener_Minimum_Sleep_Time;
@@ -167,6 +187,7 @@ public class UDPListener extends Service {
                         Thread.sleep(500);
                     } catch (InterruptedException ie) {
                         Log.w(getClass().getName(), String.format("Creating datagram ListenerThread sleep Interrupted ex: %s", ie));
+                        return;
                     }
                 } while (--retryCount > 0);
                 if (retryCount > 0) break;
@@ -174,6 +195,7 @@ public class UDPListener extends Service {
                     Thread.sleep(5000);
                 } catch (InterruptedException e2) {
                     Log.w(getClass().getName(), String.format("Creating datagram ListenerThread sleep Interrupted ex: %s", e2));
+                    return;
                 }
             } while (true);
             packet = new DatagramPacket(buffer, buffer.length);
@@ -200,12 +222,16 @@ public class UDPListener extends Service {
                         if (hasAddressAlreadyBeenFound(socketAddress) == false) {
                             Log.d(getClass().getName(), "Found new classic at address: " + address + " port: " + port);
                             addToAlreadyFoundList(socketAddress);
-                            Runnable r = new NamerThread(socketAddress);
-                            new Thread(r).start();
+                            ChargeControllerInfo cc = new ChargeControllerInfo(socketAddress);
+                            LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(UDPListener.this);
+                            Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER);
+                            pkg.putExtra("ForceRefresh", false);
+                            pkg.putExtra("ChargeController", GSON.toJson(cc));
+                            broadcaster.sendBroadcast(pkg);
                             sleepTime = Constants.UDPListener_Minimum_Sleep_Time;
                         } else if (hasAddressAlreadyBeenUpdated(socketAddress) == false) {
                             addToalreadyUpdatedList(socketAddress);
-                            Log.d(getClass().getName(), "Found existing classic at address: " + address + " port: " + port);
+                            Log.d(getClass().getName(), "Updating info on classic at address: " + address + " port: " + port);
                             Runnable r = new NameUpdaterThread(socketAddress);
                             new Thread(r).start();
                             sleepTime = Constants.UDPListener_Minimum_Sleep_Time;
@@ -236,42 +262,6 @@ public class UDPListener extends Service {
             Log.d(getClass().getName(), "mListener exiting");
         }
 
-        public class NamerThread implements Runnable {
-            InetSocketAddress socketAddress;
-
-            public NamerThread(InetSocketAddress val) {
-                socketAddress = val;
-            }
-
-            @Override
-            public void run() {
-                ChargeControllerInfo cc = new ChargeControllerInfo(socketAddress);
-                LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(UDPListener.this);
-                Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER);
-                pkg.putExtra("ForceRefresh", false);
-                pkg.putExtra("ChargeController", GSON.toJson(cc));
-                broadcaster.sendBroadcast(pkg);
-                ModbusTask modbus = new ModbusTask(cc, UDPListener.this);
-                try {
-                    if (modbus.connect()) {
-                        try {
-                            Bundle info = modbus.getChargeControllerInformation();
-                            String unitName = info.getString("UnitName");
-                            Log.d(getClass().getName(), "And it's name is: " + unitName);
-                            currentChargeControllers.update(info, socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), false);
-                        } catch (ModbusException e) {
-                            Log.d(getClass().getName(), "Failed to get unit info" + e);
-                            removeFromAlreadyFoundList(socketAddress);
-                        } finally {
-                            modbus.disconnect();
-                        }
-                    }
-                } catch (UnknownHostException e) {
-                    Log.d(getClass().getName(), String.format("Failed to connect to &s ex:%s", socketAddress.toString(), e));
-                }
-            }
-        }
-
         public class NameUpdaterThread implements Runnable {
             InetSocketAddress socketAddress;
 
@@ -282,24 +272,33 @@ public class UDPListener extends Service {
             @Override
             public void run() {
                 ChargeControllerInfo cc = new ChargeControllerInfo(socketAddress);
-                ModbusTask modbus = new ModbusTask(cc, UDPListener.this);
-                try {
-                    if (modbus.connect()) {
-                        try {
-                            Log.d(getClass().getName(), "Updating name for: " + socketAddress.toString());
-                            Bundle info = modbus.getChargeControllerInformation();
-                            currentChargeControllers.update(info, socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), true);
-                        } catch (ModbusException e) {
-                            Log.d(getClass().getName(), "Failed to get unit info" + e);
-                            removeFromAlreadyUpdatedList(socketAddress);
-                        } finally {
-                            modbus.disconnect();
+                do {
+                    ModbusTask modbus = new ModbusTask(cc, UDPListener.this);
+                    try {
+                        if (modbus.connect()) {
+                            try {
+                                Log.d(getClass().getName(), "Updating name for: " + socketAddress.toString());
+                                Bundle info = modbus.getChargeControllerInformation();
+                                currentChargeControllers.update(info, socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), true);
+                                break;
+                            } catch (ModbusException e) {
+                                Log.d(getClass().getName(), "Failed to get unit info" + e);
+                                removeFromAlreadyUpdatedList(socketAddress);
+                            } finally {
+                                modbus.disconnect();
+                            }
                         }
+                    } catch (UnknownHostException e) {
+                        currentChargeControllers.setReachable(socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), false);
+                        Log.d(getClass().getName(), String.format("Failed to connect to &s ex:%s", socketAddress.toString(), e));
                     }
-                } catch (UnknownHostException e) {
-                    currentChargeControllers.setReachable(socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), false);
-                    Log.d(getClass().getName(), String.format("Failed to connect to &s ex:%s", socketAddress.toString(), e));
-                }
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e2) {
+                        Log.w(getClass().getName(), String.format("NameUpdaterThread sleep Interrupted ex: %s", e2));
+                        return;
+                    }
+                } while (GetRunning());
             }
         }
 
@@ -397,34 +396,5 @@ public class UDPListener extends Service {
     }
 
 
-    public void listen(ChargeControllers currentCCs) {
-        stopListening();
-        mListener = new ListenerThread(currentCCs);
-        mListener.setUncaughtExceptionHandler(setUncaughtExceptionHandler);
-        mListener.start();
-        Log.d(getClass().getName(), "UDP Listener running");
-    }
 
-    private Thread.UncaughtExceptionHandler setUncaughtExceptionHandler = new Thread.UncaughtExceptionHandler() {
-
-        @Override
-        public void uncaughtException(Thread thread, Throwable ex) {
-            Log.wtf(getClass().getName(), String.format("UDPListener thread uncaughtException ex: %s on thread %s", ex, thread.getName()));
-        }
-    };
-
-    public void stopListening() {
-        if (mListener != null) {
-            mListener.SetRunning(false);
-            mListener = null;
-            Log.d(getClass().getName(), "stopListening");
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        stopListening();
-        super.onDestroy();
-        Log.d(getClass().getName(), "onDestroy");
-    }
 }

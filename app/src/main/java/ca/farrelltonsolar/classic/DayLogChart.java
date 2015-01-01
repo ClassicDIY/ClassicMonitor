@@ -55,19 +55,15 @@ public class DayLogChart extends Fragment {
     ChartView chartView;
     private List<AbstractSeries> mSeries = new ArrayList<AbstractSeries>();
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View theView = inflater.inflate(R.layout.day_logs_chart, container, false);
         // Find the chart view
         chartView = (ChartView) theView.findViewById(R.id.chart_view);
-
         LabelAdapter left = new ValueLabelAdapter(this.getActivity(), ValueLabelAdapter.LabelOrientation.VERTICAL, "%.1f");
         LabelAdapter bottom = new DayLabelAdapter(this.getActivity(), ValueLabelAdapter.LabelOrientation.HORIZONTAL);
         chartView.setLeftLabelAdapter(left);
         chartView.setBottomLabelAdapter(bottom);
-
         setHasOptionsMenu(true);
         return theView;
     }
@@ -89,16 +85,6 @@ public class DayLogChart extends Fragment {
         Log.d(getClass().getName(), "onStop");
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
     private void setupSpinner(MenuItem item) {
         item.setVisible(true);
         item.setActionView(R.layout.action_chart_select);
@@ -109,13 +95,16 @@ public class DayLogChart extends Fragment {
             ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, itemArray); //selected item will look like a spinner set from XML
             spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(spinnerArrayAdapter);
+            spinner.setSelection(MonitorApplication.chargeControllers().getCurrentChargeController().getDayLogMenuSelection());
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     chartView.clearSeries();
-                    if (position < mSeries.size())
+                    if (position < mSeries.size()){
+                        MonitorApplication.chargeControllers().getCurrentChargeController().setDayLogMenuSelection(position);
                         chartView.addSeries(mSeries.get(position));
+                    }
                 }
 
                 @Override
@@ -128,12 +117,9 @@ public class DayLogChart extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
         inflater.inflate(R.menu.chart_menu, menu); // inflate the menu
         MenuItem shareItem = menu.findItem(R.id.chart_preferences);
         setupSpinner(shareItem);
-
-
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -186,6 +172,11 @@ public class DayLogChart extends Fragment {
             seriesHighTemperature = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_TEMP_DAILY_CATEGORY), 10);
             seriesHighPvVolts = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_PV_VOLT_DAILY_CATEGORY), 10);
             seriesHighBatteryVolts = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_BATTERY_VOLT_DAILY_CATEGORY), 10);
+            float[] secondsInFloat = logs.getFloatArray(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY);
+
+            for (int i = 0; i < secondsInFloat.length; i++) {
+                secondsInFloat[i] = secondsInFloat[i]/3600; // convert to hour
+            }
             seriesFloatTime = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY), 1);
             Log.d(getClass().getName(), String.format("Chart doInBackground completed %s", Thread.currentThread().getName()));
             return "";
@@ -199,7 +190,12 @@ public class DayLogChart extends Fragment {
             mSeries.add(seriesHighPvVolts);
             mSeries.add(seriesHighBatteryVolts);
             mSeries.add(seriesFloatTime);
-            chartView.addSeries(seriesEnergy);
+            int currentSelection = MonitorApplication.chargeControllers().getCurrentChargeController().getDayLogMenuSelection();
+            if (currentSelection >= mSeries.size()) {
+                currentSelection = 0;
+                MonitorApplication.chargeControllers().getCurrentChargeController().setDayLogMenuSelection(0);
+            }
+            chartView.addSeries(mSeries.get(currentSelection));
             Log.d(getClass().getName(), String.format("Chart onPostExecute completed %s", Thread.currentThread().getName()));
         }
 
@@ -219,7 +215,12 @@ public class DayLogChart extends Fragment {
         series.setLineWidth(4);
         if (yAxis != null && yAxis.length >= 24) {
             for (int i = 0; i < 24; i++) {
-                series.addPoint(new LinearSeries.LinearPoint(i, yAxis[i] / factor));
+                series.addPoint(new LinearSeries.LinearPoint(23 - i, yAxis[i] / factor));
+            }
+        }
+        else { // default to test pattern
+            for (double i = 0d; i <= (2d * Math.PI); i += 0.1d) {
+                series.addPoint(new LinearSeries.LinearPoint(i, Math.sin(i))); // test pattern
             }
         }
         return series;

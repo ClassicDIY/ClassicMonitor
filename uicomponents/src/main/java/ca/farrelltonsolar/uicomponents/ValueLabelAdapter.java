@@ -47,7 +47,7 @@ public class ValueLabelAdapter extends LabelAdapter {
 
 		labelTextView = (TextView) convertView;
 
-        if (position == 0 || position == getCount() - 1) {
+        if (position == 0) {
             labelTextView.setText("");
             return convertView;
         }

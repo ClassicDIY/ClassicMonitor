@@ -25,10 +25,13 @@ import java.net.InetSocketAddress;
 public class ChargeController extends ChargeControllerInfo {
 
     final Object lock = new Object();
+    private boolean uploadToPVOutput;
     private String logDate; //date logs from classic were recorded for upload to PVOutput.org
     private String uploadDate; // last date the logs were uploaded to pvoutput.org
     private String SID; // pvoutput system id
     private boolean bidirectionalUnitsInWatts;
+    private int dayLogMenuSelection;
+    private int hourLogMenuSelection;
 
     // default ctor for de-serialization
     public ChargeController() {
@@ -48,136 +51,121 @@ public class ChargeController extends ChargeControllerInfo {
     }
 
     @Override
-    public String deviceIpAddress() {
-        synchronized (lock) {
+    public synchronized String deviceIpAddress() {
             return super.deviceIpAddress();
-        }
     }
 
-    public boolean setDeviceIP(String deviceIP) {
-        synchronized (lock) {
+    public synchronized boolean setDeviceIP(String deviceIP) {
             return super.setDeviceIP(deviceIP);
-        }
     }
 
-    public boolean setDeviceName(String deviceName) {
-        synchronized (lock) {
+    public synchronized boolean setDeviceName(String deviceName) {
             return super.setDeviceName(deviceName);
-        }
+
     }
 
-    public String deviceName() {
-        synchronized (lock) {
+    public synchronized String deviceName() {
             return toString();
-        }
     }
 
-    public int port() {
-        synchronized (lock) {
+    public synchronized int port() {
             return super.port();
-        }
     }
 
-    public boolean setPort(int port) {
-        synchronized (lock) {
+    public synchronized boolean setPort(int port) {
             return  super.setPort(port);
-        }
     }
 
-    public boolean isStaticIP() {
-        synchronized (lock) {
+    public synchronized boolean isStaticIP() {
             return super.isStaticIP();
-        }
     }
 
-    public int unitID() {
-        synchronized (lock) {
+    public synchronized int unitID() {
             return super.unitID();
-        }
     }
 
-    public boolean setUnitID(int unitID) {
-        synchronized (lock) {
+    public synchronized boolean setUnitID(int unitID) {
             return super.setUnitID(unitID);
-        }
     }
 
-    public DeviceType deviceType() {
-        synchronized (lock) {
+    public synchronized DeviceType deviceType() {
             return super.deviceType();
-        }
     }
 
-    public boolean setDeviceType(DeviceType deviceType) {
-        synchronized (lock) {
+    public synchronized boolean setDeviceType(DeviceType deviceType) {
             return super.setDeviceType(deviceType);
-        }
     }
 
-    public boolean hasWhizbang() {
-        synchronized (lock) {
+    public synchronized boolean hasWhizbang() {
             return super.hasWhizbang();
-        }
     }
 
-    public boolean setHasWhizbang(boolean hasWhizbang) {
-        synchronized (lock) {
+    public synchronized boolean setHasWhizbang(boolean hasWhizbang) {
             return super.setHasWhizbang(hasWhizbang);
-        }
     }
 
-    public boolean isBidirectionalUnitsInWatts() {
-        synchronized (lock) {
+    public synchronized boolean isBidirectionalUnitsInWatts() {
             return bidirectionalUnitsInWatts;
-        }
     }
 
-    public void setBidirectionalUnitsInWatts(boolean bidirectionalUnitsInWatts) {
-        synchronized (lock) {
+    public synchronized void setBidirectionalUnitsInWatts(boolean bidirectionalUnitsInWatts) {
             this.bidirectionalUnitsInWatts = bidirectionalUnitsInWatts;
-        }
     }
 
-    public String getSID() {
-        synchronized (lock) {
+
+    public synchronized int getHourLogMenuSelection() {
+        return hourLogMenuSelection;
+    }
+
+    public synchronized void setHourLogMenuSelection(int hourLogMenuSelection) {
+        this.hourLogMenuSelection = hourLogMenuSelection;
+    }
+
+    public synchronized int getDayLogMenuSelection() {
+            return dayLogMenuSelection;
+    }
+
+    public synchronized void setDayLogMenuSelection(int dayLogMenuSelection) {
+        this.dayLogMenuSelection = dayLogMenuSelection;
+    }
+
+    public synchronized String getSID() {
             return SID;
-        }
     }
 
-    public void setSID(String SID) {
-        synchronized (lock) {
+    public synchronized void setSID(String SID) {
             this.SID = SID;
-        }
+
     }
 
-    public String logDate() {
-        synchronized (lock) {
+    public synchronized String getPVOutputLogFilename() {
             return logDate;
-        }
     }
 
-    public void setLogDate(String logDate) {
-        synchronized (lock) {
-            this.logDate = logDate;
-        }
+    public synchronized void setPVOutputLogFilename(String logDate) {
+            this.logDate = String.format("PVOutput_%x_%s.log", unitID(), logDate) ;
     }
 
 
-    public String uploadDate() {
-        synchronized (lock) {
+    public synchronized String uploadDate() {
             return uploadDate;
-        }
     }
 
-    public void setUploadDate(String uploadDate) {
-        synchronized (lock) {
+    public synchronized void setUploadDate(String uploadDate) {
             this.uploadDate = uploadDate;
-        }
+    }
+
+    public synchronized Boolean uploadToPVOutput() {
+            return uploadToPVOutput;
+    }
+
+    public synchronized void setUploadToPVOutput(Boolean uploadToPVOutput) {
+            this.uploadToPVOutput = uploadToPVOutput;
     }
 
     public void resetPVOutputLogs() {
-        String fname = logDate();
-        if (fname.length() > 0) {
+        String fname = getPVOutputLogFilename();
+        if (fname != null && fname.length() > 0) {
             MonitorApplication.getAppContext().deleteFile(fname);
         }
         synchronized (lock) {

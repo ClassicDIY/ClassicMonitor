@@ -55,8 +55,10 @@ public class PVOutputUploader extends TimerTask {
             int numberOfChargeControllers = MonitorApplication.chargeControllers().count();
             for (int index = 0; index < numberOfChargeControllers; index++) {
                 ChargeController cc = MonitorApplication.chargeControllers().get(index);
-                Log.w(getClass().getName(), String.format("PVOutput uploading to %s on thread: %s", cc,  Thread.currentThread().getName()));
-                doUpload(cc);
+                if (cc.uploadToPVOutput()) {
+                    Log.w(getClass().getName(), String.format("PVOutput uploading to %s on thread: %s", cc,  Thread.currentThread().getName()));
+                    doUpload(cc);
+                }
             }
         } catch (Exception ex) {
             Log.w(getClass().getName(), String.format("PVOutput upload failed ex: %s, thread: %s", ex, Thread.currentThread().getName()));
@@ -66,9 +68,9 @@ public class PVOutputUploader extends TimerTask {
     private boolean doUpload(ChargeController controller) throws InterruptedException, IOException {
         String uploadDateString = controller.uploadDate();
         String SID = controller.getSID();
-        String fName = controller.logDate();
-        if (fName.length() > 0 && SID.length() > 0) {
-            DateTime logDate = DateTime.parse(fName, DateTimeFormat.forPattern("yyyy-MM-dd'.log'"));
+        String fName = controller.getPVOutputLogFilename();
+        if (fName != null && fName.length() > 0 && SID != null && SID.length() > 0) {
+            DateTime logDate = PVOutputService.LogDate();
             int numberOfDays = Constants.PVOUTPUT_RECORD_LIMIT;
             if (uploadDateString.length() > 0) {
                 DateTime uploadDate = DateTime.parse(uploadDateString, DateTimeFormat.forPattern("yyyy-MM-dd"));
@@ -76,10 +78,11 @@ public class PVOutputUploader extends TimerTask {
             }
             numberOfDays = numberOfDays > Constants.PVOUTPUT_RECORD_LIMIT ? Constants.PVOUTPUT_RECORD_LIMIT : numberOfDays; // limit to 20 days as per pvOutput limits
             if (numberOfDays > 0) {
+                Log.d(getClass().getName(), String.format("PVOutput uploading: %s for %d days on thread: %s", fName, numberOfDays, Thread.currentThread().getName()));
                 DateTime now = DateTime.now();
                 String UploadDate = DateTimeFormat.forPattern("yyyy-MM-dd").print(now);
                 Bundle logs = load(fName);
-                short[] mData = logs.getShortArray("0"); // kWh/day
+                float[] mData = logs.getFloatArray(String.valueOf(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY)); // kWh/day
                 boolean uploadDateRecorded = false;
                 for (int i = 0; i < numberOfDays; i++) {
                     Socket pvOutputSocket = Connect(pvOutput);
@@ -157,23 +160,18 @@ public class PVOutputUploader extends TimerTask {
         return bundle;
     }
 
-    public Bundle load(String file) {
-        Bundle rval = null;
-        try {
-            byte[] array = new byte[kBufferExpansionSize];
-            int bytesRead = 0;
-            int totalLength = 0;
-            InputStream fin = MonitorApplication.getAppContext().openFileInput(file);
-            //InputStream fin = new BufferedInputStream(new FileInputStream(file));
-            while ((bytesRead = fin.read(array, totalLength, array.length - totalLength)) != -1) {
-                totalLength += bytesRead;
+    public Bundle load(String file) throws IOException {
+        byte[] array = new byte[kBufferExpansionSize];
+        int bytesRead = 0;
+        int totalLength = 0;
+        InputStream fin = MonitorApplication.getAppContext().openFileInput(file);
+        //InputStream fin = new BufferedInputStream(new FileInputStream(file));
+        while ((bytesRead = fin.read(array, totalLength, array.length - totalLength)) != -1) {
+            totalLength += bytesRead;
 //                if (totalLength == array.length)
 //                    array = Arrays.copyOf(array, array.length + kBufferExpansionSize);
-            }
-            rval = deserializeBundle(array);
-        } catch (Exception ex) {
-            Log.w(getClass().getName(), String.format("load failed ex: %s", ex));
         }
-        return rval;
+        return deserializeBundle(array);
+
     }
 }

@@ -30,7 +30,6 @@ public final class ChargeControllers {
 
     private static Context context;
     private String APIKey = "";
-    private boolean uploadToPVOutput;
     private List<ChargeController> devices = new ArrayList<>();
 
     // default ctor for de-serialization
@@ -93,14 +92,15 @@ public final class ChargeControllers {
         synchronized (devices) {
             devices.add(newCC);
         }
-        BroadcastChangeNotification();
+        BroadcastUpdateNotification();
     }
 
     public void remove(ChargeControllerInfo cc) {
         synchronized (devices) {
             devices.remove(cc);
         }
-        BroadcastChangeNotification();
+        BroadcastUpdateNotification();
+        BroadcastRemoveNotification();
     }
 
     public int count() {
@@ -113,7 +113,7 @@ public final class ChargeControllers {
         synchronized (devices) {
             devices.clear();
         }
-        BroadcastChangeNotification();
+        BroadcastUpdateNotification();
     }
 
     public void load(ArrayAdapter adapter) {
@@ -173,7 +173,10 @@ public final class ChargeControllers {
             }
         }
         if (updated) {
-            BroadcastChangeNotification();
+            BroadcastUpdateNotification();
+        }
+        else if (useUnitIdAsKey) { // retry matching on IP address if no cc matched UnitID
+            update (info, deviceIpAddress, port, false);
         }
     }
 
@@ -188,7 +191,7 @@ public final class ChargeControllers {
             }
         }
         if (updated) {
-            BroadcastChangeNotification();
+            BroadcastUpdateNotification();
         }
     }
 
@@ -202,12 +205,18 @@ public final class ChargeControllers {
             }
             devices = staticDevices;
         }
-        BroadcastChangeNotification();
+        BroadcastUpdateNotification();
     }
 
-    private void BroadcastChangeNotification() {
+    private void BroadcastUpdateNotification() {
         LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(context);
         Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_UPDATE_CHARGE_CONTROLLERS);
+        broadcaster.sendBroadcast(pkg);
+    }
+
+    private void BroadcastRemoveNotification() {
+        LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(context);
+        Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_REMOVE_CHARGE_CONTROLLER);
         broadcaster.sendBroadcast(pkg);
     }
 
@@ -223,21 +232,23 @@ public final class ChargeControllers {
         }
     }
 
-    public Boolean uploadToPVOutput() {
-        synchronized (devices) {
-            return uploadToPVOutput;
-        }
-    }
-
-    public void setUploadToPVOutput(Boolean uploadToPVOutput) {
-        synchronized (devices) {
-            this.uploadToPVOutput = uploadToPVOutput;
-        }
-    }
-
     public void resetPVOutputLogs() {
-        for (ChargeController cc : devices) {
-            cc.resetPVOutputLogs();
+        synchronized (devices) {
+            for (ChargeController cc : devices) {
+                cc.resetPVOutputLogs();
+            }
         }
+    }
+
+    // true if any cc is uploading
+    public boolean uploadToPVOutput() {
+        synchronized (devices) {
+            for (ChargeController cc : devices) {
+                if (cc.uploadToPVOutput()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

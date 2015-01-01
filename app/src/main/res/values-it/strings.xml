@@ -44,7 +44,7 @@
     <string name="FloatMPPTDescription">Monitoraggio Max power point. Cerco float set point di tensione.</string>
     <string name="FloatMPPTTitle">Float MPPT</string>
     <string name="FloatTitle">galleggiante</string>
-    <string name="FoundClassic">Collegato al Classic all'indirizzo %1$s:%2$d</string>
+    <string name="FoundClassic">Collegato al Classic all\'indirizzo %1$s:%2$d</string>
     <string name="HourChartTabTitle">Ora Login Grafico</string>
     <string name="HyperVocDescription">Tensione di ingresso supera la tensione di esercizio massima classico.</string>
     <string name="IPAddressPrompt">Inserire un indirizzo IP statico</string>
@@ -74,7 +74,7 @@
     <string name="info_message_10000">Guasto verso terra rilevata.</string>
     <string name="info_message_100000">Errore FET</string>
     <string name="info_message_2">Classic EEprom lettura / scrittura ha trovato un errore</string>
-    <string name="info_message_200">Limite di corrente per l'utente o il limite di corrente di temperatura interna ha raggiunto.</string>
+    <string name="info_message_200">Limite di corrente per l\'utente o il limite di corrente di temperatura interna ha raggiunto.</string>
     <string name="info_message_20000">Errore Drive FET</string>
     <string name="info_message_400">Hyper Voc PV tensione di ingresso è superiore al massimo punteggio di ingresso Classic.</string>
     <string name="info_message_4000">Aux 1 ON (Aux 1 connettore ha la tensione o il relè è chiuso).</string>

@@ -78,6 +78,7 @@ public class MonitorApplication extends Application implements Application.Activ
         InitializeChargeStateTitleLookup();
         InitializeMessageLookup();
         LocalBroadcastManager.getInstance(this).registerReceiver(addChargeControllerReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER));
+        LocalBroadcastManager.getInstance(this).registerReceiver(removeChargeControllerReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_REMOVE_CHARGE_CONTROLLER));
         configuration = ComplexPreferences.getComplexPreferences(this, null, Context.MODE_PRIVATE);
         chargeControllers = configuration.getObject("devices", ChargeControllers.class);
         if (chargeControllers == null) { // save empty collection
@@ -193,6 +194,14 @@ public class MonitorApplication extends Application implements Application.Activ
                 UDPListenerService.stopListening();
                 UDPListenerService.listen(chargeControllers);
             }
+        }
+    };
+
+    private BroadcastReceiver removeChargeControllerReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            UDPListenerService.stopListening();
+            UDPListenerService.listen(chargeControllers);
         }
     };
 

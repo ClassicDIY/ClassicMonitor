@@ -23,18 +23,16 @@
         android:orientation="horizontal">
 
         <Button
-            android:text="@string/ApplyButton"
-            android:id="@+id/Apply"
-            android:layout_weight="5"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
-
-        <Button
             android:text="@string/CancelButton"
             android:id="@+id/Cancel"
             android:layout_weight="5"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
-
+        <Button
+            android:text="@string/ApplyButton"
+            android:id="@+id/Apply"
+            android:layout_weight="5"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </LinearLayout>

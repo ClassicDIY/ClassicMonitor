@@ -57,51 +57,52 @@ public class PVOutputService extends IntentService {
     private BroadcastReceiver mDayLogReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            LogEntry logs = (LogEntry) intent.getSerializableExtra("logs");
-            DateTime logDate = LogDate();
-            if (logDate != null) {
-                DateTime rightNow = DateTime.now().withTimeAtStartOfDay();
-                int daysSinceLastLog = Days.daysBetween(logDate, rightNow).getDays();
-                if (daysSinceLastLog > 0) { // last log file was created before today? update it
-                    doSave(logs);
-                }
-            } else {
-                doSave(logs); // never saved before!
-            }
-        }
-
-        private void doSave(LogEntry logs) {
             try {
-                Log.d(getClass().getName(), String.format("PVOutput upload for %s starting on thread: %s", MonitorApplication.chargeControllers().getCurrentChargeController(), Thread.currentThread().getName()));
-                if (logs != null) {
-                    SaveLogs(logs);
+                LogEntry logs = (LogEntry) intent.getSerializableExtra("logs");
+                DateTime logDate = LogDate();
+                if (logDate != null) {
+                    DateTime rightNow = DateTime.now().withTimeAtStartOfDay();
+                    int daysSinceLastLog = Days.daysBetween(logDate, rightNow).getDays();
+                    if (daysSinceLastLog > 0) { // last log file was created before today? update it
+                        saveLogs(logs);
+                    }
+                } else {
+                    saveLogs(logs); // never saved before!
                 }
             } catch (Exception ex) {
                 Log.w(getClass().getName(), String.format("SaveLogs failed ex: %s", ex));
             }
         }
+
+        private void saveLogs(LogEntry logs) {
+
+
+
+            float[] highWatts = logs.getFloatArray(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY);
+            Bundle toSave = new Bundle();
+            toSave.putFloatArray(String.valueOf(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY), highWatts);
+
+            ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
+            if (cc != null) {
+                cc.resetPVOutputLogs();
+                cc.setPVOutputLogFilename(getLogDate());
+                save(toSave, cc.getPVOutputLogFilename());
+                Log.d(getClass().getName(), String.format("PVOutput save logs for upload for %s starting on thread: %s", cc.getPVOutputLogFilename(), Thread.currentThread().getName()));
+            }
+        }
     };
 
-    private void SaveLogs(LogEntry logs) {
-        String updatedLogFilename = GetFileName();
-        save(logs.getLogs(), updatedLogFilename);
-        ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
-        if (cc != null) {
-            cc.resetPVOutputLogs();
-            cc.setLogDate(updatedLogFilename);
-        }
-    }
-
-    private DateTime LogDate() {
+    public static DateTime LogDate() {
         DateTime logDate = null;
         ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
         if (cc != null) {
-            String fName = cc.logDate();
-            if (fName.length() > 0) {
+            String fName = cc.getPVOutputLogFilename();
+            if (fName != null && fName.length() > 0) {
                 try {
-                    logDate = DateTime.parse(fName, DateTimeFormat.forPattern("yyyy-MM-dd'.log'"));
+                    String logDateSubstring = fName.substring(18, 28);
+                    logDate = DateTime.parse(logDateSubstring, DateTimeFormat.forPattern("yyyy-MM-dd"));
                 } catch (Exception ex) {
-                    Log.w(getClass().getName(), String.format("LogDate parse filename failed ex: %s", ex));
+                    Log.w("PVOutputService", String.format("LogDate parse filename failed ex: %s", ex));
                 }
             }
         }
@@ -113,7 +114,7 @@ public class PVOutputService extends IntentService {
      * Try to upload logs to PVOutput.
      */
     private void handleActionPVOutputUpload() {
-        if (MonitorApplication.chargeControllers().uploadToPVOutput()) {
+        if (MonitorApplication.chargeControllers().getCurrentChargeController().uploadToPVOutput()) {
             LocalBroadcastManager.getInstance(PVOutputService.this).registerReceiver(mDayLogReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS));
             String APIKey = MonitorApplication.chargeControllers().aPIKey();
             if (APIKey.length() > 0) {
@@ -124,9 +125,9 @@ public class PVOutputService extends IntentService {
         }
     }
 
-    private String GetFileName() {
+    private String getLogDate() {
         DateTime today = DateTime.now().withTimeAtStartOfDay();
-        return DateTimeFormat.forPattern("yyyy-MM-dd'.log'").print(today);
+        return DateTimeFormat.forPattern("yyyy-MM-dd").print(today);
     }
 
     public void save(final Bundle bundle, String file) {

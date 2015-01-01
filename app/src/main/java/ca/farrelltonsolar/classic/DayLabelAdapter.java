@@ -50,14 +50,14 @@ public class DayLabelAdapter extends LabelAdapter {
         convertView.setPadding(2, 0, 2, 0);
         TextView date = (TextView) convertView.findViewById(R.id.dayLabel_date);
         TextView day = (TextView) convertView.findViewById(R.id.dayLabel_day);
-        if (position == 0 || position == getCount() - 1) {
+        if (position == 0) {
             date.setText("");
             day.setText("");
             return convertView;
         }
         DateTime labelDate;
         try {
-            labelDate = today.minusDays(getCount() - position - 1);
+            labelDate = today.minusDays(getCount() - position);
             date.setGravity(Gravity.CENTER);
             String dateStamp = DateTimeFormat.forPattern("dd").print(labelDate);
             date.setText(dateStamp);

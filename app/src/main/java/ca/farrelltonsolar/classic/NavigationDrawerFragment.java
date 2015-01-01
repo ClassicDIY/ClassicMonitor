@@ -253,16 +253,6 @@ public class NavigationDrawerFragment extends Fragment {
             return true;
         }
 
-        if (item.getItemId() == R.id.action_scan) {
-            MonitorApplication.clearChargeControllerList(false);
-            return true;
-        }
-
-        if (item.getItemId() == R.id.action_clear) {
-            MonitorApplication.clearChargeControllerList(true);
-            return true;
-        }
-
         if (item.getItemId() == R.id.action_add) {
             IPAddressDialog dialog = new IPAddressDialog();
             dialog.show(this.getFragmentManager(), "IPAddress");

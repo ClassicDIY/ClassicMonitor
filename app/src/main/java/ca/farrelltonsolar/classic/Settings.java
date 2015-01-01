@@ -16,6 +16,7 @@
 
 package ca.farrelltonsolar.classic;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -25,8 +26,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-public class Settings extends PreferenceActivity  {
-
+public class Settings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private CheckBoxPreference _uploadToPVOutput;
     private EditTextPreference _SID;
@@ -56,10 +56,10 @@ public class Settings extends PreferenceActivity  {
             @Override
             //On click function
             public void onClick(View view) {
-                MonitorApplication.chargeControllers().setUploadToPVOutput(_uploadToPVOutput.isChecked());
                 MonitorApplication.chargeControllers().setAPIKey(_APIKey.getText());
                 ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
                 if (cc != null) {
+                    cc.setUploadToPVOutput(_uploadToPVOutput.isChecked());
                     cc.setSID(_SID.getText());
                 }
                 Settings.this.finish();
@@ -68,7 +68,7 @@ public class Settings extends PreferenceActivity  {
 
         try {
             _uploadToPVOutput = (CheckBoxPreference) findPreference(Constants.UploadToPVOutput);
-            _uploadToPVOutput.setChecked(MonitorApplication.chargeControllers().uploadToPVOutput());
+
             _SID = (EditTextPreference) findPreference(Constants.SID);
             _APIKey = (EditTextPreference) findPreference(Constants.APIKey);
             UploadToPVOutputEnabled(_uploadToPVOutput.isChecked());
@@ -83,6 +83,7 @@ public class Settings extends PreferenceActivity  {
 
             ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
             if (cc != null) {
+                _uploadToPVOutput.setChecked(cc.uploadToPVOutput());
                 _SID.setSummary(cc.getSID());
             }
             _APIKey.setSummary(MonitorApplication.chargeControllers().aPIKey());
@@ -101,12 +102,37 @@ public class Settings extends PreferenceActivity  {
 
     }
 
+
+
     private void UploadToPVOutputEnabled(boolean isEnabled) {
         _SID.setEnabled(isEnabled);
         _APIKey.setEnabled(isEnabled);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getPreferenceScreen().getSharedPreferences()
+                .registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        getPreferenceScreen().getSharedPreferences()
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    private void updatePreferences(Preference p) {
+        if (p instanceof EditTextPreference) {
+            EditTextPreference editTextPref = (EditTextPreference) p;
+            p.setSummary(editTextPref.getText());
+        }
+    }
 
 
-
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        updatePreferences(findPreference(key));
+    }
 }

@@ -32,6 +32,7 @@
         chartview:gridLineWidth="1dp"
         chartview:gridLinesHorizontal="22"
         chartview:gridLinesVertical="10"
-        chartview:leftLabelWidth="50sp" />
+        chartview:leftLabelWidth="50sp"
+        android:layout_gravity="left" />
 
 </LinearLayout>

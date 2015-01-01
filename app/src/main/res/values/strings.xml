@@ -43,7 +43,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="network">Network</string>
 
-    <string name="PowerTabTitle">Puissance</string>
+    <string name="PowerTabTitle">Power</string>
     <string name="EnergyTabTitle">Energy</string>
     <string name="StateOfChargeTabTitle">State of Charge</string>
     <string name="TemperatureTabTitle">Temperature</string>
