@@ -65,9 +65,9 @@
     <string name="amp_unit">Amps</string>
     <string name="dialog_ipaddress_hint">Indirizzo IP</string>
     <string name="dialog_port_hint">numero di porta</string>
-    <string name="info_build_date_title">Software Realizzato</string>
+    <string name="info_build_date_title">Software Realizzato:</string>
     <string name="info_ipaddress_title">Indirizzo IP:</string>
-    <string name="info_last_voc_title">Ultima VOC</string>
+    <string name="info_last_voc_title">Ultima VOC:</string>
     <string name="info_mac_title">Indirizzo MAC:</string>
     <string name="info_message_1">Classic Surriscaldamento</string>
     <string name="info_message_100">Tensione in ingresso (PV) è inferiore alla tensione della batteria.</string>
@@ -88,4 +88,21 @@
     <string name="navigation_drawer_close">Chiudi navigazione cassetto</string>
     <string name="navigation_drawer_open">Navigazione cassetto aperto</string>
     <string name="volt_unit">Volts</string>
+    <string name="menu_add">Aggiungere</string>
+    <string-array name="minute_log_chart_selection">
+        <item>Potenza</item>
+        <item>Volt PV </item>
+        <item>Volt Batteria</item>
+        <item>Corrente Batteria</item>
+        <item>Energia</item>
+    </string-array>
+
+    <string-array name="day_log_chart_selection">
+        <item>Energia</item>
+        <item>Potenza Alto</item>
+        <item>Temperatura Alto</item>
+        <item>PV Volt Alto</item>
+        <item>Batteria Volt Alto</item>
+        <item>Tempo Flottante</item>
+    </string-array>
 </resources>

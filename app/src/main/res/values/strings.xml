@@ -78,7 +78,7 @@
     <string name="info_classic_rev_title" translatable="false">Classic Rev:</string>
     <string name="info_network_rev_title">Network Rev:</string>
     <string name="info_last_voc_title">Last VOC:</string>
-    <string name="info_build_date_title">Software Build Date</string>
+    <string name="info_build_date_title">Software Build Date:</string>
     <string name="info_message_1">Classic Over Temperature</string>
     <string name="info_message_2">Classic EEprom read/write found an error</string>
     <string name="info_message_100">Input Voltage (PV) is lower than battery voltage.</string>
@@ -118,5 +118,6 @@
     <string name="RestingTitle">Resting</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="volt_unit">Volts</string>
+    <string name="menu_add">Add</string>
 
 </resources>

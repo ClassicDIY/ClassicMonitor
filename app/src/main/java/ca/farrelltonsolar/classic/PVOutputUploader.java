@@ -56,8 +56,10 @@ public class PVOutputUploader extends TimerTask {
             for (int index = 0; index < numberOfChargeControllers; index++) {
                 ChargeController cc = MonitorApplication.chargeControllers().get(index);
                 if (cc.uploadToPVOutput()) {
-                    Log.w(getClass().getName(), String.format("PVOutput uploading to %s on thread: %s", cc,  Thread.currentThread().getName()));
-                    doUpload(cc);
+                    Log.d(getClass().getName(), String.format("PVOutput uploading to %s on thread: %s", cc,  Thread.currentThread().getName()));
+                    if (doUpload(cc)) {
+                        this.cancel();
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -85,6 +87,7 @@ public class PVOutputUploader extends TimerTask {
                 float[] mData = logs.getFloatArray(String.valueOf(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY)); // kWh/day
                 boolean uploadDateRecorded = false;
                 for (int i = 0; i < numberOfDays; i++) {
+                    logDate = logDate.minusDays(1); // latest log entry is for yesterday
                     Socket pvOutputSocket = Connect(pvOutput);
                     DataOutputStream outputStream = new DataOutputStream(new BufferedOutputStream(pvOutputSocket.getOutputStream()));
                     String dateStamp = DateTimeFormat.forPattern("yyyyMMdd").print(logDate);
@@ -112,7 +115,6 @@ public class PVOutputUploader extends TimerTask {
                         uploadDateRecorded = true;
                     }
                     Thread.sleep(Constants.PVOUTPUT_RATE_LIMIT); // rate limit
-                    logDate = logDate.minusDays(1);
                 }
                 return true;
             }

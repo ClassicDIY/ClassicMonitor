@@ -68,11 +68,13 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
 
         try {
             _uploadToPVOutput = (CheckBoxPreference) findPreference(Constants.UploadToPVOutput);
-
             _SID = (EditTextPreference) findPreference(Constants.SID);
             _APIKey = (EditTextPreference) findPreference(Constants.APIKey);
-            UploadToPVOutputEnabled(_uploadToPVOutput.isChecked());
-
+            ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
+            if (cc != null) {
+                _uploadToPVOutput.setChecked(cc.uploadToPVOutput());
+                _SID.setSummary(cc.getSID());
+            }
             _uploadToPVOutput.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     boolean isEnabled = ((Boolean) newValue).booleanValue();
@@ -80,12 +82,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
                     return true;
                 }
             });
-
-            ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
-            if (cc != null) {
-                _uploadToPVOutput.setChecked(cc.uploadToPVOutput());
-                _SID.setSummary(cc.getSID());
-            }
+            UploadToPVOutputEnabled(_uploadToPVOutput.isChecked());
             _APIKey.setSummary(MonitorApplication.chargeControllers().aPIKey());
             Preference button = (Preference) findPreference("ResetLogs");
             button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

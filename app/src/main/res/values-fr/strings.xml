@@ -65,9 +65,9 @@
     <string name="amp_unit">Ampère</string>
     <string name="dialog_ipaddress_hint">Adresse IP</string>
     <string name="dialog_port_hint">numéro du port</string>
-    <string name="info_build_date_title">Date du logiciel</string>
-    <string name="info_ipaddress_title">IP Address:</string>
-    <string name="info_last_voc_title">Dernier VOC</string>
+    <string name="info_build_date_title">Date du logiciel:</string>
+    <string name="info_ipaddress_title">Adresse IP:</string>
+    <string name="info_last_voc_title">Dernier VOC:</string>
     <string name="info_mac_title">Adresse MAC:</string>
     <string name="info_message_1">Classique Surchauffe</string>
     <string name="info_message_100">Tension d\'entrée (PV) est inférieure à la tension de la batterie.</string>
@@ -88,4 +88,21 @@
     <string name="navigation_drawer_close">Fermer le tiroir de navigation</string>
     <string name="navigation_drawer_open">Ouvrir la navigation de tiroir</string>
     <string name="volt_unit">Volts</string>
+    <string name="menu_add">Ajouter</string>
+    <string-array name="minute_log_chart_selection">
+        <item>Puissance</item>
+        <item>Volt PV </item>
+        <item>Volt Batterie</item>
+        <item>Courant Batterie</item>
+        <item>Energie</item>
+    </string-array>
+
+    <string-array name="day_log_chart_selection">
+        <item>Energie</item>
+        <item>Haute Puissance</item>
+        <item>Haute Temperature</item>
+        <item>Haut Volt PV</item>
+        <item>Haut Volt Batterie</item>
+        <item>Temp de Flotte</item>
+    </string-array>
 </resources>

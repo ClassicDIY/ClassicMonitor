@@ -14,7 +14,7 @@
         app:showAsAction="always|withText"
 
         android:icon="@drawable/ic_action_new"
-        android:title="Add" />
+        android:title="@string/menu_add" />
 
 
 </menu>

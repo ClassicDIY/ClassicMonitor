@@ -65,9 +65,9 @@
     <string name="amp_unit">Amps</string>
     <string name="dialog_ipaddress_hint">Dirección IP</string>
     <string name="dialog_port_hint">número de puerto</string>
-    <string name="info_build_date_title">Software Build Fecha</string>
+    <string name="info_build_date_title">Software Build Fecha:</string>
     <string name="info_ipaddress_title">Dirección IP:</string>
-    <string name="info_last_voc_title">Última VOC</string>
+    <string name="info_last_voc_title">Última VOC:</string>
     <string name="info_mac_title">Dirección MAC:</string>
     <string name="info_message_1">Clásico de temperatura excesiva</string>
     <string name="info_message_100">Voltaje de entrada (PV) es menor que el voltaje de la batería.</string>
@@ -88,4 +88,21 @@
     <string name="navigation_drawer_close">Cerrar navegación cajón</string>
     <string name="navigation_drawer_open">Navegación cajón abierto</string>
     <string name="volt_unit">Voltios</string>
+    <string name="menu_add">Añadir</string>
+    <string-array name="minute_log_chart_selection">
+        <item>Potencia</item>
+        <item>Volt PV</item>
+        <item>Volt Batteria</item>
+        <item>Corriente Batteria</item>
+        <item>Energia</item>
+    </string-array>
+
+    <string-array name="day_log_chart_selection">
+        <item>Energia</item>
+        <item>Potencia Alto</item>
+        <item>Temperatura Alto</item>
+        <item>PV Volt Alto</item>
+        <item>Batteria Volt Alto</item>
+        <item>Tiempo Flotador</item>
+    </string-array>
 </resources>

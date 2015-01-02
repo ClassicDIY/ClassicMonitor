@@ -181,7 +181,7 @@ public class ModbusTask extends TimerTask {
 
     @Override
     public void run() {
-        Log.d(getClass().getName(), String.format("ModbusTask begin run for %s on thread is %s", chargeControllerInfo.toString(), Thread.currentThread().getName()));
+//        Log.d(getClass().getName(), String.format("ModbusTask begin run for %s on thread is %s", chargeControllerInfo.toString(), Thread.currentThread().getName()));
         try {
             synchronized (lock) {
                 boolean connected = isConnected();

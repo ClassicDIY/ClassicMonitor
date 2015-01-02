@@ -53,6 +53,21 @@ public class PVOutputService extends IntentService {
         }
     }
 
+    /**
+     * Try to upload logs to PVOutput.
+     */
+    private void handleActionPVOutputUpload() {
+        if (MonitorApplication.chargeControllers().getCurrentChargeController().uploadToPVOutput()) {
+            LocalBroadcastManager.getInstance(PVOutputService.this).registerReceiver(mDayLogReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS));
+            String APIKey = MonitorApplication.chargeControllers().aPIKey();
+            if (APIKey.length() > 0) {
+                pollTimer = new Timer();
+                uploader = new PVOutputUploader(APIKey);
+                pollTimer.schedule(uploader, 30000, 300000); // start in 30 seconds, repeat every 5 minutes
+            }
+        }
+    }
+
     // Our handler for received Intents.
     private BroadcastReceiver mDayLogReceiver = new BroadcastReceiver() {
         @Override
@@ -69,6 +84,7 @@ public class PVOutputService extends IntentService {
                 } else {
                     saveLogs(logs); // never saved before!
                 }
+                LocalBroadcastManager.getInstance(PVOutputService.this).unregisterReceiver(mDayLogReceiver);
             } catch (Exception ex) {
                 Log.w(getClass().getName(), String.format("SaveLogs failed ex: %s", ex));
             }
@@ -108,21 +124,6 @@ public class PVOutputService extends IntentService {
         }
 
         return logDate;
-    }
-
-    /**
-     * Try to upload logs to PVOutput.
-     */
-    private void handleActionPVOutputUpload() {
-        if (MonitorApplication.chargeControllers().getCurrentChargeController().uploadToPVOutput()) {
-            LocalBroadcastManager.getInstance(PVOutputService.this).registerReceiver(mDayLogReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS));
-            String APIKey = MonitorApplication.chargeControllers().aPIKey();
-            if (APIKey.length() > 0) {
-                pollTimer = new Timer();
-                uploader = new PVOutputUploader(APIKey);
-                pollTimer.schedule(uploader, 2000, 10000);
-            }
-        }
     }
 
     private String getLogDate() {
