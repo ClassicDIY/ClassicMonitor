@@ -39,10 +39,6 @@
             android:name=".Settings"
             android:label="@string/SettingsLabel"
             android:parentActivityName=".MonitorActivity" />
-        <activity
-            android:name=".About"
-            android:label="@string/About"
-            android:parentActivityName=".MonitorActivity" />
 
         <service
             android:name=".ModbusService"

@@ -45,8 +45,9 @@ public class BaseGauge extends BaseComponent {
     public static float mInnerRimWidthPercentOfDiameter = 5;
 
 
-    public static float mTitleHeightPercentOfRadius = 5; // percent of face radius
-    public static float mReadingHeightPercentOfRadius = 10; // percent of face radius
+    public static float mTitleHeightPercentOfRadius = 16; // percent of face radius
+    public static float mReadingHeightPercentOfRadius = 20; // percent of face radius
+    public static float mColoredRangePercentOfRadius = 1;
 
     //    public static final int[] OUTER_SHADOW_COLORS = {Color.argb(255, 255, 254, 187), Color.argb(200, 255, 247, 219), Color.argb(100, 255, 255, 255)};
     public static final int[] OUTER_SHADOW_COLORS = {Color.argb(255, 0, 0, 0), Color.argb(200, 255, 247, 219), Color.argb(100, 255, 255, 255)};
@@ -417,11 +418,12 @@ public class BaseGauge extends BaseComponent {
             mMajorTicksLength = mScaleRadius * 0.1f;
             mMinorTicksLength = mMajorTicksLength / 2.5f;
             float titleSize = mTitleHeightPercentOfRadius * mFaceRadius / 100;
-            mTitleTextPaint.setTextSize(titleSize * mDensity);
+            mTitleTextPaint.setTextSize(titleSize);
             mTitleTextPaint.setShadowLayer(titleSize / 5, titleSize / 10, 0, Color.BLACK);
             float readingSize = mReadingHeightPercentOfRadius * mFaceRadius / 100;
-            mReadingTextPaint.setTextSize(readingSize * mDensity);
+            mReadingTextPaint.setTextSize(readingSize);
             mReadingTextPaint.setShadowLayer(readingSize / 5, readingSize / 10, 0, Color.BLACK);
+            mColoredRangePaint.setStrokeWidth(mColoredRangePercentOfRadius * mFaceRadius / 100);
         }
     }
 
@@ -519,7 +521,7 @@ public class BaseGauge extends BaseComponent {
             if (getLabelConverter() != null) {
                 canvas.save();
                 canvas.rotate(180 + currentAngle, mGaugeRect.centerX(), mGaugeRect.centerY());
-                float txtX = mGaugeRect.centerX() + mScaleRadius + mMajorTicksLength / 2 + 8;
+                float txtX = mGaugeRect.centerX() + mScaleRadius + (float)(mMajorTicksLength * .8);
                 float txtY = mGaugeRect.centerY();
                 canvas.rotate(+90, txtX, txtY);
                 float shadowAngle = currentAngle - 110;
@@ -741,7 +743,6 @@ public class BaseGauge extends BaseComponent {
 
         mColoredRangePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mColoredRangePaint.setStyle(Paint.Style.STROKE);
-        mColoredRangePaint.setStrokeWidth(5);
         mColoredRangePaint.setColor(mDefaultColor);
 
         mNeedleLeftPaint = new Paint(Paint.ANTI_ALIAS_FLAG);

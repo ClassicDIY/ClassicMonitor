@@ -12,7 +12,6 @@
         android:id="@+id/action_add"
         android:orderInCategory="300"
         app:showAsAction="always|withText"
-
         android:icon="@drawable/ic_action_new"
         android:title="@string/menu_add" />
 

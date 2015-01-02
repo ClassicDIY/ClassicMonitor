@@ -81,9 +81,11 @@ public class MonitorActivity extends ActionBarActivity {
             tabStripAdapter.addTab(R.string.HourChartTabTitle, HourLogChart.class, null);
             tabStripAdapter.addTab(R.string.InfoTabTitle, InfoFragment.class, null);
             tabStripAdapter.addTab(R.string.MessagesTabTitle, MessageFragment.class, null);
+            tabStripAdapter.addTab(R.string.About, About.class, null);
         } else if (cc != null && cc.deviceType() == DeviceType.TriStar) {
             currentUnitName = cc.deviceName();
             tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
+            tabStripAdapter.addTab(R.string.About, About.class, null);
         } else {
             currentUnitName = "Demo";
             tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
@@ -95,6 +97,7 @@ public class MonitorActivity extends ActionBarActivity {
             tabStripAdapter.addTab(R.string.HourChartTabTitle, HourLogChart.class, null);
             tabStripAdapter.addTab(R.string.InfoTabTitle, InfoFragment.class, null);
             tabStripAdapter.addTab(R.string.MessagesTabTitle, MessageFragment.class, null);
+            tabStripAdapter.addTab(R.string.About, About.class, null);
         }
         tabStripAdapter.notifyTabsChanged();
     }
@@ -150,10 +153,6 @@ public class MonitorActivity extends ActionBarActivity {
             case R.id.action_settings:
                 startActivityForResult(new Intent(this, Settings.class), 0);
 
-                handled = true;
-                break;
-            case R.id.action_about:
-                startActivityForResult(new Intent(this, About.class), 0);
                 handled = true;
                 break;
         }
