@@ -43,7 +43,7 @@ public class InfoFragment extends ListFragment {
             data[6] = new Pair<>(getString(R.string.info_build_date_title),cc.getBuildDate());
 
             data[7] = new Pair<>(getString(R.string.info_last_voc_title), String.format("%1.1f V", cc.getLastVOC()));
-            data[8] = new Pair<>("Nominal Battery Voltage", String.format("%d V", cc.getNominalBatteryVoltage()));
+            data[8] = new Pair<>(getString(R.string.info_nominal_battery_voltage), String.format("%d V", cc.getNominalBatteryVoltage()));
 
             InfoListAdapter adapter = new InfoListAdapter(inflater.getContext(), data);
             setListAdapter(adapter);

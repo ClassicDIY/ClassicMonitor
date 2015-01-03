@@ -69,6 +69,7 @@
     <string name="info_ipaddress_title">Indirizzo IP:</string>
     <string name="info_last_voc_title">Ultima VOC:</string>
     <string name="info_mac_title">Indirizzo MAC:</string>
+    <string name="info_nominal_battery_voltage">Voltaggio nominale:</string>
     <string name="info_message_1">Classic Surriscaldamento</string>
     <string name="info_message_100">Tensione in ingresso (PV) è inferiore alla tensione della batteria.</string>
     <string name="info_message_10000">Guasto verso terra rilevata.</string>
@@ -89,6 +90,7 @@
     <string name="navigation_drawer_open">Navigazione cassetto aperto</string>
     <string name="volt_unit">Volts</string>
     <string name="menu_add">Aggiungere</string>
+
     <string-array name="minute_log_chart_selection">
         <item>Potenza</item>
         <item>Volt PV </item>

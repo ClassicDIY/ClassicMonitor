@@ -45,8 +45,8 @@ public class BaseGauge extends BaseComponent {
     public static float mInnerRimWidthPercentOfDiameter = 5;
 
 
-    public static float mTitleHeightPercentOfRadius = 16; // percent of face radius
-    public static float mReadingHeightPercentOfRadius = 20; // percent of face radius
+    public static float mTitleHeightPercentOfRadius = 14; // percent of face radius
+    public static float mReadingHeightPercentOfRadius = 18; // percent of face radius
     public static float mColoredRangePercentOfRadius = 1;
 
     //    public static final int[] OUTER_SHADOW_COLORS = {Color.argb(255, 255, 254, 187), Color.argb(200, 255, 247, 219), Color.argb(100, 255, 255, 255)};
@@ -419,11 +419,12 @@ public class BaseGauge extends BaseComponent {
             mMinorTicksLength = mMajorTicksLength / 2.5f;
             float titleSize = mTitleHeightPercentOfRadius * mFaceRadius / 100;
             mTitleTextPaint.setTextSize(titleSize);
-            mTitleTextPaint.setShadowLayer(titleSize / 5, titleSize / 10, 0, Color.BLACK);
+            mTitleTextPaint.setShadowLayer(3, 5, 5, Color.BLACK);
             float readingSize = mReadingHeightPercentOfRadius * mFaceRadius / 100;
             mReadingTextPaint.setTextSize(readingSize);
-            mReadingTextPaint.setShadowLayer(readingSize / 5, readingSize / 10, 0, Color.BLACK);
+            mReadingTextPaint.setShadowLayer(3, 5, 5, Color.BLACK);
             mColoredRangePaint.setStrokeWidth(mColoredRangePercentOfRadius * mFaceRadius / 100);
+
         }
     }
 
@@ -527,7 +528,7 @@ public class BaseGauge extends BaseComponent {
                 float shadowAngle = currentAngle - 110;
                 float dx = (float) Math.cos(shadowAngle / 180 * Math.PI) * 5f;
                 float dy = -(float) Math.sin(shadowAngle / 180 * Math.PI) * 5f;
-                mTickLabelTextPaint.setShadowLayer(desiredTextSize / 5, dx, dy, Color.BLACK);
+                mTickLabelTextPaint.setShadowLayer(3, dx, dy, Color.BLACK);
                 canvas.drawText(getLabelConverter().getLabelFor(curProgress, mScaleStartValue, mScaleEndValue), txtX, txtY, mTickLabelTextPaint);
                 canvas.restore();
             }
@@ -622,13 +623,13 @@ public class BaseGauge extends BaseComponent {
         if (dx < 0 || dy < 0) {
             // Move shadow from right to left
             mNeedleRightPaint.clearShadowLayer();
-            mNeedleLeftPaint.setShadowLayer(mNeedleWidth, dx, dy, Color.BLACK);
+            mNeedleLeftPaint.setShadowLayer(3, dx, dy, Color.BLACK);
 //            setLayerType(LAYER_TYPE_SOFTWARE, mNeedleLeftPaint);
 
         } else {
             // Move shadow from left to right
             mNeedleLeftPaint.clearShadowLayer();
-            mNeedleRightPaint.setShadowLayer(mNeedleWidth, dx, dy, Color.BLACK);
+            mNeedleRightPaint.setShadowLayer(3, dx, dy, Color.BLACK);
 //            setLayerType(LAYER_TYPE_SOFTWARE, mNeedleRightPaint);
         }
     }
@@ -693,7 +694,7 @@ public class BaseGauge extends BaseComponent {
         mAvailableAngle = mScaleEndAngle - mScaleStartAngle;
         if (mAvailableAngle > 180) {
             mFace = Quadrant.Full;
-            mTitlePosition = new PointF(0, -40); // percent of face radius from center (- indicates location above center)
+            mTitlePosition = new PointF(0, -30); // percent of face radius from center (- indicates location above center)
             mReadingPosition = new PointF(0, 40); // percent of face radius from center
         } else if (mAvailableAngle <= 90) {
             // todo quarter gauge

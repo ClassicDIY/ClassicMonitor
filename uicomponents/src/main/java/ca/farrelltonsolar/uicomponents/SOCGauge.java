@@ -189,7 +189,7 @@ public class SOCGauge extends BaseComponent {
         desiredTextSize = desiredTextSize > testTextSize ? testTextSize : desiredTextSize;
         // Set the paint for that size.
         textPaint.setTextSize(desiredTextSize);
-        textPaint.setShadowLayer(desiredTextSize / 5, desiredTextSize / 10, 0, Color.BLACK);
+        textPaint.setShadowLayer(3, 5, 5, Color.BLACK);
         textPaint.getTextBounds("100%", 0, 4, bounds);
         textPosition = new PointF(batteryRect.centerX(), batteryRect.centerY() + bounds.height() / 2);
     }

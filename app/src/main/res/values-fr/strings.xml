@@ -20,10 +20,10 @@
     <string name="AbsorbDescription">Régulation de la tension de votre batterie à absorber point de consigne.</string>
     <string name="AbsorbTitle">absorber</string>
     <string name="ApplyButton">appliquer</string>
-    <string name="BatCurrentTitle">Courant de Batterie</string>
+    <string name="BatCurrentTitle">Courant Batterie</string>
     <string name="BatPowerTitle">Puissance</string>
     <string name="BatTemperature">Batterie</string>
-    <string name="BatVoltsTitle">Tension de Batterie</string>
+    <string name="BatVoltsTitle">Tension Batterie</string>
     <string name="BulkMPPTDescription">Max suivi du point de puissance jusqu\'à absorber la tension atteint.</string>
     <string name="BulkMPPTTitle">MPPT vrac</string>
     <string name="Calendar">Calendrier</string>
@@ -51,7 +51,7 @@
     <string name="InfoTabTitle">Infos</string>
     <string name="MessagesTabTitle">Messages</string>
     <string name="NoConnection">Pas de connexion</string>
-    <string name="PVCurrentTitle">courant du PV</string>
+    <string name="PVCurrentTitle">Courant PV</string>
     <string name="PVVoltTitle">PV Volts</string>
     <string name="PowerTabTitle">Puissance</string>
     <string name="PowerTitle">Puissance</string>
@@ -69,6 +69,7 @@
     <string name="info_ipaddress_title">Adresse IP:</string>
     <string name="info_last_voc_title">Dernier VOC:</string>
     <string name="info_mac_title">Adresse MAC:</string>
+    <string name="info_nominal_battery_voltage">Tension nominal:</string>
     <string name="info_message_1">Classique Surchauffe</string>
     <string name="info_message_100">Tension d\'entrée (PV) est inférieure à la tension de la batterie.</string>
     <string name="info_message_10000">Défaut de terre détecté.</string>
@@ -89,6 +90,7 @@
     <string name="navigation_drawer_open">Ouvrir la navigation de tiroir</string>
     <string name="volt_unit">Volts</string>
     <string name="menu_add">Ajouter</string>
+
     <string-array name="minute_log_chart_selection">
         <item>Puissance</item>
         <item>Volt PV </item>
