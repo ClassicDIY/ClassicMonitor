@@ -95,13 +95,13 @@ public class DayLogChart extends Fragment {
             ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, itemArray); //selected item will look like a spinner set from XML
             spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(spinnerArrayAdapter);
-            spinner.setSelection(MonitorApplication.chargeControllers().getCurrentChargeController().getDayLogMenuSelection());
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            spinner.setSelection(MonitorApplication.chargeControllers().getCurrentChargeController().getDayLogMenuSelection(), false);
+            spinner.setOnItemSelectedListener(new OnItemSelectedListenerWrapper(new AdapterView.OnItemSelectedListener() {
 
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     chartView.clearSeries();
-                    if (position < mSeries.size()){
+                    if (position < mSeries.size()) {
                         MonitorApplication.chargeControllers().getCurrentChargeController().setDayLogMenuSelection(position);
                         chartView.addSeries(mSeries.get(position));
                     }
@@ -111,14 +111,14 @@ public class DayLogChart extends Fragment {
                 public void onNothingSelected(AdapterView<?> parent) {
 
                 }
-            });
+            }));
         }
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.chart_menu, menu); // inflate the menu
-        MenuItem shareItem = menu.findItem(R.id.chart_preferences);
+        inflater.inflate(R.menu.day_log_chart_menu, menu); // inflate the menu
+        MenuItem shareItem = menu.findItem(R.id.day_log_chart_preference);
         setupSpinner(shareItem);
         super.onCreateOptionsMenu(menu, inflater);
     }

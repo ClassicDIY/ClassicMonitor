@@ -34,6 +34,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
@@ -93,8 +94,12 @@ public class HourLogChart extends Fragment {
         if (view instanceof Spinner)
         {
             Spinner spinner = (Spinner) view;
-            spinner.setSelection(MonitorApplication.chargeControllers().getCurrentChargeController().getHourLogMenuSelection());
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            String[] itemArray = getResources().getStringArray(R.array.minute_log_chart_selection);
+            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, itemArray); //selected item will look like a spinner set from XML
+            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(spinnerArrayAdapter);
+            spinner.setSelection(MonitorApplication.chargeControllers().getCurrentChargeController().getHourLogMenuSelection(), false);
+            spinner.setOnItemSelectedListener(new OnItemSelectedListenerWrapper(new AdapterView.OnItemSelectedListener() {
 
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -109,15 +114,15 @@ public class HourLogChart extends Fragment {
                 public void onNothingSelected(AdapterView<?> parent) {
 
                 }
-            });
+            }));
         }
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        inflater.inflate(R.menu.chart_menu, menu); // inflate the menu
-        MenuItem shareItem = menu.findItem(R.id.chart_preferences);
+        inflater.inflate(R.menu.hour_log_chart_menu, menu); // inflate the menu
+        MenuItem shareItem = menu.findItem(R.id.hour_log_chart_preference);
         setupSpinner(shareItem);
         super.onCreateOptionsMenu(menu, inflater);
     }
