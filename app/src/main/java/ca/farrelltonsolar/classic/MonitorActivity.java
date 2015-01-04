@@ -177,9 +177,18 @@ public class MonitorActivity extends ActionBarActivity {
             LocalBroadcastManager.getInstance(this).registerReceiver(mMonitorReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER));
             LocalBroadcastManager.getInstance(this).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
             LocalBroadcastManager.getInstance(this).registerReceiver(updateChargeControllersReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_UPDATE_CHARGE_CONTROLLERS));
+            LocalBroadcastManager.getInstance(this).registerReceiver(receiveAToast, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_TOAST));
             isReceiverRegistered = true;
         }
     }
+
+    private BroadcastReceiver receiveAToast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra("message");
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        }
+    };
 
     private BroadcastReceiver updateChargeControllersReceiver = new BroadcastReceiver() {
         @Override

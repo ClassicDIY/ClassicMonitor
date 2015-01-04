@@ -86,13 +86,11 @@ public class HourLogChart extends Fragment {
         Log.d(getClass().getName(), "onStop");
     }
 
-    private void setupSpinner( MenuItem item )
-    {
+    private void setupSpinner(MenuItem item) {
         item.setVisible(true);
         item.setActionView(R.layout.action_chart_select);
         View view = MenuItemCompat.getActionView(item);
-        if (view instanceof Spinner)
-        {
+        if (view instanceof Spinner) {
             Spinner spinner = (Spinner) view;
             String[] itemArray = getResources().getStringArray(R.array.minute_log_chart_selection);
             ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, itemArray); //selected item will look like a spinner set from XML
@@ -143,7 +141,7 @@ public class HourLogChart extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
-                LogEntry logs = (LogEntry)intent.getSerializableExtra("logs");
+                LogEntry logs = (LogEntry) intent.getSerializableExtra("logs");
                 if (logs != null) {
                     unRegisterReceiver();
                     new ChartLoader(logs).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -156,10 +154,11 @@ public class HourLogChart extends Fragment {
         }
     };
 
-    private class ChartLoader extends AsyncTask<String, Void, String> {
+    private class ChartLoader extends AsyncTask<String, Void, Boolean> {
         private ChartLoader(LogEntry logs) {
             this.logs = logs;
         }
+
         LogEntry logs;
         LinearSeries seriesPower;
         LinearSeries seriesInputVoltage;
@@ -169,20 +168,26 @@ public class HourLogChart extends Fragment {
         LinearSeries seriesEnergy;
 
         @Override
-        protected String doInBackground(String... params) {
-            short[] timeStamps = logs.getShortArray(Constants.CLASSIC_TIMESTAMP_HIGH_HOURLY_CATEGORY);
-            seriesPower = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_POWER_HOURLY_CATEGORY));
-            seriesInputVoltage = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_INPUT_VOLTAGE_HOURLY_CATEGORY));
-            seriesBatteryVoltage = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_BATTERY_VOLTAGE_HOURLY_CATEGORY));
-            seriesOutputCurrent = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_OUTPUT_CURRENT_HOURLY_CATEGORY));
-            seriesChargeState = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_CHARGE_STATE_HOURLY_CATEGORY));
-            seriesEnergy = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_ENERGY_HOURLY_CATEGORY));
-            Log.d(getClass().getName(), String.format("Chart doInBackground completed %s", Thread.currentThread().getName()));
-            return "";
+        protected Boolean doInBackground(String... params) {
+            try {
+                short[] timeStamps = logs.getShortArray(Constants.CLASSIC_TIMESTAMP_HIGH_HOURLY_CATEGORY);
+                seriesPower = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_POWER_HOURLY_CATEGORY));
+                seriesInputVoltage = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_INPUT_VOLTAGE_HOURLY_CATEGORY));
+                seriesBatteryVoltage = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_BATTERY_VOLTAGE_HOURLY_CATEGORY));
+                seriesOutputCurrent = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_OUTPUT_CURRENT_HOURLY_CATEGORY));
+                seriesChargeState = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_CHARGE_STATE_HOURLY_CATEGORY));
+                seriesEnergy = getLinearSeries(timeStamps, logs.getFloatArray(Constants.CLASSIC_ENERGY_HOURLY_CATEGORY));
+                Log.d(getClass().getName(), String.format("Chart doInBackground completed %s", Thread.currentThread().getName()));
+                return true;
+            } catch (Exception ex) {
+                Log.w(getClass().getName(), String.format("Hour Log Chart failed to load logs in doInBackground %s ex: %s", Thread.currentThread().getName(), ex));
+            }
+            return false;
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Boolean resultOk) {
+            if (resultOk) {
             mSeries.add(seriesPower);
             mSeries.add(seriesInputVoltage);
             mSeries.add(seriesBatteryVoltage);
@@ -196,6 +201,10 @@ public class HourLogChart extends Fragment {
             }
             chartView.addSeries(mSeries.get(currentSelection));
             Log.d(getClass().getName(), String.format("Chart onPostExecute completed %s", Thread.currentThread().getName()));
+            }
+            else {
+                mSeries.add(getLinearSeries(null, null)); // just load test patterns if no logs are available or read failed
+            }
         }
     }
 
@@ -205,11 +214,11 @@ public class HourLogChart extends Fragment {
         LinearSeries series = new LinearSeries();
         series.setLineColor(Color.YELLOW);
         series.setLineWidth(4);
-        if (timeStamps != null && yAxis != null && yAxis.length >= timeStamps.length ) {
+        if (timeStamps != null && yAxis != null && yAxis.length >= timeStamps.length) {
             short offset = 1440; // 24 hrs ago
             for (int i = 0; i < timeStamps.length; i++) {
                 short t = timeStamps[i];
-                t = (short)(offset - t);
+                t = (short) (offset - t);
                 series.addPoint(new LinearSeries.LinearPoint(t, yAxis[i]));
                 pointsAdded = true;
             }

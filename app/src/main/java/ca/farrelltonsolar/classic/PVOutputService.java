@@ -62,7 +62,7 @@ public class PVOutputService extends IntentService {
             String APIKey = MonitorApplication.chargeControllers().aPIKey();
             if (APIKey.length() > 0) {
                 pollTimer = new Timer();
-                uploader = new PVOutputUploader(APIKey);
+                uploader = new PVOutputUploader(this.getBaseContext(), APIKey);
                 pollTimer.schedule(uploader, 30000, 300000); // start in 30 seconds, repeat every 5 minutes
             }
         }

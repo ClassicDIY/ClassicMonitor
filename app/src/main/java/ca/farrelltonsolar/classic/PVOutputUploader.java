@@ -16,8 +16,11 @@
 
 package ca.farrelltonsolar.classic;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcel;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.joda.time.DateTime;
@@ -44,8 +47,10 @@ public class PVOutputUploader extends TimerTask {
     private static final int kBufferExpansionSize = 1024;
     static String pvOutput = "pvoutput.org";
     String APIKey;
+    Context context;
 
-    public PVOutputUploader(String APIKey) {
+    public PVOutputUploader(Context context, String APIKey) {
+        this.context = context;
         this.APIKey = APIKey;
     }
 
@@ -59,6 +64,7 @@ public class PVOutputUploader extends TimerTask {
                     Log.d(getClass().getName(), String.format("PVOutput uploading to %s on thread: %s", cc,  Thread.currentThread().getName()));
                     if (doUpload(cc)) {
                         this.cancel();
+                        BroadcastToast(context.getString(R.string.toast_pvoutput));
                     }
                 }
             }
@@ -66,6 +72,13 @@ public class PVOutputUploader extends TimerTask {
             Log.w(getClass().getName(), String.format("PVOutput upload failed ex: %s, thread: %s", ex, Thread.currentThread().getName()));
         }
     }
+
+    private void BroadcastToast(String message) {
+        Intent intent2 = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_TOAST);
+        intent2.putExtra("message", message);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent2);
+    }
+    
 
     private boolean doUpload(ChargeController controller) throws InterruptedException, IOException {
         String uploadDateString = controller.uploadDate();

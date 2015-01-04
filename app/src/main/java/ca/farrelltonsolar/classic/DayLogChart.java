@@ -160,7 +160,7 @@ public class DayLogChart extends Fragment {
         }
     };
 
-    private class ChartLoader extends AsyncTask<String, Void, String> {
+    private class ChartLoader extends AsyncTask<String, Void, Boolean> {
         private ChartLoader(LogEntry logs) {
             this.logs = logs;
         }
@@ -174,37 +174,50 @@ public class DayLogChart extends Fragment {
         LinearSeries seriesFloatTime;
 
         @Override
-        protected String doInBackground(String... params) {
-            seriesEnergy = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY), 10);
-            seriesHighPower = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_POWER_DAILY_CATEGORY), 1);
-            seriesHighTemperature = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_TEMP_DAILY_CATEGORY), 10);
-            seriesHighPvVolts = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_PV_VOLT_DAILY_CATEGORY), 10);
-            seriesHighBatteryVolts = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_BATTERY_VOLT_DAILY_CATEGORY), 10);
-            float[] secondsInFloat = logs.getFloatArray(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY);
+        protected Boolean doInBackground(String... params) {
+            try {
 
-            for (int i = 0; i < secondsInFloat.length; i++) {
-                secondsInFloat[i] = secondsInFloat[i]/3600; // convert to hour
+
+                seriesEnergy = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY), 10);
+                seriesHighPower = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_POWER_DAILY_CATEGORY), 1);
+                seriesHighTemperature = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_TEMP_DAILY_CATEGORY), 10);
+                seriesHighPvVolts = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_PV_VOLT_DAILY_CATEGORY), 10);
+                seriesHighBatteryVolts = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_BATTERY_VOLT_DAILY_CATEGORY), 10);
+                float[] secondsInFloat = logs.getFloatArray(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY);
+
+                for (int i = 0; i < secondsInFloat.length; i++) {
+                    secondsInFloat[i] = secondsInFloat[i] / 3600; // convert to hour
+                }
+                seriesFloatTime = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY), 1);
+                Log.d(getClass().getName(), String.format("Chart doInBackground completed %s", Thread.currentThread().getName()));
+                return true;
             }
-            seriesFloatTime = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY), 1);
-            Log.d(getClass().getName(), String.format("Chart doInBackground completed %s", Thread.currentThread().getName()));
-            return "";
+            catch (Exception ex) {
+                Log.w(getClass().getName(), String.format("Hour Log Chart failed to load logs in doInBackground %s ex: %s", Thread.currentThread().getName(), ex));
+            }
+            return false;
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            mSeries.add(seriesEnergy);
-            mSeries.add(seriesHighPower);
-            mSeries.add(seriesHighTemperature);
-            mSeries.add(seriesHighPvVolts);
-            mSeries.add(seriesHighBatteryVolts);
-            mSeries.add(seriesFloatTime);
-            int currentSelection = MonitorApplication.chargeControllers().getCurrentChargeController().getDayLogMenuSelection();
-            if (currentSelection >= mSeries.size()) {
-                currentSelection = 0;
-                MonitorApplication.chargeControllers().getCurrentChargeController().setDayLogMenuSelection(0);
+        protected void onPostExecute(Boolean resultOk) {
+            if (resultOk) {
+                mSeries.add(seriesEnergy);
+                mSeries.add(seriesHighPower);
+                mSeries.add(seriesHighTemperature);
+                mSeries.add(seriesHighPvVolts);
+                mSeries.add(seriesHighBatteryVolts);
+                mSeries.add(seriesFloatTime);
+                int currentSelection = MonitorApplication.chargeControllers().getCurrentChargeController().getDayLogMenuSelection();
+                if (currentSelection >= mSeries.size()) {
+                    currentSelection = 0;
+                    MonitorApplication.chargeControllers().getCurrentChargeController().setDayLogMenuSelection(0);
+                }
+                chartView.addSeries(mSeries.get(currentSelection));
+                Log.d(getClass().getName(), String.format("Chart onPostExecute completed %s", Thread.currentThread().getName()));
             }
-            chartView.addSeries(mSeries.get(currentSelection));
-            Log.d(getClass().getName(), String.format("Chart onPostExecute completed %s", Thread.currentThread().getName()));
+            else {
+                mSeries.add(getLinearSeries(null, 0)); // just load test patterns if no logs are available or read failed
+            }
         }
 
         @Override

@@ -313,11 +313,10 @@ public class ModbusTask extends TimerTask {
 
     private void BroadcastToast(String message) {
         Intent intent2 = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_TOAST);
-        intent2.setClass(context, ReadingFramentBase.class);
         intent2.putExtra("message", message);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent2);
     }
-
+    
     public Bundle getChargeControllerInformation() throws ModbusException {
         Bundle result = new Bundle();
         DeviceType deviceType = lookForTriStar();
@@ -463,6 +462,7 @@ public class ModbusTask extends TimerTask {
             Log.d(getClass().getName(), "Completed reading Day logs");
             dayLogEntry.setLogDate(DateTime.now());
             BundleCache.getInstance(context).putBundle(dayLogCacheName, dayLogEntry.getLogs());
+            BroadcastToast(context.getString(R.string.toast_day_logs));
         } catch (ModbusIOException ex) {
             if (ex.isEOF()) {
                 Log.w(getClass().getName(), String.format("loadDayLogs reached EOF ex: %s", ex));
@@ -503,6 +503,7 @@ public class ModbusTask extends TimerTask {
             Log.d(getClass().getName(), "Completed reading minute logs");
             minuteLogEntry.setLogDate(DateTime.now());
             BundleCache.getInstance(context).putBundle(minuteLogCacheName, minuteLogEntry.getLogs());
+            BroadcastToast(context.getString(R.string.toast_minute_logs));
         } catch (ModbusIOException ex) {
             if (ex.isEOF()) {
                 Log.w(getClass().getName(), String.format("loadMinuteLogs reached EOF ex: %s", ex));

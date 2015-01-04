@@ -57,7 +57,6 @@ public class Constants {
     public static final int PVOUTPUT_RECORD_LIMIT = 20; // max uploads per session
 
     // Intents
-    public static final String CA_FARRELLTONSOLAR_CLASSIC_PVOUTPUT_UPLOAD = "ca.farrelltonsolar.classic.action.pvoutput";
     public static final String CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS = "ca.farrelltonsolar.classic.DayLogs";
     public static final String CA_FARRELLTONSOLAR_CLASSIC_MINUTE_LOGS = "ca.farrelltonsolar.classic.MinuteLogs";
     public static final String CA_FARRELLTONSOLAR_CLASSIC_READINGS = "ca.farrelltonsolar.classic.Readings";
