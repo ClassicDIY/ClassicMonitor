@@ -16,7 +16,6 @@
   -->
 
 <resources>
-    <string name="app_name">Classic</string>
     <string name="AbsorbDescription">Régulation de la tension de votre batterie à absorber point de consigne.</string>
     <string name="AbsorbTitle">absorber</string>
     <string name="ApplyButton">appliquer</string>

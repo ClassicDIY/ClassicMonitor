@@ -16,13 +16,13 @@
 
 package ca.farrelltonsolar.classic;
 
+import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Gravity;
@@ -40,45 +40,33 @@ import org.joda.time.format.DateTimeFormat;
  * Created by Graham on 21/12/2014.
  */
 public class DayLogCalendar extends Fragment {
-    private DateTime currentMonth;
+    private static final String ARG_MONTH = "month";
     private DateTime month;
     private CalendarAdapter adapter;
     private View theView;
     private boolean isReceiverRegistered;
 
+    public static DayLogCalendar newInstance(int month) {
+        DayLogCalendar fragment = new DayLogCalendar();
+        Bundle args = new Bundle();
+        args.putInt(ARG_MONTH, month);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         theView = inflater.inflate(R.layout.day_log_calendar, container, false);
-        month = DateTime.now().withTimeAtStartOfDay().withDayOfMonth(1);
-        currentMonth = month;
+        Bundle args = getArguments();
+        int monthOffset = args != null ? args.getInt(ARG_MONTH) : 0;
+        month = DateTime.now().minusMonths(monthOffset).withTimeAtStartOfDay().withDayOfMonth(1);
         adapter = new CalendarAdapter(this.getActivity(), month);
         GridView gridview = (GridView) theView.findViewById(R.id.gridview);
         gridview.setAdapter(adapter);
+        gridview.setVelocityScale(5);
+
         TextView title  = (TextView) theView.findViewById(R.id.title);
         title.setText(month.toString("MMMM yyyy"));
-        TextView previous  = (TextView) theView.findViewById(R.id.previous);
-        previous.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                month = month.minusMonths(1);
-                refreshCalendar();
-            }
-        });
-
-        TextView next  = (TextView) theView.findViewById(R.id.next);
-        next.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (month.compareTo(currentMonth) < 0 ) {
-                    month = month.plusMonths(1);
-                    refreshCalendar();
-                }
-
-            }
-        });
         View linearLayout =  theView.findViewById(R.id.headerlayout);
         DateTime days = month;
 

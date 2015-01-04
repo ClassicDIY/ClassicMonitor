@@ -4,28 +4,6 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/header"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/header_background"
-        android:orientation="horizontal">
-
-
-            <TextView
-                android:id="@+id/previous"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:clickable="true"
-                android:gravity="left"
-
-                android:padding="5dp"
-                android:paddingLeft="5dp"
-                android:text="&lt;&lt;"
-                android:textColor="@color/white"
-                android:textSize="@dimen/textSizeXLarge"
-                android:textStyle="bold" />
 
 
         <TextView
@@ -37,30 +15,12 @@
             android:gravity="center_horizontal"
             android:padding="5dp"
             android:paddingLeft="5dp"
-            android:textColor="@color/white"
+            android:textColor="#669900"
             android:textSize="@dimen/textSizeXLarge"
             android:textStyle="bold"
 
             />
 
-
-            <TextView
-                android:id="@+id/next"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:clickable="true"
-                android:gravity="right"
-                android:padding="5dp"
-                android:paddingLeft="5dp"
-                android:text=">>"
-                android:textColor="@color/white"
-                android:textSize="@dimen/textSizeXLarge"
-                android:textStyle="bold"
-                android:layout_alignRight="@+id/title" />
-
-
-    </RelativeLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/headerlayout"
@@ -80,5 +40,6 @@
         android:numColumns="7"
         android:stretchMode="columnWidth"
 
-        android:verticalSpacing="2dp" />
+        android:verticalSpacing="2dp"
+        android:choiceMode="none" />
 </LinearLayout>

@@ -16,7 +16,7 @@
   -->
 
 <resources>
-    <string name="app_name">Classic</string>
+
     <string name="About">acerca de</string>
     <string name="AbsorbDescription">Regulador de voltaje de la batería en absorber set point.</string>
     <string name="AbsorbTitle">Absorber</string>

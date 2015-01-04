@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -52,7 +53,7 @@ public class MonitorActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        navigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        navigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
         // Set up the drawer.
         DrawerLayout layout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationDrawerFragment.setUp(R.id.navigation_drawer, layout);
@@ -66,7 +67,7 @@ public class MonitorActivity extends ActionBarActivity {
 
     private void setupActionBar() {
 
-        tabStripAdapter = new TabStripAdapter(getSupportFragmentManager(), this, viewPager, stl, null);
+        tabStripAdapter = new TabStripAdapter(getFragmentManager(), this, viewPager, stl, null);
         ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
         if (cc != null && cc.deviceType() == DeviceType.Classic) {
             currentUnitName = cc.deviceName();
@@ -76,7 +77,7 @@ public class MonitorActivity extends ActionBarActivity {
                 tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
             }
             tabStripAdapter.addTab(TemperatureFragment.TabTitle, TemperatureFragment.class, null);
-            tabStripAdapter.addTab(R.string.DayLogTabTitle, DayLogCalendar.class, null);
+            addDayLogCalendar();
             tabStripAdapter.addTab(R.string.DayChartTabTitle, DayLogChart.class, null);
             tabStripAdapter.addTab(R.string.HourChartTabTitle, HourLogChart.class, null);
             tabStripAdapter.addTab(R.string.InfoTabTitle, InfoFragment.class, null);
@@ -92,7 +93,7 @@ public class MonitorActivity extends ActionBarActivity {
             tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
             tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
             tabStripAdapter.addTab(TemperatureFragment.TabTitle, TemperatureFragment.class, null);
-            tabStripAdapter.addTab(R.string.DayLogTabTitle, DayLogCalendar.class, null);
+            addDayLogCalendar();
             tabStripAdapter.addTab(R.string.DayChartTabTitle, DayLogChart.class, null);
             tabStripAdapter.addTab(R.string.HourChartTabTitle, HourLogChart.class, null);
             tabStripAdapter.addTab(R.string.InfoTabTitle, InfoFragment.class, null);
@@ -100,6 +101,16 @@ public class MonitorActivity extends ActionBarActivity {
             tabStripAdapter.addTab(R.string.About, About.class, null);
         }
         tabStripAdapter.notifyTabsChanged();
+    }
+
+    private void addDayLogCalendar() {
+        if (Build.VERSION.SDK_INT >= 17) {
+            tabStripAdapter.addTab(R.string.DayLogTabTitle, MonthCalendarPager.class, null);
+        }
+        else {
+            tabStripAdapter.addTab(R.string.DayLogTabTitle, DayLogCalendar.class, null);
+
+        }
     }
 
     protected BroadcastReceiver mMonitorReceiver = new BroadcastReceiver() {

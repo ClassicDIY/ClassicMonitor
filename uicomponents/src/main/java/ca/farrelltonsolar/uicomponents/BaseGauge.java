@@ -419,10 +419,10 @@ public class BaseGauge extends BaseComponent {
             mMinorTicksLength = mMajorTicksLength / 2.5f;
             float titleSize = mTitleHeightPercentOfRadius * mFaceRadius / 100;
             mTitleTextPaint.setTextSize(titleSize);
-            mTitleTextPaint.setShadowLayer(3, 5, 5, Color.BLACK);
+            mTitleTextPaint.setShadowLayer(2, 3, 0, Color.BLACK);
             float readingSize = mReadingHeightPercentOfRadius * mFaceRadius / 100;
             mReadingTextPaint.setTextSize(readingSize);
-            mReadingTextPaint.setShadowLayer(3, 5, 5, Color.BLACK);
+            mReadingTextPaint.setShadowLayer(2, 3, 0, Color.BLACK);
             mColoredRangePaint.setStrokeWidth(mColoredRangePercentOfRadius * mFaceRadius / 100);
 
         }
@@ -528,7 +528,7 @@ public class BaseGauge extends BaseComponent {
                 float shadowAngle = currentAngle - 110;
                 float dx = (float) Math.cos(shadowAngle / 180 * Math.PI) * 5f;
                 float dy = -(float) Math.sin(shadowAngle / 180 * Math.PI) * 5f;
-                mTickLabelTextPaint.setShadowLayer(3, dx, dy, Color.BLACK);
+                mTickLabelTextPaint.setShadowLayer(2, dx, dy, Color.BLACK);
                 canvas.drawText(getLabelConverter().getLabelFor(curProgress, mScaleStartValue, mScaleEndValue), txtX, txtY, mTickLabelTextPaint);
                 canvas.restore();
             }
@@ -623,13 +623,13 @@ public class BaseGauge extends BaseComponent {
         if (dx < 0 || dy < 0) {
             // Move shadow from right to left
             mNeedleRightPaint.clearShadowLayer();
-            mNeedleLeftPaint.setShadowLayer(3, dx, dy, Color.BLACK);
+            mNeedleLeftPaint.setShadowLayer(5, dx, dy, Color.BLACK);
 //            setLayerType(LAYER_TYPE_SOFTWARE, mNeedleLeftPaint);
 
         } else {
             // Move shadow from left to right
             mNeedleLeftPaint.clearShadowLayer();
-            mNeedleRightPaint.setShadowLayer(3, dx, dy, Color.BLACK);
+            mNeedleRightPaint.setShadowLayer(5, dx, dy, Color.BLACK);
 //            setLayerType(LAYER_TYPE_SOFTWARE, mNeedleRightPaint);
         }
     }

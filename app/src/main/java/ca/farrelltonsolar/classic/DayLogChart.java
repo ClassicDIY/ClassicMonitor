@@ -23,7 +23,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
@@ -50,10 +50,18 @@ import ca.farrelltonsolar.uicomponents.ValueLabelAdapter;
  * Created by Graham on 19/12/2014.
  */
 public class DayLogChart extends Fragment {
-
+    private static final String ARG_MONTH = "month";
     private boolean isReceiverRegistered;
     ChartView chartView;
     private List<AbstractSeries> mSeries = new ArrayList<AbstractSeries>();
+
+    public static DayLogChart newInstance(int month) {
+        DayLogChart fragment = new DayLogChart();
+        Bundle args = new Bundle();
+        args.putInt(ARG_MONTH, month);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

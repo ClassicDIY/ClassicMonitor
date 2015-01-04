@@ -102,7 +102,11 @@ public class CalendarAdapter extends BaseAdapter {
             v = vi.inflate(R.layout.calendar_item, null);
 
         }
+        v.setEnabled(false);
+        v.setClickable(false);
+        v.setFocusable(false);
         TextView dayView = (TextView) v.findViewById(R.id.date);
+        dayView.setEnabled(false);
         dayView.setClickable(false);
         dayView.setFocusable(false);
         TextView stateView = (TextView) v.findViewById(R.id.state);
@@ -224,5 +228,13 @@ public class CalendarAdapter extends BaseAdapter {
         }
     }
 
-
+    @Override
+    public boolean areAllItemsEnabled() {
+        return false;
+    }
+    @Override
+    public boolean isEnabled(int position) {
+        // Return true for clickable, false for not
+        return false;
+    }
 }

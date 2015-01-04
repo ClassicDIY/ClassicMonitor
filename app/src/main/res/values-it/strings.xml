@@ -16,7 +16,6 @@
   -->
 
 <resources>
-    <string name="app_name">Classic</string>
     <string name="About">Informazioni su</string>
     <string name="AbsorbDescription">Regolare la tensione della batteria a assorbire set point.</string>
     <string name="AbsorbTitle">Assorbire</string>

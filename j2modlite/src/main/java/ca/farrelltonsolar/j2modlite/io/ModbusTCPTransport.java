@@ -226,12 +226,14 @@ public class ModbusTCPTransport implements ModbusTransport {
             }
             return response;
         } catch (SocketTimeoutException ex) {
+            ex.printStackTrace();
             Log.w(getClass().getName(), String.format("Modbus: Timeout reading response. ex: %s", ex));
             throw new ModbusIOException("Timeout reading response");
         } catch (EOFException ex) {
             Log.w(getClass().getName(), String.format("Modbus: EOFException - failed to read. ex: %s", ex));
             throw new ModbusIOException(true);
         } catch (Exception ex) {
+            ex.printStackTrace();
             Log.w(getClass().getName(), String.format("Modbus: I/O exception - failed to read. ex: %s", ex));
             throw new ModbusIOException("I/O exception - failed to read.");
         }
