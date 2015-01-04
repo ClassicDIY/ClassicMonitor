@@ -1,19 +1,24 @@
-Version 2.0 will be released soon.
 
+<h1>Classic Monitor</h1>
+
+<h3>Version 2.0 will be released soon.</h3>
+<p>Note: version 2+ is targeted to Android API level 14 (Android 4.0) and above, all features are available on API 17 (Android 4.2) and above</p>
+
+<p>
 Version 1.7.2 of this application is currently available on Google Play at
 <https://play.google.com/store/apps/details?id=ca.farrelltonsolar.classic>
-
+</p>
+<p>
 Classic Monitor is a free status monitor for Midnite solar 's, Classic 150, 200, 250 Charge Controller (www.midniteSolar.com). It is a Read Only Program, it does not write to the Classic.
-
 The software is provided "AS IS", WITHOUT WARRANTY OF ANY KIND, express or implied.
-
 Classic Monitor is NOT a product of Midnite solar, nor do they support this application!
-
+</p>
+<p>
 If the app detects a Whizbang Junior current monitor, the State Of Charge will display along with a bi-directional current gauge.
-
 Basic support for the Tristar MPPT charge controller from Morningstar is also included.
 
-This application requires an Android device with at least API level 14 (Android 4.0 "Ice Cream Sandwich") 
+</p>
+
 
 ## License
 ```
@@ -41,17 +46,21 @@ Release notes:
 
 version 2.0
 
-Transfer to code to Github
-Added support for multiple classics using navigation drawer.
-Re-design of classic detection using UDP broadcasts.
-Added temperature gauges.
-Implemented calendar, day & hour chart using native code rather than webview.
-Added info and message tabs.
-Implemented new Android sliding tab view pager.
-Re-design gauge component to support latest Android 5.0 API 21.
-Added auto-scale feature to gauges.
-Updated French, Italian, Spanish localization resources
-
+<ul>
+<li>Transfer to code to Github</li>
+<li>Added support for multiple classics listed in a slide out navigation drawer.</li>
+<li>Re-design of classic detection using UDP broadcasts.</li>
+<li>Added temperature gauges.</li>
+<li>Implemented calendar, day & hour chart using native code rather than using webview component.</li>
+<li>Added info and message tabs.</li>
+<li>Implemented new Android sliding tab view pager.</li>
+<li>Implemented vertical pager for calendar view.</li>
+<li>Re-design gauge component to support latest Android 5.0 API 21.</li>
+<li>Added auto scale feature to gauges.</li>
+<li>Updated PVOutput uploader to support multiple site IDs.</li>
+<li>Implemented Android Services for Modbus, UPDListener and PVOutput uploader.</li>
+<li>Updated French, Italian, Spanish localization resources.</li>
+</ul>
 -----------------
 
 version 1.7

@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "ca.farrelltonsolar.classic"
         minSdkVersion 14
-        targetSdkVersion 17
+        targetSdkVersion 21
     }
     signingConfigs {
         release {
