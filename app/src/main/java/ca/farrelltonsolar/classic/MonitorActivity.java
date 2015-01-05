@@ -116,11 +116,16 @@ public class MonitorActivity extends ActionBarActivity {
     protected BroadcastReceiver mMonitorReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            try {
             boolean differentController = intent.getBooleanExtra("DifferentController", false);
             if (differentController) {
                 MonitorActivity.this.finish();
                 System.gc();
                 MonitorActivity.this.startActivity(getIntent());
+            }
+            }
+            catch (Throwable ex) {
+                Log.e(getClass().getName(), "mMonitorReceiver failed ");
             }
         }
     };
@@ -128,17 +133,22 @@ public class MonitorActivity extends ActionBarActivity {
     protected BroadcastReceiver mReadingsReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Bundle readings = intent.getBundleExtra("readings");
-            int chargeState = readings.getInt(RegisterName.ChargeState.name());
-            if (currentChargeState != chargeState) {
-                currentChargeState = chargeState;
-                String state = MonitorApplication.getChargeStateTitleText(chargeState);
-                if (state == null || state.isEmpty()) {
-                    getSupportActionBar().setTitle(currentUnitName);
-                } else {
-                    getSupportActionBar().setTitle(String.format("%s - (%s)", currentUnitName, MonitorApplication.getChargeStateTitleText(chargeState)));
-                    Toast.makeText(context, MonitorApplication.getChargeStateText(chargeState), Toast.LENGTH_LONG).show();
+            try {
+                Bundle readings = intent.getBundleExtra("readings");
+                int chargeState = readings.getInt(RegisterName.ChargeState.name());
+                if (currentChargeState != chargeState) {
+                    currentChargeState = chargeState;
+                    String state = MonitorApplication.getChargeStateTitleText(chargeState);
+                    if (state == null || state.isEmpty()) {
+                        getSupportActionBar().setTitle(currentUnitName);
+                    } else {
+                        getSupportActionBar().setTitle(String.format("%s - (%s)", currentUnitName, MonitorApplication.getChargeStateTitleText(chargeState)));
+                        Toast.makeText(context, MonitorApplication.getChargeStateText(chargeState), Toast.LENGTH_LONG).show();
+                    }
                 }
+            }
+            catch (Throwable ex) {
+                Log.e(getClass().getName(), "mReadingsReceiver failed ");
             }
         }
     };
@@ -185,21 +195,31 @@ public class MonitorActivity extends ActionBarActivity {
     private BroadcastReceiver receiveAToast = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String message = intent.getStringExtra("message");
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+            try {
+                String message = intent.getStringExtra("message");
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+            }
+            catch (Throwable ex) {
+                Log.e(getClass().getName(), "receiveAToast failed ");
+            }
         }
     };
 
     private BroadcastReceiver updateChargeControllersReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController(); // cc got removed?
-            if (cc == null) {
-                if (modbusService != null && modbusService.isInService()) {
-                    modbusService.stopMonitoringChargeController();
-                    MonitorActivity.this.finish();
-                    MonitorActivity.this.startActivity(getIntent());
+            try {
+                ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController(); // cc got removed?
+                if (cc == null) {
+                    if (modbusService != null && modbusService.isInService()) {
+                        modbusService.stopMonitoringChargeController();
+                        MonitorActivity.this.finish();
+                        MonitorActivity.this.startActivity(getIntent());
+                    }
                 }
+            }
+            catch (Throwable ex) {
+                Log.e(getClass().getName(), "updateChargeControllersReceiver failed ");
             }
         }
     };

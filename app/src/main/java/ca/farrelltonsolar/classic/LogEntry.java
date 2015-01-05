@@ -27,7 +27,7 @@ import java.io.Serializable;
 
 public class LogEntry implements Serializable {
     private Bundle logs;
-
+    
     public LogEntry(Bundle logs) {
         this.logs = logs;
     }
@@ -82,10 +82,20 @@ public class LogEntry implements Serializable {
     }
 
     public void broadcastLogs(Context context, String action) {
-        if (!logs.isEmpty()) {
+        if (isAvailable()) {
             Intent intent = new Intent(action);
             intent.putExtra("logs", this);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         }
     }
+
+    public boolean isAvailable() {
+        boolean rVal = !logs.isEmpty();
+        if (rVal) {
+            rVal = logs.getLong("LogDate", -1) != -1;
+        }
+        return rVal;
+    }
+
+
 }

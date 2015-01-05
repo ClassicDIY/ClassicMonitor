@@ -57,17 +57,20 @@ public class CalendarAdapter extends BaseAdapter {
         today = DateTime.now().withTimeAtStartOfDay();
         context = c;
         this.items = new ArrayList<String>();
-        refreshDays(month);
+        try {
+            refreshDays(month);
+        }
+        catch (Exception ex) {
+            Log.w(getClass().getName(), String.format("CalendarAdapter refreshDays failed ex: %s", ex));
+        }
     }
 
     public void setPowerSeries(float[] data) {
         this.powerDays = data;
     }
-
     public void setFloatSeries(float[] data) {
         this.floatDays = data;
     }
-
     public void setHighPowerSeries(float[] floatArray) {
         this.highPowerDays = floatArray;
     }
@@ -182,6 +185,12 @@ public class CalendarAdapter extends BaseAdapter {
                     v.setBackgroundResource(R.drawable.list_item_background);
                 }
             } catch (Exception ex) {
+                stateView.setText("");
+                floatView.setText("");
+                hiPower.setText("");
+                hiTemp.setText("");
+                hiPVVolt.setText("");
+                hiBatVolt.setText("");
                 Log.w(getClass().getName(), "getView exception: " + ex);
             }
         }
@@ -194,9 +203,6 @@ public class CalendarAdapter extends BaseAdapter {
             hiPVVolt.setText("");
             hiBatVolt.setText("");
         }
-
-
-
         return v;
     }
 

@@ -85,15 +85,6 @@ public class DayLogCalendar extends Fragment {
         return theView;
     }
 
-    public void refreshCalendar()
-    {
-        TextView title  = (TextView) theView.findViewById(R.id.title);
-
-        adapter.refreshDays(month);
-        adapter.notifyDataSetChanged();
-        title.setText(month.toString("MMMM yyyy"));
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -110,6 +101,7 @@ public class DayLogCalendar extends Fragment {
         unRegisterReceiver();
         Log.d(getClass().getName(), "onStop");
     }
+    
     private void unRegisterReceiver() {
         if (isReceiverRegistered) {
             try {

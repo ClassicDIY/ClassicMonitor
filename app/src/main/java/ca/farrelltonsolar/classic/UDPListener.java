@@ -253,10 +253,7 @@ public class UDPListener extends Service {
             } catch (Exception e) {
                 Log.w(getClass().getName(), "mListener Exception: " + e);
             } finally {
-                if (socket != null) {
-                    socket.close();
-                    socket.disconnect();
-                }
+                SetRunning(false);
                 Log.d(getClass().getName(), "closed socket and disconnected");
             }
             Log.d(getClass().getName(), "mListener exiting");
