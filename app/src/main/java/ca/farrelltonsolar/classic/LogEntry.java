@@ -37,11 +37,12 @@ public class LogEntry implements Serializable {
     }
 
     public void setLogDate(DateTime logDate) {
-        logs.putSerializable("LogDate", logDate);
+        logs.putLong("LogDate", logDate.getMillis());
     }
 
     public DateTime getLogDate() {
-        return (DateTime)logs.getSerializable("LogDate");
+        long dateMillis = logs.getLong("LogDate");
+        return new DateTime(dateMillis);
     }
 
     public boolean isEmpty() {

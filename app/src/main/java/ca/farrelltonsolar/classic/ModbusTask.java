@@ -468,6 +468,7 @@ public class ModbusTask extends TimerTask {
                 Log.w(getClass().getName(), String.format("loadDayLogs reached EOF ex: %s", ex));
                 dayLogEntry.setLogDate(DateTime.now());
                 BundleCache.getInstance(context).putBundle(dayLogCacheName, dayLogEntry.getLogs());
+                BroadcastToast(context.getString(R.string.toast_day_logs));
                 return;
             }
             BundleCache.getInstance(context).clearCache(dayLogCacheName);
@@ -509,6 +510,7 @@ public class ModbusTask extends TimerTask {
                 Log.w(getClass().getName(), String.format("loadMinuteLogs reached EOF ex: %s", ex));
                 minuteLogEntry.setLogDate(DateTime.now());
                 BundleCache.getInstance(context).putBundle(minuteLogCacheName, minuteLogEntry.getLogs());
+                BroadcastToast(context.getString(R.string.toast_minute_logs));
                 return;
             }
             BundleCache.getInstance(context).clearCache(minuteLogCacheName);

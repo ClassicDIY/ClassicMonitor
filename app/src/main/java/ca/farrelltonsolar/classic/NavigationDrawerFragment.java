@@ -16,13 +16,13 @@
 
 package ca.farrelltonsolar.classic;
 
+import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -76,9 +76,16 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onStop() {
+        LocalBroadcastManager.getInstance(this.getActivity()).unregisterReceiver(updateChargeControllersReceiver);
+
+        super.onStop();
+    }
+
+    @Override
+    public void onStart() {
         LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver(updateChargeControllersReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_UPDATE_CHARGE_CONTROLLERS));
+        super.onStart();
     }
 
     // Our handler for received Intents.

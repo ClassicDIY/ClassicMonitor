@@ -210,6 +210,8 @@ public class MonitorActivity extends ActionBarActivity {
             try {
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(mMonitorReceiver);
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(mReadingsReceiver);
+                LocalBroadcastManager.getInstance(this).unregisterReceiver(updateChargeControllersReceiver);
+                LocalBroadcastManager.getInstance(this).unregisterReceiver(receiveAToast);
             } catch (IllegalArgumentException e) {
                 // Do nothing
             }

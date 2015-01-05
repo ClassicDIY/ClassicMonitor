@@ -24,7 +24,7 @@ import java.net.InetSocketAddress;
  */
 public class ChargeController extends ChargeControllerInfo {
 
-    final Object lock = new Object();
+    final transient Object lock = new Object();
     private boolean uploadToPVOutput;
     private String logDate; //date logs from classic were recorded for upload to PVOutput.org
     private String uploadDate; // last date the logs were uploaded to pvoutput.org
