@@ -32,13 +32,15 @@ public class StateOfChargeFragment extends ReadingFramentBase {
 
     public static int TabTitle = R.string.StateOfChargeTabTitle;
     private boolean bidirectionalUnitsInWatts;
-
+    private float originalScaleEnd;
+    
     public StateOfChargeFragment() {
 
         super(R.layout.fragment_state_of_charge);
         ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
         if (cc != null) {
             bidirectionalUnitsInWatts = cc.isBidirectionalUnitsInWatts();
+           
         }
     }
 
@@ -47,7 +49,7 @@ public class StateOfChargeFragment extends ReadingFramentBase {
             View v = this.getView().findViewById(R.id.BidirectionalCurrent);
             if (v != null) {
                 BaseGauge gaugeView = (BaseGauge) v;
-                float batteryCurrent = readings.getFloat(RegisterName.BatCurrent);
+                float batteryCurrent = readings.getFloat(RegisterName.WhizbangBatCurrent);
                 if (bidirectionalUnitsInWatts) {
                     float batteryVolts = readings.getFloat(RegisterName.BatVoltage);
                     gaugeView.setTargetValue(batteryCurrent * batteryVolts);
@@ -69,7 +71,7 @@ public class StateOfChargeFragment extends ReadingFramentBase {
 
             BaseGauge gaugeView = (BaseGauge) v;
             if (gaugeView != null) {
-
+                originalScaleEnd = gaugeView.getScaleEnd();
                 gaugeView.setOnClickListener(GetClickListener(container));
                 setupGauge(gaugeView);
             }
@@ -86,6 +88,7 @@ public class StateOfChargeFragment extends ReadingFramentBase {
         }
         gaugeView.setGreenRange(50, 100);
         gaugeView.setTargetValue(0.0f);
+        
     }
 
     private View.OnClickListener GetClickListener(final ViewGroup container) {
@@ -106,6 +109,7 @@ public class StateOfChargeFragment extends ReadingFramentBase {
                         BaseGauge gauge = (BaseGauge) v;
                         if (gauge != null) {
                             setupGauge(gauge);
+                            gauge.setScaleEnd(originalScaleEnd);
                         }
                         Animation animation2 = new AlphaAnimation(0.0f, 1.0f);
                         animation2.setDuration(500);

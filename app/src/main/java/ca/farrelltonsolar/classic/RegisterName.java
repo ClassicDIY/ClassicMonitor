@@ -20,6 +20,7 @@ public enum RegisterName {
     Power,
     BatVoltage,
     BatCurrent,
+    WhizbangBatCurrent,
     PVVoltage,
     PVCurrent,
     EnergyToday,

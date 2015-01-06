@@ -50,7 +50,7 @@
         app:scaleEndValue="10"
         app:gaugeTitle="@string/BatCurrentTitle"
         app:readingUnit="A"
-        app:readingPrecision="0"
+        app:readingPrecision="1"
         app:biDirectional="true"
         app:autoScale="true"
         app:showReading="true" />

@@ -266,10 +266,7 @@ public class ModbusTask extends TimerTask {
             } else {
                 ReadMultipleRegistersResponse regRes = modbusMaster.readMultipleRegisters(reference, 36);
                 if (regRes != null) {
-                    if (!foundWhizBangJr) {
-                        Register a = regRes.getRegister(OffsetFor(4117));
-                        readings.set(RegisterName.BatCurrent, a.toShort() / 10.0f);
-                    }
+                    readings.set(RegisterName.BatCurrent, regRes.getRegisterValue(OffsetFor(4117)) / 10.0f);
                     readings.set(RegisterName.Power, (float) regRes.getRegisterValue(OffsetFor(4119)));
                     readings.set(RegisterName.BatVoltage, regRes.getRegisterValue(OffsetFor(4115)) / 10.0f);
                     readings.set(RegisterName.PVVoltage, regRes.getRegisterValue(OffsetFor(4116)) / 10.0f);
@@ -292,7 +289,7 @@ public class ModbusTask extends TimerTask {
                     ReadMultipleRegistersResponse regRes2 = modbusMaster.readMultipleRegisters(4360, 16);
                     if (regRes2 != null) {
                         Register a = regRes2.getRegister(10);
-                        readings.set(RegisterName.BatCurrent, a.toShort() / 10.0f);
+                        readings.set(RegisterName.WhizbangBatCurrent, a.toShort() / 10.0f);
                         Register soc = regRes2.getRegister(12);
                         short socVal = soc.toShort();
                         readings.set(RegisterName.SOC, socVal);

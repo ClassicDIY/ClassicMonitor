@@ -308,7 +308,7 @@ public interface Modbus {
    * Defines the default setting for I/O operation timeouts
    * in milliseconds (=<tt>3000</tt>).
    */
-  public static final int DEFAULT_TIMEOUT = 5000;
+  public static final int DEFAULT_TIMEOUT = 3000;
 
   /**
    * Defines the default reconnecting setting for
@@ -320,7 +320,7 @@ public interface Modbus {
    * Defines the default amount of retires for opening
    * a connection (=<tt>3</tt>).
    */
-  public static final int DEFAULT_RETRIES = 1;
+  public static final int DEFAULT_RETRIES = 3;
 
   /**
    * Defines the default number of msec to delay before transmission

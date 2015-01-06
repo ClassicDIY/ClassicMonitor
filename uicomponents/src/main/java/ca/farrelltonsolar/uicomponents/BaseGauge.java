@@ -267,6 +267,7 @@ public class BaseGauge extends BaseComponent {
     }
 
     protected float getScale(float currentScaleEnd, float target) {
+        target = Math.abs(target);
         while (currentScaleEnd < target) {
             currentScaleEnd *= 2;
         }
