@@ -146,7 +146,7 @@ public final class ChargeControllers {
         boolean updated = false;
         synchronized (devices) {
             for (ChargeController cc : devices) {
-                if (useUnitIdAsKey ? cc.unitID() == unitId : deviceIpAddress.compareTo(cc.deviceIpAddress()) == 0) {
+                if (useUnitIdAsKey ? cc.unitID() == unitId : (deviceIpAddress.compareTo(cc.deviceIpAddress()) == 0 && port == cc.port())) {
                     if (cc.setUnitID(unitId)) {
                         updated = true;
                     }
