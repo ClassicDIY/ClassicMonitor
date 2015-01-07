@@ -137,6 +137,7 @@ public class ModbusTask extends TimerTask {
             }
         } catch (Exception e1) {
             Log.w(getClass().getName(), String.format("Could not connect to %s, ex: %s", chargeControllerInfo.toString(), e1));
+            e1.printStackTrace();
             modbusMaster = null;
             MonitorApplication.chargeControllers().setReachable(chargeControllerInfo.deviceIpAddress(), chargeControllerInfo.port(), false);
         }
