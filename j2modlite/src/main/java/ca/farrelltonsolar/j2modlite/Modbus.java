@@ -40,15 +40,14 @@ package ca.farrelltonsolar.j2modlite;
  * @author Dieter Wimberger
  * @version 1.2rc1 (09/11/2004)
  */
-public interface Modbus {
+public class Modbus {
 
-    public static final String LOG_TAG_MODBUS = "J2Mod";
 
   /**
    * JVM flag for debug mode. Can be set passing the system property
-   * ca.farrelltonsolar.j2modlite.debug=false|true (-D flag to the jvm).
+   * ca.farrelltonsolar.j2mod.debug=false|true (-D flag to the jvm).
    */
-  public static boolean debug = "true".equals(System.getProperty("ca.farrelltonsolar.j2modlite.debug"));
+  public static boolean debug = true;
   
   /**
    * Defines the class 1 function code
@@ -75,10 +74,16 @@ public interface Modbus {
    */
   public static final int READ_MULTIPLE_REGISTERS = 3;
 
-  /*
-  * Read custom file transfer from classic
-  */
-  public static final int READ_CUSTOM = 104;
+
+    /**
+     * Midnite solar custom file read.
+     */
+    public static final int READ_LOG_FILE = 104;
+
+    /**
+     * Midnite solar custom file write.
+     */
+    public static final int WRITE_LOG_FILE = 105;
 
   /**
    * Defines a class 1 function code
@@ -169,16 +174,6 @@ public interface Modbus {
    * potentially other registers back.
    */
   public static final int READ_WRITE_MULTIPLE = 23;
-
-    /**
-     * Midnite solar custom file read.
-     */
-    public static final int READ_LOG_FILE = 104;
-
-    /**
-     * Midnite solar custom file write.
-     */
-    public static final int WRITE_LOG_FILE = 105;
   
   /**
    * <tt>read FIFO queue</tt>
@@ -264,11 +259,25 @@ public interface Modbus {
   public static final int SLAVE_DEVICE_FAILURE = 4;
   
   /**
+   * Defines the Modbus slave exception type <tt>slave busy</tt>.  This
+   * exception indicates the the slave is unable to perform the operation
+   * because it is performing an operation which cannot be interrupted.
+   */
+  public static final int SLAVE_BUSY_EXCEPTION = 6;
+  
+  /**
    * Defines the Modbus slave exception type <tt>negative acknowledgment</tt>.
    * This exception code indicates the slave cannot perform the requested
    * action.
    */
   public static final int NEGATIVE_ACKNOWLEDGEMENT = 7;
+  
+  /**
+   * Defines the Modbus slave exception type <tt>Gateway target failed to
+   * respond</tt>.  This exception code indicates that a Modbus gateway
+   * failed to receive a response from the specified target.
+   */
+  public static final int GATEWAY_TARGET_NO_RESPONSE = 11;
 
 
   /**
@@ -286,7 +295,7 @@ public interface Modbus {
   /**
    * Defines the default transaction identifier (=<tt>0</tt>).
    */
-  public static final int DEFAULT_TRANSACTION_ID = 1;
+  public static final int DEFAULT_TRANSACTION_ID = 0;
 
   /**
    * Defines the default protocol identifier (=<tt>0</tt>).
@@ -296,7 +305,7 @@ public interface Modbus {
   /**
    * Defines the default unit identifier (=<tt>0</tt>).
    */
-  public static final int DEFAULT_UNIT_ID = 0;
+  public static final int DEFAULT_UNIT_ID = 1;
 
   /**
    * Defines the default setting for validity checking
@@ -326,7 +335,7 @@ public interface Modbus {
    * Defines the default number of msec to delay before transmission
    * (=<tt>50</tt>).
    */
-  public static final int DEFAULT_TRANSMIT_DELAY = 500;
+  public static final int DEFAULT_TRANSMIT_DELAY = 0;
 
   /**
    * Defines the maximum value of the transaction identifier.

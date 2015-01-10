@@ -64,7 +64,7 @@ public interface ProcessImage {
 	 * @throws IllegalAddressException
 	 *             if the range from offset to offset+count is non existant.
 	 */
-	public ca.farrelltonsolar.j2modlite.procimg.DigitalOut[] getDigitalOutRange(int offset, int count)
+	public DigitalOut[] getDigitalOutRange(int offset, int count)
 			throws IllegalAddressException;
 
 	/**
@@ -78,7 +78,7 @@ public interface ProcessImage {
 	 * @throws IllegalAddressException
 	 *             if the reference is invalid.
 	 */
-	public ca.farrelltonsolar.j2modlite.procimg.DigitalOut getDigitalOut(int ref) throws IllegalAddressException;
+	public DigitalOut getDigitalOut(int ref) throws IllegalAddressException;
 
 	/**
 	 * Returns the number of <tt>DigitalOut</tt> instances in this
@@ -101,7 +101,7 @@ public interface ProcessImage {
 	 * @throws IllegalAddressException
 	 *             if the range from offset to offset+count is non existant.
 	 */
-	public ca.farrelltonsolar.j2modlite.procimg.DigitalIn[] getDigitalInRange(int offset, int count)
+	public DigitalIn[] getDigitalInRange(int offset, int count)
 			throws IllegalAddressException;
 
 	/**
@@ -179,7 +179,7 @@ public interface ProcessImage {
 	 * @throws IllegalAddressException
 	 *             if the range from offset to offset+count is non existant.
 	 */
-	public ca.farrelltonsolar.j2modlite.procimg.Register[] getRegisterRange(int offset, int count)
+	public Register[] getRegisterRange(int offset, int count)
 			throws IllegalAddressException;
 
 	/**

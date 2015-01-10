@@ -215,11 +215,11 @@ public final class ReadFileRecordResponse extends ModbusResponse {
 	}
 
 	public void readData(DataInput din) throws IOException {
-		m_ByteCount = din.readUnsignedByte();
+		m_ByteCount = (din.readUnsignedByte() & 0xFF);
 
 		int remainder = m_ByteCount;
 		while (remainder > 0) {
-			int length = din.readByte();
+			int length = din.readUnsignedByte();
 			remainder--;
 			
 			int function = din.readByte();

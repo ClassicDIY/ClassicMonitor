@@ -76,7 +76,7 @@ package ca.farrelltonsolar.j2modlite.procimg;
  * @version 1.2rc1 (09/11/2004)
  */
 public class SimpleInputRegister extends SynchronizedAbstractRegister implements
-        InputRegister {
+		InputRegister {
 
 	public String toString() {
 		if (m_Register == null)

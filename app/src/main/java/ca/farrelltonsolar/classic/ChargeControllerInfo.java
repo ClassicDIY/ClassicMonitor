@@ -16,8 +16,6 @@
 
 package ca.farrelltonsolar.classic;
 
-import android.os.Bundle;
-
 import java.io.Serializable;
 import java.net.InetSocketAddress;
 
@@ -212,12 +210,17 @@ public class ChargeControllerInfo implements Serializable {
         return netVersion;
     }
 
-    public void updateBoilerPlate(Bundle info) {
-        setModel(info.getString("model"));
-        setMacAddress(info.getString("macAddress"));
-        setLastVOC(info.getFloat("lastVOC"));
-        setAppVersion(info.getString("appVersion"));
-        setNetVersion(info.getString("netVersion"));
+    public String  dayLogCacheName() { return "dayLogs_" + String.format("%08x", unitID()).toUpperCase(); }
+
+    public String  minuteLogCacheName() { return "minuteLog_" + String.format("%08x", unitID()).toUpperCase(); }
+
+    public void clearLogCache() {
+        try {
+            BundleCache.getInstance(MonitorApplication.getAppContext()).clearCache(dayLogCacheName());
+            BundleCache.getInstance(MonitorApplication.getAppContext()).clearCache(minuteLogCacheName());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }
 

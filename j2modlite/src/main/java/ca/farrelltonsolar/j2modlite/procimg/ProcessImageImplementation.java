@@ -33,13 +33,6 @@
  ***/
 package ca.farrelltonsolar.j2modlite.procimg;
 
-import ca.farrelltonsolar.j2modlite.procimg.*;
-import ca.farrelltonsolar.j2modlite.procimg.DigitalIn;
-import ca.farrelltonsolar.j2modlite.procimg.DigitalOut;
-import ca.farrelltonsolar.j2modlite.procimg.IllegalAddressException;
-import ca.farrelltonsolar.j2modlite.procimg.InputRegister;
-import ca.farrelltonsolar.j2modlite.procimg.Register;
-
 /**
  * Interface defining implementation specific details of the
  * <tt>ProcessImage</tt>, adding mechanisms for creating and modifying the
@@ -55,10 +48,8 @@ public interface ProcessImageImplementation extends ProcessImage {
 	 * 
 	 * @param ref
 	 *            the reference as <tt>int</tt>.
-	 * @param _do
-	 *            the new <tt>DigitalOut</tt> instance to be set.
-	 * 
-	 * @throws ca.farrelltonsolar.j2modlite.procimg.IllegalAddressException
+	 *
+	 * @throws IllegalAddressException
 	 *             if the reference is invalid.
 	 */
 	public void setDigitalOut(int ref, DigitalOut out)
@@ -88,7 +79,7 @@ public interface ProcessImageImplementation extends ProcessImage {
 	 * @param di
 	 *            the new <tt>DigitalIn</tt> instance to be set.
 	 * 
-	 * @throws ca.farrelltonsolar.j2modlite.procimg.IllegalAddressException
+	 * @throws IllegalAddressException
 	 *             if the reference is invalid.
 	 */
 	public void setDigitalIn(int ref, DigitalIn di)
@@ -118,7 +109,7 @@ public interface ProcessImageImplementation extends ProcessImage {
 	 * @param reg
 	 *            the new <tt>InputRegister</tt> instance to be set.
 	 * 
-	 * @throws ca.farrelltonsolar.j2modlite.procimg.IllegalAddressException
+	 * @throws IllegalAddressException
 	 *             if the reference is invalid.
 	 */
 	public void setInputRegister(int ref, InputRegister reg)
@@ -148,7 +139,7 @@ public interface ProcessImageImplementation extends ProcessImage {
 	 * @param reg
 	 *            the new <tt>Register</tt> instance to be set.
 	 * 
-	 * @throws ca.farrelltonsolar.j2modlite.procimg.IllegalAddressException
+	 * @throws IllegalAddressException
 	 *             if the reference is invalid.
 	 */
 	public void setRegister(int ref, Register reg)
@@ -178,7 +169,7 @@ public interface ProcessImageImplementation extends ProcessImage {
 	 * @param reg
 	 *            the new <tt>File</tt> instance to be set.
 	 * 
-	 * @throws ca.farrelltonsolar.j2modlite.procimg.IllegalAddressException
+	 * @throws IllegalAddressException
 	 *             if the reference is invalid.
 	 */
 	public void setFile(int ref, File reg)
@@ -208,7 +199,7 @@ public interface ProcessImageImplementation extends ProcessImage {
 	 * @param reg
 	 *            the new <tt>FIFO</tt> instance to be set.
 	 * 
-	 * @throws ca.farrelltonsolar.j2modlite.procimg.IllegalAddressException
+	 * @throws IllegalAddressException
 	 *             if the reference is invalid.
 	 */
 	public void setFIFO(int ref, FIFO reg)

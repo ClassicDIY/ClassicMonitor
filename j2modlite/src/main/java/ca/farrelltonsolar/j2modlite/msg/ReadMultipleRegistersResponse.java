@@ -175,15 +175,16 @@ public final class ReadMultipleRegistersResponse extends ModbusResponse {
 
 		m_Registers = new Register[getWordCount()];
 
-        int count = getWordCount();
-		for (int k = 0; k < count; k++)
+		for (int k = 0; k < getWordCount(); k++)
 			m_Registers[k] = new SimpleRegister(din.readByte(), din.readByte());
 
 		setDataLength(m_ByteCount + 1);
 	}
 
 	public byte[] getMessage() {
-		byte[] result = new byte[getWordCount() * 2 + 1];
+		byte result[] = null;
+
+		result = new byte[getWordCount() * 2 + 1];
 		
 		int offset = 0;
 		result[offset++] = (byte) m_ByteCount;

@@ -142,7 +142,7 @@ public final class ReadCommEventLogRequest extends ModbusRequest {
 	}
 
 	/**
-	 * Constructs a new <tt>Report Slave ID request</tt>
+	 * Constructs a new <tt>Get Comm Event Log</tt>
 	 * instance.
 	 */
 	public ReadCommEventLogRequest() {

@@ -33,11 +33,11 @@
  ***/
 package ca.farrelltonsolar.j2modlite.msg;
 
+import ca.farrelltonsolar.j2modlite.Modbus;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
-import ca.farrelltonsolar.j2modlite.Modbus;
 
 /**
  * Class implementing a<tt>ModbusResponse</tt> that represents an exception.

@@ -53,7 +53,8 @@ import ca.farrelltonsolar.j2modlite.util.BitVector;
  * @author Dieter Wimberger
  * @version 1.2rc1 (09/11/2004)
  */
-public final class ReadInputDiscretesResponse extends ModbusResponse {
+public final class ReadInputDiscretesResponse
+    extends ModbusResponse {
 
   //instance attributes
   private int m_BitCount;

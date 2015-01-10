@@ -78,7 +78,8 @@ package ca.farrelltonsolar.j2modlite.procimg;
  * @author Julie Haugh
  * @version 0.97 (8/12/12)
  */
-public class SimpleRegister extends SynchronizedAbstractRegister implements Register {
+public class SimpleRegister extends SynchronizedAbstractRegister implements
+		Register {
 	
 	public String toString() {
 		if (m_Register == null)

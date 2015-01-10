@@ -26,7 +26,7 @@ public class ReadFileTransferResponse extends ModbusResponse {
      */
     public ReadFileTransferResponse() {
         super();
-        setFunctionCode(Modbus.READ_CUSTOM);
+        setFunctionCode(Modbus.READ_LOG_FILE);
     }// constructor
 
 

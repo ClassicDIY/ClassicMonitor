@@ -195,8 +195,8 @@ public final class ReadInputRegistersResponse extends ModbusResponse {
 	}
 
 	public byte[] getMessage() {
-		byte result[] = new byte[m_ByteCount + 1];
-		result[0] = (byte) m_ByteCount;
+		byte result[] = new byte[m_Registers.length * 2 + 1];
+		result[0] = (byte) (m_Registers.length * 2);
 
 		for (int i = 0; i < m_Registers.length; i++) {
 			byte value[] = m_Registers[i].toBytes();

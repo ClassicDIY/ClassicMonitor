@@ -82,7 +82,13 @@ public final class ChargeControllers {
                     cc.setIsCurrent(false);
                 }
             }
-            devices.get(position).setIsCurrent(true);
+            ChargeControllerInfo cc = devices.get(position);
+            if (cc.deviceType() != DeviceType.Unknown) {
+                devices.get(position).setIsCurrent(true);
+            }
+            else {
+                return false; // can't do it, unknown device
+            }
         }
         return true;
     }
@@ -97,6 +103,7 @@ public final class ChargeControllers {
 
     public void remove(ChargeControllerInfo cc) {
         synchronized (devices) {
+            cc.clearLogCache();
             devices.remove(cc);
         }
         BroadcastUpdateNotification();

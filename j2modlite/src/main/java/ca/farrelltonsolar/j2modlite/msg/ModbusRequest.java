@@ -151,29 +151,11 @@ public abstract class ModbusRequest extends ModbusMessageImpl {
 		ModbusRequest request = null;
 
 		switch (functionCode) {
-		case Modbus.READ_COILS:
-			request = new ReadCoilsRequest();
-			break;
-		case Modbus.READ_INPUT_DISCRETES:
-			request = new ReadInputDiscretesRequest();
-			break;
 		case Modbus.READ_MULTIPLE_REGISTERS:
 			request = new ReadMultipleRegistersRequest();
 			break;
 		case Modbus.READ_INPUT_REGISTERS:
 			request = new ReadInputRegistersRequest();
-			break;
-		case Modbus.WRITE_COIL:
-			request = new WriteCoilRequest();
-			break;
-		case Modbus.WRITE_SINGLE_REGISTER:
-			request = new WriteSingleRegisterRequest();
-			break;
-		case Modbus.WRITE_MULTIPLE_COILS:
-			request = new WriteMultipleCoilsRequest();
-			break;
-		case Modbus.WRITE_MULTIPLE_REGISTERS:
-			request = new WriteMultipleRegistersRequest();
 			break;
 		case Modbus.READ_EXCEPTION_STATUS:
 			request = new ReadExceptionStatusRequest();
@@ -190,25 +172,12 @@ public abstract class ModbusRequest extends ModbusMessageImpl {
 		case Modbus.READ_FILE_RECORD:
 			request = new ReadFileRecordRequest();
 			break;
-		case Modbus.WRITE_FILE_RECORD:
-			request = new WriteFileRecordRequest();
-			break;
-		case Modbus.MASK_WRITE_REGISTER:
-			request = new MaskWriteRegisterRequest();
-			break;
-		case Modbus.READ_WRITE_MULTIPLE:
-			request = new ReadWriteMultipleRequest();
-			break;
 		case Modbus.READ_FIFO_QUEUE:
 			request = new ReadFIFOQueueRequest();
 			break;
-        case Modbus.READ_MEI:
-            request = new ReadMEIRequest();
-            break;
-        case Modbus.READ_LOG_FILE:
-            request = new ReadFileTransferRequest();
-            break;
-
+		case Modbus.READ_MEI:
+			request = new ReadMEIRequest();
+			break;
 		default:
 			request = new IllegalFunctionRequest(functionCode);
 			break;

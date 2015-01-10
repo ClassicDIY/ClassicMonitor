@@ -140,22 +140,48 @@ public final class ReadCommEventLogResponse extends ModbusResponse {
 	 * getEvent -- get an event from the event log.
 	 */
 	public int getEvent(int index) {
-		if (m_Events == null || index < 0 || index >= m_EventCount)
+		if (m_Events == null || index < 0 || index >= m_Events.length)
 			throw new IndexOutOfBoundsException("index = " + index
-					+ ", limit = " + m_EventCount);
+					+ ", limit = " + m_Events.length);
 		
 		return m_Events[index] & 0xFF;
+	}
+	
+	public byte[] getEvents() {
+		if (m_Events == null)
+			return null;
+		
+		byte[] result = new byte[m_Events.length];
+		System.arraycopy(m_Events, 0, result, 0, m_Events.length);
+		
+		return result;
 	}
 	
 	/**
 	 * setEvent -- store an event number in the event log
 	 */
 	public void setEvent(int index, int event) {
-		if (m_Events == null || index < 0 || index >= m_EventCount)
+		if (m_Events == null || index < 0 || index >= m_Events.length)
 			throw new IndexOutOfBoundsException("index = " + index
-					+ ", limit = " + m_EventCount);
+					+ ", limit = " + m_Events.length);
 		
 		m_Events[index] = (byte) event;	
+	}
+	
+	public void setEvents(byte[] events) {
+		if (events.length > 64)
+			throw new IllegalArgumentException("events list too big (> 64 bytes)");
+
+		m_Events = new byte[events.length];
+		if (m_Events.length > 0)
+			System.arraycopy(events, 0, m_Events, 0, events.length);
+	}
+	
+	public void setEvents(int count) {
+		if (count < 0 || count > 64)
+			throw new IllegalArgumentException("invalid event list size (0 <= count <= 64)");
+		
+		m_Events = new byte[count];
 	}
 
 	/**
@@ -175,21 +201,19 @@ public final class ReadCommEventLogResponse extends ModbusResponse {
 		m_EventCount = din.readShort();
 		m_MessageCount = din.readShort();
 		
-		if (m_ByteCount != 6 + m_EventCount)
-			throw new IOException("Undetected error reading packet");
+		m_Events = new byte[m_ByteCount - 6];
 		
-		m_Events = new byte[m_EventCount];
-		
-		din.readFully(m_Events, 0, m_EventCount);
+		if (m_Events.length > 0)
+			din.readFully(m_Events, 0, m_Events.length);
 	}
 
 	/**
 	 * getMessage -- format the message into a byte array.
 	 */
 	public byte[] getMessage() {
-		byte result[] = new byte[m_EventCount + 7];
+		byte result[] = new byte[m_Events.length + 7];
 
-		result[0] = (byte) (m_ByteCount = m_EventCount + 6);
+		result[0] = (byte) (m_ByteCount = m_Events.length + 6);
 		result[1] = (byte) (m_Status >> 8);
 		result[2] = (byte) (m_Status & 0xFF);
 		result[3] = (byte) (m_EventCount >> 8);
@@ -197,7 +221,7 @@ public final class ReadCommEventLogResponse extends ModbusResponse {
 		result[5] = (byte) (m_MessageCount >> 8);
 		result[6] = (byte) (m_MessageCount & 0xFF);
 		
-		for (int i = 0;i < m_EventCount;i++)
+		for (int i = 0;i < m_Events.length;i++)
 			result[7 + i] = m_Events[i];
 
 		return result;

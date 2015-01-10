@@ -81,7 +81,8 @@ import ca.farrelltonsolar.j2modlite.Modbus;
  * @author Julie Haugh (jfh@ghgande.com)
  * @version 1.2rc1-ghpc (09/27/2010)
  */
-public final class ReportSlaveIDResponse extends ModbusResponse {
+public final class ReportSlaveIDResponse
+    extends ModbusResponse {
 
 	/*
 	 * Message fields.

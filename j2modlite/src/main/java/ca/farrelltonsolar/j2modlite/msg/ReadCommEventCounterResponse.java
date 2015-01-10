@@ -112,6 +112,9 @@ public final class ReadCommEventCounterResponse extends ModbusResponse {
 	 * @param status
 	 */
 	public void setStatus(int status) {
+		if (status != 0 && status != 0xFFFF)
+			throw new IllegalArgumentException("Illegal status value: " + status);
+		
 		m_Status = status;
 	}
 

@@ -171,7 +171,7 @@ public abstract class ModbusMessageImpl implements ModbusMessage {
 	 * The function code should be a 1-byte non negative integer value valid in
 	 * the range of 0-127.<br>
 	 * Function codes are ordered in conformance classes their values are
-	 * specified in <tt>ca.farrelltonsolar.j2modlite.Modbus</tt>.
+	 * specified in <tt>ca.farrelltonsolar.j2mod.Modbus</tt>.
 	 * 
 	 * @param code
 	 *            the code of the function to be set.
@@ -243,13 +243,18 @@ public abstract class ModbusMessageImpl implements ModbusMessage {
 	 */
 	public abstract void readData(DataInput din) throws IOException;
 
+	/**
+	 * getOutputLength -- Return the actual packet size in bytes
+	 * 
+	 * The actual packet size, plus any CRC or header, will be returned.
+	 */
 	public int getOutputLength() {
 		int l = 2 + getDataLength();
 		if (!isHeadless()) {
-			l = l + 6;
+			l = l + 4;
 		}
 		return l;
-	}// getOutputLength
+	}
 
 	/*** END Transportable *******************************/
 

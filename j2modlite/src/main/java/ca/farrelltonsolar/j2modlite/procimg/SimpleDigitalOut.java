@@ -42,7 +42,8 @@ package ca.farrelltonsolar.j2modlite.procimg;
  * @author Dieter Wimberger
  * @version 1.2rc1 (09/11/2004)
  */
-public class SimpleDigitalOut implements DigitalOut {
+public class SimpleDigitalOut 
+    implements DigitalOut {
 
   /**
    * Field for the digital out state.

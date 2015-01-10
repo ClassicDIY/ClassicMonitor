@@ -71,10 +71,9 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 import ca.farrelltonsolar.j2modlite.Modbus;
-
-import ca.farrelltonsolar.j2modlite.msg.*;
 import ca.farrelltonsolar.j2modlite.procimg.InputRegister;
 import ca.farrelltonsolar.j2modlite.procimg.SimpleInputRegister;
+import ca.farrelltonsolar.j2modlite.procimg.SimpleRegister;
 
 /**
  * Class implementing a <tt>ReadFIFOQueueResponse</tt>.
@@ -105,8 +104,30 @@ public final class ReadFIFOQueueResponse extends ModbusResponse {
 	 * 
 	 * @return
 	 */
-	public void setWordCount(int ref) {
+	public synchronized void setWordCount(int ref) {
+		if (ref < 0 || ref > 31)
+			throw new IllegalArgumentException();
+		
+		int	oldCount = m_Count;
+		InputRegister newRegisters[] = new InputRegister[ref];
+		
 		m_Count = ref;
+		
+		for (int i = 0;i < ref;i++) {
+			if (i < oldCount)
+				newRegisters[i] = m_Registers[i];
+			else
+				newRegisters[i] = new SimpleRegister(0);
+		}
+	}
+	
+	public int[] getRegisters() {
+		int	values[] = new int[m_Count];
+		
+		for (int i = 0;i < m_Count;i++)
+			values[i] = getRegister(i);
+		
+		return values;
 	}
 	
 	public int getRegister(int index) {
@@ -118,7 +139,7 @@ public final class ReadFIFOQueueResponse extends ModbusResponse {
 	 * 
 	 * @param status
 	 */
-	public void setRegisters(InputRegister[] regs) {
+	public synchronized void setRegisters(InputRegister[] regs) {
 		m_Registers = regs;
 		if (regs == null) {
 			m_Count = 0;
@@ -143,6 +164,19 @@ public final class ReadFIFOQueueResponse extends ModbusResponse {
 	 * such as for Modbus/TCP, it will have been read already.
 	 */
 	public void readData(DataInput din) throws IOException {
+		int byteCount;
+		
+		/*
+		 * Read and discard the byte count.  There's no way to indicate
+		 * the packet was inconsistent, other than throwing an I/O
+		 * exception for an invalid packet format ...
+		 */
+		byteCount = din.readShort();
+		
+		/*
+		 * The first register is the number of registers which
+		 * follow.  Save that as m_Count, not as a register.
+		 */
 		m_Count = din.readShort();
 		m_Registers = new InputRegister[m_Count];
 		
@@ -171,12 +205,16 @@ public final class ReadFIFOQueueResponse extends ModbusResponse {
 	}
 	
 	/**
-	 * Constructs a new <tt>ReadCommEventLogResponse</tt> instance.
+	 * Constructs a new <tt>ReadFIFOQueueResponse</tt> instance.
 	 */
 	public ReadFIFOQueueResponse() {
 		super();
 
-		setFunctionCode(Modbus.READ_COMM_EVENT_LOG);
+		setFunctionCode(Modbus.READ_FIFO_QUEUE);
+		
+		m_Count = 0;
+		m_Registers = new InputRegister[0];
+		
 		setDataLength(7);
 	}
 }

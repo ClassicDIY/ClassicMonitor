@@ -110,29 +110,12 @@ public abstract class ModbusResponse extends ModbusMessageImpl {
         ModbusResponse response = null;
 
         switch (functionCode) {
-            case Modbus.READ_COILS:
-                response = new ReadCoilsResponse();
-                break;
-            case Modbus.READ_INPUT_DISCRETES:
-                response = new ReadInputDiscretesResponse();
-                break;
+
             case Modbus.READ_MULTIPLE_REGISTERS:
                 response = new ReadMultipleRegistersResponse();
                 break;
             case Modbus.READ_INPUT_REGISTERS:
                 response = new ReadInputRegistersResponse();
-                break;
-            case Modbus.WRITE_COIL:
-                response = new WriteCoilResponse();
-                break;
-            case Modbus.WRITE_SINGLE_REGISTER:
-                response = new WriteSingleRegisterResponse();
-                break;
-            case Modbus.WRITE_MULTIPLE_COILS:
-                response = new WriteMultipleCoilsResponse();
-                break;
-            case Modbus.WRITE_MULTIPLE_REGISTERS:
-                response = new WriteMultipleRegistersResponse();
                 break;
             case Modbus.READ_EXCEPTION_STATUS:
                 response = new ReadExceptionStatusResponse();
@@ -152,21 +135,13 @@ public abstract class ModbusResponse extends ModbusMessageImpl {
             case Modbus.READ_LOG_FILE:
                 response = new ReadFileTransferResponse();
                 break;
-            case Modbus.WRITE_FILE_RECORD:
-                response = new WriteFileRecordResponse();
-                break;
-            case Modbus.MASK_WRITE_REGISTER:
-                response = new MaskWriteRegisterResponse();
-                break;
-            case Modbus.READ_WRITE_MULTIPLE:
-                response = new ReadWriteMultipleResponse();
-                break;
             case Modbus.READ_FIFO_QUEUE:
                 response = new ReadFIFOQueueResponse();
                 break;
             case Modbus.READ_MEI:
                 response = new ReadMEIResponse();
                 break;
+
             default:
                 if ((functionCode & 0x80) != 0) {
                     response = new ExceptionResponse(functionCode);

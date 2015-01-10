@@ -49,7 +49,11 @@ public class BundleCache {
         return mInstance;
     }
 
-    public void clearCache(String key) {
+    public synchronized void clearCache(String key) {
+        clearCacheSub(key);
+    }
+
+    private void clearCacheSub(String key) {
         String fileName = namePrefix + key;
         try {
             context.deleteFile(fileName);
@@ -58,7 +62,7 @@ public class BundleCache {
         }
     }
 
-    public void putBundle(String key, Bundle bundle) {
+    public synchronized void putBundle(String key, Bundle bundle) {
         if (bundle == null) {
             throw new IllegalArgumentException("bundle is null");
         }
@@ -76,12 +80,12 @@ public class BundleCache {
             fos.close();
             Log.d(getClass().getName(), String.format("putBundle completed for, ex: %s", fileName));
         } catch (Exception ex) {
-            clearCache(key);
+            clearCacheSub(key);
             Log.w(getClass().getName(), String.format("putBundle failed, on: %s ex: %s", fileName, ex));
         }
     }
 
-    public Bundle getBundle(String key) {
+    public synchronized Bundle getBundle(String key) {
         if (key.equals("") || key == null) {
             throw new IllegalArgumentException("key is empty or null");
         }
@@ -97,7 +101,7 @@ public class BundleCache {
             Log.d(getClass().getName(), String.format("getBundle completed for, ex: %s", fileName));
             return b;
         } catch (Exception ex) {
-            clearCache(key);
+            clearCacheSub(key);
             Log.w(getClass().getName(), String.format("getBundle failed on %s ex: %s", fileName, ex));
             return null;
         }

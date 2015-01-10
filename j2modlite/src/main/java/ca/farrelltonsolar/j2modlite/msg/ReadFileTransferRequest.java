@@ -22,7 +22,7 @@ public class ReadFileTransferRequest extends ModbusRequest {
     public ReadFileTransferRequest() {
         super();
 
-        setFunctionCode(Modbus.READ_CUSTOM);
+        setFunctionCode(Modbus.READ_LOG_FILE);
         setDataLength(10);
     }
 
@@ -84,8 +84,8 @@ public class ReadFileTransferRequest extends ModbusRequest {
         long address = Address();
         result[0] = (byte) (m_Device & 0xff);
         result[1] = (byte) 64; // data_len
-        result[2] = (byte) 0xFF; // data_len
-        result[3] = (byte) 0xFF; // data_len
+        result[2] = (byte) 0xFF; // reserved
+        result[3] = (byte) 0xFF; // reserved
         result[4] = (byte) ((address >> 24) & 0xff);
         result[5] = (byte) ((address >> 16) & 0xff);
         result[6] = (byte) ((address >> 8) & 0xff);

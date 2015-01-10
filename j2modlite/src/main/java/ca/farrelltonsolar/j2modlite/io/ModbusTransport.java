@@ -37,6 +37,7 @@ import java.io.IOException;
 
 import ca.farrelltonsolar.j2modlite.ModbusIOException;
 import ca.farrelltonsolar.j2modlite.msg.ModbusMessage;
+import ca.farrelltonsolar.j2modlite.msg.ModbusRequest;
 import ca.farrelltonsolar.j2modlite.msg.ModbusResponse;
 
 
@@ -59,6 +60,13 @@ public interface ModbusTransport {
   public void close() throws IOException;
   
   /**
+   * Creates a Modbus transaction for the underlying transport.
+   * 
+   * @return the new transaction
+   */
+  public ModbusTransaction createTransaction();
+
+  /**
    * Writes a <tt<ModbusMessage</tt> to the
    * output stream of this <tt>ModbusTransport</tt>.
    * <p>
@@ -78,7 +86,7 @@ public interface ModbusTransport {
    *         read properly from the raw input stream of
    *         this <tt>ModbusTransport</tt>.
    */
-  //public ModbusRequest readRequest() throws ModbusIOException;
+  public ModbusRequest readRequest() throws ModbusIOException;
 
   /**
    * Reads a <tt>ModbusResponse</tt> from the

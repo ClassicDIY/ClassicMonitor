@@ -62,14 +62,14 @@ public interface ProcessImageFactory {
    * @param state true if set, false otherwise.
    * @return a DigitalIn instance.
    */
-  public ca.farrelltonsolar.j2modlite.procimg.DigitalIn createDigitalIn(boolean state);
+  public DigitalIn createDigitalIn(boolean state);
 
   /**
    * Returns a new DigitalOut instance.
    *
    * @return a DigitalOut instance.
    */
-  public ca.farrelltonsolar.j2modlite.procimg.DigitalOut createDigitalOut();
+  public DigitalOut createDigitalOut();
 
   /**
    * Returns a new DigitalOut instance with the
@@ -85,7 +85,7 @@ public interface ProcessImageFactory {
    *
    * @return an InputRegister instance.
    */
-  public ca.farrelltonsolar.j2modlite.procimg.InputRegister createInputRegister();
+  public InputRegister createInputRegister();
 
   /**
    * Returns a new InputRegister instance with a
@@ -102,7 +102,7 @@ public interface ProcessImageFactory {
    *
    * @return a Register instance.
    */
-  public ca.farrelltonsolar.j2modlite.procimg.Register createRegister();
+  public Register createRegister();
 
   /**
    * Returns a new Register instance with a

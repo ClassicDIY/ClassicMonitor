@@ -35,17 +35,15 @@ package ca.farrelltonsolar.j2modlite.facade;
 
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import ca.farrelltonsolar.j2modlite.ModbusException;
 import ca.farrelltonsolar.j2modlite.io.ModbusTCPTransaction;
+import ca.farrelltonsolar.j2modlite.msg.ModbusResponse;
 import ca.farrelltonsolar.j2modlite.msg.ReadFileTransferRequest;
 import ca.farrelltonsolar.j2modlite.msg.ReadFileTransferResponse;
-import ca.farrelltonsolar.j2modlite.msg.ReadInputRegistersRequest;
-import ca.farrelltonsolar.j2modlite.msg.ReadInputRegistersResponse;
 import ca.farrelltonsolar.j2modlite.msg.ReadMultipleRegistersRequest;
 import ca.farrelltonsolar.j2modlite.msg.ReadMultipleRegistersResponse;
-import ca.farrelltonsolar.j2modlite.msg.WriteMultipleRegistersRequest;
-import ca.farrelltonsolar.j2modlite.msg.WriteSingleRegisterRequest;
 import ca.farrelltonsolar.j2modlite.net.TCPMasterConnection;
 import ca.farrelltonsolar.j2modlite.procimg.Register;
 
@@ -60,29 +58,45 @@ public class ModbusTCPMaster {
     private TCPMasterConnection m_Connection;
     private InetAddress m_SlaveAddress;
     private ModbusTCPTransaction m_Transaction;
-    private ReadFileTransferRequest m_FileTransferRequest;
-    private ReadInputRegistersRequest m_ReadInputRegistersRequest;
     private ReadMultipleRegistersRequest m_ReadMultipleRegistersRequest;
-    private WriteSingleRegisterRequest m_WriteSingleRegisterRequest;
-    private WriteMultipleRegistersRequest m_WriteMultipleRegistersRequest;
+    private ReadFileTransferRequest m_FileTransferRequest;
     private boolean m_Reconnecting = false;
-    int _retries = 0;
 
-    public ModbusTCPMaster(InetAddress addr, int port, int unitId) {
-        m_SlaveAddress = addr;
-        m_Connection = new TCPMasterConnection(m_SlaveAddress);
-        m_ReadInputRegistersRequest = new ReadInputRegistersRequest();
-        m_ReadInputRegistersRequest.setUnitID(unitId);
-        m_ReadMultipleRegistersRequest = new ReadMultipleRegistersRequest();
-        m_ReadMultipleRegistersRequest.setUnitID(unitId);
-        m_FileTransferRequest = new ReadFileTransferRequest();
-        m_FileTransferRequest.setUnitID(unitId);
-        m_WriteSingleRegisterRequest = new WriteSingleRegisterRequest();
-        m_WriteSingleRegisterRequest.setUnitID(unitId);
-        m_WriteMultipleRegistersRequest = new WriteMultipleRegistersRequest();
-        m_WriteMultipleRegistersRequest.setUnitID(unitId);
+    /**
+     * Constructs a new master facade instance for communication
+     * with a given slave.
+     *
+     * @param addr an internet address as resolvable IP name or IP number,
+     *             specifying the slave to communicate with.
+     */
+    public ModbusTCPMaster(String addr) {
+        try {
+            m_SlaveAddress = InetAddress.getByName(addr);
+            m_Connection = new TCPMasterConnection(m_SlaveAddress);
+            m_FileTransferRequest = new ReadFileTransferRequest();
+            m_ReadMultipleRegistersRequest = new ReadMultipleRegistersRequest();
+
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }//constructor
+
+    /**
+     * Constructs a new master facade instance for communication
+     * with a given slave.
+     *
+     * @param addr an internet address as resolvable IP name or IP number,
+     *             specifying the slave to communicate with.
+     * @param port the port the slave is listening to.
+     */
+    public ModbusTCPMaster(String addr, int port) {
+        this(addr);
         m_Connection.setPort(port);
     }//constructor
+
+    public boolean isConnected() {
+        return m_Connection.isConnected();
+    }
 
     /**
      * Connects this <tt>ModbusTCPMaster</tt> with the slave.
@@ -95,7 +109,6 @@ public class ModbusTCPMaster {
             m_Connection.connect();
             m_Transaction = new ModbusTCPTransaction(m_Connection);
             m_Transaction.setReconnecting(m_Reconnecting);
-            m_Transaction.setRetries(_retries);
         }
     }//connect
 
@@ -123,10 +136,6 @@ public class ModbusTCPMaster {
         }
     }//setReconnecting
 
-    public void setRetries(int retries) {
-        _retries = retries;
-    }
-
     /**
      * Tests if a constant connection is maintained or if a new
      * connection is established for every transaction.
@@ -137,32 +146,6 @@ public class ModbusTCPMaster {
     public boolean isReconnecting() {
         return m_Reconnecting;
     }//isReconnecting
-
-    /**
-     * Tests if a constant connection is maintained or if a new
-     * connection is established for every transaction.
-     *
-     * @return true if a new connection should be established for each
-     * transaction, false otherwise.
-     */
-    public boolean isConnected() {
-        boolean rVal = false;
-        if (m_Connection != null) {
-            rVal = m_Connection.isConnected();
-        }
-        return rVal;
-    }
-
-
-
-    public synchronized ReadInputRegistersResponse readInputRegisters(int ref, int count)
-            throws ModbusException {
-        m_ReadInputRegistersRequest.setReference(ref);
-        m_ReadInputRegistersRequest.setWordCount(count);
-        m_Transaction.setRequest(m_ReadInputRegistersRequest);
-        m_Transaction.execute();
-        return ((ReadInputRegistersResponse) m_Transaction.getResponse());
-    }//readInputRegisters
 
     /**
      * Reads a given number of registers from the slave.
@@ -176,13 +159,17 @@ public class ModbusTCPMaster {
      * @throws ModbusException if an I/O error, a slave exception or
      *                         a transaction error occurs.
      */
-    public synchronized ReadMultipleRegistersResponse readMultipleRegisters(int ref, int count)
+    public synchronized Register[] readMultipleRegisters(int ref, int count)
             throws ModbusException {
         m_ReadMultipleRegistersRequest.setReference(ref);
         m_ReadMultipleRegistersRequest.setWordCount(count);
         m_Transaction.setRequest(m_ReadMultipleRegistersRequest);
         m_Transaction.execute();
-        return ((ReadMultipleRegistersResponse) m_Transaction.getResponse());
+        ModbusResponse response = m_Transaction.getResponse();
+        if (response != null) {
+            return ((ReadMultipleRegistersResponse) response).getRegisters();
+        }
+        return null;
     }//readMultipleRegisters
 
     public synchronized ReadFileTransferResponse readFileTransfer(int day, int category, int device)
@@ -194,38 +181,5 @@ public class ModbusTCPMaster {
         m_Transaction.execute();
         return ((ReadFileTransferResponse) m_Transaction.getResponse());
     }
-    /**
-     * Writes a single register to the slave.
-     *
-     * @param ref      the offset of the register to be written.
-     * @param register a <tt>Register</tt> holding the value of the register
-     *                 to be written.
-     * @throws ModbusException if an I/O error, a slave exception or
-     *                         a transaction error occurs.
-     */
-    public synchronized void writeSingleRegister(int ref, Register register)
-            throws ModbusException {
-        m_WriteSingleRegisterRequest.setReference(ref);
-        m_WriteSingleRegisterRequest.setRegister(register);
-        m_Transaction.setRequest(m_WriteSingleRegisterRequest);
-        m_Transaction.execute();
-    }//writeSingleRegister
-
-    /**
-     * Writes a number of registers to the slave.
-     *
-     * @param ref       the offset of the register to start writing to.
-     * @param registers a <tt>Register[]</tt> holding the values of
-     *                  the registers to be written.
-     * @throws ModbusException if an I/O error, a slave exception or
-     *                         a transaction error occurs.
-     */
-    public synchronized void writeMultipleRegisters(int ref, Register[] registers)
-            throws ModbusException {
-        m_WriteMultipleRegistersRequest.setReference(ref);
-        m_WriteMultipleRegistersRequest.setRegisters(registers);
-        m_Transaction.setRequest(m_WriteMultipleRegistersRequest);
-        m_Transaction.execute();
-    }//writeMultipleRegisters
 
 }//class ModbusTCPMaster

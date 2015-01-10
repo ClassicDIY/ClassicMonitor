@@ -33,7 +33,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import ca.farrelltonsolar.j2modlite.ModbusException;
@@ -278,14 +277,14 @@ public class UDPListener extends Service {
                                 Bundle info = modbus.getChargeControllerInformation();
                                 currentChargeControllers.update(info, socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), true);
                                 break;
-                            } catch (ModbusException e) {
+                            } catch (Exception e) {
                                 Log.d(getClass().getName(), "Failed to get unit info" + e);
                                 removeFromAlreadyUpdatedList(socketAddress);
                             } finally {
                                 modbus.disconnect();
                             }
                         }
-                    } catch (UnknownHostException e) {
+                    } catch (Exception e) {
                         currentChargeControllers.setReachable(socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), false);
                         Log.d(getClass().getName(), String.format("Failed to connect to &s ex:%s", socketAddress.toString(), e));
                     }

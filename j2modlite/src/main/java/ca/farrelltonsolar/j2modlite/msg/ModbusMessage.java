@@ -109,7 +109,7 @@ public interface ModbusMessage extends Transportable {
 	 * 
 	 * <p>
 	 * Function codes are ordered in conformance classes their values are
-	 * specified in <tt>ca.farrelltonsolar.j2modlite.Modbus</tt>.
+	 * specified in <tt>ca.farrelltonsolar.j2mod.Modbus</tt>.
 	 * 
 	 * @return the function code as <tt>int</tt>.
 	 * 
