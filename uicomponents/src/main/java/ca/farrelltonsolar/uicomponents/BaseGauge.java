@@ -71,7 +71,7 @@ public class BaseGauge extends BaseComponent {
     protected float mMinorTicksLength;
 
     protected int mDefaultColor = Color.rgb(180, 180, 180);
-    protected double mMajorTickPercentOfMax;
+    protected double mMajorTickPercentOfRange;
     protected int mMinorTicksPerDivision;
 
     protected String mGaugeTitle;
@@ -159,8 +159,6 @@ public class BaseGauge extends BaseComponent {
     }
 
     public void setScaleStart(float scaleStart) {
-        if (scaleStart < 0 || mBiDirectional)
-            scaleStart = 0;
         if (mScaleStartValue != scaleStart) {
             this.mScaleStartValue = scaleStart;
             if (mScaleEndValue < mScaleStartValue)
@@ -206,15 +204,15 @@ public class BaseGauge extends BaseComponent {
         }
     }
 
-    public double getMajorTickPercentOfMax() {
-        return mMajorTickPercentOfMax;
+    public double getMajorTickPercentOfRange() {
+        return mMajorTickPercentOfRange;
     }
 
-    public void setMajorTickPercentOfMax(double val) {
+    public void setMajorTickPercentOfRange(double val) {
         if (val <= 0 || val > 100)
             throw new IllegalArgumentException("Bad value specified as a major tick step percent.");
-        if (mMajorTickPercentOfMax != val) {
-            this.mMajorTickPercentOfMax = val;
+        if (mMajorTickPercentOfRange != val) {
+            this.mMajorTickPercentOfRange = val;
             invalidateAll();
         }
     }
@@ -412,7 +410,7 @@ public class BaseGauge extends BaseComponent {
 
     private void updateSizes() {
         if (!isInEditMode()) {
-            mMajorTickStepValue = (float) ((mScaleEndValue - mScaleStartValue) * mMajorTickPercentOfMax / 100);
+            mMajorTickStepValue = (float) ((mScaleEndValue - mScaleStartValue) * mMajorTickPercentOfRange / 100);
             if (mMajorTickStepValue < 1) {
                 mMajorTickStepValue = 1;
             }
@@ -454,7 +452,9 @@ public class BaseGauge extends BaseComponent {
         float minimumValue = mBiDirectional ? -mScaleEndValue : mScaleStartValue;
         if (mCurrentValue < minimumValue)
             mCurrentValue = minimumValue;
-        float angle = mBiDirectional ? mScaleStartAngle + mAvailableAngle / 2 + mCurrentValue * (mAvailableAngle / 2) / mScaleEndValue : mScaleStartAngle + (mCurrentValue * (mAvailableAngle) / mScaleEndValue);
+        float pos = mScaleStartValue < 0 ? mCurrentValue + Math.abs(mScaleStartValue) : mCurrentValue;
+        float availableValues = mScaleEndValue - mScaleStartValue;
+        float angle = mBiDirectional ? mScaleStartAngle + mAvailableAngle / 2 + pos * (mAvailableAngle / 2) / availableValues : mScaleStartAngle + (pos * mAvailableAngle / availableValues);
 // this does not work on emulator when HW acc is enabled (libc crash)
 //        setNeedleShadowPosition(angle);
         canvas.save(Canvas.MATRIX_SAVE_FLAG);
@@ -497,7 +497,7 @@ public class BaseGauge extends BaseComponent {
         // Set the paint for that size.
         mTickLabelTextPaint.setTextSize(desiredTextSize);
 
-        float curProgress = 0;
+        float curProgress = mScaleStartValue;
         float currentAngle = clockwise ? startAngle : endAngle;
         while (currentAngle <= endAngle && currentAngle >= startAngle) {
             canvas.drawLine(
@@ -801,7 +801,7 @@ public class BaseGauge extends BaseComponent {
         setScaleEnd(a.getInteger(R.styleable.Gauge_scaleEndValue, 100));
         mScaleStartAngle = a.getInteger(R.styleable.Gauge_scaleStartAngle, -70);
         mScaleEndAngle = a.getInteger(R.styleable.Gauge_scaleEndAngle, 250);
-        setMajorTickPercentOfMax(a.getInteger(R.styleable.Gauge_majorTickPercentOfMax, 10));
+        setMajorTickPercentOfRange(a.getFloat(R.styleable.Gauge_majorTickPercentOfRange, 10));
         setMinorTicksPerDivision(a.getInteger(R.styleable.Gauge_minorTicksPerDivision, 4));
 
         mShowReading = a.getBoolean(R.styleable.Gauge_showReading, false);

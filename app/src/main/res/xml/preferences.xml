@@ -2,6 +2,15 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <PreferenceCategory android:title="Gauges">
+
+        <CheckBoxPreference
+            android:key="UseFahrenheit"
+            android:summary="Use Fahrenheit scale"
+            android:disableDependentsState="false"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+    
     <PreferenceCategory android:title="@string/PVOutputPreferenceTitle">
 
         <CheckBoxPreference

@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import ca.farrelltonsolar.uicomponents.BaseGauge;
+import ca.farrelltonsolar.uicomponents.TemperatureGauge;
 
 /**
  * Created by Graham on 14/12/2014.
@@ -28,47 +29,64 @@ import ca.farrelltonsolar.uicomponents.BaseGauge;
 public class TemperatureFragment extends ReadingFramentBase {
 
     public static int TabTitle = R.string.TemperatureTabTitle;
-
+    private boolean useFahrenheit;
+    
     public TemperatureFragment() {
         super(R.layout.fragment_temperature);
     }
 
     @Override
     public void initializeReadings(View view, Bundle savedInstanceState) {
-        BaseGauge gaugeView = (BaseGauge) this.getView().findViewById(R.id.BatTemperature);
-        gaugeView.setGreenRange(0, 60.0);
+        useFahrenheit = MonitorApplication.chargeControllers().useFahrenheit();
+        SetScale();
+    }
 
-        gaugeView = (BaseGauge) this.getView().findViewById(R.id.FETTemperature);
-        gaugeView.setGreenRange(0, 60.0);
-
-        gaugeView = (BaseGauge) this.getView().findViewById(R.id.PCBTemperature);
-        gaugeView.setGreenRange(0, 60.0);
+    private void SetScale() {
+        TemperatureGauge gaugeView = (TemperatureGauge) this.getView().findViewById(R.id.BatTemperature);
+        gaugeView.setFahrenheit(useFahrenheit);
+        gaugeView = (TemperatureGauge) this.getView().findViewById(R.id.FETTemperature);
+        gaugeView.setFahrenheit(useFahrenheit);
+        gaugeView = (TemperatureGauge) this.getView().findViewById(R.id.PCBTemperature);
+        gaugeView.setFahrenheit(useFahrenheit);
     }
 
     @Override
     public void setReadings(Readings reading) {
         try {
-
             BaseGauge gaugeView = (BaseGauge) this.getView().findViewById(R.id.BatTemperature);
             float batteryTemp = reading.getFloat(RegisterName.BatTemperature);
-            gaugeView.setTargetValue(batteryTemp);
+            gaugeView.setTargetValue(toSelectedScale(batteryTemp));
 
             gaugeView = (BaseGauge) this.getView().findViewById(R.id.FETTemperature);
             float fetTemp = reading.getFloat(RegisterName.FETTemperature);
-            gaugeView.setTargetValue(fetTemp);
+            gaugeView.setTargetValue(toSelectedScale(fetTemp));
 
             gaugeView = (BaseGauge) this.getView().findViewById(R.id.PCBTemperature);
             float pcbTemp = reading.getFloat(RegisterName.PCBTemperature);
-            gaugeView.setTargetValue(pcbTemp);
+            gaugeView.setTargetValue(toSelectedScale(pcbTemp));
 
         } catch (Exception ignore) {
 
         }
     }
+    
+    private float toSelectedScale (float celcius) {
+        return useFahrenheit ? celcius * 1.8f + 32 : celcius;
+        
+    }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+    }
+
+    @Override
+    public void onResume() {
+        if (MonitorApplication.chargeControllers().useFahrenheit() != useFahrenheit) { // changed?
+            useFahrenheit = MonitorApplication.chargeControllers().useFahrenheit();
+            SetScale();
+        }
+        super.onResume();
     }
 
     @Override

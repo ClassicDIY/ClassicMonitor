@@ -28,7 +28,8 @@ import android.widget.Button;
 
 public class Settings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private CheckBoxPreference _uploadToPVOutput;
+    private CheckBoxPreference uploadToPVOutput;
+    private CheckBoxPreference useFahrenheit;
     private EditTextPreference _SID;
     private EditTextPreference _APIKey;
 
@@ -57,9 +58,10 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             //On click function
             public void onClick(View view) {
                 MonitorApplication.chargeControllers().setAPIKey(_APIKey.getText());
+                MonitorApplication.chargeControllers().setFahrenheit(useFahrenheit.isChecked());
                 ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
                 if (cc != null) {
-                    cc.setUploadToPVOutput(_uploadToPVOutput.isChecked());
+                    cc.setUploadToPVOutput(uploadToPVOutput.isChecked());
                     cc.setSID(_SID.getText());
                 }
                 Settings.this.finish();
@@ -67,22 +69,25 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
         });
 
         try {
-            _uploadToPVOutput = (CheckBoxPreference) findPreference(Constants.UploadToPVOutput);
+            uploadToPVOutput = (CheckBoxPreference) findPreference(Constants.UploadToPVOutput);
+            useFahrenheit = (CheckBoxPreference) findPreference(Constants.UseFahrenheit);
             _SID = (EditTextPreference) findPreference(Constants.SID);
             _APIKey = (EditTextPreference) findPreference(Constants.APIKey);
+
+            useFahrenheit.setChecked(MonitorApplication.chargeControllers().useFahrenheit());
             ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
             if (cc != null) {
-                _uploadToPVOutput.setChecked(cc.uploadToPVOutput());
+                uploadToPVOutput.setChecked(cc.uploadToPVOutput());
                 _SID.setSummary(cc.getSID());
             }
-            _uploadToPVOutput.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            uploadToPVOutput.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     boolean isEnabled = ((Boolean) newValue).booleanValue();
                     UploadToPVOutputEnabled(isEnabled);
                     return true;
                 }
             });
-            UploadToPVOutputEnabled(_uploadToPVOutput.isChecked());
+            UploadToPVOutputEnabled(uploadToPVOutput.isChecked());
             _APIKey.setSummary(MonitorApplication.chargeControllers().aPIKey());
             Preference button = (Preference) findPreference("ResetLogs");
             button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

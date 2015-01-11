@@ -7,6 +7,7 @@
         <attr name="showRim" format="boolean" />
         <attr name="showInnerRim" format="boolean" />
         <attr name="showLeds" format="boolean" />
+        <attr name="fahrenheit" format="boolean" />
         <attr name="biDirectional" format="boolean" />
         <attr name="autoScale" format="boolean" />
 
@@ -15,7 +16,7 @@
         <attr name="scaleEndValue" format="integer" />
         <attr name="scaleStartAngle" format="integer" />
         <attr name="scaleEndAngle" format="integer" />
-        <attr name="majorTickPercentOfMax" format="integer" />
+        <attr name="majorTickPercentOfRange" format="float" />
         <attr name="minorTicksPerDivision" format="integer" />
 
         <attr name="showReading" format="boolean" />

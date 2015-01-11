@@ -42,7 +42,7 @@
             android:layout_weight="3"
 
             app:gaugeTitle="@string/PVVoltTitle"
-            app:majorTickPercentOfMax="5"
+            app:majorTickPercentOfRange="5"
             app:readingPrecision="1"
             app:readingUnit="V"
             app:register="PVVoltage"
@@ -59,7 +59,7 @@
             android:layout_weight="3"
 
             app:gaugeTitle="@string/PVCurrentTitle"
-            app:majorTickPercentOfMax="5"
+            app:majorTickPercentOfRange="5"
             app:readingPrecision="1"
             app:readingUnit="A"
             app:register="PVCurrent"
@@ -104,7 +104,7 @@
             android:layout_weight="3"
 
             app:gaugeTitle="@string/BatVoltsTitle"
-            app:majorTickPercentOfMax="5"
+            app:majorTickPercentOfRange="5"
             app:readingPrecision="1"
             app:readingUnit="V"
             app:register="BatVoltage"

@@ -26,54 +26,36 @@
     android:paddingTop="5dp"
     android:weightSum="60">
 
-    <ca.farrelltonsolar.uicomponents.BaseGauge
+    <ca.farrelltonsolar.uicomponents.TemperatureGauge
         android:id="@+id/BatTemperature"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_marginTop="10dp"
         android:layout_weight="20"
-
         app:gaugeTitle="@string/BatTemperature"
-        app:majorTickPercentOfMax="5"
-        app:readingPrecision="1"
-        app:readingUnit="&#x2103;"
         app:register="BatTemperature"
-        app:scaleEndValue="100"
-        app:scaleStartValue="0"
         app:showInnerRim="false"
         app:showReading="true" />
 
-    <ca.farrelltonsolar.uicomponents.BaseGauge
+    <ca.farrelltonsolar.uicomponents.TemperatureGauge
         android:id="@+id/FETTemperature"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_marginTop="10dp"
         android:layout_weight="20"
-
         app:gaugeTitle="@string/FETTemperature"
-        app:majorTickPercentOfMax="5"
-        app:readingPrecision="1"
-        app:readingUnit="&#x2103;"
         app:register="FETTemperature"
-        app:scaleEndValue="100"
-        app:scaleStartValue="0"
         app:showInnerRim="false"
         app:showReading="true" />
 
-    <ca.farrelltonsolar.uicomponents.BaseGauge
+    <ca.farrelltonsolar.uicomponents.TemperatureGauge
         android:id="@+id/PCBTemperature"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_marginTop="10dp"
         android:layout_weight="20"
-
         app:gaugeTitle="@string/PCBTemperature"
-        app:majorTickPercentOfMax="5"
-        app:readingPrecision="1"
-        app:readingUnit="&#x2103;"
         app:register="PCBTemperature"
-        app:scaleEndValue="100"
-        app:scaleStartValue="0"
         app:showInnerRim="false"
         app:showReading="true" />
 

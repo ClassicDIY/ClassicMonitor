@@ -115,7 +115,7 @@ public class ModbusTask extends TimerTask {
         readings = new Readings();
         dayLogEntry = new LogEntry();
         minuteLogEntry = new LogEntry();
-        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
         Log.d(getClass().getName(), String.format("ModbusTask created thread is %s", Thread.currentThread().getName()));
     }
 
@@ -219,7 +219,6 @@ public class ModbusTask extends TimerTask {
                                 loadMinuteLogs();
                             }
                         }
-                        
                         minuteLogEntry.broadcastLogs(context, Constants.CA_FARRELLTONSOLAR_CLASSIC_MINUTE_LOGS);
                     }
                 }
@@ -255,16 +254,16 @@ public class ModbusTask extends TimerTask {
             if (foundTriStar) {
                 Register[] registers = modbusMaster.readMultipleRegisters(0, 80);
                 if (registers != null && registers.length == 80) {
-
                     readings.set(RegisterName.BatVoltage, VScale(registers[24].getValue()));
                     readings.set(RegisterName.PVVoltage, VScale(registers[27].getValue()));
                     readings.set(RegisterName.BatCurrent, IScale(registers[28].getValue()));
                     readings.set(RegisterName.PVCurrent, IScale(registers[29].getValue()));
-
                     readings.set(RegisterName.Power, PScale(registers[58].getValue()));
                     readings.set(RegisterName.EnergyToday, WHr(registers[68].getValue()));
                     readings.set(RegisterName.TotalEnergy, (float) registers[57].getValue());
-
+                } else {
+                    Log.w(getClass().getName(), String.format("Modbus readMultipleRegisters returned null"));
+                    throw new ModbusException("Failed to read data from modbus");
                 }
             } else {
                 Register[] registers = modbusMaster.readMultipleRegisters(reference, 36);
@@ -278,9 +277,10 @@ public class ModbusTask extends TimerTask {
                     readings.set(RegisterName.TotalEnergy, ((registers[26].getValue() << 16) + registers[25].getValue()) / 10.0f);
                     readings.set(RegisterName.ChargeState, MSBFor(registers[19].getValue()));
                     readings.set(RegisterName.InfoFlagsBits, ((registers[30].getValue() << 16) + registers[29].getValue()));
-                    readings.set(RegisterName.BatTemperature, registers[31].getValue() / 10.0f);
-                    readings.set(RegisterName.FETTemperature, registers[32].getValue() / 10.0f);
-                    readings.set(RegisterName.PCBTemperature, registers[33].getValue() / 10.0f);
+
+                    readings.set(RegisterName.BatTemperature, (short)registers[31].getValue() / 10.0f);
+                    readings.set(RegisterName.FETTemperature, (short)registers[32].getValue() / 10.0f);
+                    readings.set(RegisterName.PCBTemperature, (short)registers[33].getValue() / 10.0f);
                     int infoFlag = registers[29].getValue();
                     readings.set(RegisterName.Aux1, (infoFlag & 0x4000) != 0);
                     readings.set(RegisterName.Aux2, (infoFlag & 0x8000) != 0);
@@ -296,15 +296,13 @@ public class ModbusTask extends TimerTask {
                         Register soc = registers2[12];
                         short socVal = soc.toShort();
                         readings.set(RegisterName.SOC, socVal);
+                    } else {
+                        Log.w(getClass().getName(), String.format("Modbus readMultipleRegisters returned null"));
+                        throw new ModbusException("Failed to read data from modbus");
                     }
                 }
-                readings.set(RegisterName.BiDirectional, foundWhizBangJr);
             }
             readings.broadcastReadings(context, Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS);
-
-        } catch (ModbusException e) {
-            Log.w(getClass().getName(), String.format("GetModbusReadings ModbusException ex: %s", e));
-            throw e;
         } catch (Exception all) {
             Log.w(getClass().getName(), String.format("GetModbusReadings Exception ex: %s", all));
             throw new ModbusException(all.getMessage());

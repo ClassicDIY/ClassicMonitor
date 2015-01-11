@@ -49,6 +49,7 @@ public class Constants {
 
 
     public static final String UploadToPVOutput = "UploadToPVOutput";
+    public static final String UseFahrenheit = "UseFahrenheit";
     public static final String APIKey = "APIKey";
     public static final String SID = "SID";
 

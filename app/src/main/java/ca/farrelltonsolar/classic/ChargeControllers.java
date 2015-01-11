@@ -31,6 +31,7 @@ public final class ChargeControllers {
     private static Context context;
     private String APIKey = "";
     private List<ChargeController> devices = new ArrayList<>();
+    private boolean useFahrenheit;
 
     // default ctor for de-serialization
     public ChargeControllers() {
@@ -77,16 +78,14 @@ public final class ChargeControllers {
                 ChargeController cc = devices.get(index);
                 if (cc.isCurrent() && index == position) {
                     return false; // already current
-                }
-                else {
+                } else {
                     cc.setIsCurrent(false);
                 }
             }
             ChargeControllerInfo cc = devices.get(position);
             if (cc.deviceType() != DeviceType.Unknown) {
                 devices.get(position).setIsCurrent(true);
-            }
-            else {
+            } else {
                 return false; // can't do it, unknown device
             }
         }
@@ -134,8 +133,7 @@ public final class ChargeControllers {
             for (ChargeController cc : devices) {
                 if (includeCurrent && cc.isCurrent()) {
                     arr.add(cc.getInetSocketAddress());
-                }
-                else if (!staticOnly || cc.isStaticIP()) {
+                } else if (!staticOnly || cc.isStaticIP()) {
                     if (!cc.isCurrent()) {
                         arr.add(cc.getInetSocketAddress());
                     }
@@ -181,9 +179,8 @@ public final class ChargeControllers {
         }
         if (updated) {
             BroadcastUpdateNotification();
-        }
-        else if (useUnitIdAsKey) { // retry matching on IP address if no cc matched UnitID
-            update (info, deviceIpAddress, port, false);
+        } else if (useUnitIdAsKey) { // retry matching on IP address if no cc matched UnitID
+            update(info, deviceIpAddress, port, false);
         }
     }
 
@@ -227,16 +224,21 @@ public final class ChargeControllers {
         broadcaster.sendBroadcast(pkg);
     }
 
-    public String aPIKey() {
-        synchronized (devices) {
-            return APIKey;
-        }
+
+    public synchronized boolean useFahrenheit() {
+        return useFahrenheit;
     }
 
-    public void setAPIKey(String APIKey) {
-        synchronized (devices) {
-            this.APIKey = APIKey;
-        }
+    public synchronized void setFahrenheit(boolean useFahrenheit) {
+        this.useFahrenheit = useFahrenheit;
+    }
+
+    public synchronized String aPIKey() {
+        return APIKey;
+    }
+
+    public synchronized void setAPIKey(String APIKey) {
+        this.APIKey = APIKey;
     }
 
     public void resetPVOutputLogs() {
