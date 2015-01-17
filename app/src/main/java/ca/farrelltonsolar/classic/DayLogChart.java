@@ -94,32 +94,37 @@ public class DayLogChart extends Fragment {
     }
 
     private void setupSpinner(MenuItem item) {
-        item.setVisible(true);
-        item.setActionView(R.layout.action_chart_select);
-        View view = MenuItemCompat.getActionView(item);
-        if (view instanceof Spinner) {
-            Spinner spinner = (Spinner) view;
-            String[] itemArray = getResources().getStringArray(R.array.day_log_chart_selection);
-            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, itemArray); //selected item will look like a spinner set from XML
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.setAdapter(spinnerArrayAdapter);
-            spinner.setSelection(MonitorApplication.chargeControllers().getCurrentChargeController().getDayLogMenuSelection(), false);
-            spinner.setOnItemSelectedListener(new OnItemSelectedListenerWrapper(new AdapterView.OnItemSelectedListener() {
+        try {
+            item.setVisible(true);
+            item.setActionView(R.layout.action_chart_select);
+            View view = MenuItemCompat.getActionView(item);
+            if (view instanceof Spinner) {
+                Spinner spinner = (Spinner) view;
+                String[] itemArray = getResources().getStringArray(R.array.day_log_chart_selection);
+                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, itemArray); //selected item will look like a spinner set from XML
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(spinnerArrayAdapter);
+                spinner.setSelection(MonitorApplication.chargeControllers().getCurrentChargeController().getDayLogMenuSelection(), false);
+                spinner.setOnItemSelectedListener(new OnItemSelectedListenerWrapper(new AdapterView.OnItemSelectedListener() {
 
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    chartView.clearSeries();
-                    if (position < mSeries.size()) {
-                        MonitorApplication.chargeControllers().getCurrentChargeController().setDayLogMenuSelection(position);
-                        chartView.addSeries(mSeries.get(position));
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        chartView.clearSeries();
+                        if (position < mSeries.size()) {
+                            MonitorApplication.chargeControllers().getCurrentChargeController().setDayLogMenuSelection(position);
+                            chartView.addSeries(mSeries.get(position));
+                        }
                     }
-                }
 
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
 
-                }
-            }));
+                    }
+                }));
+            }
+        }
+        catch (Exception ex) {
+            Log.w(getClass().getName(), String.format("Day Log Chart failed to load setupSpinner %s ex: %s", Thread.currentThread().getName(), ex));
         }
     }
 

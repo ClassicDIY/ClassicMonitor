@@ -501,7 +501,7 @@ public class ModbusTask extends TimerTask {
             minuteLogEntry.set(Constants.CLASSIC_INPUT_VOLTAGE_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_INPUT_VOLTAGE_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 10));
             minuteLogEntry.set(Constants.CLASSIC_BATTERY_VOLTAGE_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_BATTERY_VOLTAGE_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 10));
             minuteLogEntry.set(Constants.CLASSIC_OUTPUT_CURRENT_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_OUTPUT_CURRENT_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 10));
-            minuteLogEntry.set(Constants.CLASSIC_ENERGY_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_ENERGY_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 1));
+            minuteLogEntry.set(Constants.CLASSIC_ENERGY_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_ENERGY_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 10));
             minuteLogEntry.set(Constants.CLASSIC_CHARGE_STATE_HOURLY_CATEGORY, ReadLogs(requiredEntries, Constants.CLASSIC_CHARGE_STATE_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG, 256));
             Log.d(getClass().getName(), "Completed reading minute logs");
             minuteLogEntry.setLogDate(DateTime.now());
@@ -541,7 +541,8 @@ public class ModbusTask extends TimerTask {
                         if (i + index > requiredEntries - 1) {
                             break;
                         }
-                        buffer[i + index] = registerToShort(regRes.getRegister(j).toBytes()) / factor;
+                        float value = (float)registerToShort(regRes.getRegister(j).toBytes());
+                        buffer[i + index] = value / factor;
                     }
                     index += count;
                 }
