@@ -77,8 +77,14 @@ public class MonitorApplication extends Application implements Application.Activ
         InitializeChargeStateLookup();
         InitializeChargeStateTitleLookup();
         InitializeMessageLookup();
-        configuration = ComplexPreferences.getComplexPreferences(this, null, Context.MODE_PRIVATE);
-        chargeControllers = configuration.getObject("devices", ChargeControllers.class);
+        try {
+            configuration = ComplexPreferences.getComplexPreferences(this, null, Context.MODE_PRIVATE);
+            chargeControllers = configuration.getObject("devices", ChargeControllers.class);
+        }
+        catch (Exception ex) {
+            Log.w(getClass().getName(), "getComplexPreferences failed to load");
+            chargeControllers = null;
+        }
         if (chargeControllers == null) { // save empty collection
             chargeControllers = new ChargeControllers(context);
         }
