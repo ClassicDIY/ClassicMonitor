@@ -1,4 +1,4 @@
-Description
+
 Now available on Google Play at
 <https://play.google.com/store/apps/details?id=ca.farrelltonsolar.classic>
 
