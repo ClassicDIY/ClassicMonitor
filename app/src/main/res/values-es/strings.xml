@@ -91,7 +91,7 @@
     <string name="volt_unit">Voltios</string>
     <string name="menu_add">Añadir</string>
     <string name="toast_pvoutput">Carga completada a PVOutput.org</string>
-    <string name="toast_minute_logs">Registros de lectura Minuto completadas</string>
+    <string name="toast_minute_logs">Registros de lectura hora completadas</string>
     <string name="toast_day_logs">Finalizada la lectura de los registros del Día</string>
 
     <string-array name="minute_log_chart_selection">

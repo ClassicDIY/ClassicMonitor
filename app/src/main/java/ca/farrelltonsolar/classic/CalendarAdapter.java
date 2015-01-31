@@ -143,7 +143,11 @@ public class CalendarAdapter extends BaseAdapter {
                     }
                     if (highTempDays != null) {
                         if (dif >= 0 && dif < highTempDays.length) {
-                            String t = String.valueOf(highTempDays[dif] / 10.0f) + "\u00b0";
+                            float temp = highTempDays[dif] / 10.0f;
+                            if (MonitorApplication.chargeControllers().useFahrenheit()) {
+                                temp = temp * 1.8f + 32f;
+                            }
+                            String t = String.format("%.1f", temp) + "\u00b0";
                             hiTemp.setText(t);
                         }
                     }

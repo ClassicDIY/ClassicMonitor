@@ -16,6 +16,7 @@
 
 package ca.farrelltonsolar.classic;
 
+import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,7 +24,6 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
@@ -185,7 +185,7 @@ public class DayLogChart extends Fragment {
 
                 seriesEnergy = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY), 10);
                 seriesHighPower = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_POWER_DAILY_CATEGORY), 1);
-                seriesHighTemperature = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_TEMP_DAILY_CATEGORY), 10);
+                seriesHighTemperature = getLinearSeriesForTemperature(logs.getFloatArray(Constants.CLASSIC_HIGH_TEMP_DAILY_CATEGORY));
                 seriesHighPvVolts = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_PV_VOLT_DAILY_CATEGORY), 10);
                 seriesHighBatteryVolts = getLinearSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_BATTERY_VOLT_DAILY_CATEGORY), 10);
                 float[] secondsInFloat = logs.getFloatArray(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY);
@@ -242,6 +242,32 @@ public class DayLogChart extends Fragment {
         if (yAxis != null && yAxis.length >= 24) {
             for (int i = 0; i < 24; i++) {
                 series.addPoint(new LinearSeries.LinearPoint(23 - i, yAxis[i] / factor));
+            }
+        }
+        else { // default to test pattern
+            for (double i = 0d; i <= (2d * Math.PI); i += 0.1d) {
+                series.addPoint(new LinearSeries.LinearPoint(i, Math.sin(i))); // test pattern
+            }
+        }
+        return series;
+    }
+
+    private LinearSeries getLinearSeriesForTemperature(float[] yAxis) {
+        // Create the data points
+        LinearSeries series = new LinearSeries();
+        series.setLineColor(Color.YELLOW);
+        series.setLineWidth(4);
+        if (yAxis != null && yAxis.length >= 24) {
+            if (MonitorApplication.chargeControllers().useFahrenheit()) {
+                for (int i = 0; i < 24; i++) {
+                    double v = (yAxis[i] / 10) * 1.8 + 32.0;
+                    series.addPoint(new LinearSeries.LinearPoint(23 - i, v));
+                }
+            }
+            else {
+                for (int i = 0; i < 24; i++) {
+                    series.addPoint(new LinearSeries.LinearPoint(23 - i, yAxis[i] / 10.0));
+                }
             }
         }
         else { // default to test pattern
