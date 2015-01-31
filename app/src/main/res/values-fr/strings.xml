@@ -90,7 +90,7 @@
     <string name="volt_unit">Volts</string>
     <string name="menu_add">Ajouter</string>
     <string name="toast_pvoutput">Transférer a PVOutput.org complet</string>
-    <string name="toast_minute_logs">Complété le transfer des journaux de l'heure</string>
+    <string name="toast_minute_logs">Complété le transfer des journaux de l\'heure</string>
     <string name="toast_day_logs">Complété le transfer des journaux de jour</string>
 
     <string-array name="minute_log_chart_selection">
