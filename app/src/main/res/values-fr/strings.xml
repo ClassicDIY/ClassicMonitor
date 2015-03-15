@@ -46,7 +46,7 @@
     <string name="FoundClassic">Connecté à Classique à l\'adresse %1$s:%2$d</string>
     <string name="HourChartTabTitle">Graphique d\'heure</string>
     <string name="HyperVocDescription">La tension d\'entrée est supérieure à la tension maximale de fonctionnement classique.</string>
-    <string name="IPAddressPrompt">Entrez une adresse IP statique</string>
+    <string name="IPAddressPrompt">Entrez une adresse IP statique, URI</string>
     <string name="InfoTabTitle">Infos</string>
     <string name="MessagesTabTitle">Messages</string>
     <string name="NoConnection">Pas de connexion</string>

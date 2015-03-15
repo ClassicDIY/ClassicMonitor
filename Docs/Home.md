@@ -1,5 +1,5 @@
 
-Now available on Google Play at
+Available on Google Play at
 <https://play.google.com/store/apps/details?id=ca.farrelltonsolar.classic>
 
 Classic Monitor is a status monitor for Midnite solar 's, Classic 150, 200, 250 Charge Controller. It is a Read Only Program, it does not write to the Classic.
