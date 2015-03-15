@@ -1,7 +1,7 @@
 
 <h1>Classic Monitor</h1>
 
-<h3>Version 2.0.5 now available on Google Play.</h3>
+<h3>Version 2.0.5 currently on Google Play.</h3>
 
 <p>
 https://play.google.com/store/apps/details?id=ca.farrelltonsolar.classic
@@ -43,6 +43,16 @@ Basic support for the Tristar MPPT charge controller from Morningstar is also in
 
 
 Release notes:
+
+-----------------
+
+version 2.1.0
+
+<ul>
+<li>Added support for URI for remote access</li>
+<li>Added capacity page to display more WhizbangJr information</li>
+<li>Added German localization resources.</li>
+</ul>
 
 -----------------
 

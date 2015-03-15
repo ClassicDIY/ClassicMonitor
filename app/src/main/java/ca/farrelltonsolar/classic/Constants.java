@@ -23,7 +23,7 @@ public class Constants {
     // UDP listening port for available classics on the subnet
     public static final int CLASSIC_UDP_PORT = 4626;
     public static final int MODBUS_POLL_TIME = 2000;
-    public static final int UDPListener_Maximum_Sleep_Time = 6000;
+    public static final int UDPListener_Maximum_Sleep_Time = 12000;
     public static final int UDPListener_Minimum_Sleep_Time = 100;
 
     public static final int MODBUS_FILE_MEMORY= 4;

@@ -19,6 +19,7 @@ package ca.farrelltonsolar.classic;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import ca.farrelltonsolar.uicomponents.BaseGauge;
 import ca.farrelltonsolar.uicomponents.TemperatureGauge;
@@ -30,6 +31,7 @@ public class TemperatureFragment extends ReadingFramentBase {
 
     public static int TabTitle = R.string.TemperatureTabTitle;
     private boolean useFahrenheit;
+    private boolean showShuntTemperature;
     
     public TemperatureFragment() {
         super(R.layout.fragment_temperature);
@@ -38,6 +40,13 @@ public class TemperatureFragment extends ReadingFramentBase {
     @Override
     public void initializeReadings(View view, Bundle savedInstanceState) {
         useFahrenheit = MonitorApplication.chargeControllers().useFahrenheit();
+        showShuntTemperature = MonitorApplication.chargeControllers().getCurrentChargeController().hasWhizbang();
+        if (showShuntTemperature == false) {
+            TemperatureGauge gaugeView = (TemperatureGauge) this.getView().findViewById(R.id.ShuntTemp);
+            gaugeView.setVisibility(View.INVISIBLE);
+            LinearLayout layout = (LinearLayout) this.getView().findViewById(R.id.BatTemperatureLayout);
+            layout.setWeightSum(60);
+        }
         SetScale();
     }
 
@@ -47,6 +56,8 @@ public class TemperatureFragment extends ReadingFramentBase {
         gaugeView = (TemperatureGauge) this.getView().findViewById(R.id.FETTemperature);
         gaugeView.setFahrenheit(useFahrenheit);
         gaugeView = (TemperatureGauge) this.getView().findViewById(R.id.PCBTemperature);
+        gaugeView.setFahrenheit(useFahrenheit);
+        gaugeView = (TemperatureGauge) this.getView().findViewById(R.id.ShuntTemp);
         gaugeView.setFahrenheit(useFahrenheit);
     }
 
@@ -64,6 +75,12 @@ public class TemperatureFragment extends ReadingFramentBase {
             gaugeView = (BaseGauge) this.getView().findViewById(R.id.PCBTemperature);
             float pcbTemp = reading.getFloat(RegisterName.PCBTemperature);
             gaugeView.setTargetValue(toSelectedScale(pcbTemp));
+
+            if (showShuntTemperature) {
+                gaugeView = (BaseGauge) this.getView().findViewById(R.id.ShuntTemp);
+                float shuntTemp = reading.getFloat(RegisterName.ShuntTemperature);
+                gaugeView.setTargetValue(toSelectedScale(shuntTemp));
+            }
 
         } catch (Exception ignore) {
 

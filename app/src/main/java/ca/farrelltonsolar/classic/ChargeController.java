@@ -43,7 +43,7 @@ public class ChargeController extends ChargeControllerInfo {
     }
 
     public ChargeController(ChargeControllerInfo ccInfo) {
-        super(ccInfo.deviceIpAddress(), ccInfo.port(), ccInfo.isStaticIP());
+        super(ccInfo.deviceUri(), ccInfo.deviceIpAddress(), ccInfo.port(), ccInfo.isStaticIP());
         super.setDeviceType(ccInfo.deviceType());
         super.setUnitID(ccInfo.unitID());
         super.setHasWhizbang(ccInfo.hasWhizbang());

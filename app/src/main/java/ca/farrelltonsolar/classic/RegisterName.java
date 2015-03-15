@@ -34,6 +34,12 @@ public enum RegisterName {
     BatTemperature,
     FETTemperature,
     PCBTemperature,
-    InfoFlagsBits
+    InfoFlagsBits,
+    ShuntTemperature,
+    PositiveAmpHours,
+    NegativeAmpHours,
+    NetAmpHours,
+    RemainingAmpHours,
+    TotalAmpHours
 
 }

@@ -46,8 +46,6 @@
 
     <EditText
         android:id="@+id/ipAddress"
-        android:inputType="numberDecimal"
-        android:digits="0123456789."
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="4dp"
@@ -55,6 +53,7 @@
         android:layout_marginRight="4dp"
         android:layout_marginBottom="16dp"
         android:hint="@string/dialog_ipaddress_hint"
+        android:singleLine="true"
         android:layout_weight="20"
         android:autoText="true" />
 

@@ -75,6 +75,7 @@ public class MonitorActivity extends ActionBarActivity {
             tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
             if (cc.hasWhizbang()) {
                 tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
+                tabStripAdapter.addTab(CapacityFragment.TabTitle, CapacityFragment.class, null);
             }
             tabStripAdapter.addTab(TemperatureFragment.TabTitle, TemperatureFragment.class, null);
             addDayLogCalendar();

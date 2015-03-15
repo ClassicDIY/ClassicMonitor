@@ -48,8 +48,13 @@ public class PVOutputService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        if (intent != null) {
-            handleActionPVOutputUpload();
+        try {
+            if (intent != null) {
+                handleActionPVOutputUpload();
+            }
+        }
+        catch (Exception ex) {
+            Log.w(getClass().getName(), String.format("onHandleIntent failed ex: %s", ex));
         }
     }
 
@@ -57,13 +62,16 @@ public class PVOutputService extends IntentService {
      * Try to upload logs to PVOutput.
      */
     private void handleActionPVOutputUpload() {
-        if (MonitorApplication.chargeControllers().getCurrentChargeController().uploadToPVOutput()) {
-            LocalBroadcastManager.getInstance(PVOutputService.this).registerReceiver(mDayLogReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS));
-            String APIKey = MonitorApplication.chargeControllers().aPIKey();
-            if (APIKey.length() > 0) {
-                pollTimer = new Timer();
-                uploader = new PVOutputUploader(this.getBaseContext(), APIKey);
-                pollTimer.schedule(uploader, 30000, 300000); // start in 30 seconds, repeat every 5 minutes
+        ChargeController ctrl = MonitorApplication.chargeControllers().getCurrentChargeController();
+        if (ctrl != null) {
+            if (ctrl.uploadToPVOutput()) {
+                LocalBroadcastManager.getInstance(PVOutputService.this).registerReceiver(mDayLogReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS));
+                String APIKey = MonitorApplication.chargeControllers().aPIKey();
+                if (APIKey.length() > 0) {
+                    pollTimer = new Timer();
+                    uploader = new PVOutputUploader(this.getBaseContext(), APIKey);
+                    pollTimer.schedule(uploader, 30000, 300000); // start in 30 seconds, repeat every 5 minutes
+                }
             }
         }
     }

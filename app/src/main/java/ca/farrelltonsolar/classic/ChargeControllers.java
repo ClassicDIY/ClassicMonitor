@@ -18,11 +18,11 @@ package ca.farrelltonsolar.classic;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ArrayAdapter;
 
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,30 +128,31 @@ public final class ChargeControllers {
         }
     }
 
-    public void load(ArrayList<InetSocketAddress> arr, boolean staticOnly, boolean includeCurrent) {
+    public void load(ArrayList<InetSocketAddress> arr, boolean staticOnly) throws UnknownHostException {
         synchronized (devices) {
             for (ChargeController cc : devices) {
-                if (includeCurrent && cc.isCurrent()) {
+                if (cc.isCurrent()) {
                     arr.add(cc.getInetSocketAddress());
-                } else if (!staticOnly || cc.isStaticIP()) {
-                    if (!cc.isCurrent()) {
-                        arr.add(cc.getInetSocketAddress());
-                    }
+                } else if (!staticOnly || cc.isStaticIP()) { // all non current or all static non current
+                    arr.add(cc.getInetSocketAddress());
                 }
             }
         }
     }
 
     // update unit information
-    public void update(Bundle info, String deviceIpAddress, int port, boolean useUnitIdAsKey) {
-        int unitId = info.getInt("UnitID");
-        String unitName = info.getString("UnitName");
-        DeviceType deviceType = (DeviceType) info.getSerializable("DeviceType");
-        boolean hasWhizbang = info.getBoolean("FoundWhizbang");
+    public void update(ChargeControllerInfo ccToUpdate, boolean useUnitIdAsKey) throws UnknownHostException {
+        int unitId = ccToUpdate.unitID();
+        String unitName = ccToUpdate.deviceName();
+        DeviceType deviceType = ccToUpdate.deviceType();
+        boolean hasWhizbang = ccToUpdate.hasWhizbang();
+        String deviceIpAddress = ccToUpdate.deviceIpAddress();
+        int port = ccToUpdate.port();
         boolean updated = false;
         synchronized (devices) {
             for (ChargeController cc : devices) {
-                if (useUnitIdAsKey ? cc.unitID() == unitId : (deviceIpAddress.compareTo(cc.deviceIpAddress()) == 0 && port == cc.port())) {
+                String ipAddress = cc.getDeviceIp();
+                if (useUnitIdAsKey ? cc.unitID() == unitId  && unitId != -1 : (ipAddress != null && (deviceIpAddress.compareTo(ipAddress) == 0 && port == cc.port()))) {
                     if (cc.setUnitID(unitId)) {
                         updated = true;
                     }
@@ -180,7 +181,7 @@ public final class ChargeControllers {
         if (updated) {
             BroadcastUpdateNotification();
         } else if (useUnitIdAsKey) { // retry matching on IP address if no cc matched UnitID
-            update(info, deviceIpAddress, port, false);
+            update(ccToUpdate, false);
         }
     }
 
@@ -259,5 +260,17 @@ public final class ChargeControllers {
             }
         }
         return false;
+    }
+
+    public void updateUnknownStatic() {
+        synchronized (devices) {
+            for (ChargeController cc : devices) {
+                if (cc.isStaticIP() && cc.deviceType() == DeviceType.Unknown) {
+                    DeviceUpdater updater = new DeviceUpdater(cc);
+                    updater.run();
+                }
+            }
+        }
+        return;
     }
 }

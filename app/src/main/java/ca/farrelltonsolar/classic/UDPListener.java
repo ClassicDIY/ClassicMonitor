@@ -19,7 +19,6 @@ package ca.farrelltonsolar.classic;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -31,11 +30,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-
-import ca.farrelltonsolar.j2modlite.ModbusException;
 
 /**
  * Created by Graham on 08/12/2014.
@@ -140,12 +136,6 @@ public class UDPListener extends Service {
             return rVal;
         }
 
-        private void removeFromAlreadyUpdatedList(InetSocketAddress socketAddress) {
-            synchronized (lock) {
-                alreadyUpdatedList.remove(socketAddress);
-            }
-        }
-
         public ListenerThread(ChargeControllers existingControllers) {
             currentChargeControllers = existingControllers;
         }
@@ -199,12 +189,8 @@ public class UDPListener extends Service {
             } while (true);
             packet = new DatagramPacket(buffer, buffer.length);
             try {
-                currentChargeControllers.load(alreadyFoundList, false, true);
-                ArrayList<InetSocketAddress> staticAddressList = new ArrayList<>();
-                currentChargeControllers.load(staticAddressList, true, false);
-                currentChargeControllers.load(alreadyUpdatedList, true, true); // don't update as a result of the UDP datagram from a static classic
-                Runnable sr = new StaticNameUpdaterThread(staticAddressList);
-                new Thread(sr).start();
+                currentChargeControllers.load(alreadyFoundList, false); // all known controllers
+                currentChargeControllers.load(alreadyUpdatedList, true); // current & all static controllers, don't update as a result of the UDP datagram from a static classic
                 do {
                     try {
                         socket.receive(packet);
@@ -221,18 +207,19 @@ public class UDPListener extends Service {
                         if (hasAddressAlreadyBeenFound(socketAddress) == false) {
                             Log.d(getClass().getName(), "Found new classic at address: " + address + " port: " + port);
                             addToAlreadyFoundList(socketAddress);
+                            addToalreadyUpdatedList(socketAddress);
                             ChargeControllerInfo cc = new ChargeControllerInfo(socketAddress);
                             LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(UDPListener.this);
                             Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER);
-                            pkg.putExtra("ForceRefresh", false);
                             pkg.putExtra("ChargeController", GSON.toJson(cc));
                             broadcaster.sendBroadcast(pkg);
                             sleepTime = Constants.UDPListener_Minimum_Sleep_Time;
                         } else if (hasAddressAlreadyBeenUpdated(socketAddress) == false) {
                             addToalreadyUpdatedList(socketAddress);
                             Log.d(getClass().getName(), "Updating info on classic at address: " + address + " port: " + port);
-                            Runnable r = new NameUpdaterThread(socketAddress);
-                            new Thread(r).start();
+                            ChargeControllerInfo cc = new ChargeControllerInfo(socketAddress);
+                            DeviceUpdater updater = new DeviceUpdater(cc);
+                            updater.run();
                             sleepTime = Constants.UDPListener_Minimum_Sleep_Time;
                         }
                     } catch (SocketTimeoutException iox) {
@@ -257,140 +244,5 @@ public class UDPListener extends Service {
             }
             Log.d(getClass().getName(), "mListener exiting");
         }
-
-        public class NameUpdaterThread implements Runnable {
-            InetSocketAddress socketAddress;
-
-            public NameUpdaterThread(InetSocketAddress val) {
-                socketAddress = val;
-            }
-
-            @Override
-            public void run() {
-                ChargeControllerInfo cc = new ChargeControllerInfo(socketAddress);
-                do {
-                    ModbusTask modbus = new ModbusTask(cc, UDPListener.this);
-                    try {
-                        if (modbus.connect()) {
-                            try {
-                                Log.d(getClass().getName(), "Updating name for: " + socketAddress.toString());
-                                Bundle info = modbus.getChargeControllerInformation();
-                                currentChargeControllers.update(info, socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), true);
-                                break;
-                            } catch (Exception e) {
-                                Log.d(getClass().getName(), "Failed to get unit info" + e);
-                                removeFromAlreadyUpdatedList(socketAddress);
-                            } finally {
-                                modbus.disconnect();
-                            }
-                        }
-                    } catch (Exception e) {
-                        currentChargeControllers.setReachable(socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), false);
-                        Log.d(getClass().getName(), String.format("Failed to connect to &s ex:%s", socketAddress.toString(), e));
-                    }
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e2) {
-                        Log.w(getClass().getName(), String.format("NameUpdaterThread sleep Interrupted ex: %s", e2));
-                        return;
-                    }
-                } while (GetRunning());
-            }
-        }
-
-        public class StaticNameUpdaterThread implements Runnable {
-            ArrayList<InetSocketAddress> staticList;
-            ArrayList<InetSocketAddress> staticListClone = new ArrayList<>();
-
-            public StaticNameUpdaterThread(ArrayList<InetSocketAddress> val) {
-                staticList = val;
-                for (InetSocketAddress cc : staticList) staticListClone.add(cc);
-            }
-
-            private void updatedStatic(InetSocketAddress socketAddress) {
-                synchronized (staticListClone) {
-                    staticListClone.remove(socketAddress);
-                }
-            }
-
-            private boolean anythingToCheck() {
-                synchronized (staticListClone) {
-                    return staticListClone.size() > 0;
-                }
-            }
-
-            private boolean isAddressInList(InetSocketAddress socketAddress) {
-                boolean rVal = false;
-                synchronized (staticListClone) {
-                    for (InetSocketAddress cc : staticListClone) {
-                        if (cc.equals(socketAddress)) {
-                            rVal = true;
-                            break;
-                        }
-                    }
-                }
-                return rVal;
-            }
-
-
-            @Override
-            public void run() {
-                do {
-                    for (InetSocketAddress socketAddress : staticList) {
-                        if (isAddressInList(socketAddress)) {
-                            Runnable r = new CheckReachableThread(socketAddress);
-                            new Thread(r).start();
-                        }
-                    }
-                    try {
-                        Thread.sleep(Constants.UDPListener_Maximum_Sleep_Time);
-                    } catch (InterruptedException e) {
-                        break;
-                    }
-                } while (GetRunning() && anythingToCheck());
-                Log.d(getClass().getName(), "StaticNameUpdaterThread has contacted all static devices" );
-            }
-
-            class CheckReachableThread implements Runnable {
-                InetSocketAddress socketAddress;
-
-                CheckReachableThread(InetSocketAddress address) {
-                    this.socketAddress = address;
-                }
-
-                @Override
-                public void run() {
-                    try {
-                        Socket socket = new Socket();
-                        socket.connect(socketAddress, 5000);
-                        socket.close();
-                    } catch (IOException e) {
-                        return;
-                    }
-                    ChargeControllerInfo cc = new ChargeControllerInfo(socketAddress);
-                    ModbusTask modbus = new ModbusTask(cc, UDPListener.this);
-                    try {
-                        if (modbus.connect()) {
-                            try {
-                                Log.d(getClass().getName(), "Updating name for: " + socketAddress.toString());
-                                Bundle info = modbus.getChargeControllerInformation();
-                                currentChargeControllers.update(info, socketAddress.getAddress().getHostAddress(), socketAddress.getPort(), false);
-                                updatedStatic(socketAddress);
-                            } catch (ModbusException e) {
-                                Log.d(getClass().getName(), "Failed to get unit info" + e);
-                            } finally {
-                                modbus.disconnect();
-                            }
-                        }
-                    } catch (Exception e) {
-                        Log.d(getClass().getName(), String.format("Failed to connect to &s ex:%s", socketAddress.toString(), e));
-                    }
-
-                }
-            }
-        }
     }
-
-
-
 }

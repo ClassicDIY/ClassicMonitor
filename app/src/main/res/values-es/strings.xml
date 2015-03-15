@@ -110,4 +110,14 @@
         <item>Batteria Volt Alto</item>
         <item>Tiempo Flotador</item>
     </string-array>
+
+    <string name="CapacityTabTitle">Capacidad</string>
+    <string name="amp_hours_unit">Ah</string>
+    <string name="NetCapacityGaugeTitle">Carga neta</string>
+    <string name="TotalCapacityTitle">Capacidad total</string>
+    <string name="Positive_AH_Title">Carga (positivo Ah)</string>
+    <string name="Negative_AH_Title">Descarga (negativo Ah)</string>
+    <string name="RemainingCapacityTitle">Capacidad restante</string>
+    <string name="ShuntTemperatureTitle">Derivación</string>
+    <string name="TemperatureScaleSummary">La escala Fahrenheit de uso</string>
 </resources>

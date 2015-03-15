@@ -97,6 +97,7 @@ public class MonitorApplication extends Application implements Application.Activ
         if (wifi != null){
             wifiLock = wifi.createWifiLock("ClassicMonitor");
         }
+        chargeControllers.updateUnknownStatic();
         Log.d(getClass().getName(), "onCreate complete");
     }
 
@@ -191,13 +192,10 @@ public class MonitorApplication extends Application implements Application.Activ
         @Override
         public void onReceive(Context context, Intent intent) {
             ChargeControllerInfo cc = GSON.fromJson(intent.getStringExtra("ChargeController"), ChargeController.class);
-            boolean doRefresh = intent.getBooleanExtra("ForceRefresh", true);
             Log.d(getClass().getName(), String.format("adding new controller to list (%s)", cc.toString()));
+            DeviceUpdater updater = new DeviceUpdater(cc);
             chargeControllers.add(cc);
-            if (doRefresh) {
-                UDPListenerService.stopListening();
-                UDPListenerService.listen(chargeControllers);
-            }
+            updater.run();
         }
     };
 

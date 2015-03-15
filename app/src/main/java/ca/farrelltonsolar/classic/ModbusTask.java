@@ -25,7 +25,6 @@ import android.util.Log;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.TimerTask;
 
@@ -125,11 +124,10 @@ public class ModbusTask extends TimerTask {
 
     public boolean connect() throws UnknownHostException {
         boolean rVal = false;
-        InetAddress inetAddress = InetAddress.getByName(chargeControllerInfo.deviceIpAddress());
-        Log.d(getClass().getName(), String.format("Connecting to %s  (%s)", chargeControllerInfo.toString(), inetAddress.toString()));
+        Log.d(getClass().getName(), String.format("Connecting to %s", chargeControllerInfo.toString()));
         try {
             disconnect();
-            modbusMaster = new ModbusTCPMaster(chargeControllerInfo.deviceIpAddress(), chargeControllerInfo.port());
+            modbusMaster = new ModbusTCPMaster(chargeControllerInfo.getDeviceIp(), chargeControllerInfo.port());
 
             modbusMaster.connect();
             if (modbusMaster.isConnected()) {
@@ -139,7 +137,7 @@ public class ModbusTask extends TimerTask {
             Log.w(getClass().getName(), String.format("Could not connect to %s, ex: %s", chargeControllerInfo.toString(), e1));
             e1.printStackTrace();
             modbusMaster = null;
-            MonitorApplication.chargeControllers().setReachable(chargeControllerInfo.deviceIpAddress(), chargeControllerInfo.port(), false);
+            MonitorApplication.chargeControllers().setReachable(chargeControllerInfo.getDeviceIp(), chargeControllerInfo.port(), false);
         }
         return rVal;
     }
@@ -192,7 +190,7 @@ public class ModbusTask extends TimerTask {
                 if (connected) {
                     if (initialReadingLoaded == false) {
                         initialReadingLoaded = true;
-                        MonitorApplication.chargeControllers().setReachable(chargeControllerInfo.deviceIpAddress(), chargeControllerInfo.port(), true);
+                        MonitorApplication.chargeControllers().setReachable(chargeControllerInfo.getDeviceIp(), chargeControllerInfo.port(), true);
                         if (lookForTriStar() == DeviceType.Classic) {
                             lookForWhizBangJr();
                             loadBoilerPlateInfo();
@@ -289,13 +287,22 @@ public class ModbusTask extends TimerTask {
                     throw new ModbusException("Failed to read data from modbus");
                 }
                 if (foundWhizBangJr) {
-                    Register[] registers2 = modbusMaster.readMultipleRegisters(4360, 16);
-                    if (registers2 != null && registers2.length == 16) {
+                    Register[] registers2 = modbusMaster.readMultipleRegisters(4360, 22);
+                    if (registers2 != null && registers2.length == 22) {
+                        Integer val = ((registers2[5].getValue() << 16) + registers2[4].getValue());
+                        readings.set(RegisterName.PositiveAmpHours, val);
+                        val = (registers2[7].getValue() << 16) + registers2[6].getValue();
+                        readings.set(RegisterName.NegativeAmpHours, Math.abs(val));
+                        val = (registers2[9].getValue() << 16) + registers2[8].getValue();
+                        readings.set(RegisterName.NetAmpHours, val);
+                        readings.set(RegisterName.ShuntTemperature, ((short)registers2[11].getValue() & 0x00ff) -50.0f);
                         Register a = registers2[10];
                         readings.set(RegisterName.WhizbangBatCurrent, a.toShort() / 10.0f);
                         Register soc = registers2[12];
                         short socVal = soc.toShort();
                         readings.set(RegisterName.SOC, socVal);
+                        readings.set(RegisterName.RemainingAmpHours, registers2[16].toShort());
+                        readings.set(RegisterName.TotalAmpHours, registers2[20].toShort());
                     } else {
                         Log.w(getClass().getName(), String.format("Modbus readMultipleRegisters returned null"));
                         throw new ModbusException("Failed to read data from modbus");
@@ -313,30 +320,6 @@ public class ModbusTask extends TimerTask {
         Intent intent2 = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_TOAST);
         intent2.putExtra("message", message);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent2);
-    }
-    
-    public Bundle getChargeControllerInformation() throws ModbusException {
-        Bundle result = new Bundle();
-        DeviceType deviceType = lookForTriStar();
-        result.putSerializable("DeviceType", deviceType);
-        if (deviceType == DeviceType.Classic) {
-            result.putString("UnitName", getUnitName());
-            result.putInt("UnitID", getUnitID());
-            result.putBoolean("FoundWhizbang", lookForWhizBangJr());
-        } else {
-            result.putString("UnitName", "Tristar");
-            result.putInt("UnitID", 0);
-        }
-        return result;
-    }
-
-    private int getUnitID() throws ModbusException {
-        int unitId = -1;
-        Register[] registers = modbusMaster.readMultipleRegisters(4110, 4);
-        if (registers != null && registers.length == 4) {
-            unitId = (registers[1].getValue() << 16) + registers[0].getValue();
-        }
-        return unitId;
     }
 
     private void loadBoilerPlateInfo() {
@@ -376,29 +359,6 @@ public class ModbusTask extends TimerTask {
         } catch (Exception e) {
             Log.w(getClass().getName(), "loadBoilerPlateInfo failed ex: %s", e);
         }
-    }
-
-    private String getUnitName() throws ModbusException {
-        Register[] registers = modbusMaster.readMultipleRegisters(4209, 4);
-        if (registers != null && registers.length == 4) {
-            byte[] v0 = registers[0].toBytes();
-            byte[] v1 = registers[1].toBytes();
-            byte[] v2 = registers[2].toBytes();
-            byte[] v3 = registers[3].toBytes();
-
-            byte[] temp = new byte[8];
-            temp[0] = v0[1];
-            temp[1] = v0[0];
-            temp[2] = v1[1];
-            temp[3] = v1[0];
-            temp[4] = v2[1];
-            temp[5] = v2[0];
-            temp[6] = v3[1];
-            temp[7] = v3[0];
-            String unitName = new String(temp);
-            return unitName.trim();
-        }
-        return "";
     }
 
     private boolean lookForWhizBangJr() throws ModbusException {

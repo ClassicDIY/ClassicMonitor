@@ -6,7 +6,7 @@
 
         <CheckBoxPreference
             android:key="UseFahrenheit"
-            android:summary="Use Fahrenheit scale"
+            android:summary="@string/TemperatureScaleSummary"
             android:disableDependentsState="false"
             android:defaultValue="false" />
     </PreferenceCategory>

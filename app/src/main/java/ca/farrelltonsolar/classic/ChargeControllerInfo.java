@@ -16,8 +16,13 @@
 
 package ca.farrelltonsolar.classic;
 
+import android.os.Looper;
+
 import java.io.Serializable;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+import java.util.regex.Pattern;
 
 /**
  * Created by Graham on 10/12/2014.
@@ -25,8 +30,12 @@ import java.net.InetSocketAddress;
  */
 public class ChargeControllerInfo implements Serializable {
 
+    static private final String IPV4_REGEX = "(([0-1]?[0-9]{1,2}\\.)|(2[0-4][0-9]\\.)|(25[0-5]\\.)){3}(([0-1]?[0-9]{1,2})|(2[0-4][0-9])|(25[0-5]))";
+    static private Pattern IPV4_PATTERN = Pattern.compile(IPV4_REGEX);
+
     private int unitID;
-    private String deviceIP;
+    private String deviceIpAddress;
+    private String deviceUri = "";
     private String deviceName;
     private int port;
     private boolean staticIP;
@@ -41,6 +50,16 @@ public class ChargeControllerInfo implements Serializable {
     private transient String netVersion;
     private transient String buildDate;
     private transient int nominalBatteryVoltage;
+
+    // clone cTor
+    public ChargeControllerInfo(ChargeControllerInfo cc) {
+        this.unitID = cc.unitID();
+        this.deviceUri = cc.deviceUri();
+        this.deviceIpAddress = cc.deviceIpAddress();
+        this.port = cc.port();
+        this.deviceType = DeviceType.Unknown;
+        this.staticIP = cc.isStaticIP();
+    }
 
     public int getNominalBatteryVoltage() {
         return nominalBatteryVoltage;
@@ -62,8 +81,21 @@ public class ChargeControllerInfo implements Serializable {
     public ChargeControllerInfo() {
     }
 
-    public ChargeControllerInfo(String deviceIP, int port, boolean staticIP) {
-        this.deviceIP = deviceIP;
+    public ChargeControllerInfo(String deviceUri, String deviceAddress, int port, boolean staticIP) {
+        this.deviceUri = deviceUri;
+        this.deviceIpAddress = deviceAddress;
+        this.port = port;
+        this.deviceType = DeviceType.Unknown;
+        this.staticIP = staticIP;
+    }
+
+    public ChargeControllerInfo(String deviceAddress, int port, boolean staticIP) {
+        if (IPV4_PATTERN.matcher(deviceAddress).matches() == false) {
+            this.deviceUri = deviceAddress;
+        }
+        else {
+            this.deviceIpAddress = deviceAddress;
+        }
         this.port = port;
         this.deviceType = DeviceType.Unknown;
         this.staticIP = staticIP;
@@ -71,7 +103,7 @@ public class ChargeControllerInfo implements Serializable {
 
     public ChargeControllerInfo(InetSocketAddress socketAddress) {
         this.unitID = -1;
-        this.deviceIP = socketAddress.getAddress().getHostAddress();
+        this.deviceIpAddress = socketAddress.getAddress().getHostAddress();
         this.deviceName = "";
         this.port = socketAddress.getPort();
         this.staticIP = false;
@@ -81,16 +113,37 @@ public class ChargeControllerInfo implements Serializable {
 
     @Override
     public String toString() {
-        return deviceName == null || deviceName.isEmpty() ? deviceIP == null || deviceIP.isEmpty() ? "ChargeController" : deviceIP : deviceName;
+        return deviceUri == null || deviceUri.isEmpty() ? deviceName == null || deviceName.isEmpty() ? deviceIpAddress == null || deviceIpAddress.isEmpty() ? "ChargeController" : deviceIpAddress  : deviceName : deviceUri;
+    }
+
+    public String uniqueId() {
+        if (unitID() != -1) {
+            return String.format("%08x", unitID()).toUpperCase();
+        }
+        return deviceUri == null || deviceUri.isEmpty() ? deviceIpAddress == null || deviceIpAddress.isEmpty() ? deviceName : deviceIpAddress : deviceUri;
+    }
+
+    public String deviceUri() {
+        return this.deviceUri;
     }
 
     public String deviceIpAddress() {
-        return deviceIP;
+        return this.deviceIpAddress;
+    }
+
+    public String getDeviceIp() throws UnknownHostException {
+        if (deviceUri != null && !deviceUri.isEmpty()) {
+            if (Looper.getMainLooper().getThread() != Thread.currentThread()) {
+                InetAddress address = InetAddress.getByName(deviceUri);
+                this.deviceIpAddress = address.getHostAddress();
+            }
+        }
+        return this.deviceIpAddress;
     }
 
     public boolean setDeviceIP(String deviceIP) {
-        boolean rVal = this.deviceIP != deviceIP;
-        this.deviceIP = deviceIP;
+        boolean rVal = this.deviceIpAddress != deviceIP;
+        this.deviceIpAddress = deviceIP;
         return rVal;
     }
 
@@ -148,8 +201,8 @@ public class ChargeControllerInfo implements Serializable {
         return rVal;
     }
 
-    public InetSocketAddress getInetSocketAddress() {
-        return new InetSocketAddress(deviceIP, port);
+    public InetSocketAddress getInetSocketAddress() throws UnknownHostException {
+        return new InetSocketAddress(getDeviceIp(), port);
     }
 
     public boolean isCurrent() {
@@ -210,9 +263,11 @@ public class ChargeControllerInfo implements Serializable {
         return netVersion;
     }
 
-    public String  dayLogCacheName() { return "dayLogs_" + String.format("%08x", unitID()).toUpperCase(); }
+    public String  dayLogCacheName() { return "dayLogs_" + uniqueId(); }
 
-    public String  minuteLogCacheName() { return "minuteLog_" + String.format("%08x", unitID()).toUpperCase(); }
+    public String  minuteLogCacheName() {
+        return "minuteLog_" + uniqueId();
+    }
 
     public void clearLogCache() {
         try {

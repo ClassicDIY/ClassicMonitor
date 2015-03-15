@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name" translatable="false">Classic</string>
+
+    <string name="AbsorbDescription">Regulierung der Batteriespannung an Absorb-Sollwert.</string>
+    <string name="BulkMPPTDescription">Max PowerPoint tracking bis absorbieren Spannung erreicht.</string>
+    <string name="FloatDescription">Akku ist voll und regulierende Batteriespannung bei Float-Sollwert.</string>
+    <string name="FloatMPPTDescription">Max-Power-Point-tracking. Suche nach Float Sollwert Spannung.</string>
+    <string name="EqMPPTDescription">Max-Power-Point-tracking. Sollwert Spannung auszugleichen sucht.</string>
+    <string name="RestingDescription">Kein Strom, Stromquelle warten.</string>
+
+    <string name="AbsorbTitle">Absorbieren</string>
+    <string name="BulkMPPTTitle">Bulk MPPT</string>
+    <string name="FloatTitle">Schweben</string>
+    <string name="FloatMPPTTitle">Schweben MPPT</string>
+    <string name="EqualizeTitle">Gleichmachende</string>
+    <string name="HyperVocTitle" translatable="false">HyperVoc</string>
+    <string name="EqMpptTitle">Gleichmachende </string>
+
+    <string name="FoundClassic">Classic mit Adresse hergestellt %1$s:%2$d</string>
+    <string name="NoConnection">Keine Verbindung</string>
+
+    <string name="SettingsLabel">Einstellungen</string>
+    <string name="About">Über</string>
+
+    <string name="ApplyButton">Gelten</string>
+    <string name="CancelButton">Abbrechen</string>
+
+    <string name="dialog_port_hint">Port-Nummer</string>
+    <string name="dialog_ipaddress_hint">IP-Adresse, URI</string>
+
+    <string name="UploadLogsSummary">Hochladen von Protokollen zu PVOutput</string>
+    <string name="APIKeyTitle" translatable="false">API Key</string>
+    <string name="APIKeyPrompt" translatable="false">API Key:</string>
+    <string name="APIKeyDialogTitle" translatable="false">API Key</string>
+    <string name="SIDDialogTitle" translatable="false">SID</string>
+    <string name="SIDDialogMessage" translatable="false">SID:</string>
+    <string name="SIDTitle" translatable="false">SID</string>
+    <string name="ClearLogsTitle">Klare aufgezeichneten Protokolle</string>
+    <string name="PVOutputPreferenceTitle" translatable="false">PVOutput</string>
+
+    <string name="navigation_drawer_close">Enge Navigation Schublade</string>
+    <string name="network">Netzwerk</string>
+
+    <string name="PowerTabTitle">Macht</string>
+    <string name="EnergyTabTitle">Energie</string>
+    <string name="StateOfChargeTabTitle">Ladezustand</string>
+    <string name="TemperatureTabTitle">Temperatur</string>
+    <string name="DayLogTabTitle">Tage-Protokoll-Kalender</string>
+    <string name="DayChartTabTitle">Tag Log-Diagramm</string>
+    <string name="HourChartTabTitle">Stunde melden Sie Diagramm</string>
+    <string name="MessagesTabTitle">Nachrichten</string>
+
+    <string name="PVVoltTitle">PV-Volt</string>
+    <string name="PVCurrentTitle">PV-Strom</string>
+    <string name="BatVoltsTitle">Batterievolt</string>
+    <string name="BatPowerTitle">Macht</string>
+    <string name="PowerTitle">Macht</string>
+
+    <string name="EnergyTodayTitle">Energie heute</string>
+    <string name="TotalEnergyTitle">Gesamtenergie</string>
+    <string name="energy_unit" translatable="false">kWh</string>
+    <string name="power_unit" translatable="false">Watts</string>
+    <string name="amp_unit">Ampere</string>
+
+    <string name="PCBTemperature" translatable="false">PCB</string>
+    <string name="FETTemperature" translatable="false">FET</string>
+    <string name="BatTemperature">Akku</string>
+
+    <string name="Calendar">Kalender</string>
+    <string name="CalendarFloat">(Float)</string>
+
+    <string name="info_model_title">Modell:</string>
+    <string name="info_mac_title">MAC-Adresse:</string>
+    <string name="info_unitid_title" translatable="false">Unit ID:</string>
+    <string name="info_ipaddress_title">IP-Adresse:</string>
+    <string name="info_classic_rev_title" translatable="false">Classic Rev:</string>
+    <string name="info_network_rev_title">Netzwerk-Ausgabe:</string>
+    <string name="info_last_voc_title">Letzte VOC:</string>
+    <string name="info_build_date_title">Software Build-Datum:</string>
+    <string name="info_nominal_battery_voltage">Geringe Batteriespannung:</string>
+    <string name="info_message_1">Klassische Übertemperatur</string>
+    <string name="info_message_2">Klassischen EEprom lesen/schreiben, einen Fehler gefunden</string>
+    <string name="info_message_100">Input Voltage (PV) ist niedriger als die Batteriespannung.</string>
+    <string name="info_message_200">Aktuelle Benutzeranzahl oder Innentemperatur Stromgrenze erreicht.</string>
+    <string name="info_message_400">Hyper Voc PV-Eingangs-Spannung liegt über beste klassische Eingabe Note.</string>
+    <string name="info_message_4000">AUX 1 ein (Aux 1-Anschluss hat Spannung oder Relais geschlossen ist).</string>
+    <string name="info_message_8000">Aux-2-ON (Aux 2-Anschluss hat Spannung vorhanden).</string>
+    <string name="info_message_10000">Erdschluss erkannt.</string>
+    <string name="info_message_20000">DEFCON 4: FET mit dem Fehler.</string>
+    <string name="info_message_40000">Störlichtbogen aufgetreten ist.</string>
+    <string name="info_message_100000">DEFCON 3: FET Fehler.</string>
+    <string name="info_message_400000">Halbschattig, während SOLAR Sweeps erkannt.</string>
+    <string name="info_message_8000000">Temperatursensor ist kurzgeschlossen.</string>
+
+    <string-array name="minute_log_chart_selection">
+        <item>Power</item>
+        <item>PV Voltage</item>
+        <item>Battery Voltage</item>
+        <item>Battery Current</item>
+        <item>Energy</item>
+    </string-array>
+
+    <string-array name="day_log_chart_selection">
+        <item>Energy</item>
+        <item>High Power</item>
+        <item>High Temperature</item>
+        <item>High PV Volts</item>
+        <item>High Battery Volts</item>
+        <item>Float Time</item>
+    </string-array>
+    <string name="BatCurrentTitle">Batterie Strom</string>
+    <string name="ClassicNotConnecting">Versuch zum Herstellen einer %1$s:%2$d</string>
+    <string name="EqualizeDescription">Regulierung der Batteriespannung auf Sollwert ausgleichen.</string>
+    <string name="HyperVocDescription">Eingangsspannung liegt über maximale Betriebsspannung Klassiker.</string>
+    <string name="IPAddressPrompt">Geben Sie eine statische IP-Adresse</string>
+    <string name="InfoTabTitle">Info</string>
+    <string name="RestingTitle">Ruhelosigkeit</string>
+    <string name="navigation_drawer_open">Offene Navigation Schublade</string>
+    <string name="volt_unit">Volt</string>
+    <string name="menu_add">Hinzufügen</string>
+    <string name="toast_pvoutput">Abgeschlossenen Upload auf PVOutput.org</string>
+    <string name="toast_minute_logs">Vollständig gelesen Stunde Protokolle</string>
+    <string name="toast_day_logs">Vollständig gelesen Tag Protokolle</string>
+    <string name="CapacityTabTitle">Kapazität</string>
+    <string name="amp_hours_unit">Ah</string>
+    <string name="NetCapacityGaugeTitle">NET kostenlos</string>
+    <string name="TotalCapacityTitle">Gesamtkapazität</string>
+    <string name="Positive_AH_Title">Kostenlos (Positive Ah)</string>
+    <string name="Negative_AH_Title">Entlastung (Negative Ah)</string>
+    <string name="RemainingCapacityTitle">Verbleibende Kapazität</string>
+    <string name="ShuntTemperatureTitle">Shunt</string>
+    <string name="TemperatureScaleSummary">Verwendung Fahrenheit Skala</string>
+
+</resources>
