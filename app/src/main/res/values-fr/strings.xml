@@ -118,5 +118,5 @@
     <string name="Negative_AH_Title">Décharge (Negative Ah)</string>
     <string name="RemainingCapacityTitle">Capacité restante</string>
     <string name="ShuntTemperatureTitle">Shunt</string>
-    <string name="TemperatureScaleSummary">Utilisez l'échelle Fahrenheit</string>
+    <string name="TemperatureScaleSummary">Utilisez l\'échelle Fahrenheit</string>
 </resources>
