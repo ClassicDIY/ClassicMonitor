@@ -40,7 +40,8 @@ public class TemperatureFragment extends ReadingFramentBase {
     @Override
     public void initializeReadings(View view, Bundle savedInstanceState) {
         useFahrenheit = MonitorApplication.chargeControllers().useFahrenheit();
-        showShuntTemperature = MonitorApplication.chargeControllers().getCurrentChargeController().hasWhizbang();
+        ChargeController controller = MonitorApplication.chargeControllers().getCurrentChargeController();
+        showShuntTemperature = controller != null && controller.hasWhizbang();
         if (showShuntTemperature == false) {
             TemperatureGauge gaugeView = (TemperatureGauge) this.getView().findViewById(R.id.ShuntTemp);
             gaugeView.setVisibility(View.INVISIBLE);

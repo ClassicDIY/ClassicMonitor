@@ -216,7 +216,7 @@ public class CalendarAdapter extends BaseAdapter {
         items.clear();
 
         lastDayOfMonth = month.dayOfMonth().withMaximumValue().getDayOfMonth();
-        firstDayOfFirstWeek = month.getDayOfWeek();
+        firstDayOfFirstWeek = month.getDayOfWeek() % 7;
 
         // figure size of the array
         if (firstDayOfFirstWeek == 0) {

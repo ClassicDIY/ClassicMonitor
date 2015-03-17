@@ -43,6 +43,9 @@ public class About extends Fragment {
         else if (locale.compareTo("it") == 0) {
             aboutFile = "file:///android_asset/about-it.html";
         }
+        else if (locale.compareTo("de") == 0) {
+            aboutFile = "file:///android_asset/about-de.html";
+        }
         engine.loadUrl(aboutFile);
         return theView;
     }

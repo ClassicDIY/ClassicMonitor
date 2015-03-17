@@ -3,7 +3,7 @@
 
     <string name="AbsorbDescription">Regulierung der Batteriespannung am Absorb-Sollwert.</string>
     <string name="BulkMPPTDescription">MPPT bis Absorb-Spannung erreicht.</string>
-    <string name="FloatDescription">Akku ist voll und regulierende Batteriespannung bei Float-Sollwert.</string>
+    <string name="FloatDescription">Batterie ist voll und Batteriespannung bei Float-Sollwert.</string>
     <string name="FloatMPPTDescription">MPPT, Float-Sollspannung wird gesucht.</string>
     <string name="EqMPPTDescription">MPPT-Spannung wird gesucht.</string>
     <string name="RestingDescription">Keine Energie, warte auf Eingangsspannung.</string>
@@ -30,18 +30,18 @@
     <string name="StateOfChargeTabTitle">Ladezustand</string>
     <string name="TemperatureTabTitle">Temperatur</string>
     <string name="DayLogTabTitle">Protokoll-Kalender</string>
-    <string name="DayChartTabTitle">Tagesdiagramm</string>
+    <string name="DayChartTabTitle">Tages-Diagramm</string>
     <string name="HourChartTabTitle">Stunden-Diagramm</string>
     <string name="MessagesTabTitle">Nachrichten</string>
     <string name="PVVoltTitle">PV-Volt</string>
     <string name="PVCurrentTitle">PV-Strom</string>
-    <string name="BatVoltsTitle">Akku-Spannung</string>
+    <string name="BatVoltsTitle">Batterie-Spannung</string>
     <string name="BatPowerTitle">Energie</string>
     <string name="PowerTitle">Energie</string>
-    <string name="EnergyTodayTitle">Energieertrag heute</string>
+    <string name="EnergyTodayTitle">Heutiger Energieertrag</string>
     <string name="TotalEnergyTitle">Gesamtenergie</string>
     <string name="amp_unit">Ampere</string>
-    <string name="BatTemperature">Akku</string>
+    <string name="BatTemperature">Batterie</string>
     <string name="Calendar">Kalender</string>
     <string name="CalendarFloat">(Float)</string>
     <string name="info_model_title">Modell:</string>
@@ -54,7 +54,7 @@
     <string name="info_message_1">Übertemperatur</string>
     <string name="info_message_2">Fehler beim EEprom lesen/schreiben</string>
     <string name="info_message_100">Eingangsspannung (PV) liegt unter der Batteriespannung.</string>
-    <string name="info_message_200">Maximale Benutzeranzahl oder Temperatur erreicht.</string>
+    <string name="info_message_200">Benutzerdefinierte Strombegenzung oder interne Temperaturgrenze erreicht.</string>
     <string name="info_message_400">Hyper Voc PV liegt über zulässiger Eingangsspannung.</string>
     <string name="info_message_4000">AUX 1 aktiv (Spannung  am Aux 1-Anschluss oder Relais geschlossen).</string>
     <string name="info_message_8000">Aux-2 aktiv (Spannung am Aux 2-Anschluss).</string>
@@ -62,9 +62,9 @@
     <string name="info_message_20000">DEFCON 4: FET Treiber Fehler.</string>
     <string name="info_message_40000">Störung durch Lichtbogen.</string>
     <string name="info_message_100000">DEFCON 3: FET Fehler.</string>
-    <string name="info_message_400000">Teilverschattung während SOLAR Sweeps.</string>
+    <string name="info_message_400000">Teilverschattung während Solar Sweeps</string>
     <string name="info_message_8000000">Kurzschluss am Temperatursensor.</string>
-    <string name="BatCurrentTitle">Batterie Strom</string>
+    <string name="BatCurrentTitle">Batterie Ladestrom</string>
     <string name="ClassicNotConnecting">Verbindungsversuch zu %1$s:%2$d</string>
     <string name="EqualizeDescription">Regulierung der Batteriespannung zum Sollwert.</string>
     <string name="HyperVocDescription">Eingangsspannung liegt über maximaler Betriebsspannung.</string>
@@ -85,23 +85,23 @@
     <string name="Negative_AH_Title">Entlastung (Negative Ah)</string>
     <string name="RemainingCapacityTitle">Verbleibende Kapazität</string>
     <string name="ShuntTemperatureTitle">Shunt</string>
-    <string name="TemperatureScaleSummary">Fahrenheit Skala verwenden</string>
+    <string name="TemperatureScaleSummary">Temperaturen in Fahrenheit</string>
 
     <string-array name="minute_log_chart_selection">
-        <item>Power</item>
-        <item>PV Voltage</item>
-        <item>Battery Voltage</item>
-        <item>Battery Current</item>
-        <item>Energy</item>
+        <item>Energie</item>
+        <item>PV-Volt</item>
+        <item>Batterie-Volt</item>
+        <item>Batterie Strom</item>
+        <item>Energieertrag</item>
     </string-array>
 
     <string-array name="day_log_chart_selection">
-        <item>Energy</item>
+        <item>Energie</item>
         <item>High Power</item>
-        <item>High Temperature</item>
-        <item>High PV Volts</item>
-        <item>High Battery Volts</item>
-        <item>Float Time</item>
+        <item>Hochtemperatur</item>
+        <item>Hoch PV Volts</item>
+        <item>Hoch Batterie-Volt</item>
+        <item>Float Zeit</item>
     </string-array>
 
 </resources>
