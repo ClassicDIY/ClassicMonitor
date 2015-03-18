@@ -45,7 +45,7 @@ public class BaseGauge extends BaseComponent {
     public static float mInnerRimWidthPercentOfDiameter = 5;
 
 
-    public static float mTitleHeightPercentOfRadius = 14; // percent of face radius
+    public static float mTitleHeightPercentOfRadius = 12; // percent of face radius
     public static float mReadingHeightPercentOfRadius = 18; // percent of face radius
     public static float mColoredRangePercentOfRadius = 1;
 

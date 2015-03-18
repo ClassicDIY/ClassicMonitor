@@ -88,19 +88,19 @@
     <string name="TemperatureScaleSummary">Temperaturen in Fahrenheit</string>
 
     <string-array name="minute_log_chart_selection">
-        <item>Energie</item>
-        <item>PV-Volt</item>
-        <item>Batterie-Volt</item>
+        <item>brutto</item>
+        <item>PV-Spannung</item>
+        <item>Batterie-Spannung</item>
         <item>Batterie Strom</item>
         <item>Energieertrag</item>
     </string-array>
 
     <string-array name="day_log_chart_selection">
-        <item>Energie</item>
-        <item>High Power</item>
-        <item>Hochtemperatur</item>
-        <item>Hoch PV Volts</item>
-        <item>Hoch Batterie-Volt</item>
+        <item>brutto</item>
+        <item>netto</item>
+        <item>Temperatur</item>
+        <item>PV-Spannung</item>
+        <item>Batterie-Spannung</item>
         <item>Float Zeit</item>
     </string-array>
 
