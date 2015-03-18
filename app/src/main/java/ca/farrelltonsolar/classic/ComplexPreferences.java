@@ -22,6 +22,8 @@ package ca.farrelltonsolar.classic;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 
 import com.google.gson.Gson;
 
@@ -37,7 +39,7 @@ public class ComplexPreferences {
     private ComplexPreferences(Context context, String namePreferences, int mode) {
         this.context = context;
         if (namePreferences == null || namePreferences.equals("")) {
-            namePreferences = context.getPackageName() + "_complexPreferences";
+            namePreferences = context.getPackageName() + getVersion(context) + "_complexPreferences";
             this.namePreferences = namePreferences;
         }
         preferences = context.getSharedPreferences(namePreferences, mode);
@@ -54,6 +56,16 @@ public class ComplexPreferences {
 
         return complexPreferences;
     }
+
+    public int getVersion(Context context) {
+        try {
+            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            return pInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            return 0;
+        }
+    }
+
 
     public void putObject(String key, Object object) {
         if (object == null) {
