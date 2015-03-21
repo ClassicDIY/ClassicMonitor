@@ -97,23 +97,29 @@ public class HourLogChart extends Fragment {
                 ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, itemArray); //selected item will look like a spinner set from XML
                 spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(spinnerArrayAdapter);
-                spinner.setSelection(MonitorApplication.chargeControllers().getCurrentChargeController().getHourLogMenuSelection(), false);
-                spinner.setOnItemSelectedListener(new OnItemSelectedListenerWrapper(new AdapterView.OnItemSelectedListener() {
+                ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController(); // cc got removed?
+                if (cc != null) {
+                    spinner.setSelection(cc.getHourLogMenuSelection(), false);
+                    spinner.setOnItemSelectedListener(new OnItemSelectedListenerWrapper(new AdapterView.OnItemSelectedListener() {
 
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        chartView.clearSeries();
-                        if (position < mSeries.size()) {
-                            MonitorApplication.chargeControllers().getCurrentChargeController().setHourLogMenuSelection(position);
-                            chartView.addSeries(mSeries.get(position));
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            chartView.clearSeries();
+                            if (position < mSeries.size()) {
+                                ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController(); // cc got removed?
+                                if (cc != null) {
+                                    cc.setHourLogMenuSelection(position);
+                                    chartView.addSeries(mSeries.get(position));
+                                }
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
 
-                    }
-                }));
+                        }
+                    }));
+                }
             }
         }
         catch (Exception ex) {
@@ -200,12 +206,15 @@ public class HourLogChart extends Fragment {
             mSeries.add(seriesOutputCurrent);
 //            mSeries.add(seriesChargeState);
             mSeries.add(seriesEnergy);
-            int currentSelection = MonitorApplication.chargeControllers().getCurrentChargeController().getHourLogMenuSelection();
-            if (currentSelection >= mSeries.size()) {
-                currentSelection = 0;
-                MonitorApplication.chargeControllers().getCurrentChargeController().setHourLogMenuSelection(0);
+            ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController(); // cc got removed?
+            if (cc != null) {
+                int currentSelection = cc.getHourLogMenuSelection();
+                if (currentSelection >= mSeries.size()) {
+                    currentSelection = 0;
+                    cc.setHourLogMenuSelection(0);
+                }
+                chartView.addSeries(mSeries.get(currentSelection));
             }
-            chartView.addSeries(mSeries.get(currentSelection));
             Log.d(getClass().getName(), String.format("Chart onPostExecute completed %s", Thread.currentThread().getName()));
             }
             else {

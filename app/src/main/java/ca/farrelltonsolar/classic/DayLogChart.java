@@ -212,12 +212,15 @@ public class DayLogChart extends Fragment {
                 mSeries.add(seriesHighPvVolts);
                 mSeries.add(seriesHighBatteryVolts);
                 mSeries.add(seriesFloatTime);
-                int currentSelection = MonitorApplication.chargeControllers().getCurrentChargeController().getDayLogMenuSelection();
-                if (currentSelection >= mSeries.size()) {
-                    currentSelection = 0;
-                    MonitorApplication.chargeControllers().getCurrentChargeController().setDayLogMenuSelection(0);
+                ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController(); // cc got removed?
+                if (cc != null) {
+                    int currentSelection = cc.getDayLogMenuSelection();
+                    if (currentSelection >= mSeries.size()) {
+                        currentSelection = 0;
+                        cc.setDayLogMenuSelection(0);
+                    }
+                    chartView.addSeries(mSeries.get(currentSelection));
                 }
-                chartView.addSeries(mSeries.get(currentSelection));
                 Log.d(getClass().getName(), String.format("Chart onPostExecute completed %s", Thread.currentThread().getName()));
             }
             else {
