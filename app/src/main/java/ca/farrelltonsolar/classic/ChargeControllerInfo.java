@@ -36,7 +36,7 @@ public class ChargeControllerInfo implements Serializable {
     private int unitID;
     private String deviceIpAddress;
     private String deviceUri = "";
-    private String deviceName;
+    private String deviceName = "";
     private int port;
     private boolean staticIP;
     private boolean hasWhizbang;
