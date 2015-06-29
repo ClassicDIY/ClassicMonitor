@@ -18,7 +18,9 @@ package ca.farrelltonsolar.classic;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import ca.farrelltonsolar.uicomponents.BaseGauge;
@@ -35,19 +37,21 @@ public class TemperatureFragment extends ReadingFramentBase {
     
     public TemperatureFragment() {
         super(R.layout.fragment_temperature);
+        ChargeController controller = MonitorApplication.chargeControllers().getCurrentChargeController();
+        showShuntTemperature = controller != null && controller.hasWhizbang();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (showShuntTemperature) {
+            layoutId = R.layout.fragment_temperature_shunt;
+        }
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
     public void initializeReadings(View view, Bundle savedInstanceState) {
         useFahrenheit = MonitorApplication.chargeControllers().useFahrenheit();
-        ChargeController controller = MonitorApplication.chargeControllers().getCurrentChargeController();
-        showShuntTemperature = controller != null && controller.hasWhizbang();
-        if (showShuntTemperature == false) {
-            TemperatureGauge gaugeView = (TemperatureGauge) this.getView().findViewById(R.id.ShuntTemp);
-            gaugeView.setVisibility(View.INVISIBLE);
-            LinearLayout layout = (LinearLayout) this.getView().findViewById(R.id.BatTemperatureLayout);
-            layout.setWeightSum(60);
-        }
         SetScale();
     }
 
@@ -58,8 +62,10 @@ public class TemperatureFragment extends ReadingFramentBase {
         gaugeView.setFahrenheit(useFahrenheit);
         gaugeView = (TemperatureGauge) this.getView().findViewById(R.id.PCBTemperature);
         gaugeView.setFahrenheit(useFahrenheit);
-        gaugeView = (TemperatureGauge) this.getView().findViewById(R.id.ShuntTemp);
-        gaugeView.setFahrenheit(useFahrenheit);
+        if (showShuntTemperature) {
+            gaugeView = (TemperatureGauge) this.getView().findViewById(R.id.ShuntTemp);
+            gaugeView.setFahrenheit(useFahrenheit);
+        }
     }
 
     @Override

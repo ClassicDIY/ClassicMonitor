@@ -26,14 +26,14 @@
     android:paddingEnd="5dp"
     android:paddingStart="5dp"
     android:paddingTop="5dp"
-    android:weightSum="80">
+    android:weightSum="90">
 
     <ca.farrelltonsolar.uicomponents.TemperatureGauge
         android:id="@+id/BatTemperature"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
-        android:layout_weight="20"
+        android:layout_weight="30"
         app:gaugeTitle="@string/BatTemperature"
         app:register="BatTemperature"
         app:showInnerRim="false"
@@ -44,7 +44,7 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
-        android:layout_weight="20"
+        android:layout_weight="30"
         app:gaugeTitle="@string/FETTemperature"
         app:register="FETTemperature"
         app:showInnerRim="false"
@@ -55,22 +55,11 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
-        android:layout_weight="20"
+        android:layout_weight="30"
         app:gaugeTitle="@string/PCBTemperature"
         app:register="PCBTemperature"
         app:showInnerRim="false"
         app:showReading="true" />
 
-    <ca.farrelltonsolar.uicomponents.TemperatureGauge
-        android:id="@+id/ShuntTemp"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:layout_weight="20"
-        app:gaugeTitle="@string/ShuntTemperatureTitle"
-        app:readingPrecision="0"
-        app:register="ShuntTemp"
-        app:showInnerRim="false"
-        app:showReading="true" />
 </LinearLayout>
 

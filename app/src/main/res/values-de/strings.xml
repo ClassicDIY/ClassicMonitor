@@ -2,8 +2,8 @@
 <resources>
 
     <string name="AbsorbDescription">Regulierung der Batteriespannung am Absorb-Sollwert.</string>
-    <string name="BulkMPPTDescription">MPPT bis Absorb-Spannung erreicht.</string>
-    <string name="FloatDescription">Batterie ist voll und Batteriespannung bei Float-Sollwert.</string>
+    <string name="BulkMPPTDescription">MPPT bis Absorb-Spannung.</string>
+    <string name="FloatDescription">Batterie ist voll und Ladeerhaltung.</string>
     <string name="FloatMPPTDescription">MPPT, Float-Sollspannung wird gesucht.</string>
     <string name="EqMPPTDescription">MPPT-Spannung wird gesucht.</string>
     <string name="RestingDescription">Keine Energie, warte auf Eingangsspannung.</string>
@@ -11,8 +11,8 @@
     <string name="BulkMPPTTitle">Bulk MPPT</string>
     <string name="FloatTitle">Float</string>
     <string name="FloatMPPTTitle">Float MPPT</string>
-    <string name="EqualizeTitle">Ausgeglichen</string>
-    <string name="EqMpptTitle">Ausgleich</string>
+    <string name="EqualizeTitle">ausgeglichen</string>
+    <string name="EqMpptTitle">Ausgleichsladung</string>
     <string name="FoundClassic">Verbindung mit Classic auf Adresse %1$s:%2$d hergestellt</string>
     <string name="NoConnection">Keine Verbindung</string>
     <string name="SettingsLabel">Einstellungen</string>
@@ -38,7 +38,7 @@
     <string name="BatVoltsTitle">Batterie-Spannung</string>
     <string name="BatPowerTitle">Energie</string>
     <string name="PowerTitle">Energie</string>
-    <string name="EnergyTodayTitle">Heutiger Energieertrag</string>
+    <string name="EnergyTodayTitle">Energieertrag heute</string>
     <string name="TotalEnergyTitle">Gesamtenergie</string>
     <string name="amp_unit">Ampere</string>
     <string name="BatTemperature">Batterie</string>
@@ -64,7 +64,7 @@
     <string name="info_message_100000">DEFCON 3: FET Fehler.</string>
     <string name="info_message_400000">Teilverschattung während Solar Sweeps</string>
     <string name="info_message_8000000">Kurzschluss am Temperatursensor.</string>
-    <string name="BatCurrentTitle">Batterie Ladestrom</string>
+    <string name="BatCurrentTitle">Batterie-Strom</string>
     <string name="ClassicNotConnecting">Verbindungsversuch zu %1$s:%2$d</string>
     <string name="EqualizeDescription">Regulierung der Batteriespannung zum Sollwert.</string>
     <string name="HyperVocDescription">Eingangsspannung liegt über maximaler Betriebsspannung.</string>
@@ -79,12 +79,11 @@
     <string name="toast_day_logs">Tages-Protokoll vollständig gelesen</string>
     <string name="CapacityTabTitle">Kapazität</string>
     <string name="amp_hours_unit">Ah</string>
-    <string name="NetCapacityGaugeTitle">NET kostenlos</string>
+    <string name="NetCapacityGaugeTitle">Netto</string>
     <string name="TotalCapacityTitle">Gesamtkapazität</string>
-    <string name="Positive_AH_Title">Ladung (Positive Ah)</string>
-    <string name="Negative_AH_Title">Entlastung (Negative Ah)</string>
+    <string name="Positive_AH_Title">Ladung </string>
+    <string name="Negative_AH_Title">Entladung</string>
     <string name="RemainingCapacityTitle">Verbleibende Kapazität</string>
-    <string name="ShuntTemperatureTitle">Shunt</string>
     <string name="TemperatureScaleSummary">Temperaturen in Fahrenheit</string>
 
     <string-array name="minute_log_chart_selection">

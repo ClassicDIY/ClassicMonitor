@@ -130,7 +130,7 @@
     <string name="Positive_AH_Title">Charge (Positive Ah)</string>
     <string name="Negative_AH_Title">Discharge (Negative Ah)</string>
     <string name="RemainingCapacityTitle">Remaining Capacity</string>
-    <string name="ShuntTemperatureTitle">Shunt</string>
+    <string name="ShuntTemperatureTitle" translatable="false">WB Jr. Shunt</string>
     <string name="TemperatureScaleSummary">Use Fahrenheit scale</string>
 
 </resources>

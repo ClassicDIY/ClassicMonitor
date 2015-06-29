@@ -14,25 +14,33 @@
   ~  limitations under the License.
   -->
 
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/BatTemperatureLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:baselineAligned="false"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:paddingBottom="5dp"
     android:paddingEnd="5dp"
     android:paddingStart="5dp"
     android:paddingTop="5dp"
-    android:weightSum="90">
+    android:weightSum="100">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="40"
+        android:orientation="horizontal"
+        android:weightSum="100">
 
     <ca.farrelltonsolar.uicomponents.TemperatureGauge
         android:id="@+id/BatTemperature"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_marginTop="10dp"
-        android:layout_weight="30"
+        android:layout_weight="50"
         app:gaugeTitle="@string/BatTemperature"
         app:register="BatTemperature"
         app:showInnerRim="false"
@@ -43,22 +51,42 @@
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_marginTop="10dp"
-        android:layout_weight="30"
+        android:layout_weight="50"
         app:gaugeTitle="@string/FETTemperature"
         app:register="FETTemperature"
         app:showInnerRim="false"
         app:showReading="true" />
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="40"
+        android:orientation="horizontal"
+        android:weightSum="100">
 
     <ca.farrelltonsolar.uicomponents.TemperatureGauge
         android:id="@+id/PCBTemperature"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_marginTop="10dp"
-        android:layout_weight="30"
+        android:layout_weight="50"
         app:gaugeTitle="@string/PCBTemperature"
         app:register="PCBTemperature"
         app:showInnerRim="false"
         app:showReading="true" />
 
-
+    <ca.farrelltonsolar.uicomponents.TemperatureGauge
+        android:id="@+id/ShuntTemp"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="10dp"
+        android:layout_weight="50"
+        app:gaugeTitle="@string/ShuntTemperatureTitle"
+        app:readingPrecision="0"
+        app:register="ShuntTemp"
+        app:showInnerRim="false"
+        app:showReading="true" />
 </LinearLayout>
+</LinearLayout>
+

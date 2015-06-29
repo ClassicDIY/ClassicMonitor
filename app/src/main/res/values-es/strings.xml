@@ -118,6 +118,5 @@
     <string name="Positive_AH_Title">Carga (positivo Ah)</string>
     <string name="Negative_AH_Title">Descarga (negativo Ah)</string>
     <string name="RemainingCapacityTitle">Capacidad restante</string>
-    <string name="ShuntTemperatureTitle">Derivación</string>
     <string name="TemperatureScaleSummary">La escala Fahrenheit de uso</string>
 </resources>
