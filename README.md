@@ -1,7 +1,7 @@
 
 <h1>Classic Monitor</h1>
 
-<h3>Version 2.0.5 currently on Google Play.</h3>
+<h3>Available on Google Play.</h3>
 
 <p>
 https://play.google.com/store/apps/details?id=ca.farrelltonsolar.classic
