@@ -87,6 +87,7 @@ public class MonitorActivity extends ActionBarActivity {
         } else if (cc != null && cc.deviceType() == DeviceType.TriStar) {
             currentUnitName = cc.deviceName();
             tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
+            tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
             tabStripAdapter.addTab(R.string.About, About.class, null);
         } else {
             currentUnitName = "Demo";

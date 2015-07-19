@@ -374,23 +374,22 @@ public class ModbusTask extends TimerTask {
     private DeviceType lookForTriStar() {
         foundTriStar = false;
         try {
-            Register[] registers = modbusMaster.readMultipleRegisters(4100, 4); // try classic first
-            if (registers == null) {
-                registers = modbusMaster.readMultipleRegisters(0, 4); // see if its a tristar
-                if (registers != null && registers.length == 4) {
-                    foundTriStar = registers[0].toShort() != 0;
-                    if (foundTriStar) {
-                        float hi = registers[0].toShort();
-                        float lo = registers[1].toShort();
-                        lo = lo / 65536;
-                        v_pu = hi + lo;
+            Register[]registers = modbusMaster.readMultipleRegisters(0, 4); // see if its a tristar
+            if (registers != null && registers.length == 4) {
+                foundTriStar = registers[0].toShort() != 0;
+                if (foundTriStar) {
+                    chargeControllerInfo.setDeviceName("TriStar");
+                    chargeControllerInfo.setDeviceType(DeviceType.TriStar);
+                    float hi = registers[0].toShort();
+                    float lo = registers[1].toShort();
+                    lo = lo / 65536;
+                    v_pu = hi + lo;
 
-                        hi = (float) registers[2].toShort();
-                        lo = (float) registers[3].toShort();
-                        lo = lo / 65536;
-                        i_pu = hi + lo;
-                        reference = 0;
-                    }
+                    hi = (float) registers[2].toShort();
+                    lo = (float) registers[3].toShort();
+                    lo = lo / 65536;
+                    i_pu = hi + lo;
+                    reference = 0;
                 }
             }
         } catch (ModbusException e) {
