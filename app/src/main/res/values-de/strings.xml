@@ -27,6 +27,7 @@
     <string name="network">Netzwerk</string>
     <string name="PowerTabTitle">Übersicht</string>
     <string name="EnergyTabTitle">Energie</string>
+    <string name="LoadTabTitle">Konsum</string>
     <string name="StateOfChargeTabTitle">Ladezustand</string>
     <string name="TemperatureTabTitle">Temperatur</string>
     <string name="DayLogTabTitle">Protokoll-Kalender</string>
@@ -38,6 +39,8 @@
     <string name="BatVoltsTitle">Batterie-Spannung</string>
     <string name="BatPowerTitle">Energie</string>
     <string name="PowerTitle">Energie</string>
+    <string name="LoadCurrentTitle">Strom</string>
+    <string name="LoadPowerTitle">Energie</string>
     <string name="EnergyTodayTitle">Energieertrag heute</string>
     <string name="TotalEnergyTitle">Gesamtenergie</string>
     <string name="amp_unit">Ampere</string>
@@ -85,6 +88,7 @@
     <string name="Negative_AH_Title">Entladung</string>
     <string name="RemainingCapacityTitle">Verbleibende Kapazität</string>
     <string name="TemperatureScaleSummary">Temperaturen in Fahrenheit</string>
+    <string name="turn_off_local_app">Bitte stellen Sie sicher, dass der Midnite Solar lokalen app wird nicht im Netzwerk ausgeführt</string>
 
     <string-array name="minute_log_chart_selection">
         <item>brutto</item>

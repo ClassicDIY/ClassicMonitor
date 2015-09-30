@@ -46,6 +46,7 @@
     <string name="PowerTabTitle">Power</string>
     <string name="EnergyTabTitle">Energy</string>
     <string name="StateOfChargeTabTitle">State of Charge</string>
+    <string name="LoadTabTitle">Consumption</string>
     <string name="TemperatureTabTitle">Temperature</string>
     <string name="DayLogTabTitle">Day log calendar</string>
     <string name="DayChartTabTitle">Day Log Chart</string>
@@ -57,6 +58,8 @@
     <string name="BatVoltsTitle">Battery Volts</string>
     <string name="BatPowerTitle">Power</string>
     <string name="PowerTitle">Power</string>
+    <string name="LoadCurrentTitle">Current</string>
+    <string name="LoadPowerTitle">Power</string>
 
     <string name="EnergyTodayTitle">Energy Today</string>
     <string name="TotalEnergyTitle">Total Energy</string>
@@ -132,5 +135,6 @@
     <string name="RemainingCapacityTitle">Remaining Capacity</string>
     <string name="ShuntTemperatureTitle" translatable="false">WB Jr. Shunt</string>
     <string name="TemperatureScaleSummary">Use Fahrenheit scale</string>
+    <string name="turn_off_local_app">Please make sure the Midnite Solar local app is not running on the network</string>
 
 </resources>

@@ -63,6 +63,8 @@ public class MonitorActivity extends ActionBarActivity {
         viewPager = (ViewPager) findViewById(R.id.pager);
         setupActionBar();
         Log.d(getClass().getName(), "onCreate");
+        Toast.makeText(this.getBaseContext(), R.string.turn_off_local_app, Toast.LENGTH_LONG).show();
+
     }
 
     private void setupActionBar() {
@@ -76,6 +78,9 @@ public class MonitorActivity extends ActionBarActivity {
             if (cc.hasWhizbang()) {
                 tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
                 tabStripAdapter.addTab(CapacityFragment.TabTitle, CapacityFragment.class, null);
+                if (MonitorApplication.chargeControllers().count() == 1) {
+                    tabStripAdapter.addTab(LoadFragment.TabTitle, LoadFragment.class, null);
+                }
             }
             tabStripAdapter.addTab(TemperatureFragment.TabTitle, TemperatureFragment.class, null);
             addDayLogCalendar();

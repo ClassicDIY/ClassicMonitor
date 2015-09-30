@@ -25,6 +25,8 @@
     <string name="BatPowerTitle">energía</string>
     <string name="BatTemperature">Batteria</string>
     <string name="BatVoltsTitle">Batería voltios</string>
+    <string name="LoadCurrentTitle">Amperio</string>
+    <string name="LoadPowerTitle">Energía</string>
     <string name="BulkMPPTDescription">Seguimiento del punto de potencia máxima hasta absorber alcanzó voltaje.</string>
     <string name="BulkMPPTTitle">MPPT masiva</string>
     <string name="Calendar">Calendario</string>
@@ -49,6 +51,7 @@
     <string name="HyperVocDescription">El voltaje de entrada está por encima de la máxima tensión de funcionamiento clásico.</string>
     <string name="IPAddressPrompt">Introduzca una dirección IP estática, URI</string>
     <string name="InfoTabTitle">Info</string>
+    <string name="LoadTabTitle">Consumo</string>
     <string name="MessagesTabTitle">Mensajes</string>
     <string name="NoConnection">No hay conexión</string>
     <string name="PVCurrentTitle">corriente PV</string>
@@ -119,4 +122,5 @@
     <string name="Negative_AH_Title">Descarga (negativo Ah)</string>
     <string name="RemainingCapacityTitle">Capacidad restante</string>
     <string name="TemperatureScaleSummary">La escala Fahrenheit de uso</string>
+    <string name="turn_off_local_app">Por favor, asegúrese de que la aplicación local de Midnite Solar no se está ejecutando en la red</string>
 </resources>

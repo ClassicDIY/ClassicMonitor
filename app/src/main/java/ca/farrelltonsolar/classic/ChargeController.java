@@ -105,7 +105,7 @@ public class ChargeController extends ChargeControllerInfo {
     }
 
     public synchronized boolean isBidirectionalUnitsInWatts() {
-            return bidirectionalUnitsInWatts;
+        return bidirectionalUnitsInWatts;
     }
 
     public synchronized void setBidirectionalUnitsInWatts(boolean bidirectionalUnitsInWatts) {
