@@ -29,3 +29,14 @@ proguard/
 # idea files
 *.iml
 .idea/
+BlackBerry.txt
+Crashes.txt
+Docs/classic
+Docs/myMidnite.JPG
+Docs/setup.JPG
+WireShark/pvOutput.JPG
+*.pcapng
+*.pcap
+Notes.txt
+WireShark/BlueStacks.JPG
+Google Play Picture/New Microsoft Access Database.accdb
