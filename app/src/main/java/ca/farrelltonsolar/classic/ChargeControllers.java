@@ -106,7 +106,7 @@ public final class ChargeControllers {
             devices.remove(cc);
         }
         BroadcastUpdateNotification();
-        BroadcastRemoveNotification();
+        BroadcastRemoveNotification(cc.uniqueId());
     }
 
     public int count() {
@@ -219,9 +219,10 @@ public final class ChargeControllers {
         broadcaster.sendBroadcast(pkg);
     }
 
-    private void BroadcastRemoveNotification() {
+    private void BroadcastRemoveNotification(String removedCC) {
         LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(context);
         Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_REMOVE_CHARGE_CONTROLLER);
+        pkg.putExtra("uniqueId", removedCC);
         broadcaster.sendBroadcast(pkg);
     }
 

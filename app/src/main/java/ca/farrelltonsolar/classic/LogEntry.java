@@ -81,10 +81,11 @@ public class LogEntry implements Serializable {
         return logs.getFloatArray(String.valueOf(category));
     }
 
-    public void broadcastLogs(Context context, String action) {
+    public void broadcastLogs(Context context, String uniqueId, String action) {
         if (isAvailable()) {
             Intent intent = new Intent(action);
             intent.putExtra("logs", this);
+            intent.putExtra("uniqueId", uniqueId);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         }
     }

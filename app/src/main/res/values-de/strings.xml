@@ -106,5 +106,9 @@
         <item>Batterie-Spannung</item>
         <item>Float Zeit</item>
     </string-array>
+    <string name="SystemTabTitle">System</string>
+    <string name="LoadTitle">Laden</string>
+    <string name="device_button">Controller</string>
+    <string name="system_button">System</string>
 
 </resources>

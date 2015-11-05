@@ -31,10 +31,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Graham on 21/12/2014.
@@ -44,7 +48,12 @@ public class DayLogCalendar extends Fragment {
     private DateTime month;
     private CalendarAdapter adapter;
     private View theView;
-    private boolean isReceiverRegistered;
+    private boolean isReceiverRegistered = false;
+    private boolean isSlaveReceiverRegistered = false;
+    Map<String, float[]> slaveControllerTotalEnergy = new HashMap<String, float[]>();
+    float[] masterEnergyReadings;
+    float[] summarizedEnergyReadings;
+    boolean useSummarizedValues = false;
 
     public static DayLogCalendar newInstance(int month) {
         DayLogCalendar fragment = new DayLogCalendar();
@@ -65,13 +74,13 @@ public class DayLogCalendar extends Fragment {
         gridview.setAdapter(adapter);
         gridview.setVelocityScale(5);
 
-        TextView title  = (TextView) theView.findViewById(R.id.title);
+        TextView title = (TextView) theView.findViewById(R.id.title);
         title.setText(month.toString("MMMM yyyy"));
-        View linearLayout =  theView.findViewById(R.id.headerlayout);
+        View linearLayout = theView.findViewById(R.id.headerlayout);
         DateTime days = month;
 
         for (int i = 0; i < 7; i++) {
-            int d = ((i + 6) % 7) +1;
+            int d = ((i + 6) % 7) + 1;
             days = days.withDayOfWeek(d);
             TextView aDay = new TextView(theView.getContext());
             aDay.setText(DateTimeFormat.forPattern("E").print(days));
@@ -86,23 +95,88 @@ public class DayLogCalendar extends Fragment {
     }
 
     @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        slaveControllerTotalEnergy.clear();
+        RadioGroup radioGroup = (RadioGroup) this.getView().findViewById(R.id.radio_unit_system);
+        if (MonitorApplication.chargeControllers().count() == 1) {
+            radioGroup.setVisibility(View.INVISIBLE);
+        } else {
+            radioGroup.setVisibility(View.VISIBLE);
+            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    switch (checkedId) {
+                        case R.id.radio_system:
+                            useSummarizedValues = true;
+                            adapter.setPowerSeries(summarizedEnergyReadings);
+                            adapter.notifyDataSetChanged();
+                            break;
+                        case R.id.radio_unit:
+                            useSummarizedValues = false;
+                            adapter.setPowerSeries(masterEnergyReadings);
+                            adapter.notifyDataSetChanged();
+                            break;
+                    }
+                }
+            });
+            radioGroup.check(R.id.radio_unit);
+        }
+    }
+
+    private void unRegisterSlaveReceiver() {
+        if (isSlaveReceiverRegistered) {
+            try {
+                LocalBroadcastManager.getInstance(this.getActivity()).unregisterReceiver(mSlaveReadingsReceiver);
+            } catch (IllegalArgumentException e) {
+                // Do nothing
+            }
+            isSlaveReceiverRegistered = false;
+        }
+    }
+
+    private void registerSlaveReceiver() {
+        if (!isSlaveReceiverRegistered) {
+            LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver(mSlaveReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS_SLAVE));
+            isSlaveReceiverRegistered = true;
+        }
+    }
+
+    protected BroadcastReceiver mSlaveReadingsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            LogEntry logs = (LogEntry) intent.getSerializableExtra("logs");
+            if (logs != null) {
+                String uniqueId = intent.getStringExtra("uniqueId");
+                float[] f = logs.getFloatArray(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY);
+                slaveControllerTotalEnergy.put(uniqueId, f);
+            }
+        }
+    };
+
+    @Override
     public void onStart() {
         super.onStart();
+        registerMasterReceiver();
+        registerSlaveReceiver();
+        Log.d(getClass().getName(), "onStart");
+    }
+
+    private void registerMasterReceiver() {
         if (!isReceiverRegistered) {
             LocalBroadcastManager.getInstance(DayLogCalendar.this.getActivity()).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS));
             isReceiverRegistered = true;
         }
-        Log.d(getClass().getName(), "onStart");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        unRegisterReceiver();
+        unRegisterMasterReceiver();
         Log.d(getClass().getName(), "onStop");
     }
-    
-    private void unRegisterReceiver() {
+
+    private void unRegisterMasterReceiver() {
         if (isReceiverRegistered) {
             try {
                 LocalBroadcastManager.getInstance(DayLogCalendar.this.getActivity()).unregisterReceiver(mReadingsReceiver);
@@ -119,10 +193,22 @@ public class DayLogCalendar extends Fragment {
         public void onReceive(Context context, Intent intent) {
 
             try {
-                LogEntry logs = (LogEntry)intent.getSerializableExtra("logs");
+                LogEntry logs = (LogEntry) intent.getSerializableExtra("logs");
                 if (logs != null) {
-                    unRegisterReceiver();
-                    adapter.setPowerSeries(logs.getFloatArray(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY));
+                    if (slaveControllerTotalEnergy.size() == (MonitorApplication.chargeControllers().count() - 1)) { // received broadcasts from all controllers
+                        unRegisterMasterReceiver();
+                        unRegisterSlaveReceiver();
+                    }
+                    masterEnergyReadings = logs.getFloatArray(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY);
+                    float[] currentReadings = masterEnergyReadings.clone();
+                    for (float[] f : slaveControllerTotalEnergy.values()) {
+                        int length = Math.min(f.length, currentReadings.length);
+                        for (int i = 0; i < length; i++) {
+                            currentReadings[i] += f[i];
+                        }
+                    }
+                    summarizedEnergyReadings = currentReadings.clone();
+                    adapter.setPowerSeries(useSummarizedValues ? summarizedEnergyReadings : masterEnergyReadings);
                     adapter.setFloatSeries(logs.getFloatArray(Constants.CLASSIC_FLOAT_TIME_DAILY_CATEGORY));
                     adapter.setHighPowerSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_POWER_DAILY_CATEGORY));
                     adapter.setHighTempSeries(logs.getFloatArray(Constants.CLASSIC_HIGH_TEMP_DAILY_CATEGORY));

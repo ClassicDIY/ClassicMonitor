@@ -59,7 +59,9 @@ public class Constants {
     // Intents
     public static final String CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS = "ca.farrelltonsolar.classic.DayLogs";
     public static final String CA_FARRELLTONSOLAR_CLASSIC_MINUTE_LOGS = "ca.farrelltonsolar.classic.MinuteLogs";
+    public static final String CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS_SLAVE = "ca.farrelltonsolar.classic.DayLogs.slave";
     public static final String CA_FARRELLTONSOLAR_CLASSIC_READINGS = "ca.farrelltonsolar.classic.Readings";
+    public static final String CA_FARRELLTONSOLAR_CLASSIC_READINGS_SLAVE = "ca.farrelltonsolar.classic.Readings.slave";
     public static final String CA_FARRELLTONSOLAR_CLASSIC_TOAST = "ca.farrelltonsolar.classic.Toast";
     public static final String CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER = "ca.farrelltonsolar.classic.AddChargeController";
     public static final String CA_FARRELLTONSOLAR_CLASSIC_REMOVE_CHARGE_CONTROLLER = "ca.farrelltonsolar.classic.RemoveChargeController";

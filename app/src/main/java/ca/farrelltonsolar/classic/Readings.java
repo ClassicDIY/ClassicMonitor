@@ -87,10 +87,11 @@ public class Readings {
         }
     }
 
-    public void broadcastReadings(Context context, String action) {
+    public void broadcastReadings(Context context, String uniqueId, String action) {
         if (!readings.isEmpty()) {
             Intent intent = new Intent(action);
             intent.putExtra("readings", readings);
+            intent.putExtra("uniqueId", uniqueId);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         }
     }

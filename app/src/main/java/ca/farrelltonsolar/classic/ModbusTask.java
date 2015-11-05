@@ -114,7 +114,6 @@ public class ModbusTask extends TimerTask {
         readings = new Readings();
         dayLogEntry = new LogEntry();
         minuteLogEntry = new LogEntry();
-        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
         Log.d(getClass().getName(), String.format("ModbusTask created thread is %s", Thread.currentThread().getName()));
     }
 
@@ -180,7 +179,7 @@ public class ModbusTask extends TimerTask {
 
     @Override
     public void run() {
-//        Log.d(getClass().getName(), String.format("ModbusTask begin run for %s on thread is %s", chargeControllerInfo.toString(), Thread.currentThread().getName()));
+        Log.d(getClass().getName(), String.format("ModbusTask begin run for %s on thread is %s", chargeControllerInfo.toString(), Thread.currentThread().getName()));
         try {
             synchronized (lock) {
                 boolean connected = isConnected();
@@ -197,27 +196,12 @@ public class ModbusTask extends TimerTask {
                         }
                     }
                     GetModbusReadings();
-                    if (!foundTriStar) {
-                        if (dayLogEntry.isEmpty()) {
-                            loadDayLogs();
-                        }
-                        else {
-                            DateTime logDate = dayLogEntry.getLogDate();
-                            if (logDate.isBefore(DateTime.now().withTimeAtStartOfDay())) { // still good?
-                                loadDayLogs();
+                    if (!foundTriStar) { // no tristar log support
+                        if (getDayLogReacings()) {
+                            if (chargeControllerInfo.isCurrent()) { // don't need minute logs for summaries
+                                getHourLogReacings();
                             }
                         }
-                        dayLogEntry.broadcastLogs(context, Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS);
-                        if (minuteLogEntry.isEmpty()) {
-                            loadMinuteLogs();
-                        }
-                        else {
-                            DateTime logDate = minuteLogEntry.getLogDate();
-                            if (logDate.isBefore(DateTime.now().minusHours(1))) { // still good?
-                                loadMinuteLogs();
-                            }
-                        }
-                        minuteLogEntry.broadcastLogs(context, Constants.CA_FARRELLTONSOLAR_CLASSIC_MINUTE_LOGS);
                     }
                 }
             }
@@ -229,6 +213,44 @@ public class ModbusTask extends TimerTask {
         }
 //        Log.d(getClass().getName(), "end run");
 
+    }
+
+    public boolean getDayLogReacings () throws ModbusException {
+        boolean usingCache = false;
+        if (dayLogEntry.isEmpty()) {
+            loadDayLogs();
+        } else {
+            DateTime logDate = dayLogEntry.getLogDate();
+            if (logDate.isBefore(DateTime.now().withTimeAtStartOfDay())) { // still good?
+                loadDayLogs();
+            }
+            else {
+                usingCache = true;
+            }
+        }
+        if (!dayLogEntry.isEmpty()) {
+            dayLogEntry.broadcastLogs(context, chargeControllerInfo.uniqueId(), chargeControllerInfo.isCurrent() ? Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS : Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS_SLAVE);
+        }
+        return usingCache;
+    }
+
+    public boolean getHourLogReacings () throws ModbusException {
+        boolean usingCache = false;
+        if (minuteLogEntry.isEmpty()) {
+            loadMinuteLogs();
+        } else {
+            DateTime logDate = minuteLogEntry.getLogDate();
+            if (logDate.isBefore(DateTime.now().minusHours(1))) { // still good?
+                loadMinuteLogs();
+            }
+            else {
+                usingCache = true;
+            }
+        }
+        if (!minuteLogEntry.isEmpty()) {
+            minuteLogEntry.broadcastLogs(context, chargeControllerInfo.uniqueId(), Constants.CA_FARRELLTONSOLAR_CLASSIC_MINUTE_LOGS);
+        }
+        return usingCache;
     }
 
     public void clearReadings() {
@@ -244,7 +266,7 @@ public class ModbusTask extends TimerTask {
         readings.set(RegisterName.SOC, 0);
         readings.set(RegisterName.Aux1, false);
         readings.set(RegisterName.Aux2, false);
-        readings.broadcastReadings(context, Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS);
+        readings.broadcastReadings(context, chargeControllerInfo.uniqueId(), getAction());
     }
 
     private void GetModbusReadings() throws ModbusException {
@@ -260,10 +282,32 @@ public class ModbusTask extends TimerTask {
                     readings.set(RegisterName.EnergyToday, WHr(registers[68].getValue()));
                     readings.set(RegisterName.TotalEnergy, (float) registers[57].getValue());
                 } else {
-                    Log.w(getClass().getName(), String.format("Modbus readMultipleRegisters returned null"));
-                    throw new ModbusException("Failed to read data from modbus");
+                    Log.w(getClass().getName(), String.format("Modbus failed to read 0000, readMultipleRegisters returned null"));
+                    throw new ModbusException("Failed to read data from modbus 0000");
                 }
             } else {
+                if (foundWhizBangJr) {
+                    Register[] registers2 = modbusMaster.readMultipleRegisters(4360, 22);
+                    if (registers2 != null && registers2.length == 22) {
+                        Integer val = ((registers2[5].getValue() << 16) + registers2[4].getValue());
+                        readings.set(RegisterName.PositiveAmpHours, val);
+                        val = (registers2[7].getValue() << 16) + registers2[6].getValue();
+                        readings.set(RegisterName.NegativeAmpHours, Math.abs(val));
+                        val = (registers2[9].getValue() << 16) + registers2[8].getValue();
+                        readings.set(RegisterName.NetAmpHours, val);
+                        readings.set(RegisterName.ShuntTemperature, ((short)registers2[11].getValue() & 0x00ff) -50.0f);
+                        Register a = registers2[10];
+                        readings.set(RegisterName.WhizbangBatCurrent, a.toShort() / 10.0f);
+                        Register soc = registers2[12];
+                        short socVal = soc.toShort();
+                        readings.set(RegisterName.SOC, socVal);
+                        readings.set(RegisterName.RemainingAmpHours, registers2[16].toShort());
+                        readings.set(RegisterName.TotalAmpHours, registers2[20].toShort());
+                    } else {
+                        Log.w(getClass().getName(), String.format("Modbus failed to read 4360 readMultipleRegisters returned null"));
+                        throw new ModbusException("Failed to read data from modbus 4360");
+                    }
+                }
                 Register[] registers = modbusMaster.readMultipleRegisters(reference, 36);
                 if (registers != null && registers.length == 36) {
                     readings.set(RegisterName.BatCurrent, registers[16].getValue() / 10.0f);
@@ -283,37 +327,21 @@ public class ModbusTask extends TimerTask {
                     readings.set(RegisterName.Aux1, (infoFlag & 0x4000) != 0);
                     readings.set(RegisterName.Aux2, (infoFlag & 0x8000) != 0);
                 } else {
-                    Log.w(getClass().getName(), String.format("Modbus readMultipleRegisters returned null"));
-                    throw new ModbusException("Failed to read data from modbus");
+                    Log.w(getClass().getName(), String.format("Modbus failed to read 4100, readMultipleRegisters returned null"));
+                    throw new ModbusException("Failed to read data from modbus 4100");
                 }
-                if (foundWhizBangJr) {
-                    Register[] registers2 = modbusMaster.readMultipleRegisters(4360, 22);
-                    if (registers2 != null && registers2.length == 22) {
-                        Integer val = ((registers2[5].getValue() << 16) + registers2[4].getValue());
-                        readings.set(RegisterName.PositiveAmpHours, val);
-                        val = (registers2[7].getValue() << 16) + registers2[6].getValue();
-                        readings.set(RegisterName.NegativeAmpHours, Math.abs(val));
-                        val = (registers2[9].getValue() << 16) + registers2[8].getValue();
-                        readings.set(RegisterName.NetAmpHours, val);
-                        readings.set(RegisterName.ShuntTemperature, ((short)registers2[11].getValue() & 0x00ff) -50.0f);
-                        Register a = registers2[10];
-                        readings.set(RegisterName.WhizbangBatCurrent, a.toShort() / 10.0f);
-                        Register soc = registers2[12];
-                        short socVal = soc.toShort();
-                        readings.set(RegisterName.SOC, socVal);
-                        readings.set(RegisterName.RemainingAmpHours, registers2[16].toShort());
-                        readings.set(RegisterName.TotalAmpHours, registers2[20].toShort());
-                    } else {
-                        Log.w(getClass().getName(), String.format("Modbus readMultipleRegisters returned null"));
-                        throw new ModbusException("Failed to read data from modbus");
-                    }
-                }
+
             }
-            readings.broadcastReadings(context, Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS);
+            readings.broadcastReadings(context, chargeControllerInfo.uniqueId(), getAction());
         } catch (Exception all) {
             Log.w(getClass().getName(), String.format("GetModbusReadings Exception ex: %s", all));
+            all.printStackTrace();
             throw new ModbusException(all.getMessage());
         }
+    }
+
+    private String getAction() {
+        return chargeControllerInfo.isCurrent() ? Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS : Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS_SLAVE;
     }
 
     private void BroadcastToast(String message) {
@@ -523,7 +551,7 @@ public class ModbusTask extends TimerTask {
         short minuteSum = 0;
         short[] buffer = new short[bufferSize];
         try {
-            
+
             while (index < bufferSize) {
                 ReadFileTransferResponse regRes = modbusMaster.readFileTransfer(index, Constants.CLASSIC_TIMESTAMP_HIGH_HOURLY_CATEGORY, Constants.MODBUS_FILE_MINUTES_LOG);
                 if (regRes != null) {

@@ -45,7 +45,7 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_gravity="center_vertical|top"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="50dp"
         android:layout_weight="8">
 
@@ -128,6 +128,44 @@
                 android:orientation="horizontal"></LinearLayout>
         </LinearLayout>
     </FrameLayout>
+    <RadioGroup
+        android:id="@+id/radio_unit_system"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:paddingBottom="25dp"
+        android:paddingTop="25dp"
+        android:checkedButton="@+id/radio_unit"
+        android:weightSum="20"
+        android:orientation="horizontal">
 
+        <RadioButton
+            android:id="@+id/radio_system"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="System"
+            android:gravity="center"
+            android:padding="5dp"
+            android:textSize="@dimen/textSizeLarge"
+            android:textColor="@color/custom_radio_color"
+            android:background="@drawable/custom_radio_button"
+
+            android:layout_weight="10"/>
+
+        <RadioButton
+            android:id="@+id/radio_unit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Unit"
+            android:textColor="@color/custom_radio_color"
+
+            android:gravity="center"
+            android:padding="5dp"
+            android:textSize="@dimen/textSizeLarge"
+            android:background="@drawable/custom_radio_button"
+            android:layout_weight="10"/>
+
+
+    </RadioGroup>
 
 </LinearLayout>

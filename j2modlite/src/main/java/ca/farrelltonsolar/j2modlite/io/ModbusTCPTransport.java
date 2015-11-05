@@ -150,13 +150,14 @@ public class ModbusTCPTransport implements ca.farrelltonsolar.j2modlite.io.Modbu
 						+ ModbusUtil.toHex(m_ByteOut.toByteArray()));
 			// write more sophisticated exception handling
 		} catch (SocketException ex) {
-			if (! m_Master.isConnected()) {
+			if (m_Master != null && !m_Master.isConnected()) {
 				try {
 					m_Master.connect();
 				} catch (Exception e) {
 					// Do nothing.
 				}
 			}
+			ex.printStackTrace();
 			throw new ModbusIOException("I/O exception - failed to write.");
 		} catch (Exception ex) {
 			throw new ModbusIOException("I/O exception - failed to write.");

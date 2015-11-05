@@ -17,23 +17,29 @@
 package ca.farrelltonsolar.classic;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 
 public class ModbusService extends Service {
 
 
     private final IBinder mBinder = new ModbusServiceBinder();
-    private Timer pollTimer;
-    ModbusTask task;
 
+    private List<ModbusTask> tasks = new ArrayList<>();
     public ModbusService() {
+
     }
 
     @Override
@@ -63,41 +69,72 @@ public class ModbusService extends Service {
     public void onCreate() {
         Log.d(getClass().getName(), "onCreate");
         super.onCreate();
+        LocalBroadcastManager.getInstance(this).registerReceiver(removeChargeControllerReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_REMOVE_CHARGE_CONTROLLER));
     }
+
+    private BroadcastReceiver removeChargeControllerReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String uniqueId = intent.getStringExtra("uniqueId");
+            for (ModbusTask task : tasks) {
+                if (task.chargeController().uniqueId().compareTo(uniqueId) == 0) {
+                    Disconnector d = new Disconnector(task);
+                    d.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    break;
+                }
+            }
+        }
+    };
 
     @Override
     public void onDestroy() {
         Log.d(getClass().getName(), "onDestroy");
-        stopMonitoringChargeController();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(removeChargeControllerReceiver);
+        stopMonitoringChargeControllers();
         super.onDestroy();
     }
 
-    public void monitorChargeController(ChargeController controller) {
-        if (controller == null) {
+    public void monitorChargeControllers(ChargeControllers controllers) {
+        if (controllers == null || controllers.count() == 0) {
             return;
         }
-        stopMonitoringChargeController();
-        pollTimer = new Timer();
-        task = new ModbusTask(controller, this.getBaseContext());
-        pollTimer.schedule(task, 100, Constants.MODBUS_POLL_TIME);
-        Log.d(getClass().getName(), String.format("Monitor running on: %s this thread is %s", controller.toString(), Thread.currentThread().getName()));
+
+        int count = controllers.count();
+        for (int i = 0; i < count; i++) {
+            ChargeController controller = controllers.get(i);
+            if (isBeingMonitored(controller) == false) {
+                ModbusTask task = new ModbusTask(controller, this.getBaseContext());
+                tasks.add(task);
+                Timer pollTimer = new Timer();
+                pollTimer.schedule(task, 100, Constants.MODBUS_POLL_TIME);
+                Log.d(getClass().getName(), String.format("Monitor running on: %s this thread is %s", controller.toString(), Thread.currentThread().getName()));
+            }
+        }
     }
 
-    public void stopMonitoringChargeController() {
-        if (pollTimer != null) {
-            pollTimer.cancel();
+    private boolean isBeingMonitored(ChargeController controller) {
+        boolean rVal = false;
+        for (ModbusTask task : tasks) {
+            if (task.chargeController().equals(controller)) {
+                rVal = true;
+                break;
+            }
         }
-        if (task != null) {
-            Log.d(getClass().getName(), String.format("stopMonitoringChargeController: %s this thread is %s", task.chargeController().toString(), Thread.currentThread().getName()));
-            Disconnector d = new Disconnector(task);
-            d.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            task = null;
-        }
+        return rVal;
+    }
 
+    public void stopMonitoringChargeControllers() {
+        if (!tasks.isEmpty()) {
+            for (ModbusTask task : tasks) {
+                Log.d(getClass().getName(), String.format("stopMonitoringChargeController: %s this thread is %s", task.chargeController().toString(), Thread.currentThread().getName()));
+                Disconnector d = new Disconnector(task);
+                d.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+        }
     }
 
     public Boolean isInService() {
-        return task != null;
+        return !tasks.isEmpty();
     }
 
     private class Disconnector extends AsyncTask<String, Void, String> {
@@ -110,7 +147,8 @@ public class ModbusService extends Service {
 
         @Override
         protected String doInBackground(String... params) {
-            task.disconnect();
+            Log.d(getClass().getName(), String.format("Cancelling task for: %s this thread is %s", task.chargeController().toString(), Thread.currentThread().getName()));
+            task.cancel();
             task = null;
             return null;
         }

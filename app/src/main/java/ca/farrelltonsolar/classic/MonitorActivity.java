@@ -73,14 +73,25 @@ public class MonitorActivity extends ActionBarActivity {
         ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
         if (cc != null && cc.deviceType() == DeviceType.Classic) {
             currentUnitName = cc.deviceName();
-            tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
-            tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
             if (cc.hasWhizbang()) {
-                tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
-                tabStripAdapter.addTab(CapacityFragment.TabTitle, CapacityFragment.class, null);
-                if (MonitorApplication.chargeControllers().count() == 1) {
-                    tabStripAdapter.addTab(LoadFragment.TabTitle, LoadFragment.class, null);
+                if (MonitorApplication.chargeControllers().count() > 1) {
+                    tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
+                    tabStripAdapter.addTab(SystemFragment.TabTitle, SystemFragment.class, null);
+                    tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
+                    tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
+                    tabStripAdapter.addTab(CapacityFragment.TabTitle, CapacityFragment.class, null);
                 }
+                else {
+                    tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
+                    tabStripAdapter.addTab(LoadFragment.TabTitle, LoadFragment.class, null);
+                    tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
+                    tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
+                    tabStripAdapter.addTab(CapacityFragment.TabTitle, CapacityFragment.class, null);
+                }
+            }
+            else {
+                tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
+                tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
             }
             tabStripAdapter.addTab(TemperatureFragment.TabTitle, TemperatureFragment.class, null);
             addDayLogCalendar();
@@ -216,10 +227,10 @@ public class MonitorActivity extends ActionBarActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
-                ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController(); // cc got removed?
+                ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController(); // current cc got removed?
                 if (cc == null) {
                     if (modbusService != null && modbusService.isInService()) {
-                        modbusService.stopMonitoringChargeController();
+                        modbusService.stopMonitoringChargeControllers();
                         MonitorActivity.this.finish();
                         MonitorActivity.this.startActivity(getIntent());
                     }
@@ -268,7 +279,7 @@ public class MonitorActivity extends ActionBarActivity {
             ModbusService.ModbusServiceBinder binder = (ModbusService.ModbusServiceBinder) service;
             modbusService = binder.getService();
 
-            modbusService.monitorChargeController(MonitorApplication.chargeControllers().getCurrentChargeController());
+            modbusService.monitorChargeControllers(MonitorApplication.chargeControllers());
         }
 
         public void onServiceDisconnected(ComponentName arg0) {

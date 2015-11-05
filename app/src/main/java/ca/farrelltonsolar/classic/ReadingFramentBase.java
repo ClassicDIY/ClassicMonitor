@@ -34,7 +34,7 @@ import android.view.ViewGroup;
 public abstract class ReadingFramentBase extends Fragment implements ReadingFragmentInterface {
 
     int layoutId;
-    private boolean isReceiverRegistered;
+    private boolean isReceiverRegistered = false;
     protected ViewGroup container;
 
     protected ReadingFramentBase(int layoutId) {

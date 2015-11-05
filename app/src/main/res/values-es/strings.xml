@@ -123,4 +123,8 @@
     <string name="RemainingCapacityTitle">Capacidad restante</string>
     <string name="TemperatureScaleSummary">La escala Fahrenheit de uso</string>
     <string name="turn_off_local_app">Por favor, asegúrese de que la aplicación local de Midnite Solar no se está ejecutando en la red</string>
+    <string name="SystemTabTitle">Sistema </string>
+    <string name="LoadTitle">Consumo</string>
+    <string name="device_button">Controlador</string>
+    <string name="system_button">Sistema</string>
 </resources>

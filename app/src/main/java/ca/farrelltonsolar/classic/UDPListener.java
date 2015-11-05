@@ -196,6 +196,9 @@ public class UDPListener extends Service {
                         socket.receive(packet);
                         byte[] data = packet.getData();
                         byte[] addr = new byte[4];
+                        if (data[0] == -87 && data[1] == -2) { // 169.254 ==> Microsoft reserved for private addressing
+                            continue;
+                        }
                         addr[0] = data[0];
                         addr[1] = data[1];
                         addr[2] = data[2];
