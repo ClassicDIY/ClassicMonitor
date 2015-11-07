@@ -46,6 +46,13 @@ Release notes:
 
 -----------------
 
+version 2.2.0
+<ul>
+<li>Added support for multiple classics, the new 'System' tab will display the power harvested and consumed by the system when multiple classics are in use. The WhizbangJr is required to enable this feature.</li>
+<li>The Energy and Calendar views can now display system/controller values with the selection of a radio button.</li>
+</ul>
+-----------------
+
 version 2.1.0
 
 <ul>
