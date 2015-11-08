@@ -21,6 +21,9 @@ Basic support for the Tristar MPPT charge controller from Morningstar is also in
 
 </p>
 
+<p>
+If you find issues or want new features, please open an issue on the github tracker at https://github.com/graham22/Classic/issues
+</p>
 
 ## License
 ```
