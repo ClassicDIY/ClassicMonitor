@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -34,6 +35,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import java.util.Locale;
 
 import ca.farrelltonsolar.uicomponents.SlidingTabLayout;
 import ca.farrelltonsolar.uicomponents.TabStripAdapter;
@@ -63,8 +66,6 @@ public class MonitorActivity extends ActionBarActivity {
         viewPager = (ViewPager) findViewById(R.id.pager);
         setupActionBar();
         Log.d(getClass().getName(), "onCreate");
-        Toast.makeText(this.getBaseContext(), R.string.turn_off_local_app, Toast.LENGTH_LONG).show();
-
     }
 
     private void setupActionBar() {
@@ -191,7 +192,13 @@ public class MonitorActivity extends ActionBarActivity {
         switch (id) {
             case R.id.action_settings:
                 startActivityForResult(new Intent(this, Settings.class), 0);
-
+                handled = true;
+                break;
+            case R.id.action_help:
+                String helpContext = navigationDrawerFragment.isDrawerOpen() ? "NavigationDrawerFragment" : tabStripAdapter.getItem(viewPager.getCurrentItem()).getClass().getSimpleName();
+                helpContext = String.format("http://skyetracker.com/classicmonitor/%s/%s.html", Locale.getDefault().getLanguage(), helpContext);
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(helpContext)));
+                //Toast.makeText(getBaseContext(), helpContext, Toast.LENGTH_LONG).show();
                 handled = true;
                 break;
         }

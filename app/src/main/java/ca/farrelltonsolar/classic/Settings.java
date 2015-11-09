@@ -16,7 +16,9 @@
 
 package ca.farrelltonsolar.classic;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -25,6 +27,9 @@ import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+
+import java.util.Locale;
 
 public class Settings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -44,6 +49,16 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
         addPreferencesFromResource(R.xml.preferences);
         setContentView(R.layout.settings_main);
 
+        final ImageButton help = (ImageButton) findViewById(R.id.SettingsHelp);
+        help.setOnClickListener(new View.OnClickListener() {
+            @Override
+            //On click function
+            public void onClick(View view) {
+                String helpContext = String.format("http://skyetracker.com/classicmonitor/%s/Settings.html", Locale.getDefault().getLanguage());
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(helpContext)));
+                return;
+            }
+        });
         final Button Cancel = (Button) findViewById(R.id.Cancel);
         Cancel.setOnClickListener(new View.OnClickListener() {
             @Override

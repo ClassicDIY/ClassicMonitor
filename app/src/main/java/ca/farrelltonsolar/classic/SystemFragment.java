@@ -23,9 +23,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,56 +32,39 @@ import ca.farrelltonsolar.uicomponents.BaseGauge;
 public class SystemFragment extends ReadingFramentBase {
 
     public static int TabTitle = R.string.SystemTabTitle;
-    private boolean unitsInWatts;
-    private float originalScaleEnd;
     private boolean isSlaveReceiverRegistered = false;
-    Map<String, Float> slaveControllerCurrent = new HashMap<String, Float>();
     Map<String, Float> slaveControllerPower = new HashMap<String, Float>();
     Map<String, Float> slaveControllerWhizbangJr = new HashMap<String, Float>();
 
     public SystemFragment() {
-
         super(R.layout.fragment_system);
-        ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
-        if (cc != null) {
-            unitsInWatts = cc.isBidirectionalUnitsInWatts();
-        }
     }
 
     public void setReadings(Readings readings) {
         try {
+            float slavePowerSum = 0.0f;
+            for (float f : slaveControllerPower.values()) {
+                slavePowerSum += f;
+            }
+            float totalPowerIntake = readings.getFloat(RegisterName.Power) + slavePowerSum;
             View v = this.getView().findViewById(R.id.Load);
             if (v != null) {
                 BaseGauge gaugeView = (BaseGauge) v;
-                float whizbangBatteryCurrent = 0.0f;
+                float whizbangPower = 0.0f;
+                float batteryVolts = readings.getFloat(RegisterName.BatVoltage);
                 if (readings.getReadings().containsKey(RegisterName.WhizbangBatCurrent.name())) {
-                    whizbangBatteryCurrent = readings.getFloat(RegisterName.WhizbangBatCurrent);
+                    whizbangPower = readings.getFloat(RegisterName.WhizbangBatCurrent) * batteryVolts;
                 }
                 for (float f : slaveControllerWhizbangJr.values()) {
-                    whizbangBatteryCurrent += f;
+                    whizbangPower += f;
                 }
-                float slaveSum = 0.0f;
-                for (float f : slaveControllerCurrent.values()) {
-                    slaveSum += f;
-                }
-                float ccCurrent = readings.getFloat(RegisterName.BatCurrent) + slaveSum;
-                float loadCurrent = ccCurrent - whizbangBatteryCurrent;
-                if (unitsInWatts) {
-                    float batteryVolts = readings.getFloat(RegisterName.BatVoltage);
-                    gaugeView.setTargetValue(loadCurrent * batteryVolts);
-                } else {
-                    gaugeView.setTargetValue(loadCurrent);
-                }
+                float consumption = totalPowerIntake - whizbangPower;
+                gaugeView.setTargetValue(consumption);
             }
             v = this.getView().findViewById(R.id.Power);
             if (v != null) {
                 BaseGauge gaugeView = (BaseGauge) v;
-                float slaveSum = 0.0f;
-                for (float f : slaveControllerPower.values()) {
-                    slaveSum += f;
-                }
-                float power = readings.getFloat(RegisterName.Power) + slaveSum;
-                gaugeView.setTargetValue(power);
+                gaugeView.setTargetValue(totalPowerIntake);
             }
         } catch (Exception ignore) {
 
@@ -97,8 +77,6 @@ public class SystemFragment extends ReadingFramentBase {
 
             BaseGauge gaugeView = (BaseGauge) v;
             if (gaugeView != null) {
-                originalScaleEnd = gaugeView.getScaleEnd();
-                gaugeView.setOnClickListener(GetClickListener(container));
                 setupGauge(gaugeView);
             }
         }
@@ -108,59 +86,14 @@ public class SystemFragment extends ReadingFramentBase {
             gaugeView.setGreenRange(10, 100);
             gaugeView.setTargetValue(0.0f);
         }
-        slaveControllerCurrent.clear();
         slaveControllerPower.clear();
         slaveControllerWhizbangJr.clear();
     }
 
     private void setupGauge(BaseGauge gaugeView) {
-        if (unitsInWatts) {
-            gaugeView.setUnit("W");
-        } else {
-            gaugeView.setUnit("A");
-        }
+        gaugeView.setUnit("W");
         gaugeView.setGreenRange(10, 100);
         gaugeView.setTargetValue(0.0f);
-
-    }
-
-    private View.OnClickListener GetClickListener(final ViewGroup container) {
-        return new View.OnClickListener() {
-
-            @Override
-            public void onClick(final View v) {
-                Animation animation = new AlphaAnimation(1.0f, 0.0f);
-                animation.setDuration(500);
-                animation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationEnd(Animation arg0) {
-                        unitsInWatts = !unitsInWatts;
-                        ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
-                        if (cc != null) {
-                            cc.setBidirectionalUnitsInWatts(unitsInWatts);
-                        }
-                        BaseGauge gauge = (BaseGauge) v;
-                        if (gauge != null) {
-                            setupGauge(gauge);
-                            gauge.setScaleEnd(originalScaleEnd);
-                        }
-                        Animation animation2 = new AlphaAnimation(0.0f, 1.0f);
-                        animation2.setDuration(500);
-                        v.startAnimation(animation2);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation arg0) {
-                    }
-
-                    @Override
-                    public void onAnimationStart(Animation arg0) {
-                    }
-
-                });
-                v.startAnimation(animation);
-            }
-        };
     }
 
     @Override
@@ -193,9 +126,10 @@ public class SystemFragment extends ReadingFramentBase {
             Bundle bundle = intent.getBundleExtra("readings");
             String uniqueId = intent.getStringExtra("uniqueId");
             if (bundle.containsKey(RegisterName.WhizbangBatCurrent.name())) {
-                slaveControllerWhizbangJr.put(uniqueId, bundle.getFloat(RegisterName.WhizbangBatCurrent.name(), 0));
+                float wbCurrent = bundle.getFloat(RegisterName.WhizbangBatCurrent.name(), 0);
+                float slaveVoltage = bundle.getFloat(RegisterName.BatVoltage.name(), 0);
+                slaveControllerWhizbangJr.put(uniqueId, wbCurrent * slaveVoltage);
             }
-            slaveControllerCurrent.put(uniqueId, bundle.getFloat(RegisterName.BatCurrent.name(), 0));
             slaveControllerPower.put(uniqueId, bundle.getFloat(RegisterName.Power.name(), 0));
         }
     };

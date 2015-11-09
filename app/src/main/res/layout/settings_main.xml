@@ -6,6 +6,14 @@
     android:padding="20dp"
     android:weightSum="100">
 
+    <ImageButton
+        android:id="@+id/SettingsHelp"
+        android:src="@drawable/help"
+        android:layout_gravity="right"
+        android:background="@null"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
@@ -24,6 +32,8 @@
         android:layout_weight="20"
         android:orientation="horizontal"
         android:weightSum="10">
+
+
 
         <Button
             android:text="@string/CancelButton"

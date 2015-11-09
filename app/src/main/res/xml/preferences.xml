@@ -40,6 +40,7 @@
             android:defaultValue="" />
         <Preference
             android:title="@string/ClearLogsTitle"
+            android:icon="@drawable/ic_action_delete"
             android:key="ResetLogs" />
 
     </PreferenceCategory>
