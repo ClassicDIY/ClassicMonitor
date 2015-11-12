@@ -56,7 +56,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             @Override
             //On click function
             public void onClick(View view) {
-                String helpContext = String.format("http://skyetracker.com/classicmonitor/%s/help.html#Settings", Locale.getDefault().getLanguage());
+                String helpContext = String.format("http://skyetracker.com/classicmonitor/help_%s.html#Settings", Locale.getDefault().getLanguage());
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(helpContext)));
                 return;
             }

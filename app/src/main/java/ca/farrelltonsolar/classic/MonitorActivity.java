@@ -215,7 +215,7 @@ public class MonitorActivity extends ActionBarActivity {
                 break;
             case R.id.action_help:
                 String helpContext = navigationDrawerFragment.isDrawerOpen() ? "NavigationBar" : tabStripAdapter.getItem(viewPager.getCurrentItem()).getClass().getSimpleName();
-                helpContext = String.format("http://skyetracker.com/classicmonitor/%s/help.html#%s", Locale.getDefault().getLanguage(), helpContext);
+                helpContext = String.format("http://skyetracker.com/classicmonitor/help_%s.html#%s", Locale.getDefault().getLanguage(), helpContext);
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(helpContext)));
                 handled = true;
                 break;
