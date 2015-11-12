@@ -23,10 +23,17 @@ h4,.h4{font-size:24px;line-height:25px}
 h5,.h5{font-size:20px;line-height:24px}
 h6,.h6{font-size:18px;line-height:24px}
 
-a{color:#3282e6;}
-a:hover,a:focus{color:#165db5;text-decoration:underline}
+a {
+  color: #3282e6;
+  text-decoration: none;
+}
+
+/* a{color:#3282e6;}
+a:hover,a:focus{color:#165db5;text-decoration:underline} */
 
 .text-center{text-align:center}
+
+.text-left{text-align:left, padding-left: 60px}
 
 .wrap {
   min-height: 100%;
@@ -150,6 +157,11 @@ button, input, select, textarea {
   margin: 20px;
 }
 
+.toc-container {
+  text-align: left;
+  margin: 20px;
+}
+
 .footer {
   position: relative;
   margin-top: -60px; /* negative value of footer height */
@@ -158,3 +170,9 @@ button, input, select, textarea {
   text-align: center;
   font-size: 14px;
 }
+
+      div.page
+      {
+        page-break-after: always;
+        page-break-inside: avoid;
+      }
