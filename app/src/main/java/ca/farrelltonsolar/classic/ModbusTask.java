@@ -94,7 +94,6 @@ public class ModbusTask extends TimerTask {
     private Context context;
     private ModbusTCPMaster modbusMaster;
     private ChargeControllerInfo chargeControllerInfo;
-    private int reference = 4100; //the reference; offset where to start reading from
     private Readings readings;
     private LogEntry dayLogEntry;
     private LogEntry minuteLogEntry;
@@ -189,14 +188,14 @@ public class ModbusTask extends TimerTask {
                 if (connected) {
                     if (initialReadingLoaded == false) {
                         initialReadingLoaded = true;
-                        MonitorApplication.chargeControllers().setReachable(chargeControllerInfo.getDeviceIp(), chargeControllerInfo.port(), true);
-                        if (lookForTriStar() == DeviceType.Classic) {
+                        if (lookForTriStar() == false) {
                             lookForWhizBangJr();
                             loadBoilerPlateInfo();
                         }
+                        MonitorApplication.chargeControllers().setReachable(chargeControllerInfo.getDeviceIp(), chargeControllerInfo.port(), true);
                     }
                     GetModbusReadings();
-                    if (!foundTriStar) { // no tristar log support
+                    if (chargeControllerInfo.deviceType() == DeviceType.Classic) { // no tristar or kid log support
                         if (getDayLogReacings()) {
                             if (chargeControllerInfo.isCurrent()) { // don't need minute logs for summaries
                                 getHourLogReacings();
@@ -308,7 +307,7 @@ public class ModbusTask extends TimerTask {
                         throw new ModbusException("Failed to read data from modbus 4360");
                     }
                 }
-                Register[] registers = modbusMaster.readMultipleRegisters(reference, 36);
+                Register[] registers = modbusMaster.readMultipleRegisters(4100, 36);
                 if (registers != null && registers.length == 36) {
                     readings.set(RegisterName.BatCurrent, registers[16].getValue() / 10.0f);
                     readings.set(RegisterName.Power, (float) registers[18].getValue());
@@ -353,11 +352,20 @@ public class ModbusTask extends TimerTask {
     private void loadBoilerPlateInfo() {
         try {
             Register[] registers = modbusMaster.readMultipleRegisters(4100, 32);
-
+            boolean isClassic = false;
             if (registers != null && registers.length == 32) {
+                int unitId = -1;
                 short reg1 = (short) registers[0].getValue();
-                String model = String.format("Classic %d (rev %d)", reg1 & 0x00ff, reg1 >> 8);
-                chargeControllerInfo.setModel(model);
+                if (reg1 == 0) { // the kid?
+                    chargeControllerInfo.setModel("The Kid");
+                    chargeControllerInfo.setDeviceType(DeviceType.Kid);
+                }
+                else {
+                    String model = String.format("Classic %d (rev %d)", reg1 & 0x00ff, reg1 >> 8);
+                    chargeControllerInfo.setModel(model);
+                    chargeControllerInfo.setDeviceType(DeviceType.Classic);
+                    isClassic = true;
+                }
                 int buildYear = registers[1].getValue();
                 int buildMonthDay = registers[2].getValue();
                 DateTime buildDate = new DateTime(buildYear, (buildMonthDay >> 8), (buildMonthDay & 0x00ff), 0, 0);
@@ -369,20 +377,44 @@ public class ModbusTask extends TimerTask {
                 chargeControllerInfo.setMacAddress(macAddress);
                 float reg22 = (float) registers[21].getValue();
                 chargeControllerInfo.setLastVOC(reg22 / 10);
+                unitId = (registers[11].getValue() << 16) + registers[10].getValue();
+                chargeControllerInfo.setUnitID(unitId);
+            }
+            registers = modbusMaster.readMultipleRegisters(4209, 4);
+            if (registers != null && registers.length == 4) {
+                byte[] v0 = registers[0].toBytes();
+                byte[] v1 = registers[1].toBytes();
+                byte[] v2 = registers[2].toBytes();
+                byte[] v3 = registers[3].toBytes();
+
+                byte[] temp = new byte[8];
+                temp[0] = v0[1];
+                temp[1] = v0[0];
+                temp[2] = v1[1];
+                temp[3] = v1[0];
+                temp[4] = v2[1];
+                temp[5] = v2[0];
+                temp[6] = v3[1];
+                temp[7] = v3[0];
+                String unitName = new String(temp);
+                chargeControllerInfo.setDeviceName(unitName);
+                Log.i(getClass().getName(), String.format("Modbus device unitName is %s ", unitName));
             }
             registers = modbusMaster.readMultipleRegisters(4244, 2);
             if (registers != null && registers.length == 2) {
                 short reg4245 = (short) registers[0].getValue();
                 chargeControllerInfo.setNominalBatteryVoltage(reg4245);
             }
-            registers = modbusMaster.readMultipleRegisters(16386, 4);
-            if (registers != null && registers.length == 4) {
-                short reg16387 = registers[0].toShort();
-                short reg16388 = registers[1].toShort();
-                short reg16389 = registers[2].toShort();
-                short reg16390 = registers[3].toShort();
-                chargeControllerInfo.setAppVersion(String.format("%d", (reg16388 << 16) + reg16387));
-                chargeControllerInfo.setNetVersion(String.format("%d", (reg16390 << 16) + reg16389));
+            if (isClassic){
+                registers = modbusMaster.readMultipleRegisters(16386, 4);
+                if (registers != null && registers.length == 4) {
+                    short reg16387 = registers[0].toShort();
+                    short reg16388 = registers[1].toShort();
+                    short reg16389 = registers[2].toShort();
+                    short reg16390 = registers[3].toShort();
+                    chargeControllerInfo.setAppVersion(String.format("%d", (reg16388 << 16) + reg16387));
+                    chargeControllerInfo.setNetVersion(String.format("%d", (reg16390 << 16) + reg16389));
+                }
             }
         } catch (Exception e) {
             Log.w(getClass().getName(), "loadBoilerPlateInfo failed ex: %s", e);
@@ -396,10 +428,11 @@ public class ModbusTask extends TimerTask {
             Register a = registers[10];
             foundWhizBangJr = a.toShort() != 0;
         }
+        chargeControllerInfo.setHasWhizbang(foundWhizBangJr);
         return foundWhizBangJr;
     }
 
-    private DeviceType lookForTriStar() {
+    private boolean lookForTriStar() {
         foundTriStar = false;
         try {
             Register[]registers = modbusMaster.readMultipleRegisters(0, 4); // see if its a tristar
@@ -417,14 +450,12 @@ public class ModbusTask extends TimerTask {
                     lo = (float) registers[3].toShort();
                     lo = lo / 65536;
                     i_pu = hi + lo;
-                    reference = 0;
                 }
             }
         } catch (ModbusException e) {
             Log.d(getClass().getName(), "This is probably not a Tristar!");
         }
-
-        return foundTriStar ? DeviceType.TriStar : DeviceType.Classic;
+        return foundTriStar;
     }
 
     private void loadDayLogs() throws ModbusException {

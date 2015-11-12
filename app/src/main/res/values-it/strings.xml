@@ -126,4 +126,8 @@
     <string name="LoadTitle">Consumo</string>
     <string name="device_button">Controller</string>
     <string name="system_button">Sistema</string>
+    <string name="ShowPopupSummary">Abilitare i messaggi di notifica</string>
+    <string name="connectionsPreferenceCategory">Connessione</string>
+    <string name="connectionsPreferenceSummary">Rilevamento automatico classic</string>
+    <string name="gaugesPreferenceCategory">Visualizzazione</string>
 </resources>

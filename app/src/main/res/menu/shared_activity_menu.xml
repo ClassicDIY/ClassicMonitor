@@ -17,4 +17,12 @@
         android:title="help"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_pvOutput"
+        android:icon="@drawable/pv_output"
+        android:orderInCategory="60"
+        android:title="pvOutput"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
 </menu>

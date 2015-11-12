@@ -78,7 +78,6 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onStop() {
         LocalBroadcastManager.getInstance(this.getActivity()).unregisterReceiver(updateChargeControllersReceiver);
-
         super.onStop();
     }
 
@@ -213,7 +212,7 @@ public class NavigationDrawerFragment extends Fragment {
         ChargeControllers chargeControllers = MonitorApplication.chargeControllers();
         int currentCC = chargeControllers.getCurrentControllerIndex();
         chargeControllers.load(adapter);
-        rootDrawerProgressBar.setVisibility(adapter.getCount() == 0 ? View.VISIBLE : View.INVISIBLE);
+        rootDrawerProgressBar.setVisibility(chargeControllers.autoDetectClassic() && adapter.getCount() == 0 ? View.VISIBLE : View.INVISIBLE);
         if (adapter.getCount() == 0 || currentCC == -1) {
             mDrawerLayout.openDrawer(mFragmentContainerView);
         }

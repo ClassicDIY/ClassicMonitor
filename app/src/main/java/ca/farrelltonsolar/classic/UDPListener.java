@@ -95,7 +95,6 @@ public class UDPListener extends Service {
         private byte[] buffer = new byte[16];
         private DatagramPacket packet;
         private ArrayList<InetSocketAddress> alreadyFoundList = new ArrayList<>();
-        private ArrayList<InetSocketAddress> alreadyUpdatedList = new ArrayList<>();
         private ChargeControllers currentChargeControllers;
 
         private void addToAlreadyFoundList(InetSocketAddress socketAddress) {
@@ -104,29 +103,10 @@ public class UDPListener extends Service {
             }
         }
 
-        private void addToalreadyUpdatedList(InetSocketAddress socketAddress) {
-            synchronized (lock) {
-                alreadyUpdatedList.add(socketAddress);
-            }
-        }
-
         private boolean hasAddressAlreadyBeenFound(InetSocketAddress socketAddress) {
             boolean rVal = false;
             synchronized (lock) {
                 for (InetSocketAddress cc : alreadyFoundList) {
-                    if (cc.equals(socketAddress)) {
-                        rVal = true;
-                        break;
-                    }
-                }
-            }
-            return rVal;
-        }
-
-        private boolean hasAddressAlreadyBeenUpdated(InetSocketAddress socketAddress) {
-            boolean rVal = false;
-            synchronized (lock) {
-                for (InetSocketAddress cc : alreadyUpdatedList) {
                     if (cc.equals(socketAddress)) {
                         rVal = true;
                         break;
@@ -190,7 +170,6 @@ public class UDPListener extends Service {
             packet = new DatagramPacket(buffer, buffer.length);
             try {
                 currentChargeControllers.load(alreadyFoundList, false); // all known controllers
-                currentChargeControllers.load(alreadyUpdatedList, true); // current & all static controllers, don't update as a result of the UDP datagram from a static classic
                 do {
                     try {
                         socket.receive(packet);
@@ -210,19 +189,12 @@ public class UDPListener extends Service {
                         if (hasAddressAlreadyBeenFound(socketAddress) == false) {
                             Log.d(getClass().getName(), "Found new classic at address: " + address + " port: " + port);
                             addToAlreadyFoundList(socketAddress);
-                            addToalreadyUpdatedList(socketAddress);
                             ChargeControllerInfo cc = new ChargeControllerInfo(socketAddress);
+                            cc.setDeviceType(DeviceType.Classic); // probably a classic if it auto detected
                             LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(UDPListener.this);
                             Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER);
                             pkg.putExtra("ChargeController", GSON.toJson(cc));
                             broadcaster.sendBroadcast(pkg);
-                            sleepTime = Constants.UDPListener_Minimum_Sleep_Time;
-                        } else if (hasAddressAlreadyBeenUpdated(socketAddress) == false) {
-                            addToalreadyUpdatedList(socketAddress);
-                            Log.d(getClass().getName(), "Updating info on classic at address: " + address + " port: " + port);
-                            ChargeControllerInfo cc = new ChargeControllerInfo(socketAddress);
-                            DeviceUpdater updater = new DeviceUpdater(cc);
-                            updater.run();
                             sleepTime = Constants.UDPListener_Minimum_Sleep_Time;
                         }
                     } catch (SocketTimeoutException iox) {

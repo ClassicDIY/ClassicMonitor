@@ -52,7 +52,8 @@ public class MonitorApplication extends Application implements Application.Activ
     private static Gson GSON = new Gson();
     ComplexPreferences configuration;
     WifiManager.WifiLock wifiLock;
-
+    ModbusService modbusService;
+    static boolean isModbusServiceBound = false;
 
     @Override
     protected void finalize() throws Throwable {
@@ -61,6 +62,10 @@ public class MonitorApplication extends Application implements Application.Activ
                 UDPListenerService.stopListening();
                 unbindService(UDPListenerServiceConnection);
             }
+            if (isModbusServiceBound) {
+                unbindService(modbusServiceConnection);
+            }
+            unbindService(modbusServiceConnection);
         } catch (Exception ex) {
             Log.w(getClass().getName(), "onActivityDestroyed exception ex: " + ex);
         }
@@ -97,7 +102,7 @@ public class MonitorApplication extends Application implements Application.Activ
         if (wifi != null){
             wifiLock = wifi.createWifiLock("ClassicMonitor");
         }
-        chargeControllers.updateUnknownStatic();
+        bindService(new Intent(this, ModbusService.class), modbusServiceConnection, Context.BIND_AUTO_CREATE);
         Log.d(getClass().getName(), "onCreate complete");
     }
 
@@ -176,7 +181,9 @@ public class MonitorApplication extends Application implements Application.Activ
             UDPListener.UDPListenerServiceBinder binder = (UDPListener.UDPListenerServiceBinder) service;
             UDPListenerService = binder.getService();
             isUDPListenerServiceBound = true;
-            UDPListenerService.listen(chargeControllers);
+            if (chargeControllers().autoDetectClassic()) {
+                UDPListenerService.listen(chargeControllers);
+            }
             Log.d(getClass().getName(), "UDPListener ServiceConnected");
         }
 
@@ -187,33 +194,48 @@ public class MonitorApplication extends Application implements Application.Activ
         }
     };
 
+    private ServiceConnection modbusServiceConnection = new ServiceConnection() {
+
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            Log.d(getClass().getName(), "ModbusService ServiceConnected");
+            ModbusService.ModbusServiceBinder binder = (ModbusService.ModbusServiceBinder) service;
+            modbusService = binder.getService();
+            isModbusServiceBound = true;
+            modbusService.monitorChargeControllers(MonitorApplication.chargeControllers());
+        }
+
+        public void onServiceDisconnected(ComponentName arg0) {
+            isModbusServiceBound = false;
+            modbusService = null;
+            Log.d(getClass().getName(), "ModbusService ServiceDisconnected");
+        }
+    };
+
     // Our handler for received Intents.
     private BroadcastReceiver addChargeControllerReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             ChargeControllerInfo cc = GSON.fromJson(intent.getStringExtra("ChargeController"), ChargeController.class);
             Log.d(getClass().getName(), String.format("adding new controller to list (%s)", cc.toString()));
-            DeviceUpdater updater = new DeviceUpdater(cc);
             chargeControllers.add(cc);
-            updater.run();
+            modbusService.monitorChargeControllers(chargeControllers());
         }
     };
 
     private BroadcastReceiver removeChargeControllerReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            UDPListenerService.stopListening();
-            UDPListenerService.listen(chargeControllers);
+            ConfigurationChanged();
         }
     };
 
-    public static void clearChargeControllerList(boolean all) {
-        if (all) {
-            chargeControllers.clear();
-        } else {
-            chargeControllers.clearDynamic();
+    public static void ConfigurationChanged() {
+        if (UDPListenerService != null) {
+            UDPListenerService.stopListening();
+            if (chargeControllers().autoDetectClassic()) {
+                UDPListenerService.listen(chargeControllers);
+            }
         }
-        UDPListenerService.listen(chargeControllers);
     }
 
     public static void monitorChargeController(int device) {
@@ -270,6 +292,10 @@ public class MonitorApplication extends Application implements Application.Activ
             configuration.putObject("devices", chargeControllers);
             configuration.commit();
         }
+    }
+
+    public MonitorApplication() {
+        super();
     }
 
     @Override

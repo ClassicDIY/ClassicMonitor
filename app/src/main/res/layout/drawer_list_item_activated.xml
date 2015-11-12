@@ -58,15 +58,6 @@
                 android:src="@drawable/warning"
                 android:visibility="invisible" />
 
-            <ProgressBar xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/progressbar"
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="true"
-                android:visibility="invisible"
-                android:indeterminateDrawable="@drawable/pinkprogress"/>
-
 
         </FrameLayout>
     </LinearLayout>

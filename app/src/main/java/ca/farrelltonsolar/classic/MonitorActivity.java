@@ -17,16 +17,13 @@
 package ca.farrelltonsolar.classic;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -45,12 +42,10 @@ public class MonitorActivity extends ActionBarActivity {
 
     private NavigationDrawerFragment navigationDrawerFragment;
     private TabStripAdapter tabStripAdapter;
-    private String currentUnitName = "";
     private int currentChargeState = -1;
     private boolean isReceiverRegistered;
     private SlidingTabLayout stl;
     private ViewPager viewPager;
-    ModbusService modbusService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +68,6 @@ public class MonitorActivity extends ActionBarActivity {
         tabStripAdapter = new TabStripAdapter(getFragmentManager(), this, viewPager, stl, null);
         ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
         if (cc != null && cc.deviceType() == DeviceType.Classic) {
-            currentUnitName = cc.deviceName();
             if (cc.hasWhizbang()) {
                 if (MonitorApplication.chargeControllers().count() > 1) {
                     tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
@@ -101,13 +95,21 @@ public class MonitorActivity extends ActionBarActivity {
             tabStripAdapter.addTab(R.string.InfoTabTitle, InfoFragment.class, null);
             tabStripAdapter.addTab(R.string.MessagesTabTitle, MessageFragment.class, null);
             tabStripAdapter.addTab(R.string.About, About.class, null);
-        } else if (cc != null && cc.deviceType() == DeviceType.TriStar) {
-            currentUnitName = cc.deviceName();
+        } else if (cc != null && cc.deviceType() == DeviceType.Kid) {
+            tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
+            tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
+            if (cc.hasWhizbang()) {
+                tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
+            }
+            tabStripAdapter.addTab(R.string.InfoTabTitle, InfoFragment.class, null);
+            tabStripAdapter.addTab(R.string.About, About.class, null);
+        }
+        else if (cc != null && cc.deviceType() == DeviceType.TriStar) {
             tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
             tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
             tabStripAdapter.addTab(R.string.About, About.class, null);
-        } else {
-            currentUnitName = "Demo";
+        }
+        else {
             tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
             tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
             tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
@@ -120,6 +122,16 @@ public class MonitorActivity extends ActionBarActivity {
             tabStripAdapter.addTab(R.string.About, About.class, null);
         }
         tabStripAdapter.notifyTabsChanged();
+    }
+
+    public boolean onPrepareOptionsMenu(Menu menu)
+    {
+        MenuItem pvOutput = menu.findItem(R.id.action_pvOutput);
+        if(pvOutput != null)
+        {
+            pvOutput.setVisible(MonitorApplication.chargeControllers().uploadToPVOutput());
+        }
+        return true;
     }
 
     private void addDayLogCalendar() {
@@ -158,11 +170,18 @@ public class MonitorActivity extends ActionBarActivity {
                 if (currentChargeState != chargeState) {
                     currentChargeState = chargeState;
                     String state = MonitorApplication.getChargeStateTitleText(chargeState);
+                    String currentUnitName = "";
+                    ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
+                    if (cc != null) {
+                        currentUnitName = cc.deviceName();
+                    }
                     if (state == null || state.isEmpty()) {
                         getSupportActionBar().setTitle(currentUnitName);
                     } else {
                         getSupportActionBar().setTitle(String.format("%s - (%s)", currentUnitName, MonitorApplication.getChargeStateTitleText(chargeState)));
-                        Toast.makeText(context, MonitorApplication.getChargeStateText(chargeState), Toast.LENGTH_LONG).show();
+                        if (MonitorApplication.chargeControllers().showPopupMessages()) {
+                            Toast.makeText(context, MonitorApplication.getChargeStateText(chargeState), Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
             }
@@ -195,10 +214,13 @@ public class MonitorActivity extends ActionBarActivity {
                 handled = true;
                 break;
             case R.id.action_help:
-                String helpContext = navigationDrawerFragment.isDrawerOpen() ? "NavigationDrawerFragment" : tabStripAdapter.getItem(viewPager.getCurrentItem()).getClass().getSimpleName();
-                helpContext = String.format("http://skyetracker.com/classicmonitor/%s/%s.html", Locale.getDefault().getLanguage(), helpContext);
+                String helpContext = navigationDrawerFragment.isDrawerOpen() ? "NavigationBar" : tabStripAdapter.getItem(viewPager.getCurrentItem()).getClass().getSimpleName();
+                helpContext = String.format("http://skyetracker.com/classicmonitor/%s/help.html#%s", Locale.getDefault().getLanguage(), helpContext);
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(helpContext)));
-                //Toast.makeText(getBaseContext(), helpContext, Toast.LENGTH_LONG).show();
+                handled = true;
+                break;
+            case R.id.action_pvOutput:
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://pvoutput.org/")));
                 handled = true;
                 break;
         }
@@ -211,7 +233,6 @@ public class MonitorActivity extends ActionBarActivity {
         if (!isReceiverRegistered) {
             LocalBroadcastManager.getInstance(this).registerReceiver(mMonitorReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER));
             LocalBroadcastManager.getInstance(this).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
-            LocalBroadcastManager.getInstance(this).registerReceiver(updateChargeControllersReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_UPDATE_CHARGE_CONTROLLERS));
             LocalBroadcastManager.getInstance(this).registerReceiver(receiveAToast, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_TOAST));
             isReceiverRegistered = true;
         }
@@ -220,34 +241,18 @@ public class MonitorActivity extends ActionBarActivity {
     private BroadcastReceiver receiveAToast = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            try {
-                String message = intent.getStringExtra("message");
-                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-            }
-            catch (Throwable ex) {
-                Log.e(getClass().getName(), "receiveAToast failed ");
+            if (MonitorApplication.chargeControllers().showPopupMessages()) {
+                try {
+                    String message = intent.getStringExtra("message");
+                    Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                } catch (Throwable ex) {
+                    Log.e(getClass().getName(), "receiveAToast failed ");
+                }
             }
         }
     };
 
-    private BroadcastReceiver updateChargeControllersReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController(); // current cc got removed?
-                if (cc == null) {
-                    if (modbusService != null && modbusService.isInService()) {
-                        modbusService.stopMonitoringChargeControllers();
-                        MonitorActivity.this.finish();
-                        MonitorActivity.this.startActivity(getIntent());
-                    }
-                }
-            }
-            catch (Throwable ex) {
-                Log.e(getClass().getName(), "updateChargeControllersReceiver failed ");
-            }
-        }
-    };
+
 
     @Override
     protected void onPause() {
@@ -255,7 +260,6 @@ public class MonitorActivity extends ActionBarActivity {
             try {
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(mMonitorReceiver);
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(mReadingsReceiver);
-                LocalBroadcastManager.getInstance(this).unregisterReceiver(updateChargeControllersReceiver);
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(receiveAToast);
             } catch (IllegalArgumentException e) {
                 // Do nothing
@@ -265,33 +269,4 @@ public class MonitorActivity extends ActionBarActivity {
         super.onPause();
     }
 
-    @Override
-    public void onStart() {
-        Log.d(getClass().getName(), String.format("onStart thread is %s", Thread.currentThread().getName()));
-        super.onStart();
-        bindService(new Intent(this, ModbusService.class), modbusServiceConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
-    protected void onStop() {
-        Log.d(getClass().getName(), String.format("onStop thread is %s", Thread.currentThread().getName()));
-        unbindService(modbusServiceConnection);
-        super.onStop();
-    }
-
-    private ServiceConnection modbusServiceConnection = new ServiceConnection() {
-
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            Log.d(getClass().getName(), "ModbusService ServiceConnected");
-            ModbusService.ModbusServiceBinder binder = (ModbusService.ModbusServiceBinder) service;
-            modbusService = binder.getService();
-
-            modbusService.monitorChargeControllers(MonitorApplication.chargeControllers());
-        }
-
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.d(getClass().getName(), "ModbusService ServiceDisconnected");
-            modbusService = null;
-        }
-    };
 }

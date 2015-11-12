@@ -24,12 +24,6 @@ import java.net.InetSocketAddress;
  */
 public class ChargeController extends ChargeControllerInfo {
 
-    final transient Object lock = new Object();
-    private boolean uploadToPVOutput;
-    private String logDate; //date logs from classic were recorded for upload to PVOutput.org
-    private String uploadDate; // last date the logs were uploaded to pvoutput.org
-    private String SID; // pvoutput system id
-    private boolean bidirectionalUnitsInWatts;
     private int dayLogMenuSelection;
     private int hourLogMenuSelection;
 
@@ -104,15 +98,6 @@ public class ChargeController extends ChargeControllerInfo {
             return super.setHasWhizbang(hasWhizbang);
     }
 
-    public synchronized boolean isBidirectionalUnitsInWatts() {
-        return bidirectionalUnitsInWatts;
-    }
-
-    public synchronized void setBidirectionalUnitsInWatts(boolean bidirectionalUnitsInWatts) {
-            this.bidirectionalUnitsInWatts = bidirectionalUnitsInWatts;
-    }
-
-
     public synchronized int getHourLogMenuSelection() {
         return hourLogMenuSelection;
     }
@@ -129,49 +114,6 @@ public class ChargeController extends ChargeControllerInfo {
         this.dayLogMenuSelection = dayLogMenuSelection;
     }
 
-    public synchronized String getSID() {
-            return SID;
-    }
 
-    public synchronized void setSID(String SID) {
-            this.SID = SID;
-
-    }
-
-    public synchronized String getPVOutputLogFilename() {
-            return logDate;
-    }
-
-    public synchronized void setPVOutputLogFilename(String logDate) {
-            this.logDate = String.format("PVOutput_%x_%s.log", unitID(), logDate) ;
-    }
-
-
-    public synchronized String uploadDate() {
-            return uploadDate;
-    }
-
-    public synchronized void setUploadDate(String uploadDate) {
-            this.uploadDate = uploadDate;
-    }
-
-    public synchronized Boolean uploadToPVOutput() {
-            return uploadToPVOutput;
-    }
-
-    public synchronized void setUploadToPVOutput(Boolean uploadToPVOutput) {
-            this.uploadToPVOutput = uploadToPVOutput;
-    }
-
-    public void resetPVOutputLogs() {
-        String fname = getPVOutputLogFilename();
-        if (fname != null && fname.length() > 0) {
-            MonitorApplication.getAppContext().deleteFile(fname);
-        }
-        synchronized (lock) {
-            uploadDate = "";
-            logDate = "";
-        }
-    }
 }
 

@@ -35,6 +35,8 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
 
     private CheckBoxPreference uploadToPVOutput;
     private CheckBoxPreference useFahrenheit;
+    private CheckBoxPreference autoDetectClassics;
+    private CheckBoxPreference showPopupMessages;
     private EditTextPreference _SID;
     private EditTextPreference _APIKey;
 
@@ -54,7 +56,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             @Override
             //On click function
             public void onClick(View view) {
-                String helpContext = String.format("http://skyetracker.com/classicmonitor/%s/Settings.html", Locale.getDefault().getLanguage());
+                String helpContext = String.format("http://skyetracker.com/classicmonitor/%s/help.html#Settings", Locale.getDefault().getLanguage());
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(helpContext)));
                 return;
             }
@@ -74,11 +76,10 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             public void onClick(View view) {
                 MonitorApplication.chargeControllers().setAPIKey(_APIKey.getText());
                 MonitorApplication.chargeControllers().setFahrenheit(useFahrenheit.isChecked());
-                ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
-                if (cc != null) {
-                    cc.setUploadToPVOutput(uploadToPVOutput.isChecked());
-                    cc.setSID(_SID.getText());
-                }
+                MonitorApplication.chargeControllers().setAutoDetectClassic(autoDetectClassics.isChecked());
+                MonitorApplication.chargeControllers().setShowPopupMessages(showPopupMessages.isChecked());
+                MonitorApplication.chargeControllers().setUploadToPVOutput(uploadToPVOutput.isChecked());
+                MonitorApplication.chargeControllers().setSID(_SID.getText());
                 Settings.this.finish();
             }
         });
@@ -86,15 +87,16 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
         try {
             uploadToPVOutput = (CheckBoxPreference) findPreference(Constants.UploadToPVOutput);
             useFahrenheit = (CheckBoxPreference) findPreference(Constants.UseFahrenheit);
+            autoDetectClassics = (CheckBoxPreference) findPreference(Constants.AutoDetectClassic);
+            showPopupMessages = (CheckBoxPreference) findPreference(Constants.ShowPopupMessages);
             _SID = (EditTextPreference) findPreference(Constants.SID);
             _APIKey = (EditTextPreference) findPreference(Constants.APIKey);
 
             useFahrenheit.setChecked(MonitorApplication.chargeControllers().useFahrenheit());
-            ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
-            if (cc != null) {
-                uploadToPVOutput.setChecked(cc.uploadToPVOutput());
-                _SID.setSummary(cc.getSID());
-            }
+            autoDetectClassics.setChecked(MonitorApplication.chargeControllers().autoDetectClassic());
+            showPopupMessages.setChecked(MonitorApplication.chargeControllers().showPopupMessages());
+            uploadToPVOutput.setChecked(MonitorApplication.chargeControllers().uploadToPVOutput());
+            _SID.setSummary(MonitorApplication.chargeControllers().getSID());
             uploadToPVOutput.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     boolean isEnabled = ((Boolean) newValue).booleanValue();

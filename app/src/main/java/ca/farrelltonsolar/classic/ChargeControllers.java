@@ -28,10 +28,18 @@ import java.util.List;
 
 public final class ChargeControllers {
 
+    final transient Object lock = new Object();
     private static Context context;
     private String APIKey = "";
     private List<ChargeController> devices = new ArrayList<>();
-    private boolean useFahrenheit;
+    private boolean useFahrenheit = false;
+    private boolean autoDetectClassic = true;
+    private boolean showPopupMessages = true;
+    private boolean uploadToPVOutput = false;
+    private String logDate; //date logs from classic were recorded for upload to PVOutput.org
+    private String uploadDate; // last date the logs were uploaded to pvoutput.org
+    private String SID; // pvoutput system id
+    private boolean bidirectionalUnitsInWatts;
 
     // default ctor for de-serialization
     public ChargeControllers() {
@@ -83,11 +91,7 @@ public final class ChargeControllers {
                 }
             }
             ChargeControllerInfo cc = devices.get(position);
-            if (cc.deviceType() != DeviceType.Unknown) {
-                devices.get(position).setIsCurrent(true);
-            } else {
-                return false; // can't do it, unknown device
-            }
+            devices.get(position).setIsCurrent(true);
         }
         return true;
     }
@@ -112,6 +116,19 @@ public final class ChargeControllers {
     public int count() {
         synchronized (devices) {
             return devices.size();
+        }
+    }
+
+    // number of classics configured or the number of devices that provide day log data
+    public int classicCount() {
+        synchronized (devices) {
+            int count = 0;
+            for (ChargeController cc : devices) {
+                if (cc.deviceType() == DeviceType.Classic) {
+                    count++;
+                }
+            }
+            return count;
         }
     }
 
@@ -140,51 +157,6 @@ public final class ChargeControllers {
         }
     }
 
-    // update unit information
-    public void update(ChargeControllerInfo ccToUpdate, boolean useUnitIdAsKey) throws UnknownHostException {
-        int unitId = ccToUpdate.unitID();
-        String unitName = ccToUpdate.deviceName();
-        DeviceType deviceType = ccToUpdate.deviceType();
-        boolean hasWhizbang = ccToUpdate.hasWhizbang();
-        String deviceIpAddress = ccToUpdate.deviceIpAddress();
-        int port = ccToUpdate.port();
-        boolean updated = false;
-        synchronized (devices) {
-            for (ChargeController cc : devices) {
-                String ipAddress = cc.getDeviceIp();
-                if (useUnitIdAsKey ? cc.unitID() == unitId  && unitId != -1 : (ipAddress != null && (deviceIpAddress.compareTo(ipAddress) == 0 && port == cc.port()))) {
-                    if (cc.setUnitID(unitId)) {
-                        updated = true;
-                    }
-                    if (cc.setDeviceName(unitName)) {
-                        updated = true;
-                    }
-                    if (cc.setDeviceIP(deviceIpAddress)) {
-                        updated = true;
-                    }
-                    if (cc.setPort(port)) {
-                        updated = true;
-                    }
-                    if (cc.setDeviceType(deviceType)) {
-                        updated = true;
-                    }
-                    if (cc.setHasWhizbang(hasWhizbang)) {
-                        updated = true;
-                    }
-                    if (cc.setIsReachable(true)) {
-                        updated = true;
-                    }
-                    break;
-                }
-            }
-        }
-        if (updated) {
-            BroadcastUpdateNotification();
-        } else if (useUnitIdAsKey) { // retry matching on IP address if no cc matched UnitID
-            update(ccToUpdate, false);
-        }
-    }
-
     public void setReachable(String deviceIpAddress, int port, boolean state) {
         boolean updated = false;
         synchronized (devices) {
@@ -198,19 +170,6 @@ public final class ChargeControllers {
         if (updated) {
             BroadcastUpdateNotification();
         }
-    }
-
-    public void clearDynamic() {
-        List<ChargeController> staticDevices = new ArrayList<>();
-        synchronized (devices) {
-            for (ChargeController cc : devices) {
-                if (cc.isStaticIP()) {
-                    staticDevices.add(cc);
-                }
-            }
-            devices = staticDevices;
-        }
-        BroadcastUpdateNotification();
     }
 
     private void BroadcastUpdateNotification() {
@@ -227,12 +186,37 @@ public final class ChargeControllers {
     }
 
 
+    public synchronized boolean isBidirectionalUnitsInWatts() {
+        return bidirectionalUnitsInWatts;
+    }
+
+    public synchronized void setBidirectionalUnitsInWatts(boolean bidirectionalUnitsInWatts) {
+        this.bidirectionalUnitsInWatts = bidirectionalUnitsInWatts;
+    }
+
     public synchronized boolean useFahrenheit() {
         return useFahrenheit;
     }
 
     public synchronized void setFahrenheit(boolean useFahrenheit) {
         this.useFahrenheit = useFahrenheit;
+    }
+
+    public synchronized boolean autoDetectClassic() {
+        return autoDetectClassic;
+    }
+
+    public synchronized void setAutoDetectClassic(boolean autoDetectClassic) {
+        this.autoDetectClassic = autoDetectClassic;
+        MonitorApplication.ConfigurationChanged();
+    }
+
+    public synchronized boolean showPopupMessages() {
+        return showPopupMessages;
+    }
+
+    public synchronized void setShowPopupMessages(boolean showPopupMessages) {
+        this.showPopupMessages = showPopupMessages;
     }
 
     public synchronized String aPIKey() {
@@ -243,35 +227,49 @@ public final class ChargeControllers {
         this.APIKey = APIKey;
     }
 
+    public synchronized String getSID() {
+        return SID;
+    }
+
+    public synchronized void setSID(String SID) {
+        this.SID = SID;
+
+    }
+
+    public synchronized String getPVOutputLogFilename() {
+        return logDate;
+    }
+
+    public synchronized void setPVOutputLogFilename(String logDate) {
+        this.logDate = String.format("PVOutput_%s.log", logDate) ;
+    }
+
+
+    public synchronized String uploadDate() {
+        return uploadDate;
+    }
+
+    public synchronized void setUploadDate(String uploadDate) {
+        this.uploadDate = uploadDate;
+    }
+
+    public synchronized Boolean uploadToPVOutput() {
+        return uploadToPVOutput;
+    }
+
+    public synchronized void setUploadToPVOutput(Boolean uploadToPVOutput) {
+        this.uploadToPVOutput = uploadToPVOutput;
+    }
+
     public void resetPVOutputLogs() {
-        synchronized (devices) {
-            for (ChargeController cc : devices) {
-                cc.resetPVOutputLogs();
-            }
+        String fname = getPVOutputLogFilename();
+        if (fname != null && fname.length() > 0) {
+            MonitorApplication.getAppContext().deleteFile(fname);
+        }
+        synchronized (lock) {
+            uploadDate = "";
+            logDate = "";
         }
     }
 
-    // true if any cc is uploading
-    public boolean uploadToPVOutput() {
-        synchronized (devices) {
-            for (ChargeController cc : devices) {
-                if (cc.uploadToPVOutput()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void updateUnknownStatic() {
-        synchronized (devices) {
-            for (ChargeController cc : devices) {
-                if (cc.isStaticIP() && cc.deviceType() == DeviceType.Unknown) {
-                    DeviceUpdater updater = new DeviceUpdater(cc);
-                    updater.run();
-                }
-            }
-        }
-        return;
-    }
 }

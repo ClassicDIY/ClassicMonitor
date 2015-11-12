@@ -24,5 +24,6 @@ public enum DeviceType {
     Unknown,
     Demo,
     Classic,
-    TriStar;
+    TriStar,
+    Kid;
 }

@@ -126,4 +126,8 @@
     <string name="LoadTitle">Consommation</string>
     <string name="device_button">Contrôleur</string>
     <string name="system_button">Système</string>
+    <string name="ShowPopupSummary">Activer les messages de notification</string>
+    <string name="connectionsPreferenceCategory">Connexion</string>
+    <string name="connectionsPreferenceSummary">Détection automatique du classic</string>
+    <string name="gaugesPreferenceCategory">Affichage</string>
 </resources>

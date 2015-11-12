@@ -34,6 +34,8 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.zip.GZIPOutputStream;
 
@@ -41,6 +43,11 @@ public class PVOutputService extends IntentService {
 
     PVOutputUploader uploader;
     private Timer pollTimer;
+    private boolean isReceiverRegistered = false;
+    private boolean isSlaveReceiverRegistered = false;
+    Map<String, float[]> slaveControllerTotalEnergy = new HashMap<String, float[]>();
+    float[] masterEnergyReadings;
+    float[] summarizedEnergyReadings;
 
     public PVOutputService() {
         super("PVOutputService");
@@ -62,19 +69,58 @@ public class PVOutputService extends IntentService {
      * Try to upload logs to PVOutput.
      */
     private void handleActionPVOutputUpload() {
-        ChargeController ctrl = MonitorApplication.chargeControllers().getCurrentChargeController();
-        if (ctrl != null) {
-            if (ctrl.uploadToPVOutput()) {
-                LocalBroadcastManager.getInstance(PVOutputService.this).registerReceiver(mDayLogReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS));
-                String APIKey = MonitorApplication.chargeControllers().aPIKey();
-                if (APIKey.length() > 0) {
-                    pollTimer = new Timer();
-                    uploader = new PVOutputUploader(this.getBaseContext(), APIKey);
-                    pollTimer.schedule(uploader, 30000, 300000); // start in 30 seconds, repeat every 5 minutes
-                }
+        if (MonitorApplication.chargeControllers().uploadToPVOutput()) {
+            String APIKey = MonitorApplication.chargeControllers().aPIKey();
+            if (APIKey.length() > 0) {
+                registerReceiver();
+                pollTimer = new Timer();
+                uploader = new PVOutputUploader(this.getBaseContext(), APIKey);
+                pollTimer.schedule(uploader, 30000, 300000); // start in 30 seconds, repeat every 5 minutes
             }
         }
     }
+
+    private void registerReceiver() {
+        if (!isReceiverRegistered) {
+            LocalBroadcastManager.getInstance(PVOutputService.this).registerReceiver(mDayLogReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS));
+            isReceiverRegistered = true;
+        }
+        if (!isSlaveReceiverRegistered) {
+            LocalBroadcastManager.getInstance(PVOutputService.this).registerReceiver(mSlaveReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_DAY_LOGS_SLAVE));
+            isSlaveReceiverRegistered = true;
+        }
+    }
+
+    private void unRegisterReceiver() {
+        if (isReceiverRegistered) {
+            try {
+                LocalBroadcastManager.getInstance(PVOutputService.this).unregisterReceiver(mDayLogReceiver);
+            } catch (IllegalArgumentException e) {
+                // Do nothing
+            }
+            isReceiverRegistered = false;
+        }
+        if (isSlaveReceiverRegistered) {
+            try {
+                LocalBroadcastManager.getInstance(PVOutputService.this).unregisterReceiver(mSlaveReadingsReceiver);
+            } catch (IllegalArgumentException e) {
+                // Do nothing
+            }
+            isSlaveReceiverRegistered = false;
+        }
+    }
+
+    protected BroadcastReceiver mSlaveReadingsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            LogEntry logs = (LogEntry) intent.getSerializableExtra("logs");
+            if (logs != null) {
+                String uniqueId = intent.getStringExtra("uniqueId");
+                float[] f = logs.getFloatArray(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY);
+                slaveControllerTotalEnergy.put(uniqueId, f);
+            }
+        }
+    };
 
     // Our handler for received Intents.
     private BroadcastReceiver mDayLogReceiver = new BroadcastReceiver() {
@@ -92,45 +138,43 @@ public class PVOutputService extends IntentService {
                 } else {
                     saveLogs(logs); // never saved before!
                 }
-                LocalBroadcastManager.getInstance(PVOutputService.this).unregisterReceiver(mDayLogReceiver);
             } catch (Exception ex) {
                 Log.w(getClass().getName(), String.format("SaveLogs failed ex: %s", ex));
             }
         }
 
         private void saveLogs(LogEntry logs) {
-
-
-
-            float[] highWatts = logs.getFloatArray(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY);
-            Bundle toSave = new Bundle();
-            toSave.putFloatArray(String.valueOf(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY), highWatts);
-
-            ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
-            if (cc != null) {
-                cc.resetPVOutputLogs();
-                cc.setPVOutputLogFilename(getLogDate());
-                save(toSave, cc.getPVOutputLogFilename());
-                Log.d(getClass().getName(), String.format("PVOutput save logs for upload for %s starting on thread: %s", cc.getPVOutputLogFilename(), Thread.currentThread().getName()));
+            if (slaveControllerTotalEnergy.size() == (MonitorApplication.chargeControllers().classicCount() - 1)) { // received broadcasts from all other classic controllers
+                unRegisterReceiver();
+                float[] highWatts = logs.getFloatArray(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY);
+                for (float[] f : slaveControllerTotalEnergy.values()) {
+                    int length = Math.min(f.length, highWatts.length);
+                    for (int i = 0; i < length; i++) {
+                        highWatts[i] += f[i];
+                    }
+                }
+                Bundle toSave = new Bundle();
+                toSave.putFloatArray(String.valueOf(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY), highWatts);
+                MonitorApplication.chargeControllers().resetPVOutputLogs();
+                MonitorApplication.chargeControllers().setPVOutputLogFilename(getLogDate());
+                save(toSave, MonitorApplication.chargeControllers().getPVOutputLogFilename());
+                Log.d(getClass().getName(), String.format("PVOutput save logs for upload for %s starting on thread: %s", MonitorApplication.chargeControllers().getPVOutputLogFilename(), Thread.currentThread().getName()));
             }
         }
     };
 
     public static DateTime LogDate() {
         DateTime logDate = null;
-        ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
-        if (cc != null) {
-            String fName = cc.getPVOutputLogFilename();
-            if (fName != null && fName.length() > 0) {
-                try {
-                    String logDateSubstring = fName.substring(18, 28);
-                    logDate = DateTime.parse(logDateSubstring, DateTimeFormat.forPattern("yyyy-MM-dd"));
-                } catch (Exception ex) {
-                    Log.w("PVOutputService", String.format("LogDate parse filename failed ex: %s", ex));
-                }
+        String fName = MonitorApplication.chargeControllers().getPVOutputLogFilename();
+        if (fName != null && fName.length() > 0) {
+            try {
+                //this.logDate = String.format("PVOutput_%s.log", logDate) ;
+                String logDateSubstring = fName.substring(9, 19);
+                logDate = DateTime.parse(logDateSubstring, DateTimeFormat.forPattern("yyyy-MM-dd"));
+            } catch (Exception ex) {
+                Log.w("PVOutputService", String.format("LogDate parse filename failed ex: %s", ex));
             }
         }
-
         return logDate;
     }
 

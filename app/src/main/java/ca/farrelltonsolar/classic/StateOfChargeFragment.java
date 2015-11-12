@@ -35,13 +35,8 @@ public class StateOfChargeFragment extends ReadingFramentBase {
     private float originalScaleEnd;
     
     public StateOfChargeFragment() {
-
         super(R.layout.fragment_state_of_charge);
-        ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
-        if (cc != null) {
-            bidirectionalUnitsInWatts = cc.isBidirectionalUnitsInWatts();
-           
-        }
+        bidirectionalUnitsInWatts = MonitorApplication.chargeControllers().isBidirectionalUnitsInWatts();
     }
 
     public void setReadings(Readings readings) {
@@ -102,10 +97,7 @@ public class StateOfChargeFragment extends ReadingFramentBase {
                     @Override
                     public void onAnimationEnd(Animation arg0) {
                         bidirectionalUnitsInWatts = !bidirectionalUnitsInWatts;
-                        ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
-                        if (cc != null) {
-                            cc.setBidirectionalUnitsInWatts(bidirectionalUnitsInWatts);
-                        }
+                        MonitorApplication.chargeControllers().setBidirectionalUnitsInWatts(bidirectionalUnitsInWatts);
                         BaseGauge gauge = (BaseGauge) v;
                         if (gauge != null) {
                             setupGauge(gauge);

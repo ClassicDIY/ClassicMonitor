@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import java.util.List;
 
@@ -63,10 +62,8 @@ public class NavigationDrawerArrayAdapter extends ArrayAdapter<ChargeControllerI
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = super.getView(position, convertView, parent);
         ImageView noConnection = (ImageView) view.findViewById(R.id.NoConnection);
-        ProgressBar pBar = (ProgressBar) view.findViewById(R.id.progressbar);
         ChargeControllerInfo cc = getItem(position);
         noConnection.setVisibility(cc.isReachable() ? View.INVISIBLE : View.VISIBLE);
-        pBar.setVisibility(cc.deviceType()== DeviceType.Unknown ? View.VISIBLE : View.INVISIBLE);
         return view;
     }
 

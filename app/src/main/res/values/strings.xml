@@ -137,8 +137,11 @@
     <string name="RemainingCapacityTitle">Remaining Capacity</string>
     <string name="ShuntTemperatureTitle" translatable="false">WB Jr. Shunt</string>
     <string name="TemperatureScaleSummary">Use Fahrenheit scale</string>
-    <string name="turn_off_local_app">Please make sure the Midnite Solar local app is not running on the network</string>
-
+    <string name="turn_off_local_app">Please make sure the Midnite Solar local app is not running on the network,\n the classic only supports one connection at a time.</string>
+    <string name="gaugesPreferenceCategory">Display</string>
+    <string name="connectionsPreferenceCategory">Connection</string>
+    <string name="connectionsPreferenceSummary">Auto detect classic</string>
+    <string name="ShowPopupSummary">Show popup messages</string>
     <string name="device_button">Controller</string>
     <string name="system_button">System</string>
 

@@ -110,5 +110,9 @@
     <string name="LoadTitle">Laden</string>
     <string name="device_button">Controller</string>
     <string name="system_button">System</string>
+    <string name="ShowPopupSummary">Aktivieren von Benachrichtigungen</string>
+    <string name="connectionsPreferenceCategory">Verbindung</string>
+    <string name="connectionsPreferenceSummary">Automatische Erkennung Classic</string>
+    <string name="gaugesPreferenceCategory">Anzeige</string>
 
 </resources>

@@ -37,7 +37,7 @@
         app:scaleStartValue="0"
         app:gaugeTitle="@string/LoadTitle"
         app:readingUnit="W"
-        app:readingPrecision="1"
+        app:readingPrecision="0"
         app:biDirectional="false"
         app:autoScale="true"
         app:showReading="true" />
