@@ -27,7 +27,7 @@
     <string name="network">Netzwerk</string>
     <string name="PowerTabTitle">Übersicht</string>
     <string name="EnergyTabTitle">Energie</string>
-    <string name="LoadTabTitle">Konsum</string>
+    <string name="LoadTabTitle">Verbrauch</string>
     <string name="StateOfChargeTabTitle">Ladezustand</string>
     <string name="TemperatureTabTitle">Temperatur</string>
     <string name="DayLogTabTitle">Protokoll-Kalender</string>
@@ -88,7 +88,7 @@
     <string name="Negative_AH_Title">Entladung</string>
     <string name="RemainingCapacityTitle">Verbleibende Kapazität</string>
     <string name="TemperatureScaleSummary">Temperaturen in Fahrenheit</string>
-    <string name="turn_off_local_app">Bitte stellen Sie sicher, dass der Midnite Solar lokalen app wird nicht im Netzwerk ausgeführt</string>
+    <string name="turn_off_local_app">Die Midnite Local App darf nicht zeitgleich aktiv sein.\n Der Classic unterstützt nur eine Verbindung!</string>
 
     <string-array name="minute_log_chart_selection">
         <item>brutto</item>
