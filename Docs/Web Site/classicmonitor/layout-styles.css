@@ -9,7 +9,7 @@ html,body {
 body {
   background-color: #ededed;
   color: #424242;
-  margin: 0;
+  margin: 14px;
   font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size:14px;
   line-height:1.428571429;
@@ -33,7 +33,7 @@ a:hover,a:focus{color:#165db5;text-decoration:underline} */
 
 .text-center{text-align:center}
 
-.text-left{text-align:left, padding-left: 60px}
+.text-left{text-align:left}
 
 .wrap {
   min-height: 100%;
