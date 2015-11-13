@@ -16,12 +16,11 @@
 
 package ca.farrelltonsolar.uicomponents;
 
-import android.content.Context;
-import android.os.Bundle;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
+import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
-import android.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 
@@ -51,22 +50,25 @@ public class TabStripAdapter extends FragmentPagerAdapter {
 
         public final int mPosition;
 
+        public String mBookmarkName;
+
         @Override
         protected void finalize() throws Throwable {
             Log.d(getClass().getName(), "TabStripAdapter finalized");
             super.finalize();
         }
 
-        TabInfo(int position, Class<?> fragmentClass, Bundle args, int titleRes) {
+        TabInfo(String bookmark, int position, Class<?> fragmentClass, Bundle args, int titleRes) {
             mPosition = position;
             mClass = fragmentClass;
             mArgs = args;
             mTitleRes = titleRes;
+            mBookmarkName = bookmark;
         }
     }
 
     public TabStripAdapter(FragmentManager fm, Context context, ViewPager pager, SlidingTabLayout tabs, ViewPager.OnPageChangeListener pageChangeListener) {
-        this(fm,  context,  pager,  tabs);
+        this(fm, context, pager, tabs);
         if (pageChangeListener != null) {
             tabLayout.setOnPageChangeListener(pageChangeListener);
         }
@@ -88,43 +90,8 @@ public class TabStripAdapter extends FragmentPagerAdapter {
         tabLayout.setViewPager(viewPager);
     }
 
-    /**
-     * Insert a new tab at position, do nothing if it's already there. Make sure to call {@link #notifyTabsChanged} after you have added them all.
-     */
-    public void insertTab(int titleRes, Class<?> fragmentClass, Bundle args, int position) {
-        for (TabInfo ti : tabs) {
-            if (ti.mClass.equals(fragmentClass)) {
-                return;
-            }
-        }
-        tabs.add(position, new TabInfo(position, fragmentClass, args, titleRes));
-    }
-
-    public void addTab(int titleRes, Class<?> fragmentClass, Bundle args) {
-        tabs.add(new TabInfo(tabs.size(), fragmentClass, args, titleRes));
-    }
-
-    public void removeTab(Class<?> fragmentClass) {
-        int position = 0;
-        for (TabInfo ti : tabs) {
-            if (ti.mClass.equals(fragmentClass)) {
-                tabs.remove(position);
-                break;
-            }
-            position++;
-        }
-        String tag = makeFragmentName(viewPager.getId(), getItemId(position));
-        Fragment oldFragment = fragmentManager.findFragmentByTag(tag);
-        if (oldFragment!= null) {
-//        remove it
-            destroyItem(null, position, oldFragment);
-            finishUpdate(null);
-            viewPager.removeView(oldFragment.getView());
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.remove(oldFragment);
-            transaction.commitAllowingStateLoss();
-            fragmentManager.executePendingTransactions();
-        }
+    public void addTab(String bookmark, int titleRes, Class<?> fragmentClass, Bundle args) {
+        tabs.add(new TabInfo(bookmark, tabs.size(), fragmentClass, args, titleRes));
     }
 
     @Override
@@ -133,23 +100,9 @@ public class TabStripAdapter extends FragmentPagerAdapter {
         return tab.mPosition;
     }
 
-    /**
-     * Update an existing tab. Make sure to call {@link #notifyTabsChanged} afterwards.
-     */
-    public void updateTab(int titleRes, Class<?> fragmentClass, Bundle args, int position) {
-        if (position >= 0 && position < tabs.size()) {
-            // update tab info
-            tabs.set(position, new TabInfo(position, fragmentClass, args, titleRes));
-
-            // find current fragment of tab
-            Fragment oldFragment = fragmentManager
-                    .findFragmentByTag(makeFragmentName(viewPager.getId(), getItemId(position)));
-            // remove it
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.remove(oldFragment);
-            transaction.commit();
-            fragmentManager.executePendingTransactions();
-        }
+    public String getItemBookmark(int position) {
+        TabInfo tab = tabs.get(position);
+        return tab.mBookmarkName;
     }
 
     /**
@@ -180,10 +133,4 @@ public class TabStripAdapter extends FragmentPagerAdapter {
         return "";
     }
 
-    /**
-     * Copied from FragmentPagerAdapter.
-     */
-    private static String makeFragmentName(int viewId, long id) {
-        return "android:switcher:" + viewId + ":" + id;
-    }
 }

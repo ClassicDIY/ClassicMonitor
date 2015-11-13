@@ -70,56 +70,56 @@ public class MonitorActivity extends ActionBarActivity {
         if (cc != null && cc.deviceType() == DeviceType.Classic) {
             if (cc.hasWhizbang()) {
                 if (MonitorApplication.chargeControllers().count() > 1) {
-                    tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
-                    tabStripAdapter.addTab(SystemFragment.TabTitle, SystemFragment.class, null);
-                    tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
-                    tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
-                    tabStripAdapter.addTab(CapacityFragment.TabTitle, CapacityFragment.class, null);
+                    tabStripAdapter.addTab("StateOfCharge", StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
+                    tabStripAdapter.addTab("System", SystemFragment.TabTitle, SystemFragment.class, null);
+                    tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
+                    tabStripAdapter.addTab("Energy", EnergyFragment.TabTitle, EnergyFragment.class, null);
+                    tabStripAdapter.addTab("Capacity", CapacityFragment.TabTitle, CapacityFragment.class, null);
                 }
                 else {
-                    tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
-                    tabStripAdapter.addTab(LoadFragment.TabTitle, LoadFragment.class, null);
-                    tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
-                    tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
-                    tabStripAdapter.addTab(CapacityFragment.TabTitle, CapacityFragment.class, null);
+                    tabStripAdapter.addTab("StateOfCharge", StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
+                    tabStripAdapter.addTab("Load", LoadFragment.TabTitle, LoadFragment.class, null);
+                    tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
+                    tabStripAdapter.addTab("Energy", EnergyFragment.TabTitle, EnergyFragment.class, null);
+                    tabStripAdapter.addTab("Capacity", CapacityFragment.TabTitle, CapacityFragment.class, null);
                 }
             }
             else {
-                tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
-                tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
+                tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
+                tabStripAdapter.addTab("Energy", EnergyFragment.TabTitle, EnergyFragment.class, null);
             }
-            tabStripAdapter.addTab(TemperatureFragment.TabTitle, TemperatureFragment.class, null);
-            addDayLogCalendar();
-            tabStripAdapter.addTab(R.string.DayChartTabTitle, DayLogChart.class, null);
-            tabStripAdapter.addTab(R.string.HourChartTabTitle, HourLogChart.class, null);
-            tabStripAdapter.addTab(R.string.InfoTabTitle, InfoFragment.class, null);
-            tabStripAdapter.addTab(R.string.MessagesTabTitle, MessageFragment.class, null);
-            tabStripAdapter.addTab(R.string.About, About.class, null);
+            tabStripAdapter.addTab("Temperature", TemperatureFragment.TabTitle, TemperatureFragment.class, null);
+                    addDayLogCalendar();
+            tabStripAdapter.addTab("DayChart", R.string.DayChartTabTitle, DayLogChart.class, null);
+            tabStripAdapter.addTab("HourChart", R.string.HourChartTabTitle, HourLogChart.class, null);
+            tabStripAdapter.addTab("Info", R.string.InfoTabTitle, InfoFragment.class, null);
+            tabStripAdapter.addTab("Messages", R.string.MessagesTabTitle, MessageFragment.class, null);
+            tabStripAdapter.addTab("About", R.string.About, About.class, null);
         } else if (cc != null && cc.deviceType() == DeviceType.Kid) {
-            tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
-            tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
+            tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
+            tabStripAdapter.addTab("Energy", EnergyFragment.TabTitle, EnergyFragment.class, null);
             if (cc.hasWhizbang()) {
-                tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
+                tabStripAdapter.addTab("StateOfCharge", StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
             }
-            tabStripAdapter.addTab(R.string.InfoTabTitle, InfoFragment.class, null);
-            tabStripAdapter.addTab(R.string.About, About.class, null);
+            tabStripAdapter.addTab("Info", R.string.InfoTabTitle, InfoFragment.class, null);
+            tabStripAdapter.addTab("About", R.string.About, About.class, null);
         }
         else if (cc != null && cc.deviceType() == DeviceType.TriStar) {
-            tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
-            tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
-            tabStripAdapter.addTab(R.string.About, About.class, null);
+            tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
+            tabStripAdapter.addTab("Energy", EnergyFragment.TabTitle, EnergyFragment.class, null);
+            tabStripAdapter.addTab("About", R.string.About, About.class, null);
         }
         else {
-            tabStripAdapter.addTab(PowerFragment.TabTitle, PowerFragment.class, null);
-            tabStripAdapter.addTab(EnergyFragment.TabTitle, EnergyFragment.class, null);
-            tabStripAdapter.addTab(StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
-            tabStripAdapter.addTab(TemperatureFragment.TabTitle, TemperatureFragment.class, null);
+            tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
+            tabStripAdapter.addTab("Energy", EnergyFragment.TabTitle, EnergyFragment.class, null);
+            tabStripAdapter.addTab("StateOfCharge", StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
+            tabStripAdapter.addTab("Temperature", TemperatureFragment.TabTitle, TemperatureFragment.class, null);
             addDayLogCalendar();
-            tabStripAdapter.addTab(R.string.DayChartTabTitle, DayLogChart.class, null);
-            tabStripAdapter.addTab(R.string.HourChartTabTitle, HourLogChart.class, null);
-            tabStripAdapter.addTab(R.string.InfoTabTitle, InfoFragment.class, null);
-            tabStripAdapter.addTab(R.string.MessagesTabTitle, MessageFragment.class, null);
-            tabStripAdapter.addTab(R.string.About, About.class, null);
+            tabStripAdapter.addTab("DayChart", R.string.DayChartTabTitle, DayLogChart.class, null);
+            tabStripAdapter.addTab("HourChart",R.string.HourChartTabTitle, HourLogChart.class, null);
+            tabStripAdapter.addTab("Info", R.string.InfoTabTitle, InfoFragment.class, null);
+            tabStripAdapter.addTab("Messages", R.string.MessagesTabTitle, MessageFragment.class, null);
+            tabStripAdapter.addTab("About", R.string.About, About.class, null);
         }
         tabStripAdapter.notifyTabsChanged();
     }
@@ -136,10 +136,10 @@ public class MonitorActivity extends ActionBarActivity {
 
     private void addDayLogCalendar() {
         if (Build.VERSION.SDK_INT >= 17) {
-            tabStripAdapter.addTab(R.string.DayLogTabTitle, MonthCalendarPager.class, null);
+            tabStripAdapter.addTab("Calendar", R.string.DayLogTabTitle, MonthCalendarPager.class, null);
         }
         else {
-            tabStripAdapter.addTab(R.string.DayLogTabTitle, DayLogCalendar.class, null);
+            tabStripAdapter.addTab("Calendar", R.string.DayLogTabTitle, DayLogCalendar.class, null);
 
         }
     }
@@ -214,7 +214,7 @@ public class MonitorActivity extends ActionBarActivity {
                 handled = true;
                 break;
             case R.id.action_help:
-                String helpContext = navigationDrawerFragment.isDrawerOpen() ? "NavigationBar" : tabStripAdapter.getItem(viewPager.getCurrentItem()).getClass().getSimpleName();
+                String helpContext = navigationDrawerFragment.isDrawerOpen() ? "NavigationBar" : tabStripAdapter.getItemBookmark(viewPager.getCurrentItem());
                 helpContext = String.format("http://skyetracker.com/classicmonitor/help_%s.html#%s", Locale.getDefault().getLanguage(), helpContext);
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(helpContext)));
                 handled = true;
