@@ -35,6 +35,22 @@ a:hover,a:focus{color:#165db5;text-decoration:underline} */
 
 .text-left{text-align:left}
 
+.center {
+    margin: auto;
+    width: 60%;
+    border:3px solid #73AD21;
+    padding: 10px;
+	text-align:left;
+}
+
+.center_image {
+    margin: auto;
+    width: 60%;
+    padding: 10px;
+	text-align:center;
+}
+
+
 .wrap {
   min-height: 100%;
   .display: table;
@@ -158,8 +174,24 @@ button, input, select, textarea {
 }
 
 .toc-container {
-  text-align: left;
+  text-align: center;
   margin: 20px;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+	font-size:24px
+}
+table#t01 {
+    width: 100%;    
+    background-color: #f1f1c1;
+	margin: auto;
+    width: 25%;
+    padding: 10px;
 }
 
 .footer {

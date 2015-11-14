@@ -1,250 +1,327 @@
+<!DOCTYPE html>
 <html>
-
 <head>
 <title>Classic Monitor</title>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="description" content="Context Help file for the Classic Monitor Android App">
+<meta name="keywords" content="HTML,CSS">
+<meta name="author" content="Graham Ross">
 <link rel="stylesheet" type="text/css" href="layout-styles.css">
 </head>
 
 <body>
-
+<a id="Top"></a>
 <div class="container text-center">
-&nbsp;|&nbsp;
-<a href="#Bot">Bottom</a>
-&nbsp;|&nbsp;
+|
+<a href="#Bot">Ende</a>
+|
 </div>
-    <a name="Top">
+<br>
 <div class="container text-center">
-
-<a href="#Overview">Übersicht</a>
-&nbsp;|&nbsp;
+<table id="t01">
+<tr><td>
+<a href="#Overview">Ãœbersicht</a>
+</td></tr>
+<tr><td>
 <a href="#NavigationBar">Navigationsleiste</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#Settings">Einstellungen</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#StateOfCharge">Ladezustand</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#System">System</a>
-&nbsp;|&nbsp;
-<a href="#Power">Übersicht</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
+<a href="#Power">Ãœbersicht</a>
+</td></tr>
+<tr><td>
 <a href="#Energy">Energie</a>
-&nbsp;|&nbsp;
-<a href="#Capacity">Kapazität</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
+<a href="#Capacity">KapazitÃ¤t</a>
+</td></tr>
+<tr><td>
 <a href="#Temperature">Temperatur</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#Calendar">Protokoll-Kalender</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#DayChart">Tages-Diagramm</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#HourChart">Stunden-Diagramm</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#Info">Info</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#Messages">Nachrichten</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#Load">Verbrauch</a>
+</tr></td>
+</table>
 
 </div>
+<hr style="page-break-before:always;">
 <div class="container text-center">
   <div class="row">
     <div class="col-md-12">
       <h1>Classic Monitor</h1>
-      <h2>Übersicht</h2>
+      <h2 class="text-center">Ãœbersicht</h2>
     </div>
-    <a name="Overview"></a>
+    <a id="Overview"></a>
+
 	<br>
-    <p>Die Classic Monitor Android App zeigt Informationen des Classic
-    Ladereglers an. Ihr Laderegler muss mit dem Netzwerk verbunden und
-    entsprechend konfiguriert sein. Zur Konfiguration schlagen Sie bitte im
-    Handbuch zum Laderegler nach. Ihr Android Gerät muss sich auch im gleichen
-    Netzwerk befinden.</p>
-    <p>Über Port-Weiterleitung eines DDNS (DynDNS) Service kann auch aus dem
-    Internet zugegriffen werden. Hier geben Sie die Adresse / den Domain-Namen
-    Ihres DDNS Service und die in Ihrem Router durchgeleitete Portnummer an. Ein
-    kostenloser DDNS Service wäre&nbsp; <a href="https://www.noip.com" target="_blank">www.noip.com</a>,&nbsp;
-    Ihr Router muss diese Funktion und den Service-Betreiber unterstützen.</p>
-    <p>Die App unterstützt gegenwärtig die&nbsp; Classic &amp; Classic Lite Modelle
-    150, 200, 250 Laderegler. Die Classic SL Serie wird nicht unterstützt, da
-    diese keine Netzwerkverbindung besitzen. Es werden die Grundfunktionen für
-    die TriStar MPPT Laderegler unterstützt.</p>
-    <p>Die App zeigt verschiedene Tabs an, abhängig der Konfiguration.</p>
-    <p>Bei einem oder mehreren Classic ohne einen&nbsp; WhizbangJr, sind die
-    Tabs:&nbsp;<br>
-    <b>Übersicht</b><b> | Energie | Temperatur | Protokoll- Kalender |
-    Tages-Diagramm | Stunden-Diagramm | Info | Nachrichten | Über</b></p>
-    <p>Bei einem einzelnen Classic mit einem WhizbangJr:<b><br>
-    Ladezustand | Last | Übersicht | Energie | Kapazität | Temperatur |
-    Protokoll- Kalender | Tages-Diagramm | Stunden-Diagramm | Info | Nachrichten
-    | Über</b></p>
-    <p>Mehrere Classic mit WhizbangJr:<b><br>
-    Ladezustand | System | Übersicht | Energie | Kapazität | Temperatur |
-    Protokoll- Kalender | Tages-Diagramm | Stunden-Diagramm | Info | Nachrichten
-    | Über</b></p>
-    <p>Beim Morningstar Tri-Star MPPT:<b><br>
-    Übersicht | Energie | Über</b></p>
-    <p>Bei mehr als einem Laderegler und einem WhizbangJr. wird eine
-    Auswahlmöglichkeit im Kalender und Energie Tab angeboten. Hier kann die
-    erzeugte Energie der Laderegler oder des gesamten Systems (alle Laderegler)
-    eingesehen werden.</p>
+	<div class="center">
+		<p>Die Classic Monitor Android App zeigt Informationen des Classic
+		Ladereglers an. Ihr Laderegler muss mit dem Netzwerk verbunden und
+		entsprechend konfiguriert sein. Zur Konfiguration schlagen Sie bitte im
+		Handbuch zum Laderegler nach. Ihr Android GerÃ¤t muss sich auch im gleichen
+		Netzwerk befinden.</p>
+		<p>Ãœber Port-Weiterleitung eines DDNS (DynDNS) Service kann auch aus dem
+		Internet zugegriffen werden. Hier geben Sie die Adresse / den Domain-Namen
+		Ihres DDNS Service und die in Ihrem Router durchgeleitete Portnummer an. Ein
+		kostenloser DDNS Service wÃ¤re <a href="https://www.noip.com" target="_blank">www.noip.com</a>,
+		Ihr Router muss diese Funktion und den Service-Betreiber unterstÃ¼tzen.</p>
+		<p>Die App unterstÃ¼tzt gegenwÃ¤rtig die Classic & Classic Lite Modelle
+		150, 200, 250 Laderegler. Die Classic SL Serie wird nicht unterstÃ¼tzt, da
+		diese keine Netzwerkverbindung besitzen. Es werden die Grundfunktionen fÃ¼r
+		die TriStar MPPT Laderegler unterstÃ¼tzt.</p>
+		<p>Die App zeigt verschiedene Tabs an, abhÃ¤ngig der Konfiguration.</p>
 	
-    <hr style="page-break-before:always;">
-    <a name="NavigationBar"></a>
-    <h2>Navigationsleiste</h2>
-    <img alt="NavBar_landscape.PNG" src="images_de/NavBar_landscape.png" ><br>
-    <p>Die Navigationsleiste erscheint, wenn man vom linken Rand nach rechts
-    wischt, dann das &quot;Hamburger&quot; Symbol rechts in der Action-Bar
-    antippt.</p>
-    <p>Jeder eingetragene und von der App überwachte Laderegler wird angezeigt.</p>
-    <p>Ein Eintrag kann entfernt werden, wenn dieser nach rechts weggewischt
-    wird.</p>
-    <p>Eine statische Laderegler-Adresse kann durch Auswahl von <b>+ADD</b>
-    hinzugefügt werden. Hier wird die Port-Adresse und Netzwerkname, URL oder
-    IP-Adresse des Ladereglers eingegeben.</p>
-    <p>Ein <font color="#FF9900">orangenes</font> Symbol mit einem
-    Ausrufezeichen erscheint neben einem Eintrag, wenn die Verbindung nicht
-    aufgebaut werden kann.</p>
+		<p>
+			Bei einem oder mehreren Classic ohne einen WhizbangJr, sind die Tabs: 
+		</p>
+		<p>
+			<b>Ãœbersicht | Energie | Temperatur | Protokoll- Kalender | Tages-Diagramm | Stunden-Diagramm | Info | Nachrichten | Ãœber</b>
+		</p>
+
+		<p>
+			Bei einem einzelnen Classic mit einem WhizbangJr:
+		</p>
+		<p>
+			<b>Ladezustand | Last | Ãœbersicht | Energie | KapazitÃ¤t | Temperatur |	Protokoll- Kalender | Tages-Diagramm | Stunden-Diagramm | Info | Nachrichten | Ãœber</b>
+		</p>
+
+		<p>
+			Mehrere Classic mit WhizbangJr:
+		</p>
+		<p>
+			<b>Ladezustand | System | Ãœbersicht | Energie | KapazitÃ¤t | Temperatur | Protokoll- Kalender | Tages-Diagramm | Stunden-Diagramm | Info | Nachrichten | Ãœber</b>
+		</p>
+
+		<p>
+			Beim Morningstar Tri-Star MPPT:
+		</p>
+		<p>
+			<b>Ãœbersicht | Energie | Ãœber</b>
+		</p>
+
 	
+		<p>Bei mehr als einem Laderegler und einem WhizbangJr. wird eine
+		AuswahlmÃ¶glichkeit im Kalender und Energie Tab angeboten. Hier kann die
+		erzeugte Energie der Laderegler oder des gesamten Systems (alle Laderegler)
+		eingesehen werden.</p>
+
+	</div>
     <hr style="page-break-before:always;">
-    <a name="Settings"></a>
-    <h2>Einstellungen</h2>
-    <img alt="Settings_portrait.PNG" src="images_de/Settings_portrait.png" ><br>
-    <p>Die Einstellungen erreichen Sie über das &quot;Zahnrad-Symbol&quot; in
-    der oberen rechten Ecke in der Action-Bar.</p>
-    <p><b>Classic automatisch erkennen</b>:&nbsp;<br>
-    Die App erwartet ein UDP Paket für jeden nicht eingetragenen Classic Laderegler
-    im Netzwerk. Ist die Option nicht ausgewählt, muss jeder Classic manuell
-    über <b>+ADD</b> eingetragen werden.&nbsp;</p>
-    <p><b>Temperaturen in Fahrenheit</b>: Wenn ausgewählt, wird die
-    Temperaturanzeige in Fahrenheit angezeigt.</p>
-    <p><b>Zeige Popup-Mitteilungen</b>: Wenn ausgewählt, werden Nachrichten im
-    unteren Bereich als Popup angezeigt.</p>
-    <a name="PVOutput"></a>
-    <h2>PV Output</h2>
-    <img alt="PVOutput_landscape.PNG" src="images_de/PVOutput_landscape.png" ><br>
-    <p><b>PVOutput</b>: Bei Verwendung der Übermittlung der Daten an PVOutput,
-    wird hier der Key und die SystemId (SID) eingetragen. Die App lädt die
-    Daten der erzeugten Energie (kWh) auf die PVoutput.org Webseite hoch.</p>
-    <p><b>Aufgezeichnete Protokolle leeren:</b> Setzt den letzten Zeitpunkt der
-    Datenübermittlung zurück, die App kann nun die Daten der vergangenen 30
-    Tage wieder hoch laden.</p>
-    <p>Um den Dienst nutzen zu können, ist eine Anmeldung bei <a href="http://PVOutput.org" target="_blank">PVOutput.org</a>
-    erforderlich, hier erhalten Sie auch den Key und die SID.</p>
-    <p>Ein PVOutput Symbol erscheint in der Action-Bar, das Sie auf die Seite
-    von&nbsp; PVOutput.org weiterleitet.</p>
-
+    <a id="NavigationBar"></a>
+    <h2 class="text-center">Navigationsleiste</h2>
+    <img class="center_image" alt="NavBar_landscape.PNG" src="images_de/NavBar_landscape.png" >
+	<br>
+	<div class="center">
+		<p>Die Navigationsleiste erscheint, wenn man vom linken Rand nach rechts
+		wischt, dann das &quot;Hamburger&quot; Symbol rechts in der Action-Bar
+		antippt.</p>
+		<p>Jeder eingetragene und von der App Ã¼berwachte Laderegler wird angezeigt.</p>
+		<p>Ein Eintrag kann entfernt werden, wenn dieser nach rechts weggewischt
+		wird.</p>
+		<p>Ein orangenes Symbol mit einem
+		Ausrufezeichen erscheint neben einem Eintrag, wenn die Verbindung nicht
+		aufgebaut werden kann.</p>
+	</div>
+	<br>
+	<img class="center_image" alt="AddDevice_landscape.PNG" src="images_de/AddDevice_landscape.png"  title="" >
+	<br>
+	<div class="center">
+		<p>Eine statische Laderegler-Adresse kann durch Auswahl von <b>+ADD</b>
+		hinzugefÃ¼gt werden. Hier wird die Port-Adresse und Netzwerkname, URL oder
+		IP-Adresse des Ladereglers eingegeben.</p>
+	</div>
+    <hr style="page-break-before:always;">
+    <a id="Settings"></a>
+    <h2 class="text-center">Einstellungen</h2>
+    <img class="center_image" alt="Settings_portrait.PNG" src="images_de/Settings_portrait.png" >
+	<br>
+	<div class="center">
+		<p>Die Einstellungen erreichen Sie Ã¼ber das &quot;Zahnrad-Symbol&quot; in
+		der oberen rechten Ecke in der Action-Bar.</p>
+		<p><b>Classic automatisch erkennen</b>:<br>
+		Die App erwartet ein UDP Paket fÃ¼r jeden nicht eingetragenen Classic Laderegler
+		im Netzwerk. Ist die Option nicht ausgewÃ¤hlt, muss jeder Classic manuell
+		Ã¼ber <b>+ADD</b> eingetragen werden.</p>
+		<p><b>Temperaturen in Fahrenheit</b>: Wenn ausgewÃ¤hlt, wird die
+		Temperaturanzeige in Fahrenheit angezeigt.</p>
+		<p><b>Zeige Popup-Mitteilungen</b>: Wenn ausgewÃ¤hlt, werden Nachrichten im
+		unteren Bereich als Popup angezeigt.</p>
+	</div>
+    <a id="PVOutput"></a>
+    <h2 class="text-center">PV Output</h2>
+    <img class="center_image" alt="PVOutput_landscape.PNG" src="images_de/PVOutput_landscape.png" >
+	<br>
+	<div class="center">
+		<p>
+		<b>PVOutput</b>: Bei Verwendung der Ãœbermittlung der Daten an PVOutput,
+		wird hier der Key und die SystemId (SID) eingetragen. Die App lÃ¤dt die
+		Daten der erzeugten Energie (kWh) auf die PVoutput.org Webseite hoch.</p>
+		<p><b>Aufgezeichnete Protokolle leeren:</b> Setzt den letzten Zeitpunkt der
+		DatenÃ¼bermittlung zurÃ¼ck, die App kann nun die Daten der vergangenen 30
+		Tage wieder hoch laden.</p>
+		<p>Um den Dienst nutzen zu kÃ¶nnen, ist eine Anmeldung bei <a href="http://PVOutput.org" target="_blank">PVOutput.org</a>
+		erforderlich, hier erhalten Sie auch den Key und die SID.</p>
+		<p>Ein PVOutput Symbol erscheint in der Action-Bar, das Sie auf die Seite
+		von PVOutput.org weiterleitet.</p>
+	</div>
   <hr style="page-break-before:always;">
-  <a name="StateOfCharge"></a>
-  <h2>Ladezustand</h2>
-  <img alt="StateOfCharge_landscape.PNG" src="images_de/StateOfCharge_landscape.png" ><br>
-  <p>Das Ladezustand Tab erscheint nur, wenn ein WhizbangJr. im System vorhanden
-  und konfiguriert ist.</p>
-  <p>Die Anzeige kann in beiden Richtungen den Strom oder Leistung anzeigen. Zum
-  umschalten die Anzeige antippen. Eine negative Anzeige bedeutet das Entladen
-  der Batterie. Eine positive Anzeige, dass die Batterie geladen wird.</p>
-  
+  <a id="StateOfCharge"></a>
+  <h2 class="text-center">Ladezustand</h2>
+  <img class="center_image" alt="StateOfCharge_landscape.PNG" src="images_de/StateOfCharge_landscape.png" >
+  <br>
+  <div class="center">
+	  <p>Das Ladezustand Tab erscheint nur, wenn ein WhizbangJr. im System vorhanden
+	  und konfiguriert ist.</p>
+	  <p>Die Anzeige kann in beiden Richtungen den Strom oder Leistung anzeigen. Zum
+	  umschalten die Anzeige antippen. Eine negative Anzeige bedeutet das Entladen
+	  der Batterie. Eine positive Anzeige, dass die Batterie geladen wird.</p>
+  </div>
   <hr style="page-break-before:always;">
-  <a name="System"></a>
-  <h2>System</h2>
-  <img alt="System_landscape.PNG" src="images_de/System_landscape.png" ><br>
-  <p>Das System Tab wird nur angezeigt, wenn mehr als ein Laderegler gefunden
-  oder eingetragen wurde und mindest einer mit einem WhizbangJr. vorhanden ist.</p>
-  <p>In der Energie-Anzeige wird die gesamte erzeugte Energie aller Laderegler
-  angezeigt.</p>
-  <p>In der Verbrauchs-Anzeige wird die entnommene Energie angezeigt. Dies wird
-  von der erzeugten Energie abzüglich der Ladeenergie errechnet.</p>
-  
+  <a id="System"></a>
+  <h2 class="text-center">System</h2>
+  <img class="center_image" alt="System_landscape.PNG" src="images_de/System_landscape.png" >
+  <br>
+  <div class="center">
+	  <p>Das System Tab wird nur angezeigt, wenn mehr als ein Laderegler gefunden
+	  oder eingetragen wurde und mindest einer mit einem WhizbangJr. vorhanden ist.</p>
+	  <p>In der Energie-Anzeige wird die gesamte erzeugte Energie aller Laderegler
+	  angezeigt.</p>
+	  <p>In der Verbrauchs-Anzeige wird die entnommene Energie angezeigt. Dies wird
+	  von der erzeugten Energie abzÃ¼glich der Ladeenergie errechnet.</p>
+  </div>
   <hr style="page-break-before:always;">
-  <a name="Power"></a>
-  <h2>Übersicht</h2>
-  <img alt="Power_landscape.PNG" src="images_de/Power_landscape.png" ><br>
-  <p>Hier sind die Anzeigen für die PV-Spannung (Volt) und PV-Strom,
-  Batterie-Spannung und -Ladestrom, sowie die Energie in Watt, welche von den
-  Solarmodulen gewonnen wird, angezeigt.</p>
-  <p>In der Hauptanzeige sind auch die &quot;LEDs&quot; der AUX1 (links) und
-  AUX2 (rechts) zu sehen.</p>
-  
+  <a id="Power"></a>
+  <h2 class="text-center">Ãœbersicht</h2>
+  <img class="center_image" alt="Power_landscape.PNG" src="images_de/Power_landscape.png" >
+  <br>
+  <div class="center">
+	  <p>Hier sind die Anzeigen fÃ¼r die PV-Spannung (Volt) und PV-Strom,
+	  Batterie-Spannung und -Ladestrom, sowie die Energie in Watt, welche von den
+	  Solarmodulen gewonnen wird, angezeigt.</p>
+	  <p>In der Hauptanzeige sind auch die &quot;LEDs&quot; der AUX1 (links) und
+	  AUX2 (rechts) zu sehen.</p>
+  </div>
   <hr style="page-break-before:always;">
-  <a name="Energy"></a>
-  <h2>Energie</h2>
-  <img alt="Energy_portrait.PNG" src="images_de/Energy_portrait.png" ><br>
-  <p>Der Energie Tab zeigt die Menge der Energie an, die am aktuellen Tag vom ausgewählten Laderegler umgesetzt wurde und die Gesamtenergiemenge des Ladereglers seit Inbetriebnahme.</p>
-  <p>Ist mehr als ein Laderegler und ein WhizbangJr vorhanden, wird ein Optionsfeld angezeigt um den Laderegler oder das System (Summe aller Ladereglers) anzeigen zu lassen.</p>
-  
+  <a id="Energy"></a>
+  <h2 class="text-center">Energie</h2>
+  <img class="center_image" alt="Energy_landscape.PNG" src="images_de/Energy_landscape.png" >
+  <br>
+  <div class="center">
+	  <p>Der Energie Tab zeigt die Menge der Energie an, die am aktuellen Tag vom ausgewÃ¤hlten Laderegler umgesetzt wurde und die Gesamtenergiemenge des Ladereglers seit Inbetriebnahme.</p>
+	  <p>Ist mehr als ein Laderegler und ein WhizbangJr vorhanden, wird ein Optionsfeld angezeigt um den Laderegler oder das System (Summe aller Ladereglers) anzeigen zu lassen.</p>
+  </div>
   <hr style="page-break-before:always;">
-  <a name="Capacity"></a>
-  <h2>Kapazität</h2>
-  <img alt="Capacity_landscape.PNG" src="images_de/Capacity_landscape.png" ><br>
-  <p>Dies zeigt die Kapazität der Batterien und die noch verbleibende Energie
-  der Batterien an.</p>
-  <p>Weitere Informationen hierzu finden Sie im <a href="http://www.midnitesolar.com/pdfs/Whizbang_manual.pdf" target="_blank">Midnite
-  Solar WhizbangJr</a> Handbuch.</p>
-  
+  <a id="Capacity"></a>
+  <h2 class="text-center">KapazitÃ¤t</h2>
+  <img class="center_image" alt="Capacity_landscape.PNG" src="images_de/Capacity_landscape.png" >
+  <br>
+  <div class="center">
+	  <p>Dies zeigt die KapazitÃ¤t der Batterien und die noch verbleibende Energie
+	  der Batterien an.</p>
+	  <p>Weitere Informationen hierzu finden Sie im <a href="http://www.midnitesolar.com/pdfs/Whizbang_manual.pdf" target="_blank">Midnite
+	  Solar WhizbangJr</a> Handbuch.</p>
+  </div>
   <hr style="page-break-before:always;">
-  <a name="Temperature"></a>
-  <h2>Temperatur</h2>
-  <img alt="Temperature_withWB_portrait.PNG" src="images_de/Temperature_withWB_portrait.png" ><br>
-  <p>Hier werden die verschiedenen Temperaturen in Celsius oder Fahrenheit, der
-  Batterie, internem FET &amp; PCB und, wenn vorhanden, dem WhizbangJr. Shunt,
-  angezeigt.</p>
-  
+  <a id="Temperature"></a>
+  <h2 class="text-center">Temperatur</h2>
+  <img class="center_image" alt="Temperature_landscape.PNG" src="images_de/Temperature_landscape.png" >
+  <br>
+  <div class="center">
+	  <p>Hier werden die verschiedenen Temperaturen in Celsius oder Fahrenheit, der
+	  Batterie, internem FET & PCB und, wenn vorhanden, dem WhizbangJr. Shunt,
+	  angezeigt.</p>
+  </div>
   <hr style="page-break-before:always;">
-  <a name="Calendar"></a>
-  <h2>Protokoll-Kalender</h2>
-  <img alt="Calendar_landscape.PNG" src="images_de/Calendar_landscape.png" ><br>
-  <p>Hier finden Sie die gespeicherten Daten pro Tag, monatsweise als Kalender
-  dargestellt.<br>
-  Höchste PV, Batteriespannung, höchste Temperatur und Energie vom Tag.</p>
-  An Tagen mit gespeicherten Daten über Float oder Equalize, werden diese mit
-  &quot;(Float)&quot; und (Equalize) bezeichnet.
-  <p>Wenn der Kalender nicht vollständig auf dem Bildschirm angezeigt wird, kann er durch verschieben im schwarzen Bereich verschoben werden.</p>
-  <p>Vorangegangene Monate können eingesehen werden, wenn der graue Bereich
-  hoch/runter geschoben wird.</p>
-  
+  <a id="Calendar"></a>
+  <h2 class="text-center">Protokoll-Kalender</h2>
+  <img class="center_image" alt="Calendar_landscape.PNG" src="images_de/Calendar_landscape.png" >
+  <br>
+  <div class="center">
+	  <p>Hier finden Sie die gespeicherten Daten pro Tag, monatsweise als Kalender
+	  dargestellt.<br>
+	  HÃ¶chste PV, Batteriespannung, hÃ¶chste Temperatur und Energie vom Tag.</p>
+	  An Tagen mit gespeicherten Daten Ã¼ber Float oder Equalize, werden diese mit
+	  &quot;(Float)&quot; und (Equalize) bezeichnet.
+	  <p>Wenn der Kalender nicht vollstÃ¤ndig auf dem Bildschirm angezeigt wird, kann er durch verschieben im schwarzen Bereich verschoben werden.</p>
+	  <p>Vorangegangene Monate kÃ¶nnen eingesehen werden, wenn der graue Bereich
+	  hoch/runter geschoben wird.</p>
+  </div>
   <hr style="page-break-before:always;">
-  <a name="DayChart"></a>
-  <h2>Tages-Diagramm</h2>
-  <img alt="DayLogChart_landscape.PNG" src="images_de/DayLogChart_landscape.png" ><br>
-  <p>Zeigt die Informationen wie im Kalender grafisch an. Über das Menü oben
-  rechts in der Action-Bar kann man einzelne Werteanzeigen auswählen.</p>
-  
+  <a id="DayChart"></a>
+  <h2 class="text-center">Tages-Diagramm</h2>
+  <img class="center_image" alt="DayLogChart_landscape.PNG" src="images_de/DayLogChart_landscape.png" >
+  <br>
+  <div class="center">
+	  <p>Zeigt die Informationen wie im Kalender grafisch an. Ãœber das MenÃ¼ oben
+	  rechts in der Action-Bar kann man einzelne Werteanzeigen auswÃ¤hlen.</p>
+  </div>
   <hr style="page-break-before:always;">
-  <a name="HourChart"></a>
-  <h2>Stunden-Diagramm</h2>
-  <img alt="HourLogChart_landscape.PNG" src="images_de/HourLogChart_landscape.png" ><br>
-  <p>Zeigt die Daten des aktuellen Tags an. Über das Menü oben rechts in der
-  Action-Bar kann man einzelne Werteanzeigen auswählen.</p>
-  
+  <a id="HourChart"></a>
+  <h2 class="text-center">Stunden-Diagramm</h2>
+  <img class="center_image" alt="HourLogChart_landscape.PNG" src="images_de/HourLogChart_landscape.png" >
+  <br>
+  <div class="center">
+	  <p>Zeigt die Daten des aktuellen Tags an. Ãœber das MenÃ¼ oben rechts in der
+	  Action-Bar kann man einzelne Werteanzeigen auswÃ¤hlen.</p>
+  </div>
   <hr style="page-break-before:always;">
-  <a name="Info"></a>
-  <h2>Info</h2>
-  <img alt="Info_landscape.PNG" src="images_de/Info_landscape.png" ><br>
-  <p>Zeigt detaillierte Informationen des Ladereglers, die letzte VOC und die
-  Batteriespannung an.</p>
-  
+  <a id="Info"></a>
+  <h2 class="text-center">Info</h2>
+  <img class="center_image" alt="Info_landscape.PNG" src="images_de/Info_landscape.png" >
+  <br>
+  <div class="center">
+	  <p>Zeigt detaillierte Informationen des Ladereglers, die letzte VOC und die
+	  Batteriespannung an.</p>
+  </div>
   <hr style="page-break-before:always;">
-  <a name="Messages"></a>
-  <h2>Nachrichten</h2>
-  <img alt="Messages_landscape.PNG" src="images_de/Messages_landscape.png" ><br>
-  <p>Hier werden <font color="blue">informell</font>, <font color="yellow">Warnungen
-  </font>und <font color="red">Fehler</font> vom&nbsp; Laderegler durch ein Symbol am Anfang der Nachricht
-  angezeigt.</p>
-  
+  <a id="Messages"></a>
+  <h2 class="text-center">Nachrichten</h2>
+  <img class="center_image" alt="Messages_landscape.PNG" src="images_de/Messages_landscape.png" >
+  <br>
+  <div class="center">
+	  <p>Hier werden informell, Warnungen und Fehler vom Laderegler durch ein Symbol am Anfang der Nachricht
+	  angezeigt.</p>
+  </div>
   <hr style="page-break-before:always;">
-  <a name="Load"></a>
-  <h2>Verbrauch</h2>
-  <img alt="Consumption_landscape.PNG" src="images_de/Consumption_landscape.png" ><br>
-  <p>In der Verbrauchs-Anzeige wird die entnommene Energie angezeigt. Dies wird
-  von der erzeugten Energie abzüglich der Ladeenergie errechnet.</p>
-
+  <a id="Load"></a>
+  <h2 class="text-center">Verbrauch</h2>
+  <img class="center_image" alt="Consumption_landscape.PNG" src="images_de/Consumption_landscape.png" >
+  <br>
+  <div class="center">
+	  <p>In der Verbrauchs-Anzeige wird die entnommene Energie angezeigt. Dies wird
+	  von der erzeugten Energie abzÃ¼glich der Ladeenergie errechnet.</p>
+	</div>
 </div>
+
 <div class="container text-center">
-	<a name="Bot">
+	<a id="Bot"></a>
 	&nbsp;|&nbsp;
-	<a href="#Top">Top</a>
+	<a href="#Top">Anfang</a>
 	&nbsp;|&nbsp;
+</div>
 </div>
 
 </body>

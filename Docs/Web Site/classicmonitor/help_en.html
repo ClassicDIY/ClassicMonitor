@@ -2,67 +2,85 @@
 <html>
 <head>
 <title>Classic Monitor</title>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="description" content="Context Help file for the Classic Monitor Android App">
+<meta name="keywords" content="HTML,CSS">
+<meta name="author" content="Graham Ross">
 <link rel="stylesheet" type="text/css" href="layout-styles.css">
-
 </head>
 
 <body>
-
+<a id="Top"></a>
 <div class="container text-center">
 
 &nbsp;|&nbsp;
 <a href="#Bot">Bottom</a>
 &nbsp;|&nbsp;
 </div>
-    <a name="Top">
-<div class="container text-center">
+<br>
+<div class="toc-container">
 
+<table id="t01">
+<tr><td>
 <a href="#Overview">Overview</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#NavigationBar">Navigation Bar</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#Settings">Settings</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#StateOfCharge">State Of Charge</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#System">System</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#Power">Power</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#Energy">Energy</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#Capacity">Capacity</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#Temperature">Temperature</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#Calendar">Day Log Calendar</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#DayChart">Day Log Chart</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#HourChart">Hour Log Chart</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#Info">Info</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#Messages">Messages</a>
-&nbsp;|&nbsp;
+</td></tr>
+<tr><td>
 <a href="#Load">Consumption</a>
+</tr></td>
+</table>
 
 </div>
-
+<hr style="page-break-before:always;">
 <div class="container text-center" >
-
   <div class="row">
 	<div class="col-md-12">
 	  <h1>Classic Monitor</h1>
-	  <h2>Overview</h2>
+	  <h2 class="text-center">Overview</h2>
 	</div>
 
-	<a name="Overview"></a>	
-
-	<br>
+	<a id="Overview"></a>	
 	
+	<br>
+	<div class="center">
 	<p>
 		The Classic Monitor Android app displays information from your classic charge controller. Your charge controller must be connected and configured to your local network, please refer to the classic charge controller documentation provided by Midnite Solar.
 		Your Android device must also be connected to the same local network. 
@@ -79,27 +97,41 @@
 		The app displays a different set of tabs depending on your configuration;
 	</p>
 	<p>
-		One or more classics without a WhizbangJr, the tabs are: <b>Power | Energy | Temperature | Day Log Calendar | Day Log Chart | Hour Log Chart | Info | Messages | About </b>
+		One or more classics without a WhizbangJr, the tabs are: 
 	</p>
 	<p>
-		A single classic with a WhizbangJr, the tabs are: <b> State Of Charge | Load | Power | Energy | Capacity | Temperature | Day Log Calendar | Day Log Chart | Hour Log Chart | Info | Messages | About </b>
+		<b>Power | Energy | Temperature | Day Log Calendar | Day Log Chart | Hour Log Chart | Info | Messages | About </b>
+	</p>
+
+	<p>
+		A single classic with a WhizbangJr, the tabs are: 
 	</p>
 	<p>
-		More than one classic with a WhizbangJr, the tabs are: <b> State Of Charge | System | Power | Energy | Capacity | Temperature | Day Log Calendar | Day Log Chart | Hour Log Chart | Info | Messages | About </b>
+		<b> State Of Charge | Load | Power | Energy | Capacity | Temperature | Day Log Calendar | Day Log Chart | Hour Log Chart | Info | Messages | About </b>
+	</p>
+
+	<p>
+		More than one classic with a WhizbangJr, the tabs are:
 	</p>
 	<p>
-		A Morningstar Tri-Star MPPT, the tabs are: <b> Power | Energy | About </b>
+		<b> State Of Charge | System | Power | Energy | Capacity | Temperature | Day Log Calendar | Day Log Chart | Hour Log Chart | Info | Messages | About </b>
+	</p>
+	<p>
+		A Morningstar Tri-Star MPPT, the tabs are:
+	</p>
+	<p>
+		<b> Power | Energy | About </b>
 	</p>
 	<p>
 		With more than one controller and a WhizbangJr, a radio button is displayed on the Calendar and Energy tabs to allow to view the energy harvested by the controller or the system (sum of all the controllers).
 	</p>
-	
+	</div>
 	<hr style="page-break-before:always;">
-		<a name="NavigationBar"></a>		
-	<h2>Navigation bar</h2>
-	<img alt="NavBar_landscape.PNG" src="images_en/NavBar_landscape.png"  title="">
+	<a id="NavigationBar"></a>		
+	<h2 class="text-center" >Navigation bar</h2>
+	<img class="center_image" alt="NavBar_landscape.PNG" src="images_en/NavBar_landscape.png"  title="" >
 	<br>
-	
+	<div class="center">
 	<p>
 		The Navigation bar displays when you slide from the left edge of the app to the right or by tapping the "hamburger" icon on the left of the action bar.
 	</p>
@@ -110,20 +142,28 @@
 	<p>
 		You can remove an entry by sliding it to the right. 
 	</p>
+
+	<p>
+		An orange exclamation icon will appear next to an entry when the app cannot communicate with the controller.
+	</p>
+	</div>
+	
+	<br>
+	<img class="center_image" alt="AddDevice_landscape.PNG" src="images_en/AddDevice_landscape.png"  title="" >
+	<br>
+	<div class="center">
 	<p>
 		You can enter a static controller address by selecting the <b>+ADD</b> action. This will allow you to enter the port and network name or IP address of the controller. 
 	</p>
-	<p>
-		An <font color="yellow">orange</font> exclamation icon will appear next to an entry when the app cannot communicate with the controller.
-	</p>
-	
+	</div>
+
 	<hr style="page-break-before:always;">
 
-	<a name="Settings"></a>
-	<h2>Settings</h2>
-	<img alt="Settings_portrait.PNG" src="images_en/Settings_portrait.png"  title="">
+	<a id="Settings"></a>
+	<h2 class="text-center">Settings</h2>
+	<img class="center_image" alt="Settings_portrait.PNG" src="images_en/Settings_portrait.png"  title="">
 	<br>
-
+	<div class="center">
 	<p>
 		The settings dialog is displayed by pressing the gear icon on the top right of the action bar. 
 	</p>
@@ -137,10 +177,12 @@
 	<p>
 		<b>Show popup messages</b>: Messages are displayed at the bottom center of the display whenever the charge state changes, when de-selecting no messages appears.
 	</p>
-	<a name="PVOutput"></a>
-	<h2>PV Output</h2>
-	<img alt="PVOutput_landscape.PNG" src="images_en/PVOutput_landscape.png"  title="">
+	</div>
+	<a id="PVOutput"></a>
+	<h2 class="text-center">PV Output</h2>
+	<img class="center_image" alt="PVOutput_landscape.PNG" src="images_en/PVOutput_landscape.png"  title="">
 	<br>
+	<div class="center">
 	<p>
 		<b>PVOutput</b>: When you enable PVOutput and provide a key and systemId (SID), the app uploads the daily energy (kWh) recorded by your classic to the PVoutput.org web site. 
 	</p>
@@ -157,14 +199,14 @@
 	<p>
 		A PVOutput icon displays on the action bar that navigates to the PVOutput.org web site. 
 	</p>
-
+	</div>
 	<hr style="page-break-before:always;">
 
-	<a name="StateOfCharge"></a>
-	<h2>State Of Charge</h2>
-	<img alt="StateOfCharge_landscape.PNG" src="images_en/StateOfCharge_landscape.png"  title="">
+	<a id="StateOfCharge"></a>
+	<h2 class="text-center">State Of Charge</h2>
+	<img class="center_image" alt="StateOfCharge_landscape.PNG" src="images_en/StateOfCharge_landscape.png"  title="">
 	<br>
-
+	<div class="center">
 	<p> 
 		The State of Charge tab is displayed when you have at least one classic configured with a WhizbangJr. 
 	</p>
@@ -172,14 +214,14 @@
 		The bi-directional gauge can display the current or power, tap on the gauge to switch between the selection. 
 		A negative reading indicates that the battery is being discharged, a positive reading indicates charging.
 	</p>
-
+	</div>
 	<hr style="page-break-before:always;">
 
-	<a name="System"></a>
-	<h2>System</h2>
-	<img alt="System_landscape.PNG" src="images_en/System_landscape.png"  title="">
+	<a id="System"></a>
+	<h2 class="text-center">System</h2>
+	<img class="center_image" alt="System_landscape.PNG" src="images_en/System_landscape.png"  title="">
 	<br>
-		
+	<div class="center">	
 	<p>
 		The System tab is displayed when you have more than one charger controller and you have at least one classic configured with a WhizbangJr.
 	</p>
@@ -189,73 +231,73 @@
 	<p>
 		The Consumption gauge displays the amount of power being consumed from the system, this is calculated from the power generated minus the power going into the batteries.
 	</p>
-	
+	</div>
 	<hr style="page-break-before:always;">
 
-	<a name="Power"></a>
-	<h2>Power</h2>
-	<img alt="Power_landscape.PNG" src="images_en/Power_landscape.png"  title="">
+	<a id="Power"></a>
+	<h2 class="text-center">Power</h2>
+	<img class="center_image" alt="Power_landscape.PNG" src="images_en/Power_landscape.png"  title="">
 	<br>
-	
+	<div class="center">
 	<p>
 		The Power tab displays the voltage and current feeding the controller from the solar panels and the voltage and current leaving the controller to the batteries and the resultant power reading for the selected controller.
 	</p>
 	<p>
-		The main power gauge include LED’s near the bottom of the gauge. The left LED is Aux 1 and the right LED is Aux 2
+		The main power gauge include LEDs near the bottom of the gauge. The left LED is Aux 1 and the right LED is Aux 2
 	</p>
-	
+	</div>
 	<hr style="page-break-before:always;">
 
-	<a name="Energy"></a>
-	<h2>Energy</h2>
-	<img alt="Energy_portrait.PNG" src="images_en/Energy_portrait.png"  title="">
+	<a id="Energy"></a>
+	<h2 class="text-center">Energy</h2>
+	<img class="center_image" alt="Energy_landscape.PNG" src="images_en/Energy_landscape.png"  title="">
 	<br>
-		
+	<div class="center">	
 	<p>
 		The Energy tab displays the amount of energy harvested by the selected controller today and a total amount of energy harvested by the controller since it was put into service.
 	</p>
 	<p>
 		When you have more than one controller and a WhizbangJr, a radio button is displayed to allow to view the energy harvested by the controller or the system (sum of all the controllers).
 	</p>
-	
+	</div>
 	<hr style="page-break-before:always;">
 
-	<a name="Capacity"></a>
-	<h2>Capacity</h2>
-	<img alt="Capacity_landscape.PNG" src="images_en/Capacity_landscape.png"  title="">
+	<a id="Capacity"></a>
+	<h2 class="text-center">Capacity</h2>
+	<img class="center_image" alt="Capacity_landscape.PNG" src="images_en/Capacity_landscape.png"  title="">
 	<br>
-		
+	<div class="center">	
 	<p>
 		The Capacity tab displays the balance of energy in amp/Hours remaining in your batteries.
 	</p>
 	<p>
 		Please refer to the <a href="http://www.midnitesolar.com/pdfs/Whizbang_manual.pdf" target="_blank"> Midnite Solar WhizbangJr</a> documentation for more information.
 	</p>
-	
+	</div>
 	<hr style="page-break-before:always;">
 
-	<a name="Temperature"></a>
-	<h2>Temperature</h2>
+	<a id="Temperature"></a>
+	<h2 class="text-center">Temperature</h2>
 
-	<img alt="Temperature_withWB_portrait.PNG" src="images_en/Temperature_withWB_portrait.png"  title="">
+	<img class="center_image" alt="Temperature_landscape.PNG" src="images_en/Temperature_landscape.png"  title="">
 	<br>
-		
+	<div class="center">	
 	<p>
 		The Temperature Tab displays the temperature in either Celsius or Farenheit of the Battery, internal FET & PCB and, if you have a WhizbangJr, the shunt temprature.
 	</p>
-	
+	</div>
 	<hr style="page-break-before:always;">
 
-	<a name="Calendar"></a>
-	<h2>Day Log Calendar</h2>
+	<a id="Calendar"></a>
+	<h2 class="text-center">Day Log Calendar</h2>
 
-	<img alt="Calendar_landscape.PNG" src="images_en/Calendar_landscape.png"  title="">
+	<img class="center_image" alt="Calendar_landscape.PNG" src="images_en/Calendar_landscape.png"  title="">
 	<br>
-		
+	<div class="center">	
 	<p>
 		The Day Log Calendar displays the energy harvested for each day of the month along with the max pv, battery voltages, max temperature and power for the day.
-	<p>
 	</p>
+	<p>
 		Days where the system achieved float or equalize are indicated with "(Float)" and (Equalize).
 	</p>
 	<p>
@@ -264,66 +306,66 @@
 	<p>
 		Previous months can be viewed by sliding the grey part of the calendar up or down.
 	</p>
-	
+	</div>
 	<hr style="page-break-before:always;">
 
-	<a name="DayChart"></a>
-	<h2>Day Log Chart</h2>
-	<img alt="DayLogChart_landscape.PNG" src="images_en/DayLogChart_landscape.png"  title="">
+	<a id="DayChart"></a>
+	<h2 class="text-center">Day Log Chart</h2>
+	<img class="center_image" alt="DayLogChart_landscape.PNG" src="images_en/DayLogChart_landscape.png"  title="">
 	<br>
-		
+	<div class="center">	
 	<p>
 		The Day Log Chart displays the same information as the calendar, A menu is at the top right of the action bar allows you to select the value charted.
 	</p>
-	
+	</div>
 	<hr style="page-break-before:always;">
 
-	<a name="HourChart"></a>
-	<h2>Hour Log Chart</h2>
-	<img alt="HourLogChart_landscape.PNG" src="images_en/HourLogChart_landscape.png"  title="">
+	<a id="HourChart"></a>
+	<h2 class="text-center">Hour Log Chart</h2>
+	<img class="center_image" alt="HourLogChart_landscape.PNG" src="images_en/HourLogChart_landscape.png"  title="">
 	<br>
-		
+	<div class="center">	
 	<p>
 		The Hour Log Chart display the information recorded by the classic for the current day, A menu is at the top right of the action bar allows you to select the value charted.
 	</p>
-	
+	</div>
 	<hr style="page-break-before:always;">
 
-	<a name="Info"></a>
-	<h2>Info</h2>
-	<img alt="Info_landscape.PNG" src="images_en/Info_landscape.png"  title="">
+	<a id="Info"></a>
+	<h2 class="text-center">Info</h2>
+	<img class="center_image" alt="Info_landscape.PNG" src="images_en/Info_landscape.png"  title="">
 	<br>
-		
+	<div class="center">	
 	<p>
 		The Info tab display the boiler plate information of your device along with the last VOC value of the PV array.
 	</p>
-	
+	</div>
 	<hr style="page-break-before:always;">
 
-	<a name="Messages"></a>
-	<h2>Messages</h2>
-	<img alt="Messages_landscape.PNG" src="images_en/Messages_landscape.png"  title="">
+	<a id="Messages"></a>
+	<h2 class="text-center">Messages</h2>
+	<img class="center_image" alt="Messages_landscape.PNG" src="images_en/Messages_landscape.png"  title="">
 	<br>
-		
+	<div class="center">	
 	<p>
-		The Messages tab displays <font color="blue">Informational</font>, <font color="yellow">Warning</font> and <font color="red">Error</font> messages from your controller indicated by an icon at the start of the message.
+		The Messages tab displays Informational, Warning and Error messages from your controller indicated by an icon at the start of the message.
 	</p>
-	
+	</div>
 	<hr style="page-break-before:always;">
 
-	<a name="Load"></a>
-	<h2>Consumption</h2>
-	<img alt="Consumption_landscape.PNG" src="images_en/Consumption_landscape.png"  title="">
+	<a id="Load"></a>
+	<h2 class="text-center">Consumption</h2>
+	<img class="center_image" alt="Consumption_landscape.PNG" src="images_en/Consumption_landscape.png"  title="">
 	<br>
-		
+	<div class="center">	
 	<p>
 		The Consumption gauge displays the amount of power being consumed from the system, this is calculated from the power generated minus the power going into the batteries.
 	</p>
-	
+	</div>
 </div>
 
 <div class="container text-center">
-	<a name="Bot">
+	<a id="Bot"></a>
 	&nbsp;|&nbsp;
 	<a href="#Top">Top</a>
 	&nbsp;|&nbsp;
