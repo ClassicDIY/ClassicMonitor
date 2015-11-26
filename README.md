@@ -49,6 +49,14 @@ Release notes:
 
 -----------------
 
+version 2.3.0
+<ul>
+<li>Added Online Help.</li>
+<li>Added link to PVOutput.</li>
+</ul>
+
+-----------------
+
 version 2.2.0
 <ul>
 <li>Added support for multiple classics, the new 'System' tab will display the power harvested and consumed by the system when multiple classics are in use. The WhizbangJr is required to enable this feature.</li>
