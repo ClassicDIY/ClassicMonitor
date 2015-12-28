@@ -21,7 +21,7 @@
 <div class="container text-center">
 <table id="t01">
 <tr><td>
-<a href="#Overview">Vue d’ensemble  </a>
+<a href="#Overview">Vue d’ensemble</a>
 </td></tr>
 <tr><td>
 <a href="#NavigationBar">Navigation</a>
@@ -36,7 +36,7 @@
 <a href="#System">Système</a>
 </td></tr>
 <tr><td>
-<a href="#Power">alimentation</a>
+<a href="#Power">Puissance</a>
 </td></tr>
 <tr><td>
 <a href="#Energy">Energie</a>
@@ -48,13 +48,13 @@
 <a href="#Temperature">Température</a>
 </td></tr>
 <tr><td>
-<a href="#Calendar">Calendrier Jour</a>
+<a href="#Calendar">Calendrier</a>
 </td></tr>
 <tr><td>
-<a href="#DayChart">Jour Graphique</a>
+<a href="#DayChart">Graphique Quotidien</a>
 </td></tr>
 <tr><td>
-<a href="#HourChart">Heure Graphique</a>
+<a href="#HourChart">Graphique Horaire</a>
 </td></tr>
 <tr><td>
 <a href="#Info">Informations</a>
@@ -86,11 +86,11 @@
 		<p>
 			Avec la redirection de port et d'un service DDNS, le moniteur classique peut se connecter à votre contrôleur sur Internet 
 			en ajoutant une connexion en utilisant le nom de domaine fourni par votre service DDNS et le nombre de port publique configuré dans votre routeur. 
-			Un service DDNS gratuit est disponible à partir <a href="https://www.noip.com" target="_blank"> www.noip.com</a>, votre routeur doit prendre en charge le service DDNS que vous sélectionnez
+			Un service DDNS gratuit est disponible à partir <a href="https://www.noip.com" target="_blank"> www.noip.com</a>, votre routeur doit supporter le service DDNS que vous sélectionnez
 		</p>
 		<p>
 			Cette application supporte actuellement les modèles Classic & Classic Lite 150, 200, 250 contrôleurs de charge, 
-			la série Classic SL est pas pris en charge car elle ne dispose pas d'une connexion réseau, support de base pour les contrôleurs de charge MPPT TriStar est également inclus.
+			la série Classic SL est pas pris en charge car elle ne dispose pas d'une connexion Ethernet, support de base pour les contrôleurs de charge MPPT TriStar est également inclus.
 		</p>
 		<p>
 			L'application affiche un ensemble des divers onglets en fonction de votre configuration.
@@ -99,28 +99,28 @@
 			Un ou plusieurs classiques sans WhizbangJr, les onglets sont:
 		</p>
 			<p>
-				<b>Puissance | Energie | Température | Calendrier Jour Connexion | Jour Connexion Graphique | Heure Connexion Graphique | Informations | Messages | À propos de </b>
+				<b>Puissance | Energie | Température | Calendrier | Graphique Quotidien | Graphique Horaire | Informations | Messages | À propos </b>
 			</p>
 		<p>
 			Un classique avec un seul WhizbangJr, les onglets sont:
 		</p>
 			<p>
-				<b> l'état de charge | Chargez | alimentation | Energie | capacité | température | Calendrier Jour Connexion | Jour Connexion Graphique | Heure Connexion Graphique | Informations | Messages | À propos de </b>
+				<b> L'état de charge | Chargez | Puissance | Energie | Capacité | Température | Calendrier | Graphique Quotidien | Graphique Horaire | Informations | Messages | À propos </b>
 			</p>
 		<p>
 			Plus d'un classique avec une WhizbangJr, les onglets sont:
 		</p>
 			<p>
-				<b> l'état de charge | système | alimentation | Energie | capacité | température | Calendrier Jour Connexion | Jour Connexion Graphique | Heure Connexion Graphique | Informations | Messages | À propos de </b>
+				<b> L'état de charge | Système | Puissance | Energie | Capacité | Température | Calendrier | Graphique Quotidien | Graphique Horaire | Informations | Messages | À propos </b>
 			</p>
 		<p>
 			Un Morningstar Tri-Star MPPT, les onglets sont:
 		</p>
 			<p>
-				<b> Puissance | Energie | À propos de </b>
+				<b> Puissance | Energie | À propos </b>
 			</p>
 		<p>
-			Lorsque vous avez plus d'un contrôleur et un WhizbangJr, un bouton radio est affiché sur le calendrier et des onglets vous permettant 
+			Lorsque vous avez plus d'un contrôleur et un WhizbangJr, un bouton radio est affiché sur le calendrier et l'onglets d'énergie vous permettant 
 			de voir l'énergie récoltée par le contrôleur ou le système (somme de tous les contrôleurs).
 		</p>
 	</div>
@@ -131,7 +131,7 @@
 	<br>
 	<div class="center">
 		<p>
-			L'écran de navigation est affiché en faisant glisser la partie gauche de la pag vers la droite ou en appuyant sur l'icône 'hamburger' sur la bar d'action.
+			L'écran de navigation est affiché en faisant glisser la partie gauche de la page vers la droite ou en appuyant sur l'icône 'hamburger' sur la bar d'action.
 		</p>
 		
 		<p>
@@ -150,7 +150,7 @@
 	<div class="center">
 		<p>
 			Vous pouvez configurée un contrôleur avec une address statique en appuyant sur le menu <b>+Ajouter</b>. 
-			Vous pouvez ainsi entrée le numero du port, le nom ou l'addresse IP du contrôleur.
+			Vous pouvez ainsi entrée le numero du port et le nom ou l'addresse IP du contrôleur.
 		</p>
 	</div>
 	<hr style="page-break-before:always;">
@@ -164,14 +164,14 @@
 			La boîte de dialogue des réglages est affiché en appuyant sur l'icône d'engrenage en haut à droite de la barre d'action.  
 		</p>
 		<p>
-			<b>Détection automatique classique</b>: L'application écoute des paquets UDP sur le réseau local pour une manette classique disponible pas encore configuré lorsque cette option est sélectionnée.  
-			Lorsque sa sélection, chaque classique doit être ajoutée manuellement en utilisant le bouton Ajouter + lorsque le tiroir de navigation de gauche est affiché. 
+			<b>Détection automatique classique</b>: L'application écoute pour des paquets UDP sur le réseau local pour un appareil classique disponible pas encore configuré lorsque cette option est sélectionnée.  
+			Lorsque la sélection est pas cochée, chaque classique doit être ajoutée manuellement en utilisant le bouton Ajouter+ lorsque le tiroir de navigation de gauche est affiché. 
 		</p>
 		<p>
-			<b>Utilisez échelle Fahrenheit</b>: La température est affichée en fahrenheit sur des jauges, calendrier et graphiques contraire celcius.
+			<b>Utilisez échelle Fahrenheit</b>: La température est affichée en fahrenheit sur des jauges, calendrier et graphiques autrement celcius.
 		</p>
 		<p>
-			<b>Montrer messages contextuels</b>: Les messages sont affichés au centre de l'écran à chaque fois que les changements d'état de charge, lorsque De-sélectionner aucun message s'affiche.
+			<b>Affiche de messages de notification</b>: Les messages sont affichés au centre de l'écran à chaque fois que les changements d'état de charge, lorsque De-sélectionner aucun message s'affiche.
 		</p>
 	</div>
 	<a id="PVOutput"></a>
@@ -185,7 +185,7 @@
 		</p>
 
 		<p>
-			Le bouton <b>Effacer le journal enregistré</b> réinitialise la dernière date de téléchargement, l'application puis re-telecharge jusqu'à 30 jours de journaux quotidiens enregistrés
+			Le bouton <b>Effacer le journal enregistrées</b> réinitialise la dernière date de téléchargement, l'application va re-telecharger jusqu'à 30 jours de journaux quotidiens enregistrés
 		</p>
 		<p>
 			L'application télécharge les dernières lectures pour chaque jour depuis le dernier téléchargement jusqu'à 30 jours. 
@@ -193,7 +193,7 @@
 		<p>
 			Vous aurez besoin d'obtenir un compte à <a href="http://PVOutput.org" target="_blank"> PVOutput.org</a> pour obtenir une clé et Sid. 
 		<p>
-			Une icône Sortie PV s'affiche sur la barre d'action et vous suivez la navigation sur le site web PVOutput.org. 
+			Une icône 'soleil' s'affiche sur la barre d'action et vous suivez la navigation sur le site web PVOutput.org. 
 		</p>
 	</div>
 	<hr style="page-break-before:always;">
@@ -208,7 +208,7 @@
 		</p>
 		<p>
 			Le cadrant bi-directionnel peut afficher le courant ou la puissance, appuyez sur le cadrant pour basculer entre la sélection. 
-			Une lecture négative indique que la batterie est déchargée, une lecture positive indique charge.
+			Une lecture négative indique que la batterie est déchargée, une lecture positive indique la charge.
 		</p>
 	</div>
 	<hr style="page-break-before:always;">
@@ -231,7 +231,7 @@
 	<hr style="page-break-before:always;">
 
 	<a id="Power"></a>
-	<h2 class="text-center">Power</h2>
+	<h2 class="text-center">Puissance</h2>
 	<img class="center_image" alt="Power_landscape.PNG" src="images_fr/Power_landscape.png"  title="">
 	<br>
 	<div class="center">
@@ -282,13 +282,13 @@
 	<br>
 	<div class="center">
 		<p>
-			L'onglet de la température affiche la température en degrés Celsius ou Fahrenheit de la batterie, FET interne et PCB et, si vous avez un WhizbangJr, la temprature de dérivation.
+			L'onglet de la température affiche la température en degrés Celsius ou Fahrenheit de la batterie, FET interne et PCB et, si vous avez un WhizbangJr, la temprature du shunt.
 		</p>
 	</div>
 	<hr style="page-break-before:always;">
 
 	<a id="Calendar"></a>
-	<h2 class="text-center">Le Journal en Calendrier</h2>
+	<h2 class="text-center">Journal en Calendrier</h2>
 
 	<img class="center_image" alt="Calendar_landscape.PNG" src="images_fr/Calendar_landscape.png"  title="">
 	<br>
@@ -309,24 +309,24 @@
 	<hr style="page-break-before:always;">
 
 	<a id="DayChart"></a>
-	<h2 class="text-center">Journal Graphique de jour</h2>
+	<h2 class="text-center">Graphique Quotidien</h2>
 	<img class="center_image" alt="DayLogChart_landscape.PNG" src="images_fr/DayLogChart_landscape.png"  title="">
 	<br>
 	<div class="center">
 		<p>
-			Le Journal graphique de jour affiche les informations enregistrées par le contrôleur pour les jour du mois, un menu est en haut à 
+			Le Journal Quotidien affiche les informations enregistrées par le contrôleur pour les jour du mois, un menu est en haut à 
 			droite de la barre d'action vous permet de sélectionner la valeur tracée.
 		</p>
 	</div>
 	<hr style="page-break-before:always;">
 
 	<a id="HourChart"></a>
-	<h2 class="text-center">Journal Graphique de l'heure</h2>
+	<h2 class="text-center">Graphique Horaire</h2>
 	<img class="center_image" alt="HourLogChart_landscape.PNG" src="images_fr/HourLogChart_landscape.png"  title="">
 	<br>
 	<div class="center">
 		<p>
-			Le Journal graphique de l'heure affiche les informations enregistrées par le contrôleur pour la journée en cours, un menu est en haut à 
+			Le Journal Horaire affiche les informations enregistrées par le contrôleur pour la journée en cours, un menu est en haut à 
 			droite de la barre d'action vous permet de sélectionner la valeur tracée.
 		</p>
 	</div>

@@ -60,7 +60,7 @@
     <string name="RestingDescription">Nessun potere, in attesa di alimentazione.</string>
     <string name="RestingTitle">Riposo</string>
     <string name="SettingsLabel">Regolazioni</string>
-    <string name="StateOfChargeTabTitle">State of Charge</string>
+    <string name="StateOfChargeTabTitle">Stato di carica</string>
     <string name="TemperatureTabTitle">Temperatura</string>
     <string name="TotalEnergyTitle">Totale di Energia</string>
     <string name="UploadLogsSummary">Invia i log di PVOUtput</string>
