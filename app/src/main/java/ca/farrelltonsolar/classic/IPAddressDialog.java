@@ -23,6 +23,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -72,11 +73,13 @@ public class IPAddressDialog extends DialogFragment {
                 }
             }
         }).setNegativeButton(R.string.CancelButton, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                });
-        // Create the AlertDialog object and return it
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+        EditText port = (EditText) view.findViewById(R.id.port);
+        port.setFilters(new InputFilter[]{new InputFilterMinMax(1, 65535)});
+
         return builder.create();
     }
 

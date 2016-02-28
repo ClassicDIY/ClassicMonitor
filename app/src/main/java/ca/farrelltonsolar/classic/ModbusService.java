@@ -123,6 +123,7 @@ public class ModbusService extends Service {
         return rVal;
     }
 
+
     public void stopMonitoringChargeControllers() {
         if (!tasks.isEmpty()) {
             for (ModbusTask task : tasks) {
@@ -130,6 +131,7 @@ public class ModbusService extends Service {
                 Disconnector d = new Disconnector(task);
                 d.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
+            tasks.clear();
         }
     }
 

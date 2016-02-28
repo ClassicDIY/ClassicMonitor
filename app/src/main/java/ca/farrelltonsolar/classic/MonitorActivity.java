@@ -227,16 +227,6 @@ public class MonitorActivity extends ActionBarActivity {
         return handled || super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (!isReceiverRegistered) {
-            LocalBroadcastManager.getInstance(this).registerReceiver(mMonitorReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER));
-            LocalBroadcastManager.getInstance(this).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
-            LocalBroadcastManager.getInstance(this).registerReceiver(receiveAToast, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_TOAST));
-            isReceiverRegistered = true;
-        }
-    }
 
     private BroadcastReceiver receiveAToast = new BroadcastReceiver() {
         @Override
@@ -252,7 +242,16 @@ public class MonitorActivity extends ActionBarActivity {
         }
     };
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isReceiverRegistered) {
+            LocalBroadcastManager.getInstance(this).registerReceiver(mMonitorReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER));
+            LocalBroadcastManager.getInstance(this).registerReceiver(mReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
+            LocalBroadcastManager.getInstance(this).registerReceiver(receiveAToast, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_TOAST));
+            isReceiverRegistered = true;
+        }
+    }
 
     @Override
     protected void onPause() {

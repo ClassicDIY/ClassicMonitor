@@ -36,6 +36,8 @@ import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Graham on 26/12/13.
@@ -54,6 +56,7 @@ public class MonitorApplication extends Application implements Application.Activ
     WifiManager.WifiLock wifiLock;
     ModbusService modbusService;
     static boolean isModbusServiceBound = false;
+    private Timer disconnectTimer;
 
     @Override
     protected void finalize() throws Throwable {
@@ -65,7 +68,6 @@ public class MonitorApplication extends Application implements Application.Activ
             if (isModbusServiceBound) {
                 unbindService(modbusServiceConnection);
             }
-            unbindService(modbusServiceConnection);
         } catch (Exception ex) {
             Log.w(getClass().getName(), "onActivityDestroyed exception ex: " + ex);
         }
@@ -274,6 +276,13 @@ public class MonitorApplication extends Application implements Application.Activ
         if (activity.getLocalClassName().compareTo("MonitorActivity") == 0) {
             LocalBroadcastManager.getInstance(this).registerReceiver(addChargeControllerReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER));
             LocalBroadcastManager.getInstance(this).registerReceiver(removeChargeControllerReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_REMOVE_CHARGE_CONTROLLER));
+            if (disconnectTimer != null) {
+                disconnectTimer.cancel();
+                disconnectTimer.purge();
+            }
+            if (modbusService.isInService() == false) {
+                modbusService.monitorChargeControllers(chargeControllers());
+            }
         }
     }
 
@@ -282,6 +291,14 @@ public class MonitorApplication extends Application implements Application.Activ
         if (activity.getLocalClassName().compareTo("MonitorActivity") == 0) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(addChargeControllerReceiver);
             LocalBroadcastManager.getInstance(this).unregisterReceiver(removeChargeControllerReceiver);
+            disconnectTimer = new Timer();
+            disconnectTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    // this code will be executed after 10 seconds unless Activity Resumed
+                    modbusService.stopMonitoringChargeControllers();
+                }
+            }, 10000);
         }
     }
 
