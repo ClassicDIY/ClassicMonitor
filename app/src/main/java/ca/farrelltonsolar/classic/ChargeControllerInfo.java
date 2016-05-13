@@ -113,7 +113,10 @@ public class ChargeControllerInfo implements Serializable {
 
     @Override
     public String toString() {
-        return deviceUri == null || deviceUri.isEmpty() ? deviceName == null || deviceName.isEmpty() ? deviceIpAddress == null || deviceIpAddress.isEmpty() ? "ChargeController" : deviceIpAddress  : deviceName : deviceUri;
+        return deviceName == null || deviceName.isEmpty()
+                ? deviceUri == null || deviceUri.isEmpty()
+                ? deviceIpAddress == null || deviceIpAddress.isEmpty()
+                ? "ChargeController" : deviceIpAddress  : deviceUri : deviceName;
     }
 
     public String uniqueId() {
