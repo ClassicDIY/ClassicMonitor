@@ -50,6 +50,17 @@ Release notes:
 
 -----------------
 
+version 2.4.0
+<ul>
+<li>Added Live Chart Tab.</li>
+<li>Added Share Screen Capture.</li>
+<li>Added option to disable 'System View' to support multiple independent charge controllers on separate battery banks.</li>
+<li>Added support for multiple PVOutput Systems when System View is disabled.</li>
+</ul>
+
+-----------------
+
+
 version 2.3.0
 <ul>
 <li>Added Online Help.</li>
