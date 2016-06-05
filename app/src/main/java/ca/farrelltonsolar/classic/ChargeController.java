@@ -26,6 +26,7 @@ public class ChargeController extends ChargeControllerInfo {
 
     private int dayLogMenuSelection;
     private int hourLogMenuSelection;
+    private PVOutputSetting pVOutputSetting = new PVOutputSetting();
 
     // default ctor for de-serialization
     public ChargeController() {
@@ -114,6 +115,8 @@ public class ChargeController extends ChargeControllerInfo {
         this.dayLogMenuSelection = dayLogMenuSelection;
     }
 
-
+    public synchronized PVOutputSetting getPVOutputSetting() {
+        return pVOutputSetting;
+    }
 }
 

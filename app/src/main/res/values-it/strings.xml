@@ -130,4 +130,7 @@
     <string name="connectionsPreferenceCategory">Connessione</string>
     <string name="connectionsPreferenceSummary">Rilevamento automatico classic</string>
     <string name="gaugesPreferenceCategory">Visualizzazione</string>
+    <string name="RealTimeChartTabTitle">Grafico Attuale</string>
+    <string name="SupplyCurrentTitle">Corrente di alimentazione</string>
+    <string name="SystemViewEnabled">System View Enabled</string>
 </resources>

@@ -28,8 +28,8 @@
         android:id="@+id/AHNetValue"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
-        android:layout_margin="20dp"
-        android:layout_weight="60"
+        android:layout_margin="10dp"
+        android:layout_weight="50"
         app:autoScale="true"
         app:gaugeTitle="@string/NetCapacityGaugeTitle"
         app:readingPrecision="0"
@@ -47,8 +47,8 @@
         android:layout_gravity="center_vertical|top"
         android:layout_marginBottom="25dp"
         android:layout_marginTop="25dp"
-        android:layout_marginLeft="50dp"
-        android:layout_weight="40">
+        android:layout_marginLeft="10dp"
+        android:layout_weight="50">
 
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -63,7 +63,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="25"
                 android:layout_gravity="center_vertical|top"
-                android:layout_marginRight="50dp"
+                android:layout_marginRight="10dp"
 
                 android:gravity="center_vertical|top"
                 android:orientation="vertical"
@@ -121,7 +121,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="25"
                 android:layout_gravity="center_vertical|top"
-                android:layout_marginRight="50dp"
+                android:layout_marginRight="10dp"
                 android:gravity="center_vertical|top"
                 android:orientation="vertical"
                 android:weightSum="100">
@@ -178,7 +178,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="25"
                 android:layout_gravity="center_vertical|top"
-                android:layout_marginRight="50dp"
+                android:layout_marginRight="10dp"
                 android:gravity="center_vertical|top"
                 android:orientation="vertical"
                 android:weightSum="100">
@@ -235,7 +235,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="25"
                 android:layout_gravity="center_vertical|top"
-                android:layout_marginRight="50dp"
+                android:layout_marginRight="10dp"
 
                 android:gravity="center_vertical|top"
                 android:orientation="vertical"

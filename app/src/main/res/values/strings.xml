@@ -125,7 +125,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="volt_unit">Volts</string>
     <string name="menu_add">Add</string>
-    <string name="toast_pvoutput">Completed upload to PVOutput.org</string>
+    <string name="toast_pvoutput">Completed upload to PVOutput.org for </string>
     <string name="toast_minute_logs">Completed reading Hour logs</string>
     <string name="toast_day_logs">Completed reading Day logs</string>
     <string name="CapacityTabTitle">Capacity</string>
@@ -144,5 +144,8 @@
     <string name="ShowPopupSummary">Show popup messages</string>
     <string name="device_button">Controller</string>
     <string name="system_button">System</string>
+    <string name="RealTimeChartTabTitle">Live Chart</string>
+    <string name="SupplyCurrentTitle">Supply Current</string>
+    <string name="SystemViewEnabled">System View Enabled</string>
 
 </resources>

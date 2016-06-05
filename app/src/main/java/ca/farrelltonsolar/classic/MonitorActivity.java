@@ -20,10 +20,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -31,8 +33,14 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
+import org.joda.time.DateTime;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import ca.farrelltonsolar.uicomponents.SlidingTabLayout;
@@ -46,6 +54,7 @@ public class MonitorActivity extends ActionBarActivity {
     private boolean isReceiverRegistered;
     private SlidingTabLayout stl;
     private ViewPager viewPager;
+    public ArrayList<RecordEntry> record;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +69,19 @@ public class MonitorActivity extends ActionBarActivity {
         stl.setSelectedIndicatorColors(Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.YELLOW);
         viewPager = (ViewPager) findViewById(R.id.pager);
         setupActionBar();
+        if(savedInstanceState != null && savedInstanceState.containsKey("record")) {
+            record = savedInstanceState.getParcelableArrayList("record");
+        }
+        else {
+            record = new ArrayList<>();
+        }
         Log.d(getClass().getName(), "onCreate");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("record", record);
     }
 
     private void setupActionBar() {
@@ -69,7 +90,7 @@ public class MonitorActivity extends ActionBarActivity {
         ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
         if (cc != null && cc.deviceType() == DeviceType.Classic) {
             if (cc.hasWhizbang()) {
-                if (MonitorApplication.chargeControllers().count() > 1) {
+                if (MonitorApplication.chargeControllers().showSystemView()) {
                     tabStripAdapter.addTab("StateOfCharge", StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
                     tabStripAdapter.addTab("System", SystemFragment.TabTitle, SystemFragment.class, null);
                     tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
@@ -90,6 +111,7 @@ public class MonitorActivity extends ActionBarActivity {
             }
             tabStripAdapter.addTab("Temperature", TemperatureFragment.TabTitle, TemperatureFragment.class, null);
                     addDayLogCalendar();
+            tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, RealTimeChartFragment.class, null);
             tabStripAdapter.addTab("DayChart", R.string.DayChartTabTitle, DayLogChart.class, null);
             tabStripAdapter.addTab("HourChart", R.string.HourChartTabTitle, HourLogChart.class, null);
             tabStripAdapter.addTab("Info", R.string.InfoTabTitle, InfoFragment.class, null);
@@ -101,12 +123,14 @@ public class MonitorActivity extends ActionBarActivity {
             if (cc.hasWhizbang()) {
                 tabStripAdapter.addTab("StateOfCharge", StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
             }
+            tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, RealTimeChartFragment.class, null);
             tabStripAdapter.addTab("Info", R.string.InfoTabTitle, InfoFragment.class, null);
             tabStripAdapter.addTab("About", R.string.About, About.class, null);
         }
         else if (cc != null && cc.deviceType() == DeviceType.TriStar) {
             tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
             tabStripAdapter.addTab("Energy", EnergyFragment.TabTitle, EnergyFragment.class, null);
+            tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, RealTimeChartFragment.class, null);
             tabStripAdapter.addTab("About", R.string.About, About.class, null);
         }
         else {
@@ -115,6 +139,7 @@ public class MonitorActivity extends ActionBarActivity {
             tabStripAdapter.addTab("StateOfCharge", StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
             tabStripAdapter.addTab("Temperature", TemperatureFragment.TabTitle, TemperatureFragment.class, null);
             addDayLogCalendar();
+            tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, RealTimeChartFragment.class, null);
             tabStripAdapter.addTab("DayChart", R.string.DayChartTabTitle, DayLogChart.class, null);
             tabStripAdapter.addTab("HourChart",R.string.HourChartTabTitle, HourLogChart.class, null);
             tabStripAdapter.addTab("Info", R.string.InfoTabTitle, InfoFragment.class, null);
@@ -184,6 +209,11 @@ public class MonitorActivity extends ActionBarActivity {
                         }
                     }
                 }
+                DateTime now = DateTime.now();
+                if (record.size() > 21600) {
+                    record.remove(0);
+                }
+                record.add(new RecordEntry(readings.getFloat(RegisterName.BatVoltage.name()), readings.getFloat(RegisterName.BatCurrent.name()), readings.getFloat(RegisterName.WhizbangBatCurrent.name()), readings.getInt(RegisterName.ChargeState.name()), now.getMillis()));
             }
             catch (Throwable ex) {
                 Log.e(getClass().getName(), "mReadingsReceiver failed ");
@@ -192,17 +222,7 @@ public class MonitorActivity extends ActionBarActivity {
     };
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (navigationDrawerFragment == null || !navigationDrawerFragment.isDrawerOpen()) {
-            getMenuInflater().inflate(R.menu.shared_activity_menu, menu);
-            currentChargeState = -1; // reload title
-            return true;
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -221,6 +241,18 @@ public class MonitorActivity extends ActionBarActivity {
                 break;
             case R.id.action_pvOutput:
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://pvoutput.org/")));
+                handled = true;
+                break;
+            case R.id.action_share:
+                new Thread(new Runnable() {
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                startActivity(Intent.createChooser(getScreenShot(), "Share Screenshot"));
+                            }
+                        });
+                    }
+                }).start();
                 handled = true;
                 break;
         }
@@ -266,6 +298,44 @@ public class MonitorActivity extends ActionBarActivity {
             isReceiverRegistered = false;
         }
         super.onPause();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (navigationDrawerFragment == null || !navigationDrawerFragment.isDrawerOpen()) {
+            getMenuInflater().inflate(R.menu.shared_activity_menu, menu);
+            currentChargeState = -1; // reload title
+            return true;
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public Intent getScreenShot() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        intent.setType("image/png");
+        intent.putExtra(Intent.EXTRA_SUBJECT, tabStripAdapter.getPageTitle(viewPager.getCurrentItem()));
+        View view = getWindow().getDecorView().findViewById(android.R.id.content);
+        View screenView = view.getRootView();
+        screenView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache());
+        screenView.setDrawingCacheEnabled(false);
+        String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Screenshots";
+        File dir = new File(dirPath);
+        if(!dir.exists())
+            dir.mkdirs();
+        File file = new File(dirPath, "Classic.png");
+        try {
+            FileOutputStream fOut = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 85, fOut);
+            fOut.flush();
+            fOut.close();
+            Uri uri = Uri.fromFile(file);
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return intent;
     }
 
 }

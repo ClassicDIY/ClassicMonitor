@@ -25,4 +25,11 @@
         android:visible="false"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_share"
+        android:icon="@android:drawable/ic_menu_share"
+        android:orderInCategory="70"
+        app:showAsAction="ifRoom"
+        android:title="Share"/>
+
 </menu>

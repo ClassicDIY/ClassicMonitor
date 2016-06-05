@@ -281,9 +281,7 @@ public class MonitorApplication extends Application implements Application.Activ
                 disconnectTimer.purge();
             }
             if (isModbusServiceBound && modbusService != null){
-                if (modbusService.isInService() == false) {
-                    modbusService.monitorChargeControllers(chargeControllers());
-                }
+                modbusService.monitorChargeControllers(chargeControllers());
             }
             else {
                 bindService(new Intent(this, ModbusService.class), modbusServiceConnection, Context.BIND_AUTO_CREATE);

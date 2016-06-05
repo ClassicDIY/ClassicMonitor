@@ -46,7 +46,7 @@
         android:layout_height="0dp"
         android:layout_gravity="center_vertical|top"
         android:layout_marginBottom="10dp"
-        android:layout_marginLeft="50dp"
+        android:layout_marginLeft="10dp"
         android:layout_weight="8">
 
 
@@ -56,16 +56,9 @@
             android:orientation="horizontal"
             android:weightSum="100">
 
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="20"
-                android:orientation="horizontal"></LinearLayout>
-
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="0dp"
-                android:layout_weight="60"
+                android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_gravity="center_vertical|top"
                 android:layout_marginLeft="50dp"
@@ -77,7 +70,7 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="40"
+                    android:layout_weight="30"
                     android:gravity="center_vertical|left"
                     android:labelFor="@+id/Value"
                     android:singleLine="true"
@@ -93,7 +86,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
 
-                    android:layout_weight="75"
+                    android:layout_weight="70"
                     android:orientation="horizontal"
                     android:weightSum="100">
 
@@ -121,11 +114,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="20"
-                android:orientation="horizontal"></LinearLayout>
         </LinearLayout>
     </FrameLayout>
     <RadioGroup

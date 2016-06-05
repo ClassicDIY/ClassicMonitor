@@ -114,5 +114,8 @@
     <string name="connectionsPreferenceCategory">Verbindung</string>
     <string name="connectionsPreferenceSummary">Automatische Erkennung Classic</string>
     <string name="gaugesPreferenceCategory">Anzeige</string>
+    <string name="RealTimeChartTabTitle">Live-Diagramm</string>
+    <string name="SupplyCurrentTitle">Liefern-Strom</string>
+    <string name="SystemViewEnabled">System View Enabled</string>
 
 </resources>

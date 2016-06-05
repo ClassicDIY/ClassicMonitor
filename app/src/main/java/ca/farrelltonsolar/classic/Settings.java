@@ -37,6 +37,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     private CheckBoxPreference useFahrenheit;
     private CheckBoxPreference autoDetectClassics;
     private CheckBoxPreference showPopupMessages;
+    private CheckBoxPreference systemViewEnabled;
     private EditTextPreference _SID;
     private EditTextPreference _APIKey;
 
@@ -79,7 +80,11 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
                 MonitorApplication.chargeControllers().setAutoDetectClassic(autoDetectClassics.isChecked());
                 MonitorApplication.chargeControllers().setShowPopupMessages(showPopupMessages.isChecked());
                 MonitorApplication.chargeControllers().setUploadToPVOutput(uploadToPVOutput.isChecked());
-                MonitorApplication.chargeControllers().setSID(_SID.getText());
+                MonitorApplication.chargeControllers().setSystemViewEnabled(systemViewEnabled.isChecked());
+                PVOutputSetting setting = MonitorApplication.chargeControllers().getPVOutputSetting();
+                if (setting != null) {
+                    setting.setSID(_SID.getText());
+                }
                 Settings.this.finish();
             }
         });
@@ -89,14 +94,17 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             useFahrenheit = (CheckBoxPreference) findPreference(Constants.UseFahrenheit);
             autoDetectClassics = (CheckBoxPreference) findPreference(Constants.AutoDetectClassic);
             showPopupMessages = (CheckBoxPreference) findPreference(Constants.ShowPopupMessages);
+            systemViewEnabled = (CheckBoxPreference) findPreference(Constants.SystemViewEnabled);
             _SID = (EditTextPreference) findPreference(Constants.SID);
             _APIKey = (EditTextPreference) findPreference(Constants.APIKey);
 
             useFahrenheit.setChecked(MonitorApplication.chargeControllers().useFahrenheit());
             autoDetectClassics.setChecked(MonitorApplication.chargeControllers().autoDetectClassic());
             showPopupMessages.setChecked(MonitorApplication.chargeControllers().showPopupMessages());
+            systemViewEnabled.setEnabled(MonitorApplication.chargeControllers().count() > 1);
+            systemViewEnabled.setChecked(MonitorApplication.chargeControllers().systemViewEnabled());
             uploadToPVOutput.setChecked(MonitorApplication.chargeControllers().uploadToPVOutput());
-            _SID.setSummary(MonitorApplication.chargeControllers().getSID());
+
             uploadToPVOutput.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     boolean isEnabled = ((Boolean) newValue).booleanValue();
@@ -106,6 +114,10 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             });
             UploadToPVOutputEnabled(uploadToPVOutput.isChecked());
             _APIKey.setSummary(MonitorApplication.chargeControllers().aPIKey());
+            PVOutputSetting setting = MonitorApplication.chargeControllers().getPVOutputSetting();
+            if (setting != null) {
+                _SID.setSummary(setting.getSID());
+            }
             Preference button = (Preference) findPreference("ResetLogs");
             button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override

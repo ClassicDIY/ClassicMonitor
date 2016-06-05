@@ -38,10 +38,12 @@ dependencies {
     compile 'joda-time:joda-time:2.6'
     compile 'me.grantland:autofittextview:0.2.0'
     compile 'com.github.castorflex.verticalviewpager:library:19.0.1'
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
 }
 
 repositories{
     flatDir{
         dirs 'libs'
     }
+    maven { url "https://jitpack.io" }
 }

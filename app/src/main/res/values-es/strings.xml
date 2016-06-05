@@ -131,4 +131,7 @@
     <string name="connectionsPreferenceCategory">Conexión</string>
     <string name="connectionsPreferenceSummary">Detección automática de classic</string>
     <string name="gaugesPreferenceCategory">Pantalla</string>
+    <string name="RealTimeChartTabTitle">Gráfico Actual</string>
+    <string name="SupplyCurrentTitle">Corriente de alimentación</string>
+    <string name="SystemViewEnabled">System View Enabled</string>
 </resources>

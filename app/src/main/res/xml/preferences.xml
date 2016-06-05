@@ -25,6 +25,12 @@
             android:disableDependentsState="false"
             android:defaultValue="true" />
 
+        <CheckBoxPreference
+            android:key="SystemViewEnabled"
+            android:summary="@string/SystemViewEnabled"
+            android:disableDependentsState="false"
+            android:defaultValue="true" />
+
     </PreferenceCategory>
     
     <PreferenceCategory android:title="@string/PVOutputPreferenceTitle">

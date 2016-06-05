@@ -99,7 +99,7 @@ public class DayLogCalendar extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         slaveControllerTotalEnergy.clear();
         RadioGroup radioGroup = (RadioGroup) this.getView().findViewById(R.id.radio_unit_system);
-        if (MonitorApplication.chargeControllers().classicCount() == 1) {
+        if (MonitorApplication.chargeControllers().showSystemView() == false || MonitorApplication.chargeControllers().classicCount() == 1) {
             radioGroup.setVisibility(View.INVISIBLE);
         } else {
             radioGroup.setVisibility(View.VISIBLE);

@@ -56,3 +56,5 @@ public static *** i(...);
     @android.webkit.JavascriptInterface <methods>;
 }
 
+-keep class com.github.mikephil.charting.** { *; }
+-dontwarn io.realm.**

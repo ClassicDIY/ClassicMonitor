@@ -36,10 +36,9 @@ public final class ChargeControllers {
     private boolean autoDetectClassic = true;
     private boolean showPopupMessages = true;
     private boolean uploadToPVOutput = false;
-    private String logDate; //date logs from classic were recorded for upload to PVOutput.org
-    private String uploadDate; // last date the logs were uploaded to pvoutput.org
-    private String SID; // pvoutput system id
     private boolean bidirectionalUnitsInWatts;
+    private boolean systemViewEnabled = true;
+    private PVOutputSetting pVOutputSetting = new PVOutputSetting();
 
     // default ctor for de-serialization
     public ChargeControllers() {
@@ -219,6 +218,19 @@ public final class ChargeControllers {
         this.showPopupMessages = showPopupMessages;
     }
 
+    public synchronized boolean showSystemView() {
+
+        return systemViewEnabled && count() > 1;
+    }
+
+    public synchronized boolean systemViewEnabled() {
+        return systemViewEnabled;
+    }
+
+    public synchronized void setSystemViewEnabled(boolean systemViewEnabled) {
+        this.systemViewEnabled = systemViewEnabled;
+    }
+
     public synchronized String aPIKey() {
         return APIKey;
     }
@@ -227,31 +239,7 @@ public final class ChargeControllers {
         this.APIKey = APIKey;
     }
 
-    public synchronized String getSID() {
-        return SID;
-    }
 
-    public synchronized void setSID(String SID) {
-        this.SID = SID;
-
-    }
-
-    public synchronized String getPVOutputLogFilename() {
-        return logDate;
-    }
-
-    public synchronized void setPVOutputLogFilename(String logDate) {
-        this.logDate = String.format("PVOutput_%s.log", logDate) ;
-    }
-
-
-    public synchronized String uploadDate() {
-        return uploadDate;
-    }
-
-    public synchronized void setUploadDate(String uploadDate) {
-        this.uploadDate = uploadDate;
-    }
 
     public synchronized Boolean uploadToPVOutput() {
         return uploadToPVOutput;
@@ -261,15 +249,44 @@ public final class ChargeControllers {
         this.uploadToPVOutput = uploadToPVOutput;
     }
 
-    public void resetPVOutputLogs() {
-        String fname = getPVOutputLogFilename();
-        if (fname != null && fname.length() > 0) {
-            MonitorApplication.getAppContext().deleteFile(fname);
+    public synchronized PVOutputSetting getPVOutputSetting() {
+        if (systemViewEnabled) {
+            return pVOutputSetting;
         }
-        synchronized (lock) {
-            uploadDate = "";
-            logDate = "";
+        else {
+            ChargeController controller = getCurrentChargeController();
+            if (controller != null) {
+                PVOutputSetting rSetting = controller.getPVOutputSetting();
+                // Sid could have been set when in systemView
+                if (rSetting.getSID() == null || rSetting.getSID().length() == 0) {
+                    rSetting.setSID(pVOutputSetting.getSID());
+                }
+                return rSetting;
+            }
+            else {
+                return null;
+            }
         }
     }
 
+    public void resetPVOutputLogs() {
+        pVOutputSetting.resetPVOutputEntry();
+        synchronized (devices) {
+            for (ChargeController cc : devices) {
+                cc.getPVOutputSetting().resetPVOutputEntry();
+            }
+        }
+    }
+
+    public void resetCurrentPVOutputLogs() {
+        if (systemViewEnabled) {
+            pVOutputSetting.resetPVOutputEntry();
+        }
+        else {
+            ChargeController controller = getCurrentChargeController();
+            if (controller != null) {
+                controller.getPVOutputSetting().resetPVOutputEntry();
+            }
+        }
+    }
 }

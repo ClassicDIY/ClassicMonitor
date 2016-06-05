@@ -56,7 +56,7 @@ public class EnergyFragment extends ReadingFramentBase {
         slaveControllerEnergy.clear();
         slaveControllerTotalEnergy.clear();
         RadioGroup radioGroup = (RadioGroup) this.getView().findViewById(R.id.radio_unit_system);
-        if (MonitorApplication.chargeControllers().count() == 1) {
+        if (MonitorApplication.chargeControllers().showSystemView() == false) {
             radioGroup.setVisibility(View.INVISIBLE);
         }
         else {

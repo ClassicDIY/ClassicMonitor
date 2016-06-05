@@ -52,6 +52,7 @@ public class Constants {
     public static final String UseFahrenheit = "UseFahrenheit";
     public static final String AutoDetectClassic = "AutoDetectClassic";
     public static final String ShowPopupMessages = "ShowPopupMessages";
+    public static final String SystemViewEnabled = "SystemViewEnabled";
     public static final String APIKey = "APIKey";
     public static final String SID = "SID";
 

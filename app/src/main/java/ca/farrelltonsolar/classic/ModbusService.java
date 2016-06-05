@@ -98,16 +98,30 @@ public class ModbusService extends Service {
         if (controllers == null || controllers.count() == 0) {
             return;
         }
-
-        int count = controllers.count();
-        for (int i = 0; i < count; i++) {
-            ChargeController controller = controllers.get(i);
-            if (isBeingMonitored(controller) == false) {
-                ModbusTask task = new ModbusTask(controller, this.getBaseContext());
-                tasks.add(task);
-                Timer pollTimer = new Timer();
-                pollTimer.schedule(task, 100, Constants.MODBUS_POLL_TIME);
-                Log.d(getClass().getName(), String.format("Monitor running on: %s this thread is %s", controller.toString(), Thread.currentThread().getName()));
+        if (controllers.systemViewEnabled()) {
+            int count = controllers.count();
+            for (int i = 0; i < count; i++) {
+                ChargeController controller = controllers.get(i);
+                if (isBeingMonitored(controller) == false) {
+                    ModbusTask task = new ModbusTask(controller, this.getBaseContext());
+                    tasks.add(task);
+                    Timer pollTimer = new Timer();
+                    pollTimer.schedule(task, 100, Constants.MODBUS_POLL_TIME);
+                    Log.d(getClass().getName(), String.format("Monitor running on: %s this thread is %s", controller.toString(), Thread.currentThread().getName()));
+                }
+            }
+        }
+        else {
+            ChargeController controller = controllers.getCurrentChargeController();
+            if (controller != null) {
+                if (isBeingMonitored(controller) == false) {
+                    stopMonitoringChargeControllers();
+                    ModbusTask task = new ModbusTask(controller, this.getBaseContext());
+                    tasks.add(task);
+                    Timer pollTimer = new Timer();
+                    pollTimer.schedule(task, 100, Constants.MODBUS_POLL_TIME);
+                    Log.d(getClass().getName(), String.format("Monitor running on: %s this thread is %s", controller.toString(), Thread.currentThread().getName()));
+                }
             }
         }
     }

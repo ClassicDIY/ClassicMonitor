@@ -58,10 +58,29 @@ public class PVOutputUploader extends TimerTask {
     public void run() {
         try {
             if (MonitorApplication.chargeControllers().uploadToPVOutput()) {
-                Log.d(getClass().getName(), String.format("PVOutput uploading on thread: %s",  Thread.currentThread().getName()));
-                if (doUpload()) {
-                    this.cancel();
-                    BroadcastToast(context.getString(R.string.toast_pvoutput));
+                if (MonitorApplication.chargeControllers().showSystemView()) {
+                    Log.d(getClass().getName(), String.format("PVOutput uploading on thread: %s", Thread.currentThread().getName()));
+                    PVOutputSetting setting = MonitorApplication.chargeControllers().getPVOutputSetting();
+                    if (setting != null) {
+                        if (doUpload(setting)) {
+                            this.cancel();
+                            BroadcastToast(context.getString(R.string.toast_pvoutput));
+                        }
+                    }
+                }
+                else {
+                    int count = MonitorApplication.chargeControllers().count();
+                    for (int i = 0; i < count; i++) {
+                        ChargeController controller = MonitorApplication.chargeControllers().get(i);
+                        PVOutputSetting setting = controller.getPVOutputSetting();
+                        if (setting != null) {
+                            Log.d(getClass().getName(), String.format("PVOutput uploading on thread: %s for SID: %s", Thread.currentThread().getName(), setting.getSID()));
+                            if (doUpload(setting)) {
+                                this.cancel();
+                                BroadcastToast(context.getString(R.string.toast_pvoutput));
+                            }
+                        }
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -76,12 +95,12 @@ public class PVOutputUploader extends TimerTask {
     }
     
 
-    private boolean doUpload() throws InterruptedException, IOException {
-        String uploadDateString = MonitorApplication.chargeControllers().uploadDate();
-        String SID = MonitorApplication.chargeControllers().getSID();
-        String fName = MonitorApplication.chargeControllers().getPVOutputLogFilename();
+    private boolean doUpload(PVOutputSetting setting) throws InterruptedException, IOException {
+        String uploadDateString = setting.uploadDate();
+        String SID = setting.getSID();
+        String fName = setting.getPVOutputLogFilename();
         if (fName != null && fName.length() > 0 && SID != null && SID.length() > 0) {
-            DateTime logDate = PVOutputService.LogDate();
+            DateTime logDate = PVOutputService.LogDate(setting);
             int numberOfDays = Constants.PVOUTPUT_RECORD_LIMIT;
             if (uploadDateString.length() > 0) {
                 DateTime uploadDate = DateTime.parse(uploadDateString, DateTimeFormat.forPattern("yyyy-MM-dd"));
@@ -120,7 +139,7 @@ public class PVOutputUploader extends TimerTask {
                     outputStream.flush();
                     pvOutputSocket.close();
                     if (uploadDateRecorded == false) {
-                        MonitorApplication.chargeControllers().setUploadDate(UploadDate);
+                        setting.setUploadDate(UploadDate);
                         uploadDateRecorded = true;
                     }
                     Thread.sleep(Constants.PVOUTPUT_RATE_LIMIT); // rate limit

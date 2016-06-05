@@ -46,8 +46,6 @@ public class PVOutputService extends IntentService {
     private boolean isReceiverRegistered = false;
     private boolean isSlaveReceiverRegistered = false;
     Map<String, float[]> slaveControllerTotalEnergy = new HashMap<String, float[]>();
-    float[] masterEnergyReadings;
-    float[] summarizedEnergyReadings;
 
     public PVOutputService() {
         super("PVOutputService");
@@ -128,23 +126,36 @@ public class PVOutputService extends IntentService {
         public void onReceive(Context context, Intent intent) {
             try {
                 LogEntry logs = (LogEntry) intent.getSerializableExtra("logs");
-                DateTime logDate = LogDate();
-                if (logDate != null) {
-                    DateTime rightNow = DateTime.now().withTimeAtStartOfDay();
-                    int daysSinceLastLog = Days.daysBetween(logDate, rightNow).getDays();
-                    if (daysSinceLastLog > 0) { // last log file was created before today? update it
-                        saveLogs(logs);
+                PVOutputSetting setting = MonitorApplication.chargeControllers().getPVOutputSetting();
+                if (setting != null) {
+                    DateTime logDate = LogDate(setting);
+                    if (logDate != null) {
+                        DateTime rightNow = DateTime.now().withTimeAtStartOfDay();
+                        int daysSinceLastLog = Days.daysBetween(logDate, rightNow).getDays();
+                        if (daysSinceLastLog > 0) { // last log file was created before today? update it
+                            saveLogs(logs, setting);
+                        }
+                    } else {
+                        saveLogs(logs, setting); // never saved before!
                     }
-                } else {
-                    saveLogs(logs); // never saved before!
                 }
             } catch (Exception ex) {
                 Log.w(getClass().getName(), String.format("SaveLogs failed ex: %s", ex));
             }
         }
 
-        private void saveLogs(LogEntry logs) {
-            if (slaveControllerTotalEnergy.size() == (MonitorApplication.chargeControllers().classicCount() - 1)) { // received broadcasts from all other classic controllers
+        private void saveLogs(LogEntry logs, PVOutputSetting setting) {
+            if (MonitorApplication.chargeControllers().showSystemView() == false) {
+                unRegisterReceiver();
+                float[] highWatts = logs.getFloatArray(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY);
+                Bundle toSave = new Bundle();
+                toSave.putFloatArray(String.valueOf(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY), highWatts);
+                MonitorApplication.chargeControllers().resetCurrentPVOutputLogs();
+                setting.setPVOutputLogFilename(getLogDate());
+                save(toSave, setting.getPVOutputLogFilename());
+                Log.d(getClass().getName(), String.format("PVOutput save logs for upload for %s starting on thread: %s", setting.getPVOutputLogFilename(), Thread.currentThread().getName()));
+            }
+            else if (slaveControllerTotalEnergy.size() == (MonitorApplication.chargeControllers().classicCount() - 1)) { // received broadcasts from all other classic controllers
                 unRegisterReceiver();
                 float[] highWatts = logs.getFloatArray(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY);
                 for (float[] f : slaveControllerTotalEnergy.values()) {
@@ -155,17 +166,17 @@ public class PVOutputService extends IntentService {
                 }
                 Bundle toSave = new Bundle();
                 toSave.putFloatArray(String.valueOf(Constants.CLASSIC_KWHOUR_DAILY_CATEGORY), highWatts);
-                MonitorApplication.chargeControllers().resetPVOutputLogs();
-                MonitorApplication.chargeControllers().setPVOutputLogFilename(getLogDate());
-                save(toSave, MonitorApplication.chargeControllers().getPVOutputLogFilename());
-                Log.d(getClass().getName(), String.format("PVOutput save logs for upload for %s starting on thread: %s", MonitorApplication.chargeControllers().getPVOutputLogFilename(), Thread.currentThread().getName()));
+                MonitorApplication.chargeControllers().resetCurrentPVOutputLogs();
+                setting.setPVOutputLogFilename(getLogDate());
+                save(toSave, setting.getPVOutputLogFilename());
+                Log.d(getClass().getName(), String.format("PVOutput save logs for upload for %s starting on thread: %s", setting.getPVOutputLogFilename(), Thread.currentThread().getName()));
             }
         }
     };
 
-    public static DateTime LogDate() {
+    public static DateTime LogDate(PVOutputSetting setting) {
         DateTime logDate = null;
-        String fName = MonitorApplication.chargeControllers().getPVOutputLogFilename();
+        String fName = setting.getPVOutputLogFilename();
         if (fName != null && fName.length() > 0) {
             try {
                 //this.logDate = String.format("PVOutput_%s.log", logDate) ;
