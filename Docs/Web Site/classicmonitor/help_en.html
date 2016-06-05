@@ -52,6 +52,9 @@
 <a href="#Calendar">Day Log Calendar</a>
 </td></tr>
 <tr><td>
+<a href="#LiveChart">Live Chart</a>
+</td></tr>
+<tr><td>
 <a href="#DayChart">Day Log Chart</a>
 </td></tr>
 <tr><td>
@@ -305,6 +308,34 @@
 	</p>
 	<p>
 		Previous months can be viewed by sliding the grey part of the calendar up or down.
+	</p>
+	</div>
+	<hr style="page-break-before:always;">
+	
+	<a id="LiveChart"></a>
+	<h2 class="text-center">Live Chart</h2>
+
+	<img class="center_image" alt="Live_Chart.PNG" src="images_en/LiveChart.png"  title="">
+	<br>
+	<div class="center">	
+	<p>
+		The Live Chart displays the battery volt (red), supply current (yellow) and a state of charge indicator.
+		If a WhizbangJr is detected, the chart will also display the battery charge/discharge current (cyan).
+	</p>
+	<p>
+	The charge state (line at the bottom of the chart) display as follows;
+	
+	<ul>
+	<li>Undefined: White</li>
+	<li>Resting: Black (code 0)</li>
+	<li>Absorb: Orange (code 3)</li>
+	<li>BulkMPPT: Green (code 4)</li>
+	<li>Float: Blue (code 5)</li>
+	<li>FloatMPPT: Cyan (code 6)</li>
+	<li>Equalize:  Pink (code 7)</li>
+	<li>HyperVOC: Red (code 10)</li>
+	<li>EQMPPT: Violet (code 18)</li>
+	</ul>
 	</p>
 	</div>
 	<hr style="page-break-before:always;">
