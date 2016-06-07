@@ -29,7 +29,7 @@
             android:key="SystemViewEnabled"
             android:summary="@string/SystemViewEnabled"
             android:disableDependentsState="false"
-            android:defaultValue="true" />
+            android:defaultValue="false" />
 
     </PreferenceCategory>
     

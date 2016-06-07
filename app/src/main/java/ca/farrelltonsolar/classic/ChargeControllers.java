@@ -37,7 +37,7 @@ public final class ChargeControllers {
     private boolean showPopupMessages = true;
     private boolean uploadToPVOutput = false;
     private boolean bidirectionalUnitsInWatts;
-    private boolean systemViewEnabled = true;
+    private boolean systemViewEnabled = false;
     private PVOutputSetting pVOutputSetting = new PVOutputSetting();
 
     // default ctor for de-serialization
