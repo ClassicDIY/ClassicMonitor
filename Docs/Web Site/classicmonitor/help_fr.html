@@ -36,6 +36,9 @@
 <a href="#System">Système</a>
 </td></tr>
 <tr><td>
+<a href="#Load">Consommation</a>
+</tr></td>
+<tr><td>
 <a href="#Power">Puissance</a>
 </td></tr>
 <tr><td>
@@ -45,10 +48,10 @@
 <a href="#Capacity">Capacité</a>
 </td></tr>
 <tr><td>
-<a href="#Temperature">Température</a>
+<a href="#RealTimeChart">Graphique Actuelle</a>
 </td></tr>
 <tr><td>
-<a href="#Calendar">Calendrier</a>
+<a href="#Temperature">Température</a>
 </td></tr>
 <tr><td>
 <a href="#DayChart">Graphique Quotidien</a>
@@ -57,14 +60,15 @@
 <a href="#HourChart">Graphique Horaire</a>
 </td></tr>
 <tr><td>
+<a href="#Calendar">Calendrier</a>
+</td></tr>
+<tr><td>
 <a href="#Info">Informations</a>
 </td></tr>
 <tr><td>
 <a href="#Messages">Messages</a>
 </td></tr>
-<tr><td>
-<a href="#Load">À propos</a>
-</tr></td>
+
 </table>
 </div>
 <hr style="page-break-before:always;">
@@ -173,6 +177,10 @@
 		<p>
 			<b>Affiche de messages de notification</b>: Les messages sont affichés au centre de l'écran à chaque fois que les changements d'état de charge, lorsque De-sélectionner aucun message s'affiche.
 		</p>
+		<p>
+			<b>Vue Système Activé</b>: Lorsqu'elle est cochée, l'application va se connecter à tous les contrôleurs de charge et de résumer les valeurs de puissance et de consommation, ce qui devrait être utilisé lorsque vous avez plus d'un contrôleur de charge de charge une banque de batterie.
+			Si elle est décochée, chaque contrôleur de charge est indépendante, l'application ne se connecter au classique sélectionné.
+		</p>
 	</div>
 	<a id="PVOutput"></a>
 	<h2 class="text-center">PV Output</h2>
@@ -229,6 +237,17 @@
 		</p>
 	</div>
 	<hr style="page-break-before:always;">
+	
+	<a id="Load"></a>
+	<h2 class="text-center">Consommation</h2>
+	<img class="center_image" alt="Consumption_landscape.PNG" src="images_fr/Consumption_landscape.png"  title="">
+	<br>
+	<div class="center">
+		<p>
+			Les cadrant de la consommation affiche la quantité d'énergie consommée par le système, cela est calculé à partir de la puissance générée moins la puissance d'entrer dans les batteries.
+		</p>
+	</div>
+	<hr style="page-break-before:always;">
 
 	<a id="Power"></a>
 	<h2 class="text-center">Puissance</h2>
@@ -273,6 +292,35 @@
 			Veuillez référer à la documentation <a href="http://www.midnitesolar.com/pdfs/Whizbang_manual.pdf" target="_blank"> Midnite Solar WhizbangJr</a> pour plus d'informations.
 		</p>
 	</div>
+		<hr style="page-break-before:always;">
+	
+	<a id="RealTimeChart"></a>
+	<h2 class="text-center">Graphique Actuelle</h2>
+
+	<img class="center_image" alt="LiveChart.PNG" src="images_en/LiveChart.png"  title="">
+	<br>
+	<div class="center">	
+	<p>
+		Le graphique en direct affiche le volts de la batterie (rouge), le courant d'alimentation (jaune) et un état de l'indicateur de charge.
+		Si un WhizbangJr est détecté, le tableau affiche également la charge de la batterie / courant de décharge (cyan).
+	</p>
+	<p>
+	L'état de charge (ligne au bas du tableau) affichage comme suit;
+	
+	<ul>
+	<li>Indéfini: Blanc</li>
+	<li>Repos: Noir (code 0)</li>
+	<li>Absorber: Orange (code 3)</li>
+	<li>BulkMPPT: Vert (code 4)</li>
+	<li>Flotte: Bleu (code 5)</li>
+	<li>FlotteMPPT: Cyan (code 6)</li>
+	<li>Égaliser:  Rose (code 7)</li>
+	<li>HyperVOC: Rouge (code 10)</li>
+	<li>EQMPPT: Violet (code 18)</li>
+	</ul>
+	</p>
+	</div>
+	
 	<hr style="page-break-before:always;">
 
 	<a id="Temperature"></a>
@@ -285,27 +333,7 @@
 			L'onglet de la température affiche la température en degrés Celsius ou Fahrenheit de la batterie, FET interne et PCB et, si vous avez un WhizbangJr, la temprature du shunt.
 		</p>
 	</div>
-	<hr style="page-break-before:always;">
 
-	<a id="Calendar"></a>
-	<h2 class="text-center">Journal en Calendrier</h2>
-
-	<img class="center_image" alt="Calendar_landscape.PNG" src="images_fr/Calendar_landscape.png"  title="">
-	<br>
-	<div class="center">
-		<p>
-			Le Calendrier affiche l'énergie récoltée pour chaque jour du mois avec le PV max, tensions de batterie, la température et la puissance max pour la journée.
-		</p>
-		<p>
-			Les jours où le système atteint flotte ou égalise sont indiqués avec "(flotte)" et (égalisation). 
-		</p>
-		<p>
-			Si le calendrier ne montre pas entièrement sur votre écran, vous pouvez faire défiler sa position en faisant glisser la partie noire du calendrier. 
-		</p>
-		<p>
-			Les mois précédents peuvent être vue en glissant la partie grise du calendrier haut ou le bas.
-		</p>
-	</div>
 	<hr style="page-break-before:always;">
 
 	<a id="DayChart"></a>
@@ -330,6 +358,28 @@
 			droite de la barre d'action vous permet de sélectionner la valeur tracée.
 		</p>
 	</div>
+		<hr style="page-break-before:always;">
+
+	<a id="Calendar"></a>
+	<h2 class="text-center">Journal en Calendrier</h2>
+
+	<img class="center_image" alt="Calendar_landscape.PNG" src="images_fr/Calendar_landscape.png"  title="">
+	<br>
+	<div class="center">
+		<p>
+			Le Calendrier affiche l'énergie récoltée pour chaque jour du mois avec le PV max, tensions de batterie, la température et la puissance max pour la journée.
+		</p>
+		<p>
+			Les jours où le système atteint flotte ou égalise sont indiqués avec "(flotte)" et (égalisation). 
+		</p>
+		<p>
+			Si le calendrier ne montre pas entièrement sur votre écran, vous pouvez faire défiler sa position en faisant glisser la partie noire du calendrier. 
+		</p>
+		<p>
+			Les mois précédents peuvent être vue en glissant la partie grise du calendrier haut ou le bas.
+		</p>
+	</div>
+	
 	<hr style="page-break-before:always;">
 
 	<a id="Info"></a>
@@ -354,16 +404,6 @@
 	</div>
 	<hr style="page-break-before:always;">
 
-	<a id="Load"></a>
-	<h2 class="text-center">Consommation</h2>
-	<img class="center_image" alt="Consumption_landscape.PNG" src="images_fr/Consumption_landscape.png"  title="">
-	<br>
-	<div class="center">
-		<p>
-			Les cadrant de la consommation affiche la quantité d'énergie consommée par le système, cela est calculé à partir de la puissance générée moins la puissance d'entrer dans les batteries.
-		</p>
-	</div>
-	<hr style="page-break-before:always;">
 
 </div>
 

@@ -49,6 +49,7 @@
         app:register="BatCurrent"
         app:scaleStartValue="0"
         app:scaleEndValue="10"
+        app:showInnerRim="false"
         app:gaugeTitle="@string/BatCurrentTitle"
         app:readingUnit="A"
         app:readingPrecision="1"

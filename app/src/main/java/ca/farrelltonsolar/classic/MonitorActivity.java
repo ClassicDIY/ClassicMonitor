@@ -16,24 +16,29 @@
 
 package ca.farrelltonsolar.classic;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.joda.time.DateTime;
@@ -109,11 +114,11 @@ public class MonitorActivity extends ActionBarActivity {
                 tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
                 tabStripAdapter.addTab("Energy", EnergyFragment.TabTitle, EnergyFragment.class, null);
             }
-            tabStripAdapter.addTab("Temperature", TemperatureFragment.TabTitle, TemperatureFragment.class, null);
-                    addDayLogCalendar();
             tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, RealTimeChartFragment.class, null);
+            tabStripAdapter.addTab("Temperature", TemperatureFragment.TabTitle, TemperatureFragment.class, null);
             tabStripAdapter.addTab("DayChart", R.string.DayChartTabTitle, DayLogChart.class, null);
             tabStripAdapter.addTab("HourChart", R.string.HourChartTabTitle, HourLogChart.class, null);
+            addDayLogCalendar();
             tabStripAdapter.addTab("Info", R.string.InfoTabTitle, InfoFragment.class, null);
             tabStripAdapter.addTab("Messages", R.string.MessagesTabTitle, MessageFragment.class, null);
             tabStripAdapter.addTab("About", R.string.About, About.class, null);
@@ -137,11 +142,11 @@ public class MonitorActivity extends ActionBarActivity {
             tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
             tabStripAdapter.addTab("Energy", EnergyFragment.TabTitle, EnergyFragment.class, null);
             tabStripAdapter.addTab("StateOfCharge", StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
-            tabStripAdapter.addTab("Temperature", TemperatureFragment.TabTitle, TemperatureFragment.class, null);
-            addDayLogCalendar();
             tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, RealTimeChartFragment.class, null);
+            tabStripAdapter.addTab("Temperature", TemperatureFragment.TabTitle, TemperatureFragment.class, null);
             tabStripAdapter.addTab("DayChart", R.string.DayChartTabTitle, DayLogChart.class, null);
             tabStripAdapter.addTab("HourChart",R.string.HourChartTabTitle, HourLogChart.class, null);
+            addDayLogCalendar();
             tabStripAdapter.addTab("Info", R.string.InfoTabTitle, InfoFragment.class, null);
             tabStripAdapter.addTab("Messages", R.string.MessagesTabTitle, MessageFragment.class, null);
             tabStripAdapter.addTab("About", R.string.About, About.class, null);
@@ -244,15 +249,28 @@ public class MonitorActivity extends ActionBarActivity {
                 handled = true;
                 break;
             case R.id.action_share:
-                new Thread(new Runnable() {
-                    public void run() {
+                try {
+                    if (verifyStoragePermissions(this)) {
+                        item.setActionView(new ProgressBar(this));
                         runOnUiThread(new Runnable() {
                             public void run() {
                                 startActivity(Intent.createChooser(getScreenShot(), "Share Screenshot"));
                             }
                         });
+
+                        item.getActionView().postDelayed(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                item.setActionView(null);
+                            }
+                        }, 2000);
                     }
-                }).start();
+                }
+                catch (Exception e) {
+                    item.setActionView(null);
+                    e.printStackTrace();
+                }
                 handled = true;
                 break;
         }
@@ -320,12 +338,10 @@ public class MonitorActivity extends ActionBarActivity {
         screenView.setDrawingCacheEnabled(true);
         Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache());
         screenView.setDrawingCacheEnabled(false);
-        String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Screenshots";
-        File dir = new File(dirPath);
-        if(!dir.exists())
-            dir.mkdirs();
-        File file = new File(dirPath, "Classic.png");
+        String state = Environment.getExternalStorageState();
+        File file = new File(Environment.getExternalStorageDirectory().getAbsoluteFile(), "Classic.png");
         try {
+            file.createNewFile();
             FileOutputStream fOut = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.PNG, 85, fOut);
             fOut.flush();
@@ -337,5 +353,34 @@ public class MonitorActivity extends ActionBarActivity {
         }
         return intent;
     }
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
+    /**
+     * Checks if the app has permission to write to device storage
+     *
+     * If the app does not has permission then the user will be prompted to grant permissions
+     *
+     * @param activity
+     */
+    public static boolean verifyStoragePermissions(AppCompatActivity activity) {
+        boolean rVal = true;
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            rVal = false;
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+        return rVal;
+    }
 }

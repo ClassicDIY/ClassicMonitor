@@ -35,6 +35,9 @@
 <a href="#System">System</a>
 </td></tr>
 <tr><td>
+<a href="#Load">Verbrauch</a>
+</tr></td>
+<tr><td>
 <a href="#Power">Übersicht</a>
 </td></tr>
 <tr><td>
@@ -44,10 +47,10 @@
 <a href="#Capacity">Kapazität</a>
 </td></tr>
 <tr><td>
-<a href="#Temperature">Temperatur</a>
+<a href="#RealTimeChart">Tatsächlich-Diagramm</a>
 </td></tr>
 <tr><td>
-<a href="#Calendar">Protokoll-Kalender</a>
+<a href="#Temperature">Temperatur</a>
 </td></tr>
 <tr><td>
 <a href="#DayChart">Tages-Diagramm</a>
@@ -56,14 +59,15 @@
 <a href="#HourChart">Stunden-Diagramm</a>
 </td></tr>
 <tr><td>
+<a href="#Calendar">Protokoll-Kalender</a>
+</td></tr>
+<tr><td>
 <a href="#Info">Info</a>
 </td></tr>
 <tr><td>
 <a href="#Messages">Nachrichten</a>
 </td></tr>
-<tr><td>
-<a href="#Load">Verbrauch</a>
-</tr></td>
+
 </table>
 
 </div>
@@ -213,6 +217,15 @@
 	  von der erzeugten Energie abzüglich der Ladeenergie errechnet.</p>
   </div>
   <hr style="page-break-before:always;">
+  <a id="Load"></a>
+  <h2 class="text-center">Verbrauch</h2>
+  <img class="center_image" alt="Consumption_landscape.PNG" src="images_de/Consumption_landscape.png" >
+  <br>
+	<div class="center">
+	  <p>In der Verbrauchs-Anzeige wird die entnommene Energie angezeigt. Dies wird
+	  von der erzeugten Energie abzüglich der Ladeenergie errechnet.</p>
+	  </div>
+  <hr style="page-break-before:always;">
   <a id="Power"></a>
   <h2 class="text-center">Übersicht</h2>
   <img class="center_image" alt="Power_landscape.PNG" src="images_de/Power_landscape.png" >
@@ -244,6 +257,34 @@
 	  <p>Weitere Informationen hierzu finden Sie im <a href="http://www.midnitesolar.com/pdfs/Whizbang_manual.pdf" target="_blank">Midnite
 	  Solar WhizbangJr</a> Handbuch.</p>
   </div>
+  	<hr style="page-break-before:always;">
+	
+	<a id="RealTimeChart"></a>
+	<h2 class="text-center">Tatsächlich-Diagramm</h2>
+
+	<img class="center_image" alt="LiveChart.PNG" src="images_en/LiveChart.png"  title="">
+	<br>
+	<div class="center">	
+	<p>
+		Die Live-Diagramm zeigt den Batterie Volt (rot), Versorgungsstrom (gelb) und einen Zustand der Ladeanzeige .
+		Wenn ein WhizbangJr erkannt wird, wird das Diagramm auch die Batterieladeanzeige / Entladestrom (cyan).
+	</p>
+	<p>
+	Der Ladezustand (Linie am unteren Rand des Diagramms) Anzeige wie folgt;
+	
+	<ul>
+	<li>Undefiniert: Weiß</li>
+	<li>ruhend: Schwarz (code 0)</li>
+	<li>Absorbieren: Orange (code 3)</li>
+	<li>BulkMPPT: Grün (code 4)</li>
+	<li>Float: Blau (code 5)</li>
+	<li>FloatMPPT: Cyan (code 6)</li>
+	<li>Angleichen:  Rosa (code 7)</li>
+	<li>HyperVOC: Rot (code 10)</li>
+	<li>EQMPPT: Violett (code 18)</li>
+	</ul>
+	</p>
+	</div>
   <hr style="page-break-before:always;">
   <a id="Temperature"></a>
   <h2 class="text-center">Temperatur</h2>
@@ -254,21 +295,7 @@
 	  Batterie, internem FET & PCB und, wenn vorhanden, dem WhizbangJr. Shunt,
 	  angezeigt.</p>
   </div>
-  <hr style="page-break-before:always;">
-  <a id="Calendar"></a>
-  <h2 class="text-center">Protokoll-Kalender</h2>
-  <img class="center_image" alt="Calendar_landscape.PNG" src="images_de/Calendar_landscape.png" >
-  <br>
-  <div class="center">
-	  <p>Hier finden Sie die gespeicherten Daten pro Tag, monatsweise als Kalender
-	  dargestellt.<br>
-	  Höchste PV, Batteriespannung, höchste Temperatur und Energie vom Tag.</p>
-	  An Tagen mit gespeicherten Daten über Float oder Equalize, werden diese mit
-	  &quot;(Float)&quot; und (Equalize) bezeichnet.
-	  <p>Wenn der Kalender nicht vollständig auf dem Bildschirm angezeigt wird, kann er durch verschieben im schwarzen Bereich verschoben werden.</p>
-	  <p>Vorangegangene Monate können eingesehen werden, wenn der graue Bereich
-	  hoch/runter geschoben wird.</p>
-  </div>
+
   <hr style="page-break-before:always;">
   <a id="DayChart"></a>
   <h2 class="text-center">Tages-Diagramm</h2>
@@ -286,6 +313,21 @@
   <div class="center">
 	  <p>Zeigt die Daten des aktuellen Tags an. Über das Menü oben rechts in der
 	  Action-Bar kann man einzelne Werteanzeigen auswählen.</p>
+  </div>
+    <hr style="page-break-before:always;">
+  <a id="Calendar"></a>
+  <h2 class="text-center">Protokoll-Kalender</h2>
+  <img class="center_image" alt="Calendar_landscape.PNG" src="images_de/Calendar_landscape.png" >
+  <br>
+  <div class="center">
+	  <p>Hier finden Sie die gespeicherten Daten pro Tag, monatsweise als Kalender
+	  dargestellt.<br>
+	  Höchste PV, Batteriespannung, höchste Temperatur und Energie vom Tag.</p>
+	  An Tagen mit gespeicherten Daten über Float oder Equalize, werden diese mit
+	  &quot;(Float)&quot; und (Equalize) bezeichnet.
+	  <p>Wenn der Kalender nicht vollständig auf dem Bildschirm angezeigt wird, kann er durch verschieben im schwarzen Bereich verschoben werden.</p>
+	  <p>Vorangegangene Monate können eingesehen werden, wenn der graue Bereich
+	  hoch/runter geschoben wird.</p>
   </div>
   <hr style="page-break-before:always;">
   <a id="Info"></a>
@@ -305,15 +347,7 @@
 	  <p>Hier werden informell, Warnungen und Fehler vom Laderegler durch ein Symbol am Anfang der Nachricht
 	  angezeigt.</p>
   </div>
-  <hr style="page-break-before:always;">
-  <a id="Load"></a>
-  <h2 class="text-center">Verbrauch</h2>
-  <img class="center_image" alt="Consumption_landscape.PNG" src="images_de/Consumption_landscape.png" >
-  <br>
-  <div class="center">
-	  <p>In der Verbrauchs-Anzeige wird die entnommene Energie angezeigt. Dies wird
-	  von der erzeugten Energie abzüglich der Ladeenergie errechnet.</p>
-	</div>
+
 </div>
 
 <div class="container text-center">

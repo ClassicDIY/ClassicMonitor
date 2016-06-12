@@ -139,13 +139,18 @@ public class ModbusService extends Service {
 
 
     public void stopMonitoringChargeControllers() {
-        if (!tasks.isEmpty()) {
-            for (ModbusTask task : tasks) {
-                Log.d(getClass().getName(), String.format("stopMonitoringChargeController: %s this thread is %s", task.chargeController().toString(), Thread.currentThread().getName()));
-                Disconnector d = new Disconnector(task);
-                d.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        try {
+            if (!tasks.isEmpty()) {
+                for (ModbusTask task : tasks) {
+                    Log.d(getClass().getName(), String.format("stopMonitoringChargeController: %s this thread is %s", task.chargeController().toString(), Thread.currentThread().getName()));
+                    Disconnector d = new Disconnector(task);
+                    d.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+                tasks.clear();
             }
-            tasks.clear();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

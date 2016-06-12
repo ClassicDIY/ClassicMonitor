@@ -36,6 +36,9 @@
 <a href="#System">Sistema</a>
 </td></tr>
 <tr><td>
+<a href="#Load">Consumo</a>
+</tr></td>
+<tr><td>
 <a href="#Power">Potenza</a>
 </td></tr>
 <tr><td>
@@ -45,10 +48,13 @@
 <a href="#Capacity">Capacità</a>
 </td></tr>
 <tr><td>
-<a href="#Temperature">Temperatura</a>
+<a href="#RealTimeChart">Grafico dal vivo</a>
 </td></tr>
 <tr><td>
-<a href="#Calendar">Il Journal Calendario di Giorno</a>
+<a href="#RealTimeChart">Grafico attuale</a>
+</td></tr>
+<tr><td>
+<a href="#Temperature">Temperatura</a>
 </td></tr>
 <tr><td>
 <a href="#DayChart">Grafico del mese</a>
@@ -57,14 +63,15 @@
 <a href="#HourChart">Grafico giornaliero</a>
 </td></tr>
 <tr><td>
+<a href="#Calendar">Il Journal Calendario di Giorno</a>
+</td></tr>
+<tr><td>
 <a href="#Info">Informazioni</a>
 </td></tr>
 <tr><td>
 <a href="#Messages">Messaggi</a>
 </td></tr>
-<tr><td>
-<a href="#Load">Consumo</a>
-</tr></td>
+
 </table>
 </div>
 	<hr style="page-break-before:always;">
@@ -232,6 +239,18 @@
 			Il scheda de consumo di energia consumata dal sistema, essa viene calcolata dalla potenza generata meno energia per inserire le batterie.
 		</p>
 	</div>
+		<hr style="page-break-before:always;">
+
+	<a id="Load"></a>
+	<h2 class="text-center">Consumo</h2>
+	<img class="center_image" alt="Consumption_landscape.PNG" src="images_it/Consumption_landscape.png"  title="">
+	<br>
+	<div class="center">
+		<p>
+			Il display di misurare il consumo di energia consumata dal sistema, essa viene calcolata dalla potenza generata meno energia per inserire le batterie.
+		</p>
+	</div>
+	
 	<hr style="page-break-before:always;">
 
 	<a id="Power"></a>
@@ -274,6 +293,35 @@
 			Vorresti fare riferimento alla documentazione <a href="http://www.midnitesolar.com/pdfs/Whizbang_manual.pdf" target="_blank"> Midnite Solar WhizbangJr</a> per ulteriori informazioni.
 		</p>
 	</div>
+		<hr style="page-break-before:always;">
+	
+	<a id="RealTimeChart"></a>
+	<h2 class="text-center">Grafico dal vivo</h2>
+
+	<img class="center_image" alt="LiveChart.PNG" src="images_en/LiveChart.png"  title="">
+	<br>
+	<div class="center">	
+	<p>
+		La Carta dal vivo visualizza il volt della batteria (rosso), corrente di alimentazione (giallo) e uno stato di indicatore di carica.
+		Se viene rilevato un WhizbangJr, il grafico mostrerà anche la carica della batteria / corrente di scarica (ciano).
+	</p>
+	<p>
+	Lo stato di carica (linea nella parte inferiore del grafico) display come segue;
+	
+	<ul>
+	<li>Non definito: White</li>
+	<li>Riposo: Nero (codice 0)</li>
+	<li>Assorbire: arancia (codice 3)</li>
+	<li>BulkMPPT: verde (codice 4)</li>
+	<li>Float: Blu (codice 5)</li>
+	<li>FloatMPPT: Ciano (codice 6)</li>
+	<li>Pareggiare:  Rosa (codice 7)</li>
+	<li>HyperVOC: Rosso (codice 10)</li>
+	<li>EQMPPT: viola (codice 18)</li>
+	</ul>
+	</p>
+	</div>
+	
 	<hr style="page-break-before:always;">
 
 	<a id="Temperature"></a>
@@ -286,27 +334,7 @@
 			La scheda visualizza la temperatura in gradi Celsius o Fahrenheit batteria, FET interni e PCB, e se avete un WhizbangJr, la temperatura di bypass.
 		</p>
 	</div>
-	<hr style="page-break-before:always;">
 
-	<a id="Calendar"></a>
-	<h2 class="text-center">Il Journal Calendario di Giorno</h2>
-
-	<img class="center_image" alt="Calendar_landscape.PNG" src="images_it/Calendar_landscape.png"  title="">
-	<br>
-	<div class="center">
-		<p>
-			Il Journal Calendario di Giorno mostra l’energia raccolta per ogni giorno del mese con il PV massima, tensione della batteria, la temperatura e la potenza massima per la giornata. 
-		</p>
-		<p>
-			Giorni in cui il sistema raggiunge float o pareggiare sono contrassegnati "(float)" e (EQ).
-		</p>
-		<p>
-			Se il calendario non è completamente visualizzato sullo schermo, è possibile scorrere la posizione trascinando la parte nera del calendario. 
-		</p>
-		<p>
-			Mesi precedenti possono essere visualizzati facendo scorrere la parte grigia del programma su o giù.
-		</p>
-	</div>
 	<hr style="page-break-before:always;">
 
 	<a id="DayChart"></a>
@@ -327,6 +355,27 @@
 	<div class="center">
 		<p>
 			Il grafico Journal visualizza informazioni registrate dal classico per il giorno corrente, un menu è in alto a destra della barra delle azioni consente di selezionare il valore tracciato.
+		</p>
+	</div>
+		<hr style="page-break-before:always;">
+
+	<a id="Calendar"></a>
+	<h2 class="text-center">Il Journal Calendario di Giorno</h2>
+
+	<img class="center_image" alt="Calendar_landscape.PNG" src="images_it/Calendar_landscape.png"  title="">
+	<br>
+	<div class="center">
+		<p>
+			Il Journal Calendario di Giorno mostra l’energia raccolta per ogni giorno del mese con il PV massima, tensione della batteria, la temperatura e la potenza massima per la giornata. 
+		</p>
+		<p>
+			Giorni in cui il sistema raggiunge float o pareggiare sono contrassegnati "(float)" e (EQ).
+		</p>
+		<p>
+			Se il calendario non è completamente visualizzato sullo schermo, è possibile scorrere la posizione trascinando la parte nera del calendario. 
+		</p>
+		<p>
+			Mesi precedenti possono essere visualizzati facendo scorrere la parte grigia del programma su o giù.
 		</p>
 	</div>
 	<hr style="page-break-before:always;">
@@ -351,17 +400,7 @@
 			La scheda Messaggi visualizza i messaggi informativi e di errore di avviso sul controller indicati da un'icona all'inizio del messaggio. 
 		</p>
 	</div>
-	<hr style="page-break-before:always;">
 
-	<a id="Load"></a>
-	<h2 class="text-center">Consumo</h2>
-	<img class="center_image" alt="Consumption_landscape.PNG" src="images_it/Consumption_landscape.png"  title="">
-	<br>
-	<div class="center">
-		<p>
-			Il display di misurare il consumo di energia consumata dal sistema, essa viene calcolata dalla potenza generata meno energia per inserire le batterie.
-		</p>
-	</div>
 </div>
 
 <div class="container text-center">
