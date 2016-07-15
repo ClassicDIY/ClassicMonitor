@@ -277,9 +277,13 @@ public class ModbusTask extends TimerTask {
                     readings.set(RegisterName.PVVoltage, VScale(registers[27].getValue()));
                     readings.set(RegisterName.BatCurrent, IScale(registers[28].getValue()));
                     readings.set(RegisterName.PVCurrent, IScale(registers[29].getValue()));
+                    readings.set(RegisterName.ChargeState, StateScale(registers[50].getValue()));
                     readings.set(RegisterName.Power, PScale(registers[58].getValue()));
                     readings.set(RegisterName.EnergyToday, WHr(registers[68].getValue()));
                     readings.set(RegisterName.TotalEnergy, (float) registers[57].getValue());
+                    readings.set(RegisterName.BatTemperature, (short)registers[37].getValue() / 1.0f);
+                    readings.set(RegisterName.FETTemperature, (short)registers[35].getValue() / 1.0f);
+                    readings.set(RegisterName.PCBTemperature, (short)registers[35].getValue() / 1.0f);
                 } else {
                     Log.w(getClass().getName(), String.format("Modbus failed to read 0000, readMultipleRegisters returned null"));
                     throw new ModbusException("Failed to read data from modbus 0000");
@@ -663,5 +667,56 @@ public class ModbusTask extends TimerTask {
         val /= 32768;
         return val;
     }
+
+//    0 START
+//    1 NIGHT_CHECK
+//    2 DISCONNECT
+//    3 NIGHT
+//    4 FAULT
+//    5 MPPT
+//    6 ABSORPTION
+//    7 FLOAT
+//    8 EQUALIZE
+//    9 SLAVE
+
+//    chargeStateTitles.put(-1, "");
+//    chargeStateTitles.put(0, getString(R.string.RestingTitle));
+//    chargeStateTitles.put(3, getString(R.string.AbsorbTitle));
+//    chargeStateTitles.put(4, getString(R.string.BulkMPPTTitle));
+//    chargeStateTitles.put(5, getString(R.string.FloatTitle));
+//    chargeStateTitles.put(6, getString(R.string.FloatMPPTTitle));
+//    chargeStateTitles.put(7, getString(R.string.EqualizeTitle));
+//    chargeStateTitles.put(10, getString(R.string.HyperVocTitle));
+//    chargeStateTitles.put(18, getString(R.string.EqMpptTitle));
+    private int StateScale(int value) {
+        int rVal = 0;
+        switch (value) {
+            case 0:
+            case 1:
+            case 3:
+                rVal = 0;
+                break;
+            case 2:
+                rVal = -1;
+                break;
+            case 4:
+                rVal = 10;
+                break;
+            case 6:
+                rVal = 3;
+                break;
+            case 5:
+                rVal = 4;
+                break;
+            case 7:
+                rVal = 5;
+                break;
+            case 8:
+                rVal = 7;
+                break;
+        }
+        return rVal;
+    }
+
     // END Tristar code...
 }

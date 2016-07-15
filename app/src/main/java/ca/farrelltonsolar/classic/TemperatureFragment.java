@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import ca.farrelltonsolar.uicomponents.BaseGauge;
 import ca.farrelltonsolar.uicomponents.TemperatureGauge;
@@ -32,13 +31,17 @@ import ca.farrelltonsolar.uicomponents.TemperatureGauge;
 public class TemperatureFragment extends ReadingFramentBase {
 
     public static int TabTitle = R.string.TemperatureTabTitle;
-    private boolean useFahrenheit;
-    private boolean showShuntTemperature;
+    private boolean useFahrenheit = false;
+    private boolean showShuntTemperature = false;
+    private boolean isTriStar = false;
     
     public TemperatureFragment() {
         super(R.layout.fragment_temperature);
         ChargeController controller = MonitorApplication.chargeControllers().getCurrentChargeController();
-        showShuntTemperature = controller != null && controller.hasWhizbang();
+        if (controller != null) {
+            showShuntTemperature = controller != null && controller.hasWhizbang();
+            isTriStar = controller.deviceType() ==  DeviceType.TriStar;
+        }
     }
 
     @Override
@@ -61,6 +64,9 @@ public class TemperatureFragment extends ReadingFramentBase {
         gaugeView = (TemperatureGauge) this.getView().findViewById(R.id.FETTemperature);
         gaugeView.setFahrenheit(useFahrenheit);
         gaugeView = (TemperatureGauge) this.getView().findViewById(R.id.PCBTemperature);
+        if (isTriStar) {
+            gaugeView.setVisibility(gaugeView.INVISIBLE);
+        }
         gaugeView.setFahrenheit(useFahrenheit);
         if (showShuntTemperature) {
             gaugeView = (TemperatureGauge) this.getView().findViewById(R.id.ShuntTemp);

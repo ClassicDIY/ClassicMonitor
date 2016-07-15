@@ -136,6 +136,7 @@ public class MonitorActivity extends ActionBarActivity {
             tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
             tabStripAdapter.addTab("Energy", EnergyFragment.TabTitle, EnergyFragment.class, null);
             tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, RealTimeChartFragment.class, null);
+            tabStripAdapter.addTab("Temperature", TemperatureFragment.TabTitle, TemperatureFragment.class, null);
             tabStripAdapter.addTab("About", R.string.About, About.class, null);
         }
         else {
