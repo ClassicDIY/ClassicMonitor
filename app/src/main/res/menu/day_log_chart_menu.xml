@@ -20,7 +20,7 @@
 
     <item android:id="@+id/day_log_chart_preference"
         android:title="Chart"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         android:orderInCategory="100"/>
 
 </menu>
