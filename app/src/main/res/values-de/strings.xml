@@ -20,7 +20,7 @@
     <string name="ApplyButton">Übernehmen</string>
     <string name="CancelButton">Abbrechen</string>
     <string name="dialog_port_hint">Port-Nummer</string>
-    <string name="dialog_ipaddress_hint">IP-Adresse, URI</string>
+    <string name="dialog_ipaddress_hint">IP-Adresse oder URI und Portnummer</string>
     <string name="UploadLogsSummary">Hochladen von Protokollen zu PVOutput</string>
     <string name="ClearLogsTitle">Aufgezeichnete Protokolle leeren</string>
     <string name="navigation_drawer_close">Navigation schließen</string>
