@@ -29,8 +29,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
-import java.util.Locale;
-
 public class Settings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private CheckBoxPreference uploadToPVOutput;
@@ -57,7 +55,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             @Override
             //On click function
             public void onClick(View view) {
-                String helpContext = String.format("http://skyetracker.com/classicmonitor/help_%s.html#Settings", Locale.getDefault().getLanguage());
+                String helpContext = String.format("http://graham22.github.io/Classic/classicmonitor/help_%s.html#Settings", MonitorApplication.getLanguage());
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(helpContext)));
                 return;
             }

@@ -46,7 +46,6 @@ import org.joda.time.DateTime;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import ca.farrelltonsolar.uicomponents.SlidingTabLayout;
 import ca.farrelltonsolar.uicomponents.TabStripAdapter;
@@ -241,7 +240,7 @@ public class MonitorActivity extends ActionBarActivity {
                 break;
             case R.id.action_help:
                 String helpContext = navigationDrawerFragment.isDrawerOpen() ? "NavigationBar" : tabStripAdapter.getItemBookmark(viewPager.getCurrentItem());
-                helpContext = String.format("http://skyetracker.com/classicmonitor/help_%s.html#%s", Locale.getDefault().getLanguage(), helpContext);
+                helpContext = String.format("http://graham22.github.io/Classic/classicmonitor/help_%s.html#%s", MonitorApplication.getLanguage(), helpContext);
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(helpContext)));
                 handled = true;
                 break;

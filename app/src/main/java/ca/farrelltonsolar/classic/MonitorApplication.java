@@ -35,6 +35,7 @@ import android.util.Pair;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -323,4 +324,20 @@ public class MonitorApplication extends Application implements Application.Activ
 
     }
 
+    // get supported language code, default to english
+    public static String getLanguage() {
+        String rVal = Locale.getDefault().getLanguage();
+        switch (rVal) {
+            case "en":
+            case "it":
+            case "de":
+            case "es":
+            case "fr":
+            break;
+            default:
+                rVal = "en";
+                break;
+        }
+        return rVal;
+    }
 }
