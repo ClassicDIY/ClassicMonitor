@@ -85,6 +85,7 @@
     <string name="info_last_voc_title">Last VOC:</string>
     <string name="info_build_date_title">Software Build Date:</string>
     <string name="info_nominal_battery_voltage">Nominal Battery Voltage:</string>
+    <string name="info_tempreature_compensated_battery_voltage">Target Battery Voltage:</string>
     <string name="info_message_1">Classic Over Temperature</string>
     <string name="info_message_2">Classic EEprom read/write found an error</string>
     <string name="info_message_100">Input Voltage (PV) is lower than battery voltage.</string>
@@ -147,5 +148,16 @@
     <string name="RealTimeChartTabTitle">Live Chart</string>
     <string name="SupplyCurrentTitle">Supply Current</string>
     <string name="SystemViewEnabled">System View Enabled</string>
+    <string name="MPPTMode3">Slow Dynamic Solar Tracking</string>
+    <string name="MPPTMode5">Wind Track Mode</string>
+    <string name="MPPTMode9">Legacy P - O sweep mode</string>
+    <string name="MPPTModeB">Fast SOLAR track</string>
+    <string name="MPPTModeD">Micro Hydro mode</string>
+    <string name="TargetVoltage">Target Battery Voltage: %1$1.1f V (currently at %2$1.1f V)</string>
+    <string name="EndingAmps">Ending Amps: %1$1.1f A (currently at %2$1.1f A)</string>
+    <string name="FloatTime">Float Time Today: %s</string>
+    <string name="AbsorbTime">Absorb Timer: %s</string>
+    <string name="MPPTMode">MPPT Mode</string>
+    <string name="EqualizeTime">Equalize time: %s</string>
 
 </resources>

@@ -48,6 +48,7 @@ public class MonitorApplication extends Application implements Application.Activ
 
     static Map<Integer, String> chargeStates = new HashMap<Integer, String>();
     static Map<Integer, String> chargeStateTitles = new HashMap<Integer, String>();
+    static Map<Integer, String> mpptModes = new HashMap<Integer, String>();
     static Map<Integer, Pair<Severity, String>> messages = new HashMap<Integer, Pair<Severity, String>>();
     static UDPListener UDPListenerService;
     static boolean isUDPListenerServiceBound = false;
@@ -84,6 +85,7 @@ public class MonitorApplication extends Application implements Application.Activ
         }
         InitializeChargeStateLookup();
         InitializeChargeStateTitleLookup();
+        InitializeMPPTModes();
         InitializeMessageLookup();
         try {
             configuration = ComplexPreferences.getComplexPreferences(this, null, Context.MODE_PRIVATE);
@@ -154,6 +156,14 @@ public class MonitorApplication extends Application implements Application.Activ
         return "";
     }
 
+    public static String getMpptModeText(int cs) {
+        if (mpptModes.containsKey(cs)) {
+            return mpptModes.get(cs);
+        }
+        return "";
+    }
+
+
     private void InitializeChargeStateLookup() {
         chargeStates.put(-1, getString(R.string.NoConnection));
         chargeStates.put(0, getString(R.string.RestingDescription));
@@ -176,6 +186,14 @@ public class MonitorApplication extends Application implements Application.Activ
         chargeStateTitles.put(7, getString(R.string.EqualizeTitle));
         chargeStateTitles.put(10, getString(R.string.HyperVocTitle));
         chargeStateTitles.put(18, getString(R.string.EqMpptTitle));
+    }
+
+    private void InitializeMPPTModes() {
+        mpptModes.put(0x0003, getString(R.string.MPPTMode3));
+        mpptModes.put(0x0005, getString(R.string.MPPTMode5));
+        mpptModes.put(0x0009, getString(R.string.MPPTMode9));
+        mpptModes.put(0x000B, getString(R.string.MPPTModeB));
+        mpptModes.put(0x000D, getString(R.string.MPPTModeD));
     }
 
     private ServiceConnection UDPListenerServiceConnection = new ServiceConnection() {

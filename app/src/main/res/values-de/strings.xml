@@ -54,6 +54,7 @@
     <string name="info_last_voc_title">Letzte VOC:</string>
     <string name="info_build_date_title">Software Build-Datum:</string>
     <string name="info_nominal_battery_voltage">Batterie-Nennspannung:</string>
+    <string name="info_tempreature_compensated_battery_voltage">Zielspannung:</string>
     <string name="info_message_1">Übertemperatur</string>
     <string name="info_message_2">Fehler beim EEprom lesen/schreiben</string>
     <string name="info_message_100">Eingangsspannung (PV) liegt unter der Batteriespannung.</string>
@@ -116,6 +117,17 @@
     <string name="gaugesPreferenceCategory">Anzeige</string>
     <string name="RealTimeChartTabTitle">Live-Diagramm</string>
     <string name="SupplyCurrentTitle">Liefern-Strom</string>
-    <string name="SystemViewEnabled">System View Enabled</string>
+    <string name="SystemViewEnabled">Systemansicht aktiviert</string>
+    <string name="MPPTMode3">Langsame dynamische Solarverfolgung</string>
+    <string name="MPPTMode5">Wind-Track-Modus</string>
+    <string name="MPPTMode9">Legacy-Sweep-Modus</string>
+    <string name="MPPTModeB">Schnelle SOLAR-Spur</string>
+    <string name="MPPTModeD">Mikro-Hydro-Modus</string>
+    <string name="TargetVoltage">Batteriespannung: %1$1.1f V (Derzeit bei %2$1.1f V)</string>
+    <string name="EndingAmps">Endverstärker: %1$1.1f A (Derzeit bei %2$1.1f A)</string>
+    <string name="FloatTime">Schwimmerzeit heute: %s</string>
+    <string name="AbsorbTime">Absorbieren Timer: %s</string>
+    <string name="MPPTMode">MPPT-Modus</string>
+    <string name="EqualizeTime">Zeit Equalize: %s</string>
 
 </resources>

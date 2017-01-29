@@ -16,12 +16,12 @@
 
 package ca.farrelltonsolar.classic;
 
+import android.app.ListFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.app.ListFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.Pair;
@@ -86,9 +86,51 @@ public class MessageFragment extends ListFragment {
                 }
                 bitMask >>= 1;              // shift bits, removing lower bit
             }
+            float batteryVolt = readings.getFloat(RegisterName.BatVoltage.name(), 0);
+            float whizbangAmp = readings.getFloat(RegisterName.WhizbangBatCurrent.name(), 0);
+            float VbattRegSetPTmpComp = readings.getFloat(RegisterName.VbattRegSetPTmpComp.name(), 0);
+            ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
+            adapter.add(new Pair<Severity, String>(Severity.info, String.format(getString(R.string.TargetVoltage), VbattRegSetPTmpComp, batteryVolt)));
+            if (cc.hasWhizbang())
+            {
+                adapter.add(new Pair<Severity, String>(Severity.info, String.format(getString(R.string.EndingAmps), cc.getEndingAmps(), whizbangAmp)));
+            }
+            int floatTime = readings.getInt(RegisterName.FloatTimeTodaySeconds.name(), 0);
+            adapter.add(new Pair<Severity, String>(Severity.info, String.format(getString(R.string.FloatTime), formatSeconds(floatTime))));
+            int absorbTime = readings.getInt(RegisterName.AbsorbTime.name(), 0);
+            adapter.add(new Pair<Severity, String>(Severity.info, String.format(getString(R.string.AbsorbTime), formatSeconds(absorbTime))));
+            int equalizeTime = readings.getInt(RegisterName.EqualizeTime.name(), 0);
+            adapter.add(new Pair<Severity, String>(Severity.info, String.format(getString(R.string.EqualizeTime), formatSeconds(equalizeTime))));
             adapter.notifyDataSetChanged();
         }
     };
 
+    private static String formatSeconds(int timeInSeconds)
+    {
+        String formattedTime = "";
+        if (timeInSeconds < 0)
+        {
+            formattedTime = "-";
+            timeInSeconds = Math.abs(timeInSeconds);
+        }
+        int hours = timeInSeconds / 3600;
+        int secondsLeft = timeInSeconds - hours * 3600;
+        int minutes = secondsLeft / 60;
+        int seconds = secondsLeft - minutes * 60;
+
+        if (hours < 10)
+            formattedTime += "0";
+        formattedTime += hours + ":";
+
+        if (minutes < 10)
+            formattedTime += "0";
+        formattedTime += minutes + ":";
+
+        if (seconds < 10)
+            formattedTime += "0";
+        formattedTime += seconds ;
+
+        return formattedTime;
+    }
 
 }

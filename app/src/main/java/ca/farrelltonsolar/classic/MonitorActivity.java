@@ -95,16 +95,16 @@ public class MonitorActivity extends ActionBarActivity {
         if (cc != null && cc.deviceType() == DeviceType.Classic) {
             if (cc.hasWhizbang()) {
                 if (MonitorApplication.chargeControllers().showSystemView()) {
+                    tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
                     tabStripAdapter.addTab("StateOfCharge", StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
                     tabStripAdapter.addTab("System", SystemFragment.TabTitle, SystemFragment.class, null);
-                    tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
                     tabStripAdapter.addTab("Energy", EnergyFragment.TabTitle, EnergyFragment.class, null);
                     tabStripAdapter.addTab("Capacity", CapacityFragment.TabTitle, CapacityFragment.class, null);
                 }
                 else {
+                    tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
                     tabStripAdapter.addTab("StateOfCharge", StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
                     tabStripAdapter.addTab("Load", LoadFragment.TabTitle, LoadFragment.class, null);
-                    tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
                     tabStripAdapter.addTab("Energy", EnergyFragment.TabTitle, EnergyFragment.class, null);
                     tabStripAdapter.addTab("Capacity", CapacityFragment.TabTitle, CapacityFragment.class, null);
                 }

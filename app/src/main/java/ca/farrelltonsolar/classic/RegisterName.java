@@ -40,6 +40,9 @@ public enum RegisterName {
     NegativeAmpHours,
     NetAmpHours,
     RemainingAmpHours,
-    TotalAmpHours
-
+    TotalAmpHours,
+    FloatTimeTodaySeconds,
+    EqualizeTime,
+    AbsorbTime,
+    VbattRegSetPTmpComp
 }

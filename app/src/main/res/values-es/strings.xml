@@ -73,6 +73,7 @@
     <string name="info_last_voc_title">Última VOC:</string>
     <string name="info_mac_title">Dirección MAC:</string>
     <string name="info_nominal_battery_voltage">Voltaje nominal:</string>
+    <string name="info_tempreature_compensated_battery_voltage">Voltaje Objetivo:</string>
     <string name="info_message_1">Clásico de temperatura excesiva</string>
     <string name="info_message_100">Voltaje de entrada (PV) es menor que el voltaje de la batería.</string>
     <string name="info_message_10000">Fallo de tierra detectado.</string>
@@ -133,5 +134,16 @@
     <string name="gaugesPreferenceCategory">Pantalla</string>
     <string name="RealTimeChartTabTitle">Gráfico Actual</string>
     <string name="SupplyCurrentTitle">Corriente de alimentación</string>
-    <string name="SystemViewEnabled">System View Enabled</string>
+    <string name="SystemViewEnabled">Vista del sistema activada</string>
+    <string name="MPPTMode3">Seguimiento Solar Dinámico Lento</string>
+    <string name="MPPTMode5">Modo de Viento</string>
+    <string name="MPPTMode9">Modo de barrido de legado</string>
+    <string name="MPPTModeB">Pista SOLAR rápida</string>
+    <string name="MPPTModeD">Modo Micro Hidro</string>
+    <string name="TargetVoltage">Tensión de la batería objetivo: %1$1.1f V (Actualmente en %2$1.1f V)</string>
+    <string name="EndingAmps">Amplificadores finales: %1$1.1f A (Actualmente en %2$1.1f A)</string>
+    <string name="FloatTime">Float Time Today: %s</string>
+    <string name="AbsorbTime">Temporizador de absorción: %s</string>
+    <string name="MPPTMode">Modo MPPT</string>
+    <string name="EqualizeTime">Tiempo igualar: %s</string>
 </resources>

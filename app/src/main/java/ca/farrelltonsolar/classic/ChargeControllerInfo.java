@@ -50,6 +50,8 @@ public class ChargeControllerInfo implements Serializable {
     private transient String netVersion;
     private transient String buildDate;
     private transient int nominalBatteryVoltage;
+    private transient int mpptMode;
+    private transient float endingAmps;
 
     // clone cTor
     public ChargeControllerInfo(ChargeControllerInfo cc) {
@@ -67,6 +69,22 @@ public class ChargeControllerInfo implements Serializable {
 
     public void setNominalBatteryVoltage(int nominalBatteryVoltage) {
         this.nominalBatteryVoltage = nominalBatteryVoltage;
+    }
+
+    public float getEndingAmps() {
+        return endingAmps;
+    }
+
+    public void setEndingAmps(float endingAmps) {
+        this.endingAmps = endingAmps;
+    }
+
+    public int getMpptMode() {
+        return mpptMode;
+    }
+
+    public void setMpptMode(int mode) {
+        this.mpptMode = mode;
     }
 
     public String getBuildDate() {
@@ -280,5 +298,6 @@ public class ChargeControllerInfo implements Serializable {
             ex.printStackTrace();
         }
     }
+
 }
 
