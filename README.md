@@ -55,6 +55,18 @@ Release notes:
 
 -----------------
 
+version 2.5.0
+
+Added the following information to the message tab;
+<ul>
+<li>Target Battery Voltage</li>
+<li>Ending Amps</li>
+<li>Float time</li>
+<li>Equalize time</li>
+</ul>
+
+-----------------
+
 version 2.4.0
 <ul>
 <li>Added Live Chart Tab.</li>
