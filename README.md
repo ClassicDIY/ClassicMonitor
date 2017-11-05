@@ -55,6 +55,14 @@ Release notes:
 
 -----------------
 
+version 2.5.1
+
+<ul>
+<li>Updated German text</li>
+</ul>
+
+-----------------
+
 version 2.5.0
 
 Added the following information to the message tab;
