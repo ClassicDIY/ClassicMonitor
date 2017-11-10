@@ -386,7 +386,7 @@ class ModbusTask extends TimerTask {
                 String macAddress = String.format("%02x:%02x:%02x:%02x:%02x:%02x", reg8 >> 8, reg8 & 0x00ff, reg7 >> 8, reg7 & 0x00ff, reg6 >> 8, reg6 & 0x00ff);
                 chargeControllerInfo.setMacAddress(macAddress);
                 float reg22 = (float) registers[21].getValue();
-                chargeControllerInfo.setLastVOC(reg22 / 10);
+                chargeControllerInfo.setLastVOC(reg22 / 10.0f);
                 unitId = (registers[11].getValue() << 16) + registers[10].getValue();
                 chargeControllerInfo.setUnitID(unitId);
             }
@@ -420,7 +420,7 @@ class ModbusTask extends TimerTask {
             registers = modbusMaster.readMultipleRegisters(4244, 2);
             if (registers != null && registers.length == 2) {
                 chargeControllerInfo.setNominalBatteryVoltage(registers[0].getValue());
-                chargeControllerInfo.setEndingAmps(registers[1].getValue() / 10);
+                chargeControllerInfo.setEndingAmps(registers[1].getValue() / 10.0f);
             }
             if (isClassic){
                 registers = modbusMaster.readMultipleRegisters(16386, 4);
