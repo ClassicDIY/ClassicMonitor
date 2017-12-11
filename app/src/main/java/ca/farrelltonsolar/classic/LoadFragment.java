@@ -75,9 +75,11 @@ public class LoadFragment extends ReadingFramentBase {
         if (bidirectionalUnitsInWatts) {
             gaugeView.setTitle(this.getString(R.string.LoadPowerTitle));
             gaugeView.setUnit("W");
+            gaugeView.setPrecision(0);
         } else {
             gaugeView.setTitle(this.getString(R.string.LoadCurrentTitle));
             gaugeView.setUnit("A");
+            gaugeView.setPrecision(1);
         }
         gaugeView.setGreenRange(50, 100);
         gaugeView.setTargetValue(0.0f);

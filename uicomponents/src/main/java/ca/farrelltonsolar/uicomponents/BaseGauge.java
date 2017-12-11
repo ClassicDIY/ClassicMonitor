@@ -309,6 +309,10 @@ public class BaseGauge extends BaseComponent {
         mReadingUnit = val;
     }
 
+    public void setPrecision(int val) {
+        mReadingPrecision = val;
+    }
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         if (w == 0 || h == 0)
