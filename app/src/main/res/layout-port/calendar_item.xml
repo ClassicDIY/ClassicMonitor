@@ -8,17 +8,17 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="70"
         android:orientation="vertical"
-        android:padding="2sp"
-        android:layout_weight="70">
+        android:padding="2sp">
 
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:layout_gravity="left|top"
+            android:layout_gravity="top|left|start"
             android:gravity="left|top"
             android:textAlignment="gravity"
             android:textColor="@color/white_70"
@@ -29,10 +29,8 @@
             android:id="@+id/state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_gravity="center"
             android:textColor="@color/text_primary"
-            android:textSize="@dimen/textSizeMedium"
             android:textStyle="bold"></TextView>
 
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -52,11 +50,11 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|top"
         android:layout_weight="30"
         android:gravity="right|top"
-        android:layout_gravity="right|top"
+        android:orientation="vertical"
         android:weightSum="100">
 
 
@@ -64,42 +62,45 @@
             android:id="@+id/hiPower"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="25"
             android:layout_gravity="center_horizontal"
-            android:textColor="@color/text_color"
-            android:singleLine="true"
+            android:layout_weight="25"
             android:gravity="end"
-            android:textAlignment="textEnd" />
+            android:singleLine="true"
+            android:textAlignment="textEnd"
+            android:textColor="@color/text_color" />
+
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/hiTemp"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="25"
             android:layout_gravity="center_horizontal"
-            android:textColor="@color/text_color"
-            android:singleLine="true"
+            android:layout_weight="25"
             android:gravity="end"
-            android:textAlignment="textEnd" />
+            android:singleLine="true"
+            android:textAlignment="textEnd"
+            android:textColor="@color/text_color" />
+
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/hiPVVolt"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="25"
             android:layout_gravity="center_horizontal"
-            android:textColor="@color/text_color"
-            android:singleLine="true"
+            android:layout_weight="25"
             android:gravity="end"
-            android:textAlignment="textEnd" />
+            android:singleLine="true"
+            android:textAlignment="textEnd"
+            android:textColor="@color/text_color" />
+
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/hiBatVolt"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="25"
             android:layout_gravity="center_horizontal"
-            android:textColor="@color/text_color"
-            android:singleLine="true"
+            android:layout_weight="25"
             android:gravity="end"
-            android:textAlignment="textEnd" />
+            android:singleLine="true"
+            android:textAlignment="textEnd"
+            android:textColor="@color/text_color" />
 
-        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

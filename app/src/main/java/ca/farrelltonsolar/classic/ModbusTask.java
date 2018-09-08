@@ -340,6 +340,10 @@ class ModbusTask extends TimerTask {
                 if (registers != null && registers.length == 1) {
                     readings.set(RegisterName.VbattRegSetPTmpComp, (short)registers[0].getValue() / 10.0f);
                 }
+                registers = modbusMaster.readMultipleRegisters(4274, 1);
+                if (registers != null && registers.length == 1) {
+                    readings.set(RegisterName.ReasonForResting, (short)registers[0].getValue());
+                }
             }
             readings.broadcastReadings(context, chargeControllerInfo.uniqueId(), getAction());
         } catch (Exception all) {

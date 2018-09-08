@@ -44,5 +44,6 @@ public enum RegisterName {
     FloatTimeTodaySeconds,
     EqualizeTime,
     AbsorbTime,
-    VbattRegSetPTmpComp
+    VbattRegSetPTmpComp,
+    ReasonForResting
 }

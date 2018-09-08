@@ -97,6 +97,43 @@
     <string name="toast_minute_logs">Complété le transfer des journaux horaire</string>
     <string name="toast_day_logs">Complété le transfer des journaux quotidien</string>
 
+    <string name="reasonsForResting_message_1">Wake state.</string>
+    <string name="reasonsForResting_message_2">Insane Ibatt on WakeUp state.</string>
+    <string name="reasonsForResting_message_3">Negative current on WakeUp state.</string>
+    <string name="reasonsForResting_message_4">Code 4.</string>
+    <string name="reasonsForResting_message_5">Too low power and Vbatt below set point for 90 seconds.</string>
+    <string name="reasonsForResting_message_6">FET temperature >= 100C Hot.</string>
+    <string name="reasonsForResting_message_7">Ground Fault.</string>
+    <string name="reasonsForResting_message_8">Arc Fault.</string>
+    <string name="reasonsForResting_message_9">Negative current.</string>
+    <string name="reasonsForResting_message_10">Battery less than 8 Volts.</string>
+    <string name="reasonsForResting_message_11">Low Light #1.</string>
+    <string name="reasonsForResting_message_12">Low Light #2.</string>
+    <string name="reasonsForResting_message_13">Code 13.</string>
+    <string name="reasonsForResting_message_14">Low Light #3.</string>
+    <string name="reasonsForResting_message_15">Low Light #4.</string>
+    <string name="reasonsForResting_message_16">Disabled.</string>
+    <string name="reasonsForResting_message_17">Vpv > 150V .</string>
+    <string name="reasonsForResting_message_18">Vpv > 200V .</string>
+    <string name="reasonsForResting_message_19">Vpv > 250V .</string>
+    <string name="reasonsForResting_message_22">Average Battery Voltage is too high above set point.</string>
+    <string name="reasonsForResting_message_25">Battery breaker tripped.</string>
+    <string name="reasonsForResting_message_26">Mode changed while running.</string>
+    <string name="reasonsForResting_message_27">Code 27.</string>
+    <string name="reasonsForResting_message_28">NOT Resting but RELAY is not engaged for some reason.</string>
+    <string name="reasonsForResting_message_29">ON/OFF stays off because WIND GRAPH is insane.</string>
+    <string name="reasonsForResting_message_30">Code 30.</string>
+    <string name="reasonsForResting_message_31">Peak negative battery current.</string>
+    <string name="reasonsForResting_message_32">Aux 2 Logic input is high.</string>
+    <string name="reasonsForResting_message_33">OCP in a mode other than Solar or PV-Uset.</string>
+    <string name="reasonsForResting_message_34">Code 34.</string>
+    <string name="reasonsForResting_message_35">LOW LOW battery.</string>
+    <string name="reasonsForResting_message_36">Battery temperature is Greater than specified.</string>
+    <string name="reasonsForResting_message_38">Other charging sources appear to be active.</string>
+    <string name="reasonsForResting_message_136">Battery temperature fell below specified.</string>
+    <string name="reasonsForResting_message_104">Watchdog WDT reset.</string>
+    <string name="reasonsForResting_message_111">Normal Power up boot.</string>
+
     <string-array name="minute_log_chart_selection">
         <item>Puissance</item>
         <item>Volt PV </item>
@@ -145,4 +182,6 @@
     <string name="AbsorbTime">Temp absorber: %s</string>
     <string name="MPPTMode">Mode MPPT</string>
     <string name="EqualizeTime">Temps égaliser: %s</string>
+    <string name="ReasonForResting">Reason For Resting: %s</string>
+
 </resources>

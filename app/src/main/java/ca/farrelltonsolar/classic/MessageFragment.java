@@ -101,6 +101,12 @@ public class MessageFragment extends ListFragment {
             adapter.add(new Pair<Severity, String>(Severity.info, String.format(getString(R.string.AbsorbTime), formatSeconds(absorbTime))));
             int equalizeTime = readings.getInt(RegisterName.EqualizeTime.name(), 0);
             adapter.add(new Pair<Severity, String>(Severity.info, String.format(getString(R.string.EqualizeTime), formatSeconds(equalizeTime))));
+            int reasonForResting = readings.getInt(RegisterName.ReasonForResting.name(), 0);
+            Pair<Severity, String> item = MonitorApplication.getReasonsForResting(reasonForResting);
+            if (item != null)
+            {
+                adapter.add(new Pair(item.first, String.format(getString(R.string.ReasonForResting), item.second)));
+            }
             adapter.notifyDataSetChanged();
         }
     };

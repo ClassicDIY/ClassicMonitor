@@ -461,7 +461,7 @@ public class BaseGauge extends BaseComponent {
         float angle = mBiDirectional ? mScaleStartAngle + mAvailableAngle / 2 + pos * (mAvailableAngle / 2) / availableValues : mScaleStartAngle + (pos * mAvailableAngle / availableValues);
 // this does not work on emulator when HW acc is enabled (libc crash)
 //        setNeedleShadowPosition(angle);
-        canvas.save(Canvas.MATRIX_SAVE_FLAG);
+        canvas.save();
         canvas.rotate(angle - 90, mGaugeRect.centerX(), mGaugeRect.centerY());
         canvas.drawPath(mNeedleRightPath, mNeedleRightPaint);
         canvas.drawPath(mNeedleLeftPath, mNeedleLeftPaint);

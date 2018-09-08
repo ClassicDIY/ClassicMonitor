@@ -50,6 +50,7 @@ public class MonitorApplication extends Application implements Application.Activ
     static Map<Integer, String> chargeStateTitles = new HashMap<Integer, String>();
     static Map<Integer, String> mpptModes = new HashMap<Integer, String>();
     static Map<Integer, Pair<Severity, String>> messages = new HashMap<Integer, Pair<Severity, String>>();
+    static Map<Integer, Pair<Severity, String>> reasonsForResting = new HashMap<Integer, Pair<Severity, String>>();
     static UDPListener UDPListenerService;
     static boolean isUDPListenerServiceBound = false;
     private static ChargeControllers chargeControllers;
@@ -87,6 +88,7 @@ public class MonitorApplication extends Application implements Application.Activ
         InitializeChargeStateTitleLookup();
         InitializeMPPTModes();
         InitializeMessageLookup();
+        InitializeReasonsForRestingLookup();
         try {
             configuration = ComplexPreferences.getComplexPreferences(this, null, Context.MODE_PRIVATE);
             chargeControllers = configuration.getObject("devices", ChargeControllers.class);
@@ -132,6 +134,51 @@ public class MonitorApplication extends Application implements Application.Activ
         messages.put(0x00100000, new Pair(Severity.alert, getString(R.string.info_message_100000)));
         messages.put(0x00400000, new Pair(Severity.warning, getString(R.string.info_message_400000)));
         messages.put(0x08000000, new Pair(Severity.warning, getString(R.string.info_message_8000000)));
+    }
+
+    public static Pair<Severity, String> getReasonsForResting(int cs) {
+        if (reasonsForResting.containsKey(cs)) {
+            return reasonsForResting.get(cs);
+        }
+        return null;
+    }
+    private void InitializeReasonsForRestingLookup() {
+        reasonsForResting.put(1, new Pair(Severity.info, getString(R.string.reasonsForResting_message_1)));
+        reasonsForResting.put(2, new Pair(Severity.alert, getString(R.string.reasonsForResting_message_2)));
+        reasonsForResting.put(3, new Pair(Severity.warning, getString(R.string.reasonsForResting_message_3)));
+        reasonsForResting.put(4, new Pair(Severity.info, getString(R.string.reasonsForResting_message_4)));
+        reasonsForResting.put(5, new Pair(Severity.info, getString(R.string.reasonsForResting_message_5)));
+        reasonsForResting.put(6, new Pair(Severity.alert, getString(R.string.reasonsForResting_message_6)));
+        reasonsForResting.put(7, new Pair(Severity.alert, getString(R.string.reasonsForResting_message_7)));
+        reasonsForResting.put(8, new Pair(Severity.alert, getString(R.string.reasonsForResting_message_8)));
+        reasonsForResting.put(9, new Pair(Severity.info, getString(R.string.reasonsForResting_message_9)));
+        reasonsForResting.put(10, new Pair(Severity.alert, getString(R.string.reasonsForResting_message_10)));
+        reasonsForResting.put(11, new Pair(Severity.info, getString(R.string.reasonsForResting_message_11)));
+        reasonsForResting.put(12, new Pair(Severity.info, getString(R.string.reasonsForResting_message_12)));
+        reasonsForResting.put(13, new Pair(Severity.info, getString(R.string.reasonsForResting_message_13)));
+        reasonsForResting.put(14, new Pair(Severity.info, getString(R.string.reasonsForResting_message_14)));
+        reasonsForResting.put(15, new Pair(Severity.info, getString(R.string.reasonsForResting_message_15)));
+        reasonsForResting.put(16, new Pair(Severity.info, getString(R.string.reasonsForResting_message_16)));
+        reasonsForResting.put(17, new Pair(Severity.warning, getString(R.string.reasonsForResting_message_17)));
+        reasonsForResting.put(18, new Pair(Severity.warning, getString(R.string.reasonsForResting_message_18)));
+        reasonsForResting.put(19, new Pair(Severity.warning, getString(R.string.reasonsForResting_message_19)));
+        reasonsForResting.put(22, new Pair(Severity.warning, getString(R.string.reasonsForResting_message_22)));
+        reasonsForResting.put(25, new Pair(Severity.alert, getString(R.string.reasonsForResting_message_25)));
+        reasonsForResting.put(26, new Pair(Severity.warning, getString(R.string.reasonsForResting_message_26)));
+        reasonsForResting.put(27, new Pair(Severity.info, getString(R.string.reasonsForResting_message_27)));
+        reasonsForResting.put(28, new Pair(Severity.warning, getString(R.string.reasonsForResting_message_28)));
+        reasonsForResting.put(29, new Pair(Severity.alert, getString(R.string.reasonsForResting_message_29)));
+        reasonsForResting.put(30, new Pair(Severity.info, getString(R.string.reasonsForResting_message_30)));
+        reasonsForResting.put(31, new Pair(Severity.warning, getString(R.string.reasonsForResting_message_31)));
+        reasonsForResting.put(32, new Pair(Severity.warning, getString(R.string.reasonsForResting_message_32)));
+        reasonsForResting.put(33, new Pair(Severity.warning, getString(R.string.reasonsForResting_message_33)));
+        reasonsForResting.put(34, new Pair(Severity.info, getString(R.string.reasonsForResting_message_34)));
+        reasonsForResting.put(35, new Pair(Severity.alert, getString(R.string.reasonsForResting_message_35)));
+        reasonsForResting.put(36, new Pair(Severity.alert, getString(R.string.reasonsForResting_message_36)));
+        reasonsForResting.put(38, new Pair(Severity.info, getString(R.string.reasonsForResting_message_38)));
+        reasonsForResting.put(136, new Pair(Severity.warning, getString(R.string.reasonsForResting_message_136)));
+        reasonsForResting.put(104, new Pair(Severity.warning, getString(R.string.reasonsForResting_message_104)));
+        reasonsForResting.put(111, new Pair(Severity.info, getString(R.string.reasonsForResting_message_111)));
     }
 
     public static Context getAppContext() {
