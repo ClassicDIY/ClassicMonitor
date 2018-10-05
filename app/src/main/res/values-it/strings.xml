@@ -183,5 +183,6 @@
     <string name="MPPTMode">Modalità MPPT</string>
     <string name="EqualizeTime">Tempo equiparare: %s</string>
     <string name="ReasonForResting">Reason For Resting: %s</string>
+    <string name="PercentCharge">% Charge</string>
 
 </resources>

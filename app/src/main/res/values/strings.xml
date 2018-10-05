@@ -128,7 +128,7 @@
     <string name="reasonsForResting_message_30">Code 30.</string>
     <string name="reasonsForResting_message_31">Peak negative battery current.</string>
     <string name="reasonsForResting_message_32">Aux 2 Logic input is high.</string>
-    <string name="reasonsForResting_message_33">OCP in a mode other than Solar or PV-Uset.</string>
+    <string name="reasonsForResting_message_33">OCP in a mode other than Solar or PV-Used.</string>
     <string name="reasonsForResting_message_34">Code 34.</string>
     <string name="reasonsForResting_message_35">LOW LOW battery.</string>
     <string name="reasonsForResting_message_36">Battery temperature is Greater than specified.</string>
@@ -197,5 +197,6 @@
     <string name="MPPTMode">MPPT Mode</string>
     <string name="EqualizeTime">Equalize time: %s</string>
     <string name="ReasonForResting">Reason For Resting: %s</string>
+    <string name="PercentCharge">% Charge</string>
 
 </resources>

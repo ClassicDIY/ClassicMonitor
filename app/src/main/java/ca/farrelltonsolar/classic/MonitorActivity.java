@@ -32,7 +32,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -50,7 +49,7 @@ import java.util.ArrayList;
 import ca.farrelltonsolar.uicomponents.SlidingTabLayout;
 import ca.farrelltonsolar.uicomponents.TabStripAdapter;
 
-public class MonitorActivity extends ActionBarActivity {
+public class MonitorActivity extends AppCompatActivity {
 
     private NavigationDrawerFragment navigationDrawerFragment;
     private TabStripAdapter tabStripAdapter;
@@ -218,7 +217,8 @@ public class MonitorActivity extends ActionBarActivity {
                 if (record.size() > 21600) {
                     record.remove(0);
                 }
-                record.add(new RecordEntry(readings.getFloat(RegisterName.BatVoltage.name()), readings.getFloat(RegisterName.BatCurrent.name()), readings.getFloat(RegisterName.WhizbangBatCurrent.name()), readings.getInt(RegisterName.ChargeState.name()), now.getMillis()));
+                record.add(new RecordEntry(readings.getFloat(RegisterName.BatVoltage.name()), readings.getFloat(RegisterName.BatCurrent.name()),
+                        readings.getFloat(RegisterName.WhizbangBatCurrent.name()), readings.getInt(RegisterName.ChargeState.name()), readings.getInt(RegisterName.SOC.name()), now.getMillis()));
             }
             catch (Throwable ex) {
                 Log.e(getClass().getName(), "mReadingsReceiver failed ");

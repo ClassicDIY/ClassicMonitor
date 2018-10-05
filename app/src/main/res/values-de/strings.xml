@@ -91,42 +91,42 @@
     <string name="TemperatureScaleSummary">Temperaturen in Fahrenheit</string>
     <string name="turn_off_local_app">Die Midnite Local App darf nicht zeitgleich aktiv sein.\n Der Classic unterstützt nur eine Verbindung!</string>
 
-    <string name="reasonsForResting_message_1">Wake state.</string>
-    <string name="reasonsForResting_message_2">Insane Ibatt on WakeUp state.</string>
-    <string name="reasonsForResting_message_3">Negative current on WakeUp state.</string>
+    <string name="reasonsForResting_message_1">Wachzustand.</string>
+    <string name="reasonsForResting_message_2">Insane Ibatt im WakeUp-Zustand.</string>
+    <string name="reasonsForResting_message_3">Negativer Strom im WakeUp-Zustand.</string>
     <string name="reasonsForResting_message_4">Code 4.</string>
-    <string name="reasonsForResting_message_5">Too low power and Vbatt below set point for 90 seconds.</string>
-    <string name="reasonsForResting_message_6">FET temperature >= 100C Hot.</string>
-    <string name="reasonsForResting_message_7">Ground Fault.</string>
-    <string name="reasonsForResting_message_8">Arc Fault.</string>
-    <string name="reasonsForResting_message_9">Negative current.</string>
-    <string name="reasonsForResting_message_10">Battery less than 8 Volts.</string>
-    <string name="reasonsForResting_message_11">Low Light #1.</string>
-    <string name="reasonsForResting_message_12">Low Light #2.</string>
+    <string name="reasonsForResting_message_5">zu niedrige Leistung und Vbatt unter dem Sollwert für 90 Sekunden.</string>
+    <string name="reasonsForResting_message_6">FET temperatur >= 100C Heiß.</string>
+    <string name="reasonsForResting_message_7">Grundfehler.</string>
+    <string name="reasonsForResting_message_8">Lichtbogenfehler.</string>
+    <string name="reasonsForResting_message_9">Negativer Strom.</string>
+    <string name="reasonsForResting_message_10">Batterie weniger als 8 Volt.</string>
+    <string name="reasonsForResting_message_11">Wenig Licht #1.</string>
+    <string name="reasonsForResting_message_12">Wenig Licht #2.</string>
     <string name="reasonsForResting_message_13">Code 13.</string>
-    <string name="reasonsForResting_message_14">Low Light #3.</string>
-    <string name="reasonsForResting_message_15">Low Light #4.</string>
-    <string name="reasonsForResting_message_16">Disabled.</string>
+    <string name="reasonsForResting_message_14">LWenig Licht #3.</string>
+    <string name="reasonsForResting_message_15">Wenig Licht #4.</string>
+    <string name="reasonsForResting_message_16">Deaktiviert.</string>
     <string name="reasonsForResting_message_17">Vpv > 150V .</string>
     <string name="reasonsForResting_message_18">Vpv > 200V .</string>
     <string name="reasonsForResting_message_19">Vpv > 250V .</string>
-    <string name="reasonsForResting_message_22">Average Battery Voltage is too high above set point.</string>
-    <string name="reasonsForResting_message_25">Battery breaker tripped.</string>
-    <string name="reasonsForResting_message_26">Mode changed while running.</string>
+    <string name="reasonsForResting_message_22">Die durchschnittliche Batteriespannung ist zu hoch über dem Sollwert.</string>
+    <string name="reasonsForResting_message_25">Batterieschalter ausgelöst.</string>
+    <string name="reasonsForResting_message_26">Der Modus wurde während des Betriebs geändert.</string>
     <string name="reasonsForResting_message_27">Code 27.</string>
-    <string name="reasonsForResting_message_28">NOT Resting but RELAY is not engaged for some reason.</string>
-    <string name="reasonsForResting_message_29">ON/OFF stays off because WIND GRAPH is insane.</string>
+    <string name="reasonsForResting_message_28">NICHT Ruhe, aber RELAIS ist aus irgendeinem Grund nicht aktiviert.</string>
+    <string name="reasonsForResting_message_29">ON / OFF bleibt aus, weil WIND GRAPH verrückt ist.</string>
     <string name="reasonsForResting_message_30">Code 30.</string>
-    <string name="reasonsForResting_message_31">Peak negative battery current.</string>
-    <string name="reasonsForResting_message_32">Aux 2 Logic input is high.</string>
-    <string name="reasonsForResting_message_33">OCP in a mode other than Solar or PV-Uset.</string>
+    <string name="reasonsForResting_message_31">Maximaler negativer Batteriestrom.</string>
+    <string name="reasonsForResting_message_32">Aux 2 Logikeingang ist hoch.</string>
+    <string name="reasonsForResting_message_33">OCP in einem anderen Modus als Solar oder PV verwendet.</string>
     <string name="reasonsForResting_message_34">Code 34.</string>
-    <string name="reasonsForResting_message_35">LOW LOW battery.</string>
-    <string name="reasonsForResting_message_36">Battery temperature is Greater than specified.</string>
-    <string name="reasonsForResting_message_38">Other charging sources appear to be active.</string>
-    <string name="reasonsForResting_message_136">Battery temperature fell below specified.</string>
-    <string name="reasonsForResting_message_104">Watchdog WDT reset.</string>
-    <string name="reasonsForResting_message_111">Normal Power up boot.</string>
+    <string name="reasonsForResting_message_35">LOW LOW Batterie.</string>
+    <string name="reasonsForResting_message_36">Die Batterietemperatur ist größer als angegeben.</string>
+    <string name="reasonsForResting_message_38">Andere Ladequellen scheinen aktiv zu sein.</string>
+    <string name="reasonsForResting_message_136">Die Batterietemperatur ist unter den angegebenen Wert gefallen.</string>
+    <string name="reasonsForResting_message_104">Watchdog WDT zurückgesetzt.</string>
+    <string name="reasonsForResting_message_111">Normales Hochfahren.</string>
 
     <string-array name="minute_log_chart_selection">
         <item>Brutto</item>
@@ -166,6 +166,7 @@
     <string name="AbsorbTime">Zeit für Konstantspannungsphase: %s</string>
     <string name="MPPTMode">MPPT-Modus</string>
     <string name="EqualizeTime">Zeit für Ausgleichsladen: %s</string>
-    <string name="ReasonForResting">Reason For Resting: %s</string>
+    <string name="ReasonForResting">Grund für Ruhe: %s</string>
+    <string name="PercentCharge">% Ladung</string>
 
 </resources>

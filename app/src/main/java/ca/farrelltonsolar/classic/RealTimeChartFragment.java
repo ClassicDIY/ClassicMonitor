@@ -81,7 +81,12 @@ public class RealTimeChartFragment extends ReadingFramentBase {
         leftAxis.setTextSize(14f);
         leftAxis.setLabelCount(10, false);
         YAxis rightAxis = mChart.getAxisRight();
-        rightAxis.setEnabled(false);
+        rightAxis.setTextColor(Color.BLACK);
+        rightAxis.setDrawGridLines(false);
+        rightAxis.setTextSize(14f);
+        rightAxis.setLabelCount(10, false);
+        rightAxis.setAxisMaxValue(100);
+        rightAxis.setAxisMinValue(0);
 
         ILineDataSet set = data.getDataSetByIndex(0);
         if (set == null) {
@@ -91,12 +96,12 @@ public class RealTimeChartFragment extends ReadingFramentBase {
         MonitorActivity ma = (MonitorActivity)getActivity();
         for (RecordEntry r : ma.record) {
             DateTime dt = new DateTime(r.time);
-            addEntry(r.volt, r.supplyCurrent, r.batteryCurrent, r.state, dt);
+            addEntry(r.volt, r.supplyCurrent, r.batteryCurrent, r.state, r.dod, dt);
         }
     }
 
     public void setReadings(Readings readings) {
-        addEntry(readings.getFloat(RegisterName.BatVoltage), readings.getFloat(RegisterName.BatCurrent), readings.getFloat(RegisterName.WhizbangBatCurrent), readings.getInt(RegisterName.ChargeState), DateTime.now());
+        addEntry(readings.getFloat(RegisterName.BatVoltage), readings.getFloat(RegisterName.BatCurrent), readings.getFloat(RegisterName.WhizbangBatCurrent), readings.getInt(RegisterName.ChargeState), readings.getInt(RegisterName.SOC), DateTime.now());
     }
 
     private boolean validState(int state) {
@@ -116,7 +121,7 @@ public class RealTimeChartFragment extends ReadingFramentBase {
         return rVal;
     }
 
-    private void addEntry(float volt, float supplyCurrent, float batteryCurrent, int chargeState, DateTime date) {
+    private void addEntry(float volt, float supplyCurrent, float batteryCurrent, int chargeState, int soc, DateTime date) {
         try {
             if (volt != 0 && validState(chargeState)) { // don't chart disconnects
                 LineData data = mChart.getData();
@@ -135,6 +140,7 @@ public class RealTimeChartFragment extends ReadingFramentBase {
                     data.addEntry(new Entry(codedState / 10, set.getEntryCount(), RegisterName.ChargeState), 2);
                     if (showWhizbangCurrent) {
                         data.addEntry(new Entry(batteryCurrent, set.getEntryCount(), RegisterName.WhizbangBatCurrent), 3);
+                        data.addEntry(new Entry(soc, set.getEntryCount(), RegisterName.SOC), 4);
                     }
                     // let the chart know it's data has changed
                     mChart.notifyDataSetChanged();
@@ -193,6 +199,21 @@ public class RealTimeChartFragment extends ReadingFramentBase {
         return set;
     }
 
+    private LineDataSet createDODSet() {
+        LineDataSet set = new LineDataSet(null, getString(R.string.PercentCharge));
+        set.setAxisDependency(YAxis.AxisDependency.RIGHT);
+        set.setColor(Color.WHITE);
+        set.setLineWidth(2f);
+        set.setDrawCircles(false);
+        set.setFillAlpha(65);
+        set.setHighLightColor(Color.rgb(244, 117, 117));
+        set.setValueTextColor(Color.BLACK);
+        set.setValueTextSize(9f);
+        set.setDrawValues(false);
+        set.setHighlightEnabled(true);
+        return set;
+    }
+
     private LineDataSet createStateSet() {
         LineDataSet set = new LineDataSet(null, getString(R.string.StateOfChargeTabTitle));
         set.setColor(Color.BLUE);
@@ -216,6 +237,8 @@ public class RealTimeChartFragment extends ReadingFramentBase {
         data.addDataSet(set);
         if (showWhizbangCurrent) {
             set = createBatteryCurrentSet();
+            data.addDataSet(set);
+            set = createDODSet();
             data.addDataSet(set);
         }
         return set;

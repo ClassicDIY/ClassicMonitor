@@ -10,4 +10,8 @@
     <dimen name="textSizeSmall">4sp</dimen>
     <dimen name="navigation_drawer_width">240dp</dimen>
     <dimen name="pagemargin">16dp</dimen>
+    <dimen name="SOCBarWidth">2sp</dimen>
+    <dimen name="SOCRimWidth">4sp</dimen>
+    <dimen name="BigSOCBarWidth">8sp</dimen>
+    <dimen name="BigSOCRimWidth">16sp</dimen>
 </resources>

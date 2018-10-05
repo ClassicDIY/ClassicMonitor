@@ -8,11 +8,12 @@ import android.os.Parcelable;
  */
 public class RecordEntry implements Parcelable {
 
-    public RecordEntry(float v, float sc, float bc, int s, long t) {
+    public RecordEntry(float v, float sc, float bc, int s, int d, long t) {
         volt = v;
         supplyCurrent = sc;
         batteryCurrent = bc;
         state = s;
+        dod = d;
         time = t;
     }
 
@@ -21,6 +22,7 @@ public class RecordEntry implements Parcelable {
         supplyCurrent = in.readFloat();
         batteryCurrent = in.readFloat();
         state = in.readInt();
+        dod = in.readInt();
         time = in.readLong();
     }
 
@@ -28,6 +30,7 @@ public class RecordEntry implements Parcelable {
     public float supplyCurrent;
     public float batteryCurrent;
     public int state;
+    public int dod;
     public long time;
 
     @Override
@@ -41,6 +44,7 @@ public class RecordEntry implements Parcelable {
         dest.writeFloat(supplyCurrent);
         dest.writeFloat(batteryCurrent);
         dest.writeInt(state);
+        dest.writeInt(dod);
         dest.writeLong(time);
     }
 

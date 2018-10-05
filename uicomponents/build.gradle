@@ -2,10 +2,10 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "23.0.3"
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -19,7 +19,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:23.+'
-    compile 'com.android.support:support-v13:23.+'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+//    compile 'com.android.support:support-v4:23.+'
+//    compile 'com.android.support:support-v13:23.+'
+    implementation 'com.android.support:support-compat:28.+'
+    implementation 'com.android.support:support-v13:28.+'
 }
