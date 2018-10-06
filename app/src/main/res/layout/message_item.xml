@@ -16,6 +16,7 @@
 
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -37,12 +38,12 @@
         android:layout_height="wrap_content"
         android:layout_weight="90"
         android:inputType="none"
+        android:paddingLeft="10sp"
+        android:shadowColor="@color/material_blue_grey_800"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1"
         android:singleLine="true"
-        android:textColor="@color/text_primary_inverse"
-        android:shadowColor="@color/text_primary"
-        android:shadowDx="2"
-        android:shadowDy="2"
-        android:shadowRadius="2"
-        android:textSize="@dimen/textSizeXLarge"
-        android:paddingLeft="10sp"/>
+        android:textColor="@color/black_87"
+        android:textSize="@dimen/textSizeXLarge" />
 </LinearLayout>

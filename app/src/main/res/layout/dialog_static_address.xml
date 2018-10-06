@@ -43,7 +43,7 @@
         android:layout_marginBottom="4dp"
         android:hint="@string/dialog_port_hint"
         android:text="502"
-        android:layout_weight="20" />
+        android:layout_weight="25" />
 
     <EditText
         android:id="@+id/ipAddress"
@@ -55,8 +55,7 @@
         android:layout_marginBottom="16dp"
         android:hint="@string/dialog_ipaddress_hint"
         android:singleLine="true"
-        android:layout_weight="20"
-        android:autoText="true" />
+        android:layout_weight="25" />
 
 
 </LinearLayout>
