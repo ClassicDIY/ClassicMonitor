@@ -55,6 +55,16 @@ Release notes:
 
 -----------------
 
+version 2.5.5
+
+<ul>
+<li>Update to API 28</li>
+<li>Added charge % to live chart</li>
+<li>Added Reason for Resting to Messages</li>
+</ul>
+
+-----------------
+
 version 2.5.1
 
 <ul>
