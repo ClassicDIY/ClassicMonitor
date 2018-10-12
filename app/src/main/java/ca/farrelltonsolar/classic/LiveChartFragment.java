@@ -37,13 +37,13 @@ import org.joda.time.format.DateTimeFormatter;
 /**
  * This fragment displays the power gauges
  */
-public class RealTimeChartFragment extends ReadingFramentBase {
+public class LiveChartFragment extends ReadingFramentBase {
 
     public static int TabTitle = R.string.RealTimeChartTabTitle;
     private CustomLineChart mChart;
     private boolean showWhizbangCurrent;
 
-    public RealTimeChartFragment() {
+    public LiveChartFragment() {
         super(R.layout.real_time_chart);
         ChargeController controller = MonitorApplication.chargeControllers().getCurrentChargeController();
         showWhizbangCurrent = controller != null && controller.hasWhizbang();
@@ -81,12 +81,17 @@ public class RealTimeChartFragment extends ReadingFramentBase {
         leftAxis.setTextSize(14f);
         leftAxis.setLabelCount(10, false);
         YAxis rightAxis = mChart.getAxisRight();
-        rightAxis.setTextColor(Color.BLACK);
-        rightAxis.setDrawGridLines(false);
-        rightAxis.setTextSize(14f);
-        rightAxis.setLabelCount(10, false);
-        rightAxis.setAxisMaxValue(100);
-        rightAxis.setAxisMinValue(0);
+        if (showWhizbangCurrent) {
+            rightAxis.setTextColor(Color.BLACK);
+            rightAxis.setDrawGridLines(false);
+            rightAxis.setTextSize(14f);
+            rightAxis.setLabelCount(10, false);
+            rightAxis.setAxisMaxValue(100);
+            rightAxis.setAxisMinValue(0);
+        }
+        else {
+            rightAxis.setEnabled(false);
+        }
 
         ILineDataSet set = data.getDataSetByIndex(0);
         if (set == null) {

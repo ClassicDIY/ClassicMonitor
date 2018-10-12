@@ -112,7 +112,7 @@ public class MonitorActivity extends AppCompatActivity {
                 tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
                 tabStripAdapter.addTab("Energy", EnergyFragment.TabTitle, EnergyFragment.class, null);
             }
-            tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, RealTimeChartFragment.class, null);
+            tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, LiveChartFragment.class, null);
             tabStripAdapter.addTab("Temperature", TemperatureFragment.TabTitle, TemperatureFragment.class, null);
             tabStripAdapter.addTab("DayChart", R.string.DayChartTabTitle, DayLogChart.class, null);
             tabStripAdapter.addTab("HourChart", R.string.HourChartTabTitle, HourLogChart.class, null);
@@ -126,14 +126,14 @@ public class MonitorActivity extends AppCompatActivity {
             if (cc.hasWhizbang()) {
                 tabStripAdapter.addTab("StateOfCharge", StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
             }
-            tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, RealTimeChartFragment.class, null);
+            tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, LiveChartFragment.class, null);
             tabStripAdapter.addTab("Info", R.string.InfoTabTitle, InfoFragment.class, null);
             tabStripAdapter.addTab("About", R.string.About, About.class, null);
         }
         else if (cc != null && cc.deviceType() == DeviceType.TriStar) {
             tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
             tabStripAdapter.addTab("Energy", EnergyFragment.TabTitle, EnergyFragment.class, null);
-            tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, RealTimeChartFragment.class, null);
+            tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, LiveChartFragment.class, null);
             tabStripAdapter.addTab("Temperature", TemperatureFragment.TabTitle, TemperatureFragment.class, null);
             tabStripAdapter.addTab("About", R.string.About, About.class, null);
         }
@@ -141,7 +141,7 @@ public class MonitorActivity extends AppCompatActivity {
             tabStripAdapter.addTab("Power", PowerFragment.TabTitle, PowerFragment.class, null);
             tabStripAdapter.addTab("Energy", EnergyFragment.TabTitle, EnergyFragment.class, null);
             tabStripAdapter.addTab("StateOfCharge", StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
-            tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, RealTimeChartFragment.class, null);
+            tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, LiveChartFragment.class, null);
             tabStripAdapter.addTab("Temperature", TemperatureFragment.TabTitle, TemperatureFragment.class, null);
             tabStripAdapter.addTab("DayChart", R.string.DayChartTabTitle, DayLogChart.class, null);
             tabStripAdapter.addTab("HourChart",R.string.HourChartTabTitle, HourLogChart.class, null);

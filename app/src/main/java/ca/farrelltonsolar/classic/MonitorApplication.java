@@ -31,6 +31,7 @@ import android.os.StrictMode;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.Pair;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -101,7 +102,13 @@ public class MonitorApplication extends Application implements Application.Activ
             chargeControllers = new ChargeControllers(context);
         }
         if (chargeControllers.uploadToPVOutput()) {
-            startService(new Intent(this, PVOutputService.class)); // start PVOutputService intent service
+            try {
+                startService(new Intent(this, PVOutputService.class)); // start PVOutputService intent service
+            }
+            catch (Exception ex) {
+                Log.w(getClass().getName(), "Failed to start PVOutput service");
+                Toast.makeText(getApplicationContext(), "Failed to start PVOutput service", Toast.LENGTH_SHORT).show();
+            }
         }
         this.registerActivityLifecycleCallbacks(this);
         bindService(new Intent(this, UDPListener.class), UDPListenerServiceConnection, Context.BIND_AUTO_CREATE);
