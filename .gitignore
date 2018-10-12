@@ -12,11 +12,6 @@
 bin/
 gen/
 
-# Gradle files
-.gradle/
-gradle
-build/
-
 # Local configuration file (sdk path, etc)
 local.properties
 
@@ -28,7 +23,15 @@ proguard/
 
 # idea files
 *.iml
-.idea/
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+
 BlackBerry.txt
 Crashes.txt
 Docs/classic
