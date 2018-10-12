@@ -44,7 +44,7 @@ public class LiveChartFragment extends ReadingFramentBase {
     private boolean showWhizbangCurrent;
 
     public LiveChartFragment() {
-        super(R.layout.real_time_chart);
+        super(R.layout.live_chart);
         ChargeController controller = MonitorApplication.chargeControllers().getCurrentChargeController();
         showWhizbangCurrent = controller != null && controller.hasWhizbang();
     }
