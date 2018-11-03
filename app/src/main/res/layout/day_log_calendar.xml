@@ -9,30 +9,31 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="10">
+        android:paddingTop="2sp"
+        android:paddingBottom="2sp"
+        android:weightSum="100">
 
         <TextView
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="7"
             android:layout_centerInParent="true"
             android:layout_toRightOf="@+id/previous"
+            android:layout_weight="50"
             android:gravity="left"
             android:padding="5dp"
             android:paddingLeft="10dp"
+            android:text="Month Year"
             android:textColor="#669900"
             android:textSize="@dimen/textSizeXLarge"
-            android:textStyle="bold"
-            android:text="Month Year"
-            />
+            android:textStyle="bold" />
 
         <RadioGroup
             android:id="@+id/radio_unit_system"
             android:layout_width="0dp"
-            android:layout_weight="3"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:layout_weight="50"
             android:checkedButton="@+id/radio_unit"
             android:orientation="horizontal"
             android:weightSum="20">
@@ -43,11 +44,11 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="10"
                 android:background="@drawable/custom_radio_button"
+                android:checked="false"
                 android:gravity="center"
                 android:padding="5dp"
                 android:text="@string/system_button"
                 android:textColor="@color/custom_radio_color"
-
                 android:textSize="@dimen/textSizeLarge" />
 
             <RadioButton

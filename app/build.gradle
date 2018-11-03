@@ -28,10 +28,6 @@ android {
 
 }
 dependencies {
-//    compile 'com.android.support:support-v4:23.+'
-//    compile 'com.android.support:appcompat-v7:23.+'
-//    compile 'com.android.support:support-v13:23.+'
-
     implementation 'com.android.support:support-compat:28.+'
     implementation 'com.android.support:appcompat-v7:28.+'
     implementation 'com.android.support:support-v13:28.+'

@@ -113,6 +113,7 @@ public class CalendarAdapter extends BaseAdapter {
         dayView.setClickable(false);
         dayView.setFocusable(false);
         TextView stateView = (TextView) v.findViewById(R.id.state);
+        TextView stateSuffixView = (TextView) v.findViewById(R.id.stateSuffix);
         TextView floatView = (TextView) v.findViewById(R.id.isfloat);
         TextView hiPower = (TextView) v.findViewById(R.id.hiPower);
         TextView hiTemp = (TextView) v.findViewById(R.id.hiTemp);
@@ -127,11 +128,12 @@ public class CalendarAdapter extends BaseAdapter {
                     int dif = Days.daysBetween(cellDate, today).getDays() - 1;
                     if (powerDays != null) {
                         if (dif >= 0 && dif < powerDays.length) {
-                            String t = String.valueOf(powerDays[dif] / 10.0f) + " kWh";
+                            String t = String.valueOf(powerDays[dif] / 10.0f);
                             if (floatDays[dif] > 0) {
                                 floatView.setText(context.getString(R.string.CalendarFloat));
                             }
                             stateView.setText(t);
+                            stateSuffixView.setText(" kWh");
                         }
                     }
                     if (highPowerDays != null) {
