@@ -299,5 +299,40 @@ public class ChargeControllerInfo implements Serializable {
         }
     }
 
+    public ChargeControllerTransfer GetTransfer() {
+        ChargeControllerTransfer tranfer = new ChargeControllerTransfer();
+        tranfer.unitID = unitID();
+        tranfer.deviceName = deviceName();
+        tranfer.hasWhizbang = hasWhizbang();
+        tranfer.deviceType = deviceType;
+        tranfer.model = model;
+        tranfer.lastVOC = lastVOC;
+        tranfer.appVersion = appVersion;
+        tranfer.netVersion = netVersion;
+        tranfer.buildDate = buildDate;
+        tranfer.nominalBatteryVoltage = nominalBatteryVoltage;
+        tranfer.mpptMode = mpptMode;
+        tranfer.endingAmps = endingAmps;
+        return tranfer;
+    }
+
+    public void LoadTransfer(ChargeControllerTransfer tranfer) {
+        unitID = tranfer.unitID;
+        deviceName = tranfer.deviceName;
+        hasWhizbang = tranfer.hasWhizbang;
+        deviceType = tranfer.deviceType;
+        model= tranfer.model;
+        lastVOC = tranfer.lastVOC;
+        appVersion = tranfer.appVersion;
+        netVersion = tranfer.netVersion;
+        buildDate = tranfer.buildDate;
+        nominalBatteryVoltage = tranfer.nominalBatteryVoltage;
+        mpptMode = tranfer.mpptMode;
+        endingAmps = tranfer.endingAmps;
+        isCurrent = true;
+        isReachable = true;
+        deviceIpAddress = "MQTT broker";
+        return;
+    }
 }
 

@@ -72,6 +72,9 @@
 <tr><td>
 <a href="#PortForwarding">Access your classic over the internet</a>
 </td></tr>
+<tr><td>
+<a href="#MQTT">Access your classic over the internet using MQTT</a>
+</td></tr>
 
 </table>
 
@@ -472,6 +475,46 @@
 	</p>
 	</div>
 
+		
+	<hr style="page-break-before:always;">
+    <a id="MQTT"></a>
+	<h2 class="text-center">Access your classic over the internet using MQTT</h2>
+
+	<div class="center">	
+	<p>
+		MQTT stands for MQ Telemetry Transport. It is a publish/subscribe, extremely simple and lightweight messaging protocol, designed for constrained devices and low-bandwidth, high-latency or unreliable networks.
+		The app can be setup as a MQTT publisher or subscriber, this setup allows you to view the classic data anywhere on the internet without having to setup port forwarding in your router.
+		Two Android devices are required, the 'publisher' is on your local network that reads the data from the classic using the Modbus protocol as usual, it will publish the data to a MQTT broker which normally resides in the 'cloud'.
+		A number of services exist both free and paid like <a href="http://www.dioty.co/" target="_blank">DIoTY</a> and <a href="https://aws.amazon.com/iot-core/" target="_blank">Amazon IOT core</a>.
+		A second Android device is setup as a subsciber that will consume the data from the MQTT broker and display the information as it does on the publisher.
+		Currently, the Day, Hour logs and calendar are not supported on the subscriber.
+	</p>
+	</div>
+	<br>
+		<div class="center">	
+	<p>
+		Here is an example setup using <a href="http://www.dioty.co/" target="_blank">DIoTY</a>. When you create an account on their site, they will send you an email with the required information to setup the app.
+		The publisher should be connected to your classic on the local network as usual, set the MQTT mode to 'MQTT Publisher' along with the other information in the email. 
+		The 'Publisher' device needs to be plugged in and configured to 'stay awake when charging', this setting is found under 'System->Advanced->Developer Options' on native android devices.
+		For the subscriber, you need to uncheck 'Auto detect classic' and remove any connected classics in the nav bar by sliding the entry to the right, restart the app for good measure.
+		Set the MQTT mode to 'MQTT Subscriber' along with the other information in the email from dioty.co.
+	</p>
+	</div>
+	<br>
+	<img class="center_image" alt="MQTT.PNG" src="images_en/MQTT.png"  title="">
+	<br>
+	
+		<br>
+		<div class="center">	
+	<p>
+		There are a number of free MQTT viewer application you can use to verify the traffic being sent to the broker, I used <a href="https://mqttfx.jensd.de/" target="_blank">MQTT.fx</a> on windows 10.
+		Subscribe to "/'root topic'/classic/stat/#" and "/'root topic'/classic/cmnd/#" once you connect to the broker in MQTT.fx to view the payloads. 
+	</p>
+	</div>
+	<br>
+	<img class="center_image" alt="MQTTfx.PNG" src="images_en/MQTTfx.png"  title="">
+	<br>
+	
 </div>
 
 <div class="container text-center">

@@ -114,9 +114,7 @@ public class MonitorActivity extends AppCompatActivity {
             }
             tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, LiveChartFragment.class, null);
             tabStripAdapter.addTab("Temperature", TemperatureFragment.TabTitle, TemperatureFragment.class, null);
-            tabStripAdapter.addTab("DayChart", R.string.DayChartTabTitle, DayLogChart.class, null);
-            tabStripAdapter.addTab("HourChart", R.string.HourChartTabTitle, HourLogChart.class, null);
-            addDayLogCalendar();
+            AddCharts();
             tabStripAdapter.addTab("Info", R.string.InfoTabTitle, InfoFragment.class, null);
             tabStripAdapter.addTab("Messages", R.string.MessagesTabTitle, MessageFragment.class, null);
             tabStripAdapter.addTab("About", R.string.About, About.class, null);
@@ -143,9 +141,7 @@ public class MonitorActivity extends AppCompatActivity {
             tabStripAdapter.addTab("StateOfCharge", StateOfChargeFragment.TabTitle, StateOfChargeFragment.class, null);
             tabStripAdapter.addTab("RealTimeChart", R.string.RealTimeChartTabTitle, LiveChartFragment.class, null);
             tabStripAdapter.addTab("Temperature", TemperatureFragment.TabTitle, TemperatureFragment.class, null);
-            tabStripAdapter.addTab("DayChart", R.string.DayChartTabTitle, DayLogChart.class, null);
-            tabStripAdapter.addTab("HourChart",R.string.HourChartTabTitle, HourLogChart.class, null);
-            addDayLogCalendar();
+            AddCharts();
             tabStripAdapter.addTab("Info", R.string.InfoTabTitle, InfoFragment.class, null);
             tabStripAdapter.addTab("Messages", R.string.MessagesTabTitle, MessageFragment.class, null);
             tabStripAdapter.addTab("About", R.string.About, About.class, null);
@@ -161,6 +157,15 @@ public class MonitorActivity extends AppCompatActivity {
             pvOutput.setVisible(MonitorApplication.chargeControllers().uploadToPVOutput());
         }
         return true;
+    }
+
+    private void AddCharts() {
+        // no chart data over MQTT yet
+        if (MonitorApplication.chargeControllers().mqttType() != MQTT_Type.Subscriber) {
+            tabStripAdapter.addTab("DayChart", R.string.DayChartTabTitle, DayLogChart.class, null);
+            tabStripAdapter.addTab("HourChart", R.string.HourChartTabTitle, HourLogChart.class, null);
+            addDayLogCalendar();
+        }
     }
 
     private void addDayLogCalendar() {

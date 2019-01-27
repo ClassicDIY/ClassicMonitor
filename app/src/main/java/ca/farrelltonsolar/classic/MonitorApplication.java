@@ -16,8 +16,10 @@
 
 package ca.farrelltonsolar.classic;
 
-import android.app.Activity;
 import android.app.Application;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -32,8 +34,20 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
+import android.arch.lifecycle.ProcessLifecycleOwner;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.DisconnectedBufferOptions;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -41,12 +55,15 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static android.arch.lifecycle.Lifecycle.Event.ON_START;
+import static android.arch.lifecycle.Lifecycle.Event.ON_STOP;
+
 /**
  * Created by Graham on 26/12/13.
  */
-public class MonitorApplication extends Application implements Application.ActivityLifecycleCallbacks {
-    private static Context context;
 
+public class MonitorApplication extends Application implements LifecycleObserver {
+    private static MonitorApplication instance;
     static Map<Integer, String> chargeStates = new HashMap<Integer, String>();
     static Map<Integer, String> chargeStateTitles = new HashMap<Integer, String>();
     static Map<Integer, String> mpptModes = new HashMap<Integer, String>();
@@ -55,33 +72,25 @@ public class MonitorApplication extends Application implements Application.Activ
     static UDPListener UDPListenerService;
     static boolean isUDPListenerServiceBound = false;
     private static ChargeControllers chargeControllers;
-    private static Gson GSON = new Gson();
-    ComplexPreferences configuration;
-    WifiManager.WifiLock wifiLock;
+    private GsonBuilder gsonBuilder;
     ModbusService modbusService;
     static boolean isModbusServiceBound = false;
-    private Timer disconnectTimer;
+    WifiManager.WifiLock wifiLock;
+    private MqttAndroidClient mqttClient;
+    private String statTopic;
+    private String cmndTopic;
+    private long mqttPublishPeriod;
+    private boolean mqttIdle = true;
+    private Timer mqttWakeTimer;
 
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-            if (isUDPListenerServiceBound) {
-                UDPListenerService.stopListening();
-                unbindService(UDPListenerServiceConnection);
-            }
-            if (isModbusServiceBound) {
-                unbindService(modbusServiceConnection);
-            }
-        } catch (Exception ex) {
-            Log.w(getClass().getName(), "onActivityDestroyed exception ex: " + ex);
-        }
-        super.finalize();
+    public MonitorApplication() {
+        super();
     }
 
     public void onCreate() {
         super.onCreate();
 
-        MonitorApplication.context = getApplicationContext();
+        instance = this;
         if (Constants.DEVELOPER_MODE) {
             StrictMode.enableDefaults();
         }
@@ -90,34 +99,382 @@ public class MonitorApplication extends Application implements Application.Activ
         InitializeMPPTModes();
         InitializeMessageLookup();
         InitializeReasonsForRestingLookup();
+        gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapterFactory(new BundleTypeAdapterFactory());
         try {
-            configuration = ComplexPreferences.getComplexPreferences(this, null, Context.MODE_PRIVATE);
+            ComplexPreferences configuration = ComplexPreferences.getComplexPreferences(this, null, Context.MODE_PRIVATE);
             chargeControllers = configuration.getObject("devices", ChargeControllers.class);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             Log.w(getClass().getName(), "getComplexPreferences failed to load");
             chargeControllers = null;
         }
         if (chargeControllers == null) { // save empty collection
-            chargeControllers = new ChargeControllers(context);
+            chargeControllers = new ChargeControllers(getApplicationContext());
         }
-        if (chargeControllers.uploadToPVOutput()) {
-            try {
-                startService(new Intent(this, PVOutputService.class)); // start PVOutputService intent service
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
+        if (chargeControllers.mqttType() != MQTT_Type.Subscriber) {  // do not use PVOutput & Modbus when MQTT subscriber
+            WifiManager wifi = (WifiManager) MonitorApplication.getAppContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            chargeControllers = MonitorApplication.chargeControllers();
+            if (chargeControllers.mqttType() != MQTT_Type.Subscriber) {
+                if (wifi != null) {
+                    wifiLock = wifi.createWifiLock("ClassicMonitor");
+                }
             }
-            catch (Exception ex) {
-                Log.w(getClass().getName(), "Failed to start PVOutput service");
-                Toast.makeText(getApplicationContext(), "Failed to start PVOutput service", Toast.LENGTH_SHORT).show();
+            if (chargeControllers.uploadToPVOutput()) {
+                try {
+                    startService(new Intent(this, PVOutputService.class)); // start PVOutputService intent service
+                } catch (Exception ex) {
+                    Log.w(getClass().getName(), "Failed to start PVOutput service");
+                    Toast.makeText(getApplicationContext(), "Failed to start PVOutput service", Toast.LENGTH_SHORT).show();
+                }
             }
+            bindService(new Intent(this, UDPListener.class), UDPListenerServiceConnection, Context.BIND_AUTO_CREATE);
+            bindService(new Intent(this, ModbusService.class), modbusServiceConnection, Context.BIND_AUTO_CREATE);
         }
-        this.registerActivityLifecycleCallbacks(this);
-        bindService(new Intent(this, UDPListener.class), UDPListenerServiceConnection, Context.BIND_AUTO_CREATE);
-        WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
-        if (wifi != null){
-            wifiLock = wifi.createWifiLock("ClassicMonitor");
+        String rootTopic = chargeControllers.mqttRootTopic();
+        if (rootTopic.endsWith("/") == false) {
+            rootTopic += "/";
         }
-        bindService(new Intent(this, ModbusService.class), modbusServiceConnection, Context.BIND_AUTO_CREATE);
+        statTopic = String.format("%s%s", rootTopic, Constants.STAT_TOPIC_SUFFIX);
+        cmndTopic = String.format("%s%s", rootTopic, Constants.CMND_TOPIC_SUFFIX);
+        mqttPublishPeriod = System.currentTimeMillis();
         Log.d(getClass().getName(), "onCreate complete");
+    }
+
+    @OnLifecycleEvent(ON_START)
+    void onStart(LifecycleOwner source) {
+        Log.d(getClass().getName(), "onStart event");
+        if (wifiLock != null) {
+            wifiLock.acquire();
+        }
+        if (chargeControllers.mqttType() != MQTT_Type.Subscriber) {
+            LocalBroadcastManager.getInstance(this).registerReceiver(addChargeControllerReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER));
+            LocalBroadcastManager.getInstance(this).registerReceiver(removeChargeControllerReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_REMOVE_CHARGE_CONTROLLER));
+            if (isModbusServiceBound && modbusService != null) {
+                modbusService.monitorChargeControllers(chargeControllers());
+            } else {
+                bindService(new Intent(this, ModbusService.class), modbusServiceConnection, Context.BIND_AUTO_CREATE);
+            }
+            if (isUDPListenerServiceBound && UDPListenerService != null) {
+                if (chargeControllers().autoDetectClassic()) {
+                    UDPListenerService.listen(chargeControllers);
+                }
+            } else {
+                bindService(new Intent(this, UDPListener.class), UDPListenerServiceConnection, Context.BIND_AUTO_CREATE);
+            }
+        }
+        try {
+            connectToMQTT();
+        } catch (MqttException e) {
+            Log.w(getClass().getName(), "connectToMQTT exception");
+            e.printStackTrace();
+        }
+
+    }
+
+    @OnLifecycleEvent(ON_STOP)
+    void onStop(LifecycleOwner source) {
+        Log.d(getClass().getName(), "onStop event");
+        if (wifiLock != null) {
+            wifiLock.release();
+        }
+        ComplexPreferences configuration = ComplexPreferences.getComplexPreferences(MonitorApplication.getAppContext(), null, Context.MODE_PRIVATE);
+        if (configuration != null) {
+            configuration.putObject("devices", chargeControllers);
+            configuration.commit();
+        }
+        if (chargeControllers.mqttType() != MQTT_Type.Subscriber) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(addChargeControllerReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(removeChargeControllerReceiver);
+            try {
+                if (isModbusServiceBound && modbusService != null) {
+                    modbusService.stopMonitoringChargeControllers();
+                }
+                if (isUDPListenerServiceBound && UDPListenerService != null) {
+                    UDPListenerService.stopListening();
+                }
+            } catch (Exception e) {
+                Log.w(getClass().getName(), "stop service exception");
+                e.printStackTrace();
+            }
+        }
+        try {
+            unSubscribe();
+            IMqttToken token = mqttClient.disconnect();
+//            token.waitForCompletion();
+//            mqttClient.unregisterResources();
+            Log.d(getClass().getName(), "mqttClient disconnected");
+        } catch (Exception e) {
+            Log.w(getClass().getName(), "unSubscribe exception");
+            e.printStackTrace();
+        }
+    }
+
+    private boolean connectToMQTT() throws MqttException {
+        boolean rVal = false;
+        if (chargeControllers.mqttType() != MQTT_Type.Off) {
+            try {
+                if (mqttClient != null) {
+                    rVal = mqttClient.isConnected();
+                }
+            } catch (Exception ex) {
+                mqttClient = null;
+            }
+            if (rVal == false) {
+                Log.d(getClass().getName(), "connectToMQTT");
+                String brokerUrl = String.format("tcp://%s:%d", chargeControllers.mqttBrokerHost(), chargeControllers.mqttPort());
+                if (mqttClient == null) {
+                    mqttClient = new MqttAndroidClient(MonitorApplication.getAppContext(), brokerUrl, generateClientId());
+                    Log.d(getClass().getName(), "creating new mqttClient");
+                }
+                MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
+                mqttConnectOptions.setCleanSession(true);
+                mqttConnectOptions.setAutomaticReconnect(true);
+                //mqttConnectOptions.setWill(Constants.PUBLISH_TOPIC, "I am going offline".getBytes(), 1, true);
+                mqttConnectOptions.setUserName(chargeControllers.mqttUser());
+                mqttConnectOptions.setPassword(chargeControllers.mqttPassword().toCharArray());
+                IMqttToken token = mqttClient.connect(mqttConnectOptions);
+                token.setActionCallback(new IMqttActionListener() {
+                    @Override
+                    public void onSuccess(IMqttToken asyncActionToken) {
+                        DisconnectedBufferOptions disconnectedBufferOptions = new DisconnectedBufferOptions();
+                        disconnectedBufferOptions.setBufferEnabled(true);
+                        disconnectedBufferOptions.setBufferSize(2048);
+                        disconnectedBufferOptions.setPersistBuffer(false);
+                        disconnectedBufferOptions.setDeleteOldestMessages(false);
+                        mqttClient.setBufferOpts(disconnectedBufferOptions);
+                        Log.d(getClass().getName(), "mqttClient connected");
+                        Subscribe();
+                    }
+
+                    @Override
+                    public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                        Log.w(getClass().getName(), String.format("mqttClient failed to connect: %s", exception.getMessage()));
+                    }
+                });
+                rVal = true;
+            } else {
+                Log.d(getClass().getName(), "already connected To MQTT");
+                Subscribe();
+            }
+        }
+        return rVal;
+    }
+
+    private static String generateClientId() {
+        return Constants.CLIENT_ID + System.currentTimeMillis() * 1000000L;
+    }
+
+    protected BroadcastReceiver mMqttReadingsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (!mqttIdle || mqttPublishPeriod < System.currentTimeMillis()) {
+                try {
+                    Bundle b = intent.getBundleExtra("readings");
+                    Gson gson = gsonBuilder.create();
+                    String json = gson.toJson(b);
+                    MqttMessage message = new MqttMessage(json.getBytes("UTF-8"));
+                    message.setId(320);
+                    message.setRetained(false);
+                    message.setQos(1);
+                    mqttClient.publish(String.format("%s/readings", statTopic), message);
+                } catch (Exception e) {
+                    Log.w(getClass().getName(), String.format("Failed to publish payload to MQTT broker, ex: %s", e));
+                    e.printStackTrace();
+                }
+            }
+            if (mqttPublishPeriod < System.currentTimeMillis()) {
+                mqttPublishPeriod = System.currentTimeMillis() + (Constants.MQTT_IDLE_DELAY * 10); // idle: publish every 10 times the MQTT_IDLE_DELAY
+                mqttIdle = true;
+            }
+        }
+    };
+
+    private void WakeMQTT(String cmnd) {
+        try {
+            Gson gson = gsonBuilder.create();
+            String json = String.format("{\"%s\"}", cmnd);
+            MqttMessage message = new MqttMessage(json.getBytes("UTF-8"));
+            message.setId(321);
+            message.setRetained(false);
+            message.setQos(1);
+            mqttClient.publish(String.format("%s/%s", cmndTopic, cmnd), message);
+        } catch (Exception e) {
+            Log.w(getClass().getName(), String.format("Failed to publish payload to MQTT broker, ex: %s", e));
+            e.printStackTrace();
+        }
+
+    }
+
+    private void Subscribe() {
+        if (chargeControllers.mqttType() == MQTT_Type.Publisher) {
+            Log.d(getClass().getName(), "Subscribe to MQTT " + cmndTopic);
+            LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).registerReceiver(mMqttReadingsReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS));
+            try {
+                IMqttToken token = mqttClient.subscribe(String.format("%s/#", cmndTopic), 1);
+                token.setActionCallback(new IMqttActionListener() {
+                    String topic = String.format("%s/#", cmndTopic);
+
+                    @Override
+                    public void onSuccess(IMqttToken iMqttToken) {
+                        Log.d(getClass().getName(), "Subscribe Successfully " + topic);
+                        mqttClient.setCallback(new MqttCallbackExtended() {
+                            @Override
+                            public void connectComplete(boolean b, String s) {
+                                Log.d(getClass().getName(), "connectComplete " + topic);
+                            }
+
+                            @Override
+                            public void connectionLost(Throwable throwable) {
+                                Log.w(getClass().getName(), "connectionLost " + topic);
+                            }
+
+                            @Override
+                            public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
+
+                                try {
+                                    Gson gson = gsonBuilder.create();
+                                    if (topic.endsWith("info")) {
+                                        ChargeControllerTransfer controller = chargeControllers.getCurrentChargeController().GetTransfer();
+                                        String json = gson.toJson(controller);
+                                        MqttMessage message = new MqttMessage(json.getBytes("UTF-8"));
+                                        message.setId(322);
+                                        message.setRetained(false);
+                                        message.setQos(1);
+                                        mqttClient.publish(String.format("%s/info", statTopic), message);
+                                        mqttIdle = false; // publish readings every second for 5 minutes
+                                        mqttPublishPeriod = System.currentTimeMillis() + Constants.MQTT_IDLE_DELAY;
+                                    } else if (topic.endsWith("wake")) {
+                                        mqttIdle = false; // publish readings every second for 5 minutes
+                                        mqttPublishPeriod = System.currentTimeMillis() + Constants.MQTT_IDLE_DELAY;
+                                    }
+                                } catch (Exception e) {
+                                    Log.w(getClass().getName(), "MQTT deserialize Exception " + topic);
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+                                Log.d(getClass().getName(), "MQTT Publisher deliveryComplete ");
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(IMqttToken iMqttToken, Throwable throwable) {
+                        Log.w(getClass().getName(), "Subscribe Failed " + topic);
+
+                    }
+                });
+            } catch (Exception e) {
+                Log.w(getClass().getName(), String.format("Subscribe Exception %s/#", cmndTopic));
+                e.printStackTrace();
+            }
+        } else if (chargeControllers.mqttType() == MQTT_Type.Subscriber) {
+            Log.d(getClass().getName(), "Subscribe to MQTT " + statTopic);
+            try {
+                IMqttToken token = mqttClient.subscribe(String.format("%s/#", statTopic), 1);
+                token.setActionCallback(new IMqttActionListener() {
+                    String topic = String.format("%s/#", statTopic);
+
+                    @Override
+                    public void onSuccess(IMqttToken iMqttToken) {
+                        Log.d(getClass().getName(), "Subscribe Successfully " + topic);
+                        mqttClient.setCallback(new MqttCallbackExtended() {
+                            @Override
+                            public void connectComplete(boolean b, String s) {
+                                Log.d(getClass().getName(), "connectComplete " + topic);
+                            }
+
+                            @Override
+                            public void connectionLost(Throwable throwable) {
+                                Log.w(getClass().getName(), "connectionLost " + topic);
+                            }
+
+                            @Override
+                            public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
+
+                                try {
+                                    String str = mqttMessage.toString();
+                                    Gson gson = gsonBuilder.create();
+                                    if (topic.endsWith("readings")) {
+
+                                        Bundle b = gson.fromJson(str, Bundle.class);
+                                        Readings readings = new Readings(b);
+                                        readings.broadcastReadings(MonitorApplication.getAppContext(), "MQTT", Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS);
+                                    } else if (topic.endsWith("info")) {
+                                        ChargeControllerTransfer t = gson.fromJson(str, ChargeControllerTransfer.class);
+                                        if (chargeControllers.count() == 0) {
+                                            ChargeControllerInfo c = new ChargeControllerInfo();
+                                            c.setIsCurrent(true);
+                                            c.setIsReachable(true);
+                                            c.LoadTransfer(t);
+                                            chargeControllers.add(c);
+                                        } else {
+                                            chargeControllers.getCurrentChargeController().LoadTransfer(t);
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    Log.w(getClass().getName(), "MQTT deserialize Exception " + topic);
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+                                Log.d(getClass().getName(), "MQTT Subscriber deliveryComplete ");
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(IMqttToken iMqttToken, Throwable throwable) {
+                        Log.w(getClass().getName(), "Subscribe Failed " + topic);
+
+                    }
+                });
+                WakeMQTT("info");
+                mqttWakeTimer = new Timer();
+                mqttWakeTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        WakeMQTT("wake");
+                    }
+
+                }, (Constants.MQTT_IDLE_DELAY - 2000), (Constants.MQTT_IDLE_DELAY - 2000));
+            } catch (Exception e) {
+                Log.w(getClass().getName(), String.format("Subscribe Exception %s/#", statTopic));
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void unSubscribe() throws MqttException {
+        if (mqttClient.isConnected()) {
+            String topic = statTopic;
+            if (chargeControllers.mqttType() == MQTT_Type.Publisher) {
+                topic = cmndTopic;
+                LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).unregisterReceiver(mMqttReadingsReceiver);
+            }
+            IMqttToken token = mqttClient.unsubscribe(topic);
+            token.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken iMqttToken) {
+                    Log.d(getClass().getName(), "UnSubscribe Successfully ");
+                }
+
+                @Override
+                public void onFailure(IMqttToken iMqttToken, Throwable throwable) {
+                    Log.w(getClass().getName(), "UnSubscribe Failed ");
+                }
+            });
+        }
+        if (mqttWakeTimer != null) {
+            mqttWakeTimer.cancel();
+            mqttWakeTimer.purge();
+            Log.d(getClass().getName(), "mqttWakeTimer.purge");
+        }
     }
 
     public static Pair<Severity, String> getMessage(int cs) {
@@ -149,6 +506,7 @@ public class MonitorApplication extends Application implements Application.Activ
         }
         return null;
     }
+
     private void InitializeReasonsForRestingLookup() {
         reasonsForResting.put(1, new Pair(Severity.info, getString(R.string.reasonsForResting_message_1)));
         reasonsForResting.put(2, new Pair(Severity.alert, getString(R.string.reasonsForResting_message_2)));
@@ -189,7 +547,7 @@ public class MonitorApplication extends Application implements Application.Activ
     }
 
     public static Context getAppContext() {
-        return MonitorApplication.context;
+        return instance.getApplicationContext();
     }
 
     public static ChargeControllers chargeControllers() {
@@ -280,6 +638,7 @@ public class MonitorApplication extends Application implements Application.Activ
         }
 
         public void onServiceDisconnected(ComponentName arg0) {
+            Log.d(getClass().getName(), "ModbusService onServiceDisconnected");
             isModbusServiceBound = false;
             modbusService = null;
             Log.d(getClass().getName(), "ModbusService ServiceDisconnected");
@@ -290,7 +649,8 @@ public class MonitorApplication extends Application implements Application.Activ
     private BroadcastReceiver addChargeControllerReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            ChargeControllerInfo cc = GSON.fromJson(intent.getStringExtra("ChargeController"), ChargeController.class);
+            Gson gson = gsonBuilder.create();
+            ChargeControllerInfo cc = gson.fromJson(intent.getStringExtra("ChargeController"), ChargeController.class);
             Log.d(getClass().getName(), String.format("adding new controller to list (%s)", cc.toString()));
             chargeControllers.add(cc);
             modbusService.monitorChargeControllers(chargeControllers());
@@ -318,82 +678,11 @@ public class MonitorApplication extends Application implements Application.Activ
             return;
         }
         if (chargeControllers.setCurrent(device)) {
-            LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(context);
+            LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(getAppContext());
             Intent pkg = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER);
             pkg.putExtra("DifferentController", true);
             broadcaster.sendBroadcast(pkg); //notify activity
         }
-    }
-
-    @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        if (wifiLock != null) {
-            wifiLock.acquire();
-        }
-    }
-
-    @Override
-    public void onActivityDestroyed(Activity activity) {
-        if (wifiLock != null) {
-            wifiLock.release();
-        }
-    }
-
-    @Override
-    public void onActivityStarted(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivityResumed(Activity activity) {
-        if (activity.getLocalClassName().compareTo("MonitorActivity") == 0) {
-            LocalBroadcastManager.getInstance(this).registerReceiver(addChargeControllerReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_ADD_CHARGE_CONTROLLER));
-            LocalBroadcastManager.getInstance(this).registerReceiver(removeChargeControllerReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_REMOVE_CHARGE_CONTROLLER));
-            if (disconnectTimer != null) {
-                disconnectTimer.cancel();
-                disconnectTimer.purge();
-            }
-            if (isModbusServiceBound && modbusService != null){
-                modbusService.monitorChargeControllers(chargeControllers());
-            }
-            else {
-                bindService(new Intent(this, ModbusService.class), modbusServiceConnection, Context.BIND_AUTO_CREATE);
-            }
-        }
-    }
-
-    @Override
-    public void onActivityPaused(Activity activity) {
-        if (activity.getLocalClassName().compareTo("MonitorActivity") == 0) {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(addChargeControllerReceiver);
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(removeChargeControllerReceiver);
-            disconnectTimer = new Timer();
-            disconnectTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    // this code will be executed after 10 seconds unless Activity Resumed
-                    modbusService.stopMonitoringChargeControllers();
-                }
-            }, 10000);
-        }
-    }
-
-    @Override
-    public void onActivityStopped(Activity activity) {
-        Log.d(getClass().getName(), "saving chargeController settings");
-        if (configuration != null) {
-            configuration.putObject("devices", chargeControllers);
-            configuration.commit();
-        }
-    }
-
-    public MonitorApplication() {
-        super();
-    }
-
-    @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
     }
 
     // get supported language code, default to english
@@ -405,7 +694,7 @@ public class MonitorApplication extends Application implements Application.Activ
             case "de":
             case "es":
             case "fr":
-            break;
+                break;
             default:
                 rVal = "en";
                 break;

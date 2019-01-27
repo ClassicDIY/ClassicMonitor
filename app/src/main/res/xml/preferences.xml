@@ -47,8 +47,7 @@
             android:key="APIKey"
             android:title="@string/APIKeyTitle"
             android:inputType="text"
-            android:maxLength="40"
-            android:defaultValue="" />
+            android:maxLength="40"/>
 
         <EditTextPreference
             android:dialogTitle="@string/SIDDialogTitle"
@@ -58,12 +57,54 @@
             android:inputType="numberDecimal"
             android:digits="0123456789"
             android:maxLength="5"
-            android:numeric="decimal"
-            android:defaultValue="" />
+            android:numeric="decimal"/>
         <Preference
             android:title="@string/ClearLogsTitle"
             android:icon="@drawable/ic_action_delete"
             android:key="ResetLogs" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="MQTT">
+
+        <ListPreference
+            android:title="MQTT mode"
+            android:defaultValue="Off"
+            android:key="listPref"/>
+
+        <EditTextPreference
+            android:key="brokerHost"
+            android:title="MQTT broker host name"
+            android:inputType="text"
+            android:maxLength="16"
+            android:defaultValue="mqtt.dioty.co" />
+
+        <EditTextPreference
+            android:key="mqttPort"
+            android:title="MQTT broker port"
+            android:inputType="numberDecimal"
+            android:digits="0123456789"
+            android:maxLength="5"
+            android:numeric="decimal"
+            android:defaultValue="1883" />
+
+        <EditTextPreference
+            android:key="mqttUser"
+            android:title="MQTT User"
+            android:inputType="text"
+            android:maxLength="32"/>
+
+        <EditTextPreference
+            android:key="mqttPassword"
+            android:title="MQTT Password"
+            android:inputType="text"
+            android:maxLength="32" />
+
+        <EditTextPreference
+            android:key="mqttRootTopic"
+            android:title="MQTT Root Topic"
+            android:inputType="text"
+            android:maxLength="32"/>
 
     </PreferenceCategory>
 

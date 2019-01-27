@@ -22,6 +22,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.util.Log;
@@ -38,7 +39,12 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     private CheckBoxPreference systemViewEnabled;
     private EditTextPreference _SID;
     private EditTextPreference _APIKey;
-
+    private ListPreference _mListPreference;
+    private EditTextPreference _brokerHost;
+    private EditTextPreference _mqttPort;
+    private EditTextPreference _mqttUser;
+    private EditTextPreference _mqttPassword;
+    private EditTextPreference _mqttRootTopic;
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -83,6 +89,13 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
                 if (setting != null) {
                     setting.setSID(_SID.getText());
                 }
+                MQTT_Type mqtt = MQTT_Type.valueOf(_mListPreference.getValue());
+                MonitorApplication.chargeControllers().setMQTT_Type(mqtt);
+                MonitorApplication.chargeControllers().setMqttBrokerHost(_brokerHost.getText());
+                MonitorApplication.chargeControllers().setMqttPort(Integer.parseInt(_mqttPort.getText()));
+                MonitorApplication.chargeControllers().setMqttUser(_mqttUser.getText());
+                MonitorApplication.chargeControllers().setMqttPassword(_mqttPassword.getText());
+                MonitorApplication.chargeControllers().setMqttRootTopic(_mqttRootTopic.getText());
                 Settings.this.finish();
             }
         });
@@ -95,7 +108,12 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             systemViewEnabled = (CheckBoxPreference) findPreference(Constants.SystemViewEnabled);
             _SID = (EditTextPreference) findPreference(Constants.SID);
             _APIKey = (EditTextPreference) findPreference(Constants.APIKey);
-
+            _mListPreference = (ListPreference)getPreferenceScreen().findPreference("listPref");
+            _brokerHost = (EditTextPreference) findPreference("brokerHost");
+            _mqttPort = (EditTextPreference) findPreference("mqttPort");
+            _mqttUser = (EditTextPreference) findPreference("mqttUser");
+            _mqttPassword = (EditTextPreference) findPreference("mqttPassword");
+            _mqttRootTopic = (EditTextPreference) findPreference("mqttRootTopic");
             useFahrenheit.setChecked(MonitorApplication.chargeControllers().useFahrenheit());
             autoDetectClassics.setChecked(MonitorApplication.chargeControllers().autoDetectClassic());
             showPopupMessages.setChecked(MonitorApplication.chargeControllers().showPopupMessages());
@@ -111,6 +129,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
                 }
             });
             UploadToPVOutputEnabled(uploadToPVOutput.isChecked());
+
             _APIKey.setSummary(MonitorApplication.chargeControllers().aPIKey());
             PVOutputSetting setting = MonitorApplication.chargeControllers().getPVOutputSetting();
             if (setting != null) {
@@ -125,17 +144,36 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
                 }
             });
 
+            CharSequence[] entries = new CharSequence[]{"Off", "Subscriber", "Publisher"};
+            CharSequence[] entryValues = new CharSequence[]{ MQTT_Type.Off.name(), MQTT_Type.Subscriber.name(), MQTT_Type.Publisher.name() };
+            _mListPreference.setEntries(entries);
+            _mListPreference.setEntryValues(entryValues);
+            _mListPreference.setValueIndex(MonitorApplication.chargeControllers().mqttType().ordinal());
+            _mListPreference.setSummary("MQTT " + _mListPreference.getValue());
+            _brokerHost.setSummary(MonitorApplication.chargeControllers().mqttBrokerHost());
+            _mqttPort.setSummary( Integer.toString(MonitorApplication.chargeControllers().mqttPort()));
+            _mqttUser.setSummary(MonitorApplication.chargeControllers().mqttUser());
+            _mqttPassword.setSummary(MonitorApplication.chargeControllers().mqttPassword());
+            _mqttRootTopic.setSummary(MonitorApplication.chargeControllers().mqttRootTopic());
+            MQTTEnabled();
         } catch (Exception ex) {
             Log.w(getClass().getName(), String.format("settings failed ex: %s", ex));
         }
 
     }
 
-
-
     private void UploadToPVOutputEnabled(boolean isEnabled) {
         _SID.setEnabled(isEnabled);
         _APIKey.setEnabled(isEnabled);
+    }
+
+    private void MQTTEnabled() {
+        boolean isEnabled = (_mListPreference.getEntry().toString() != MQTT_Type.Off.name());
+        _brokerHost.setEnabled(isEnabled);
+        _mqttPort.setEnabled(isEnabled);
+        _mqttUser.setEnabled(isEnabled);
+        _mqttPassword.setEnabled(isEnabled);
+        _mqttRootTopic.setEnabled(isEnabled);
     }
 
     @Override
@@ -163,5 +201,9 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         updatePreferences(findPreference(key));
+        if (key.equals("listPref")) {
+            _mListPreference.setSummary("MQTT " + _mListPreference.getEntry().toString());
+            MQTTEnabled();
+        }
     }
 }

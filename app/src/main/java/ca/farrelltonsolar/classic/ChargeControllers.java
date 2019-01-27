@@ -38,6 +38,12 @@ public final class ChargeControllers {
     private boolean uploadToPVOutput = false;
     private boolean bidirectionalUnitsInWatts;
     private boolean systemViewEnabled = false;
+    private String mqttBrokerHost = "";
+    private int mqttPort;
+    private String mqttUser = "";
+    private String mqttPassword = "";
+    private String mqttRootTopic = "";
+    private MQTT_Type mqttType = MQTT_Type.Off;
     private PVOutputSetting pVOutputSetting = new PVOutputSetting();
 
     // default ctor for de-serialization
@@ -289,4 +295,65 @@ public final class ChargeControllers {
             }
         }
     }
+
+    public synchronized MQTT_Type mqttType() {
+        return mqttType;
+    }
+
+    public synchronized boolean setMQTT_Type(MQTT_Type mqttType) {
+        boolean rVal = this.mqttType != mqttType;
+        this.mqttType = mqttType;
+        return rVal;
+    }
+
+    public synchronized String mqttBrokerHost() {
+        return mqttBrokerHost;
+    }
+
+    public synchronized boolean setMqttBrokerHost(String brokerHost) {
+        boolean rVal = this.mqttBrokerHost != brokerHost;
+        this.mqttBrokerHost = brokerHost;
+        return rVal;
+    }
+
+    public synchronized int mqttPort() {
+        return mqttPort;
+    }
+
+    public synchronized boolean setMqttPort(int mqttPort) {
+        boolean rVal = this.mqttPort != mqttPort;
+        this.mqttPort = mqttPort;
+        return rVal;
+    }
+
+    public synchronized String mqttUser() {
+        return mqttUser;
+    }
+
+    public synchronized boolean setMqttUser(String mqttUser) {
+        boolean rVal = this.mqttUser != mqttUser;
+        this.mqttUser = mqttUser;
+        return rVal;
+    }
+
+    public synchronized String mqttRootTopic() {
+        return mqttRootTopic;
+    }
+
+    public synchronized boolean setMqttRootTopic(String mqttRootTopic) {
+        boolean rVal = this.mqttRootTopic != mqttRootTopic;
+        this.mqttRootTopic = mqttRootTopic;
+        return rVal;
+    }
+
+    public synchronized String mqttPassword() {
+        return mqttPassword;
+    }
+
+    public synchronized boolean setMqttPassword(String mqttPassword) {
+        boolean rVal = this.mqttPassword != mqttPassword;
+        this.mqttPassword = mqttPassword;
+        return rVal;
+    }
+
 }
