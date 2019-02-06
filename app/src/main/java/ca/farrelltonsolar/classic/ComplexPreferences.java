@@ -38,7 +38,7 @@ public class ComplexPreferences {
     private ComplexPreferences(Context context, String namePreferences, int mode) {
         if (namePreferences == null || namePreferences.equals("")) {
 //            namePreferences = context.getPackageName() + getVersion(context) + "_complexPreferences";
-            namePreferences = context.getPackageName() + "211_complexPreferences";
+            namePreferences = context.getPackageName() + "300_complexPreferences";
             this.namePreferences = namePreferences;
         }
         preferences = context.getSharedPreferences(namePreferences, mode);
