@@ -25,10 +25,13 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+
+import static ca.farrelltonsolar.classic.MonitorApplication.getAppContext;
 
 public class Settings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -45,6 +48,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     private EditTextPreference _mqttUser;
     private EditTextPreference _mqttPassword;
     private EditTextPreference _mqttRootTopic;
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -71,6 +75,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             @Override
             //On click function
             public void onClick(View view) {
+                setResult(RESULT_CANCELED);
                 Settings.this.finish();
             }
         });
@@ -79,6 +84,13 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             @Override
             //On click function
             public void onClick(View view) {
+                CONNECTION_TYPE mqtt = CONNECTION_TYPE.valueOf(_mListPreference.getValue());
+                boolean hasChanged = MonitorApplication.chargeControllers().setConnectionType(mqtt);
+                MonitorApplication.chargeControllers().setMqttBrokerHost(_brokerHost.getText());
+                MonitorApplication.chargeControllers().setMqttPort(Integer.parseInt(_mqttPort.getText()));
+                MonitorApplication.chargeControllers().setMqttUser(_mqttUser.getText());
+                MonitorApplication.chargeControllers().setMqttPassword(_mqttPassword.getText());
+                MonitorApplication.chargeControllers().setMqttRootTopic(_mqttRootTopic.getText());
                 MonitorApplication.chargeControllers().setAPIKey(_APIKey.getText());
                 MonitorApplication.chargeControllers().setFahrenheit(useFahrenheit.isChecked());
                 MonitorApplication.chargeControllers().setAutoDetectClassic(autoDetectClassics.isChecked());
@@ -89,13 +101,9 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
                 if (setting != null) {
                     setting.setSID(_SID.getText());
                 }
-                MQTT_Type mqtt = MQTT_Type.valueOf(_mListPreference.getValue());
-                MonitorApplication.chargeControllers().setMQTT_Type(mqtt);
-                MonitorApplication.chargeControllers().setMqttBrokerHost(_brokerHost.getText());
-                MonitorApplication.chargeControllers().setMqttPort(Integer.parseInt(_mqttPort.getText()));
-                MonitorApplication.chargeControllers().setMqttUser(_mqttUser.getText());
-                MonitorApplication.chargeControllers().setMqttPassword(_mqttPassword.getText());
-                MonitorApplication.chargeControllers().setMqttRootTopic(_mqttRootTopic.getText());
+                Intent i =new Intent();
+                i.putExtra("hasChanged", hasChanged);
+                setResult(RESULT_OK, i);
                 Settings.this.finish();
             }
         });
@@ -144,12 +152,12 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
                 }
             });
 
-            CharSequence[] entries = new CharSequence[]{"Off", "Subscriber", "Publisher"};
-            CharSequence[] entryValues = new CharSequence[]{ MQTT_Type.Off.name(), MQTT_Type.Subscriber.name(), MQTT_Type.Publisher.name() };
+            CharSequence[] entries = new CharSequence[]{"Modbus", "MQTT"};
+            CharSequence[] entryValues = new CharSequence[]{ CONNECTION_TYPE.MODBUS.name(), CONNECTION_TYPE.MQTT.name() };
             _mListPreference.setEntries(entries);
             _mListPreference.setEntryValues(entryValues);
-            _mListPreference.setValueIndex(MonitorApplication.chargeControllers().mqttType().ordinal());
-            _mListPreference.setSummary("MQTT " + _mListPreference.getValue());
+            _mListPreference.setValueIndex(MonitorApplication.chargeControllers().getConnectionType().ordinal());
+            _mListPreference.setSummary(_mListPreference.getEntry().toString());
             _brokerHost.setSummary(MonitorApplication.chargeControllers().mqttBrokerHost());
             _mqttPort.setSummary( Integer.toString(MonitorApplication.chargeControllers().mqttPort()));
             _mqttUser.setSummary(MonitorApplication.chargeControllers().mqttUser());
@@ -168,12 +176,14 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     }
 
     private void MQTTEnabled() {
-        boolean isEnabled = (_mListPreference.getEntry().toString() != MQTT_Type.Off.name());
+        boolean isEnabled = _mListPreference.getValue().compareTo(CONNECTION_TYPE.MODBUS.name()) != 0;
         _brokerHost.setEnabled(isEnabled);
         _mqttPort.setEnabled(isEnabled);
         _mqttUser.setEnabled(isEnabled);
         _mqttPassword.setEnabled(isEnabled);
         _mqttRootTopic.setEnabled(isEnabled);
+        isEnabled = _mListPreference.getValue().compareTo(CONNECTION_TYPE.MQTT.name()) != 0;
+        autoDetectClassics.setEnabled(isEnabled);
     }
 
     @Override
@@ -202,7 +212,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         updatePreferences(findPreference(key));
         if (key.equals("listPref")) {
-            _mListPreference.setSummary("MQTT " + _mListPreference.getEntry().toString());
+            _mListPreference.setSummary(_mListPreference.getEntry().toString());
             MQTTEnabled();
         }
     }

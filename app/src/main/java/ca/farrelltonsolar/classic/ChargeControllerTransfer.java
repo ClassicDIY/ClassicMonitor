@@ -14,5 +14,5 @@ public class ChargeControllerTransfer {
     public int nominalBatteryVoltage;
     public int mpptMode;
     public float endingAmps;
-
+    public String macAddress;
 }

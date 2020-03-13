@@ -107,6 +107,12 @@ public class ChargeControllerInfo implements Serializable {
         this.staticIP = staticIP;
     }
 
+    public ChargeControllerInfo(String deviceName) {
+        this.deviceName = deviceName;
+        this.deviceUri = deviceName;
+        this.deviceType = DeviceType.Classic;
+    }
+
     public ChargeControllerInfo(String deviceAddress, int port, boolean staticIP) {
         if (IPV4_PATTERN.matcher(deviceAddress).matches() == false) {
             this.deviceUri = deviceAddress;
@@ -331,7 +337,8 @@ public class ChargeControllerInfo implements Serializable {
         endingAmps = tranfer.endingAmps;
         isCurrent = true;
         isReachable = true;
-        deviceIpAddress = "MQTT broker";
+        deviceIpAddress = tranfer.deviceName;
+        macAddress = tranfer.macAddress;
         return;
     }
 }
