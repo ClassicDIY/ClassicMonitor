@@ -49,6 +49,9 @@
             android:name=".ModbusService"
             android:exported="false" />
         <service
+            android:name=".MQTTService"
+            android:exported="false" />
+        <service
             android:name=".UDPListener"
             android:exported="false" />
         <service

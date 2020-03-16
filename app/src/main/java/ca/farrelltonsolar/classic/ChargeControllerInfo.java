@@ -335,8 +335,6 @@ public class ChargeControllerInfo implements Serializable {
         nominalBatteryVoltage = tranfer.nominalBatteryVoltage;
         mpptMode = tranfer.mpptMode;
         endingAmps = tranfer.endingAmps;
-        isCurrent = true;
-        isReachable = true;
         deviceIpAddress = tranfer.deviceName;
         macAddress = tranfer.macAddress;
         return;

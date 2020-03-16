@@ -7,7 +7,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="Off"
-            android:key="listPref"
+            android:key="protocol"
             android:title="Protocol" />
         <CheckBoxPreference
             android:key="AutoDetectClassic"

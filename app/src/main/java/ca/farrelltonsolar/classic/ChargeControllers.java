@@ -236,7 +236,6 @@ public final class ChargeControllers {
 
     public synchronized void setAutoDetectClassic(boolean autoDetectClassic) {
         this.autoDetectClassic = autoDetectClassic;
-        MonitorApplication.ConfigurationChanged();
     }
 
     public synchronized boolean showPopupMessages() {

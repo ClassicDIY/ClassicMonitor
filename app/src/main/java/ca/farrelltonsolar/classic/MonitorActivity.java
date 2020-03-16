@@ -240,6 +240,7 @@ public class MonitorActivity extends AppCompatActivity {
         if ( data != null) {
             boolean changed = data.getBooleanExtra("hasChanged", false);
             if (changed) {
+                MonitorApplication.ConfigurationChanged();
                 MonitorActivity.this.finish();
                 System.gc();
                 MonitorActivity.this.startActivity(getIntent());

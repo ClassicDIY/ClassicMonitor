@@ -287,9 +287,9 @@ public class NavigationDrawerFragment extends Fragment {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
-    public void add(ChargeController cc) {
-        adapter.add(cc);
-    }
+//    public void add(ChargeController cc) {
+//        adapter.add(cc);
+//    }
 
 
     /**
