@@ -297,12 +297,14 @@ public class MQTTService extends Service {
                             ChargeControllerTransfer t = gson.fromJson(str, ChargeControllerTransfer.class);
                             t.deviceName = deviceName; // use name defined in publisher
                             current.LoadTransfer(t);
+                            if (current.isReachable() == false) {
+                                chargeControllers.setReachable(deviceName, true);
+                            }
                         } else if (topic.endsWith("LWT")) {
                             if (str.compareTo("Offline") == 0) {
                                 clearReadings(Constants.CA_FARRELLTONSOLAR_CLASSIC_READINGS);
                                 chargeControllers.setReachable(deviceName, false);
                             } else {
-                                chargeControllers.setReachable(deviceName, true);
                                 WakeMQTT("wake");
                             }
                         }
