@@ -77,11 +77,13 @@ public class MonitorApplication extends Application implements LifecycleObserver
     static boolean isMQTTServiceBound = false;
     private static MonitorApplication instance;
     private static ChargeControllers chargeControllers;
+    private CONNECTION_TYPE currentConnectionType;
     ModbusService modbusService;
     MQTTService mqttService;
     WifiManager.WifiLock wifiLock;
     private GsonBuilder gsonBuilder;
     private Timer disconnectTimer;
+
 
     private ServiceConnection UDPListenerServiceConnection = new ServiceConnection() {
 
@@ -108,7 +110,6 @@ public class MonitorApplication extends Application implements LifecycleObserver
             ModbusService.ModbusServiceBinder binder = (ModbusService.ModbusServiceBinder) service;
             modbusService = binder.getService();
             isModbusServiceBound = true;
-            modbusService.monitorChargeControllers(chargeControllers);
             Log.d(getClass().getName(), "ModbusService ServiceConnected");
         }
 
@@ -125,7 +126,6 @@ public class MonitorApplication extends Application implements LifecycleObserver
             MQTTService.MQTTServiceBinder binder = (MQTTService.MQTTServiceBinder) service;
             mqttService = binder.getService();
             isMQTTServiceBound = true;
-            mqttService.monitorChargeControllers(chargeControllers);
             Log.d(getClass().getName(), "MQTTService ServiceConnected");
         }
 
@@ -219,7 +219,8 @@ public class MonitorApplication extends Application implements LifecycleObserver
         if (wifi != null) {
             wifiLock = wifi.createWifiLock("ClassicMonitor");
         }
-        if (chargeControllers.getConnectionType() == CONNECTION_TYPE.MODBUS) {  // do not use PVOutput & Modbus when MQTT subscriber
+        currentConnectionType = chargeControllers.getConnectionType();
+        if (currentConnectionType == CONNECTION_TYPE.MODBUS) {  // do not use PVOutput & Modbus when MQTT subscriber
             if (chargeControllers.uploadToPVOutput()) {
                 try {
                     startService(new Intent(this, PVOutputService.class)); // start PVOutputService intent service
@@ -238,13 +239,11 @@ public class MonitorApplication extends Application implements LifecycleObserver
         if (wifiLock != null) {
             wifiLock.acquire();
         }
-        if (chargeControllers.getConnectionType() == CONNECTION_TYPE.MODBUS) {
+
             bindService(new Intent(this, ModbusService.class), modbusServiceConnection, Context.BIND_AUTO_CREATE);
             bindService(new Intent(this, UDPListener.class), UDPListenerServiceConnection, Context.BIND_AUTO_CREATE);
-        }
-        else {
             bindService(new Intent(this, MQTTService.class), mqttServiceConnection, Context.BIND_AUTO_CREATE);
-        }
+
         Log.d(getClass().getName(), "onStart Done");
     }
 
@@ -311,10 +310,19 @@ public class MonitorApplication extends Application implements LifecycleObserver
                 disconnectTimer.cancel();
                 disconnectTimer.purge();
             }
-            if (isModbusServiceBound && modbusService != null){
+            if (currentConnectionType != chargeControllers.getConnectionType()) {
+                currentConnectionType = chargeControllers.getConnectionType();
+                if (isModbusServiceBound && modbusService != null){
+                    modbusService.stopMonitoringChargeControllers();
+                }
+                if (isMQTTServiceBound && mqttService != null){
+                    mqttService.stopMonitoringChargeControllers();
+                }
+            }
+            if (isModbusServiceBound && modbusService != null && chargeControllers.getConnectionType() == CONNECTION_TYPE.MODBUS){
                 modbusService.monitorChargeControllers(chargeControllers);
             }
-            if (isMQTTServiceBound && mqttService != null){
+            if (isMQTTServiceBound && mqttService != null && chargeControllers.getConnectionType() == CONNECTION_TYPE.MQTT){
                 mqttService.monitorChargeControllers(chargeControllers);
             }
         }

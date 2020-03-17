@@ -119,7 +119,7 @@ public class MQTTService extends Service {
             return;
         }
         ChargeController controller = controllers.getCurrentChargeController();
-        if (controller != null && controller.deviceName().compareTo(currentDeviceName) != 0) {
+        if (controller != null) {
             stopMonitoringChargeControllers();
             currentDeviceName = controller.deviceName();
             try {

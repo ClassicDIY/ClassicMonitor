@@ -39,8 +39,8 @@ public final class ChargeControllers {
     private boolean uploadToPVOutput = false;
     private boolean bidirectionalUnitsInWatts;
     private boolean systemViewEnabled = false;
-    private String mqttBrokerHost = "";
-    private int mqttPort;
+    private String mqttBrokerHost = "mqtt.dioty.co";
+    private int mqttPort = 1883;
     private String mqttUser = "";
     private String mqttPassword = "";
     private String mqttRootTopic = "";

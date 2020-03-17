@@ -18,6 +18,7 @@ package ca.farrelltonsolar.classic;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -190,6 +191,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
         _mqttRootTopic.setEnabled(isEnabled);
         isEnabled = _mProtocol.getValue().compareTo(CONNECTION_TYPE.MQTT.name()) != 0;
         autoDetectClassics.setEnabled(isEnabled);
+        autoDetectClassics.setChecked(isEnabled);
     }
 
     @Override

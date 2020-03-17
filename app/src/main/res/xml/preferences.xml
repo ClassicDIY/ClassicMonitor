@@ -65,7 +65,7 @@
             android:key="ShowPopupMessages"
             android:summary="@string/ShowPopupSummary"
             android:disableDependentsState="false"
-            android:defaultValue="true" />
+            android:defaultValue="false" />
 
         <CheckBoxPreference
             android:key="SystemViewEnabled"
