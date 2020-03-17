@@ -50,6 +50,7 @@
     <string name="info_model_title">Modell:</string>
     <string name="info_mac_title">MAC-Adresse:</string>
     <string name="info_ipaddress_title">IP-Adresse:</string>
+    <string name="info_name_title">Einheitenname:</string>
     <string name="info_network_rev_title">Netzwerk-Version:</string>
     <string name="info_last_voc_title">Letzte VOC:</string>
     <string name="info_build_date_title">Software Build-Datum:</string>
