@@ -182,7 +182,7 @@
     <string name="EndingAmps">Amplificadores finales: %1$1.1f A (Actualmente en %2$1.1f A)</string>
     <string name="FloatTime">Float Time Today: %s</string>
     <string name="AbsorbTime">Temporizador de absorción: %s</string>
-    <string name="MPPTMode">Modo MPPT</string>
+    <string name="MPPTMode">Modo MPPT:</string>
     <string name="EqualizeTime">Tiempo igualar: %s</string>
     <string name="ReasonForResting">Razón para descansar: %s</string>
     <string name="PercentCharge">% Carga</string>

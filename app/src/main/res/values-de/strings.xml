@@ -165,7 +165,7 @@
     <string name="EndingAmps">Ladeendstrom: %1$1.1f A (Derzeit bei %2$1.1f A)</string>
     <string name="FloatTime">Erhaltungsladung heute: %s</string>
     <string name="AbsorbTime">Zeit für Konstantspannungsphase: %s</string>
-    <string name="MPPTMode">MPPT-Modus</string>
+    <string name="MPPTMode">MPPT-Modus:</string>
     <string name="EqualizeTime">Zeit für Ausgleichsladen: %s</string>
     <string name="ReasonForResting">Grund für Ruhe: %s</string>
     <string name="PercentCharge">% Ladung</string>

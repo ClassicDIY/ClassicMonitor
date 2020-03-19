@@ -18,7 +18,6 @@ package ca.farrelltonsolar.classic;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -170,7 +169,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             _mqttPassword.setText(MonitorApplication.chargeControllers().mqttPassword());
             _mqttRootTopic.setSummary(MonitorApplication.chargeControllers().mqttRootTopic());
             _mqttRootTopic.setText(MonitorApplication.chargeControllers().mqttRootTopic());
-            MQTTEnabled();
+            OnProtocolChanged();
         } catch (Exception ex) {
             Log.w(getClass().getName(), String.format("settings failed ex: %s", ex));
         }
@@ -182,16 +181,20 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
         _APIKey.setEnabled(isEnabled);
     }
 
-    private void MQTTEnabled() {
-        boolean isEnabled = _mProtocol.getValue().compareTo(CONNECTION_TYPE.MODBUS.name()) != 0;
-        _brokerHost.setEnabled(isEnabled);
-        _mqttPort.setEnabled(isEnabled);
-        _mqttUser.setEnabled(isEnabled);
-        _mqttPassword.setEnabled(isEnabled);
-        _mqttRootTopic.setEnabled(isEnabled);
-        isEnabled = _mProtocol.getValue().compareTo(CONNECTION_TYPE.MQTT.name()) != 0;
-        autoDetectClassics.setEnabled(isEnabled);
-        autoDetectClassics.setChecked(isEnabled);
+    private void OnProtocolChanged() {
+        boolean isModbus = _mProtocol.getValue().compareTo(CONNECTION_TYPE.MODBUS.name()) == 0;
+        _brokerHost.setEnabled(!isModbus);
+        _mqttPort.setEnabled(!isModbus);
+        _mqttUser.setEnabled(!isModbus);
+        _mqttPassword.setEnabled(!isModbus);
+        _mqttRootTopic.setEnabled(!isModbus);
+        uploadToPVOutput.setEnabled(isModbus);
+        UploadToPVOutputEnabled(isModbus);
+        autoDetectClassics.setEnabled(isModbus);
+        if (!isModbus) {
+            autoDetectClassics.setChecked(false);
+            uploadToPVOutput.setChecked(false);
+        }
     }
 
     @Override
@@ -222,7 +225,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
         updatePreferences(findPreference(key));
         if (key.equals("protocol")) {
             _mProtocol.setSummary(_mProtocol.getEntry().toString());
-            MQTTEnabled();
+            OnProtocolChanged();
         }
     }
 }

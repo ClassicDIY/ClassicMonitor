@@ -195,7 +195,7 @@
     <string name="EndingAmps">Ending Amps: %1$1.1f A (currently at %2$1.1f A)</string>
     <string name="FloatTime">Float Time Today: %s</string>
     <string name="AbsorbTime">Absorb Timer: %s</string>
-    <string name="MPPTMode">MPPT Mode</string>
+    <string name="MPPTMode">MPPT Mode:</string>
     <string name="EqualizeTime">Equalize time: %s</string>
     <string name="ReasonForResting">Reason For Resting: %s</string>
     <string name="PercentCharge">% Charge</string>

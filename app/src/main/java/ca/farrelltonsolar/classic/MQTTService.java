@@ -20,7 +20,6 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -50,7 +49,6 @@ public class MQTTService extends Service {
     private final IBinder mBinder = new MQTTServiceBinder();
     private String currentDeviceName = "";
     private MqttAndroidClient mqttClient;
-    private String rootTopic;
     private Timer mqttWakeTimer;
     private GsonBuilder gsonBuilder;
     private List<ModbusTask> tasks = new ArrayList<>();
@@ -86,13 +84,16 @@ public class MQTTService extends Service {
         super.onCreate();
         gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapterFactory(new BundleTypeAdapterFactory());
-        LocalBroadcastManager.getInstance(this).registerReceiver(removeChargeControllerReceiver, new IntentFilter(Constants.CA_FARRELLTONSOLAR_CLASSIC_REMOVE_CHARGE_CONTROLLER));
-        ChargeControllers chargeControllers = MonitorApplication.chargeControllers();
-        rootTopic = chargeControllers.mqttRootTopic();
-                if (rootTopic.endsWith("/") == false) {
-            rootTopic += "/";
-        }
+    }
 
+    private synchronized String mqttRootTopic() {
+        ChargeControllers chargeControllers = MonitorApplication.chargeControllers();
+        String mqttRootTopic;
+        mqttRootTopic = chargeControllers.mqttRootTopic();
+        if (mqttRootTopic.endsWith("/") == false) {
+            mqttRootTopic += "/";
+        }
+        return mqttRootTopic;
     }
 
     @Override
@@ -100,7 +101,6 @@ public class MQTTService extends Service {
         Log.d(getClass().getName(), "onDestroy");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(removeChargeControllerReceiver);
         stopMonitoringChargeControllers();
-
         super.onDestroy();
     }
 
@@ -187,6 +187,7 @@ public class MQTTService extends Service {
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Log.w(getClass().getName(), String.format("mqttClient failed to connect: %s", exception.getMessage()));
+                    BroadcastToast("Failed to connect to MQTT broker");
                 }
             });
             rVal = true;
@@ -204,12 +205,12 @@ public class MQTTService extends Service {
             message.setQos(1);
             ChargeControllers chargeControllers = MonitorApplication.chargeControllers();
             if (chargeControllers.systemViewEnabled() == false) {
-                mqttClient.publish(String.format("%s/%s", String.format("%s%s/%s", rootTopic, currentDeviceName, Constants.CMND_TOPIC_SUFFIX), cmnd), message);
+                mqttClient.publish(String.format("%s/%s", String.format("%s%s/%s", mqttRootTopic(), currentDeviceName, Constants.CMND_TOPIC_SUFFIX), cmnd), message);
             }
             else {
                 for (int i = 0; i < chargeControllers.count(); i++) {
                     String controllerName = MonitorApplication.chargeControllers().get(i).deviceName();
-                    mqttClient.publish(String.format("%s/%s", String.format("%s%s/%s", rootTopic, controllerName, Constants.CMND_TOPIC_SUFFIX), cmnd), message);
+                    mqttClient.publish(String.format("%s/%s", String.format("%s%s/%s", mqttRootTopic(), controllerName, Constants.CMND_TOPIC_SUFFIX), cmnd), message);
                 }
             }
 
@@ -225,14 +226,14 @@ public class MQTTService extends Service {
             try {
                 ChargeControllers chargeControllers = MonitorApplication.chargeControllers();
                 if (chargeControllers.systemViewEnabled() == false) {
-                    SubscribeTo(String.format("%s%s/%s", rootTopic, currentDeviceName, Constants.STAT_TOPIC_SUFFIX));
-                    SubscribeTo(String.format("%s%s/%s", rootTopic, currentDeviceName, Constants.TELE_TOPIC_SUFFIX));
+                    SubscribeTo(String.format("%s%s/%s", mqttRootTopic(), currentDeviceName, Constants.STAT_TOPIC_SUFFIX));
+                    SubscribeTo(String.format("%s%s/%s", mqttRootTopic(), currentDeviceName, Constants.TELE_TOPIC_SUFFIX));
                 }
                 else {
                     for (int i = 0; i < chargeControllers.count(); i++) {
                         String controllerName = MonitorApplication.chargeControllers().get(i).deviceName();
-                        SubscribeTo(String.format("%s%s/%s", rootTopic, controllerName, Constants.STAT_TOPIC_SUFFIX));
-                        SubscribeTo(String.format("%s%s/%s", rootTopic, controllerName, Constants.TELE_TOPIC_SUFFIX));
+                        SubscribeTo(String.format("%s%s/%s", mqttRootTopic(), controllerName, Constants.STAT_TOPIC_SUFFIX));
+                        SubscribeTo(String.format("%s%s/%s", mqttRootTopic(), controllerName, Constants.TELE_TOPIC_SUFFIX));
                     }
                 }
                 WakeMQTT("info");
@@ -252,6 +253,7 @@ public class MQTTService extends Service {
     }
 
     private void SubscribeTo(String topic) throws MqttException {
+        Log.d(getClass().getName(), "SubscribeTo " + topic);
         IMqttToken token = mqttClient.subscribe(String.format("%s/#", topic), 1);
         token.setActionCallback(new IMqttActionListener() {
             @Override
@@ -261,6 +263,7 @@ public class MQTTService extends Service {
             @Override
             public void onFailure(IMqttToken iMqttToken, Throwable throwable) {
                 Log.w(getClass().getName(), "Subscribe Failed " + iMqttToken.getException().getMessage());
+                BroadcastToast("Failed to subscribe: " + iMqttToken.getException().getMessage());
             }
         });
     }
@@ -360,14 +363,14 @@ public class MQTTService extends Service {
             try {
                 ChargeControllers chargeControllers = MonitorApplication.chargeControllers();
                 if (chargeControllers.systemViewEnabled() == false) {
-                    UnSubscribeTo(String.format("%s%s/%s", rootTopic, currentDeviceName, Constants.STAT_TOPIC_SUFFIX));
-                    UnSubscribeTo(String.format("%s%s/%s", rootTopic, currentDeviceName, Constants.TELE_TOPIC_SUFFIX));
+                    UnSubscribeTo(String.format("%s%s/%s", mqttRootTopic(), currentDeviceName, Constants.STAT_TOPIC_SUFFIX));
+                    UnSubscribeTo(String.format("%s%s/%s", mqttRootTopic(), currentDeviceName, Constants.TELE_TOPIC_SUFFIX));
                 }
                 else {
                     for (int i = 0; i < chargeControllers.count(); i++) {
                         String controllerName = MonitorApplication.chargeControllers().get(i).deviceName();
-                        UnSubscribeTo(String.format("%s%s/%s", rootTopic, controllerName, Constants.STAT_TOPIC_SUFFIX));
-                        UnSubscribeTo(String.format("%s%s/%s", rootTopic, controllerName, Constants.TELE_TOPIC_SUFFIX));
+                        UnSubscribeTo(String.format("%s%s/%s", mqttRootTopic(), controllerName, Constants.STAT_TOPIC_SUFFIX));
+                        UnSubscribeTo(String.format("%s%s/%s", mqttRootTopic(), controllerName, Constants.TELE_TOPIC_SUFFIX));
                     }
                 }
 
@@ -394,5 +397,11 @@ public class MQTTService extends Service {
                 Log.w(getClass().getName(), " UnSubscribe Failed " + iMqttToken.getException().getMessage());
             }
         });
+    }
+
+    private void BroadcastToast(String message) {
+        Intent intent2 = new Intent(Constants.CA_FARRELLTONSOLAR_CLASSIC_TOAST);
+        intent2.putExtra("message", message);
+        LocalBroadcastManager.getInstance(MonitorApplication.getAppContext()).sendBroadcast(intent2);
     }
 }

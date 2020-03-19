@@ -144,6 +144,7 @@ public class MonitorApplication extends Application implements LifecycleObserver
             ChargeControllerInfo cc = gson.fromJson(intent.getStringExtra("ChargeController"), ChargeController.class);
             Log.d(getClass().getName(), String.format("adding new controller to list (%s)", cc.toString()));
             chargeControllers.add(cc);
+            SaveSettings();
             if (chargeControllers.getConnectionType() == CONNECTION_TYPE.MODBUS && isModbusServiceBound) {
                 modbusService.monitorChargeControllers(chargeControllers);
             }
