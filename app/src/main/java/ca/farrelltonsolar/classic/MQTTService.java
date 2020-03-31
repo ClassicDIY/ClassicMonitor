@@ -287,7 +287,7 @@ public class MQTTService extends Service {
                     String str = mqttMessage.toString();
                     Gson gson = gsonBuilder.create();
                     String[] elements = topic.split("/");
-                    String deviceName = elements.length > 4 ? elements[elements.length - 3] : "classic";  // devicename
+                    String deviceName = elements.length >= 4 ? elements[elements.length - 3] : "classic";  // devicename
                     Log.d(getClass().getName(), "MQTT messageArrived for " + deviceName);
                     ChargeControllers chargeControllers = MonitorApplication.chargeControllers();
                     ChargeController current = chargeControllers.getCurrentChargeController();
