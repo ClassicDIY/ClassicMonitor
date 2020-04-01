@@ -9,7 +9,7 @@ https://play.google.com/store/apps/details?id=ca.farrelltonsolar.classic
 
 <p>Note: version 2+ is targeted to Android API level 14 (Android 4.0) and above, all features are available on API 17 (Android 4.2) and above</p>
 
-![Alt text](http://graham22.github.io/Classic/classicmonitor/images_en/StateOfCharge_landscape.png)
+![Alt text](http://ClassicDIY.github.io/Classic/classicmonitor/images_en/StateOfCharge_landscape.png)
 
 <p>
 Classic Monitor is a free status monitor for Midnite solar 's, Classic 150, 200, 250 Charge Controller (www.midniteSolar.com). It is a Read Only Program, it does not write to the Classic.
@@ -23,11 +23,11 @@ Basic support for the Tristar MPPT charge controller from Morningstar is also in
 </p>
 
 <p>
-If you find issues or want new features, please open an issue on the github tracker at https://github.com/graham22/Classic/issues
+If you find issues or want new features, please open an issue on the github tracker at https://github.com/ClassicDIY/Classic/issues
 </p>
 
 <p>
-Online help: http://graham22.github.io/Classic/classicmonitor/help_en.html
+Online help: http://ClassicDIY.github.io/Classic/classicmonitor/help_en.html
 </p>
 
 
