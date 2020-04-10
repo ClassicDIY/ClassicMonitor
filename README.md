@@ -1,19 +1,15 @@
 
 <h1>Classic Monitor</h1>
 
-<a href='https://play.google.com/store/apps/details?id=ca.farrelltonsolar.classic&hl=en&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
+<p>
+<a href='https://play.google.com/store/apps/details?id=ca.farrelltonsolar.classic&hl=en&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width=200/></a>
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/ClassicDIY/Classic?style=for-the-badge)](https://github.com/ClassicDIY/Classic/releases)
 
 [![https://www.buymeacoffee.com/r4K2HIB](https://img.shields.io/badge/Donate-Buy%20Me%20a%20coffee-orange?style=for-the-badge)](https://www.buymeacoffee.com/r4K2HIB)
-
-
-
-<h3>Available on Google Play.</h3>
-
-<p>
-https://play.google.com/store/apps/details?id=ca.farrelltonsolar.classic
 </p>
+
+
 
 <p>Note: version 2+ is targeted to Android API level 14 (Android 4.0) and above, all features are available on API 17 (Android 4.2) and above</p>
 
