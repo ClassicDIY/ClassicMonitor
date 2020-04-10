@@ -27,19 +27,10 @@ Basic support for the Tristar MPPT charge controller from Morningstar is also in
 
 </p>
 
-<p>
-If you find issues or want new features, please open an issue on the github tracker at https://github.com/ClassicDIY/Classic/issues
-</p>
-
-<p>
-Online help: http://ClassicDIY.github.io/Classic/classicmonitor/help_en.html
-</p>
-
-
 ## License
 ```
 
- Copyright (c) 2014. FarrelltonSolar
+ Copyright (c) 2020. ClassicDIY
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
