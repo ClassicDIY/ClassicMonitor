@@ -72,6 +72,9 @@
 <tr><td>
 <a href="#PortForwarding">Access your classic over the internet</a>
 </td></tr>
+<tr><td>
+<a href="#MQTT">Access your classic over the internet using MQTT</a>
+</td></tr>
 
 </table>
 
@@ -413,62 +416,6 @@
 		<li>Float time</li>
 		<li>Equalize time</li>
 		</ul>
-	</p>
-	</div>
-	
-	<hr style="page-break-before:always;">
-	
-	<a id="PortForwarding"></a>
-	<h2 class="text-center">Access your classic over the internet</h2>
-	
-	<div class="center">	
-	<p>
-		<ul>
-			<li>Step 1 is to enable port forwarding in your router, Google port forwarding with the make of your router</li>
-		</ul>
-	</p>
-	</div>
-	
-	<img class="center_image" alt="PortForwarding.PNG" src="images_en/PortForwarding.png"  title="">
-	<br>
-	<div class="center">	
-	<p>
-		Access your router admin page and setup port forwarding;
-		<ul>
-			<li>Add a port forwarding rule with the local IP address of the classic (ex: 192.168.0.22), the local port (default: 502) and the public port (ex: 49502, the public port number should be in the range of 49152–65535). Then save the changes and reboot the router.</li>
-			<li>Once rebooted, note of the wan IP address the router was assigned by your service provider.</li>
-			<li>Test this step by disabling the wifi on your phone to force it to use the cell network.</li>
-			<li>Open the Classic Monitor android app and delete any existing entries in the Nav Bar by sliding them to the right.</li>
-			<li>Add an new device entry using port number (ex: 49502) and the wan IP for the address by clicking the +Add while the Nav bar is in view.</li>
-			<li>Click Apply to save the new entry, the IP address should be displayed in the nav bar.</li>
-			<li>Click on the new entry to open the connection over the internet.</li>
-		</ul>
-	</p>
-	</div>
-	<br>
-	<div class="center">	
-	<p>
-		<ul>
-			<li>Step 2 is to use a ddns service to map your routers wan IP address to a network name</li>
-		</ul>
-	</p>
-	</div>
-	<img class="center_image" alt="DDNS.PNG" src="images_en/DDNS.png"  title="">
-	<br>
-	<div class="center">	
-	<p>
-		DDNS setup;
-		The DDNS service will assign a network name to your routers WAN IP address.
-		Your router is assigned a WAN IP address from your service provider whenever it is rebooted, this address may also expire every few weeks and be re-assigned a new address. The router needs to be setup to notify the DDNS service with the current WAN IP Address.
-		Please refer to http://www.noip.com/ for a more detailed explanation.
-		<ul>
-			<li>Access the router admin page, selected the ddns tab.</li>
-			<li>enter the DDNS service name (ex: noip.com), username/pw and the network name that you have reserved.</li>
-			<li>a few hours later your network name will be uploaded to DNS servers on the internet.</li>
-			<li>disable wifi on the phone again, deleted any existing entries, create an entry using the network name and 49502 for the port, click Apply to save the new entry, the domain name should be displayed in the nav bar.</li>
-			<li>Click on the new entry to open the connection over the internet.</li>
-		<ul>
-		
 	</p>
 	</div>
 
