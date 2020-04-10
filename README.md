@@ -6,7 +6,7 @@
  
 [![GitHub tag (latest SemVer pre-release)](https://img.shields.io/github/v/tag/ClassicDIY/Classic?include_prereleases&label=Pre-Release&style=for-the-badge)](https://github.com/ClassicDIY/Classic/releases)
 
-[![https://www.buymeacoffee.com/r4K2HIB](https://img.shields.io/badge/Donate-Buy%20Me%20a%20coffee-orange&style=for-the-badge)](https://www.buymeacoffee.com/r4K2HIB)
+[![https://www.buymeacoffee.com/r4K2HIB](https://img.shields.io/badge/Donate-Buy%20Me%20a%20coffee-orange?style=for-the-badge)](https://www.buymeacoffee.com/r4K2HIB)
 </p>
 
 
