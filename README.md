@@ -1,15 +1,16 @@
 
 <h1>Classic Monitor</h1>
-
-<h3>Available on Google Play.</h3>
-
+<h2>An Android App for the Midnite Solar Charge Controller</h2>
 <p>
-https://play.google.com/store/apps/details?id=ca.farrelltonsolar.classic
+<a href='https://play.google.com/store/apps/details?id=ca.farrelltonsolar.classic&hl=en&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width=200/></a>
+ 
+[![GitHub tag (latest SemVer pre-release)](https://img.shields.io/github/v/tag/ClassicDIY/Classic?include_prereleases&label=Pre-Release&style=for-the-badge)](https://github.com/ClassicDIY/Classic/releases)
+[![GitHub issues](https://img.shields.io/github/issues/ClassicDIY/Classic?style=for-the-badge)](https://github.com/ClassicDIY/Classic/issues)
+[![http://ClassicDIY.github.io/Classic/classicmonitor/help_en.html](https://img.shields.io/badge/Documentation-Help-blue?style=for-the-badge)](http://ClassicDIY.github.io/Classic/classicmonitor/help_en.html)
+[![https://www.buymeacoffee.com/r4K2HIB](https://img.shields.io/badge/Donate-Buy%20Me%20a%20coffee-orange?style=for-the-badge)](https://www.buymeacoffee.com/r4K2HIB)
 </p>
 
-<p>Note: version 2+ is targeted to Android API level 14 (Android 4.0) and above, all features are available on API 17 (Android 4.2) and above</p>
-
-![Alt text](http://graham22.github.io/Classic/classicmonitor/images_en/StateOfCharge_landscape.png)
+![Alt text](http://ClassicDIY.github.io/Classic/classicmonitor/images_en/StateOfCharge_landscape.png)
 
 <p>
 Classic Monitor is a free status monitor for Midnite solar 's, Classic 150, 200, 250 Charge Controller (www.midniteSolar.com). It is a Read Only Program, it does not write to the Classic.
@@ -22,19 +23,10 @@ Basic support for the Tristar MPPT charge controller from Morningstar is also in
 
 </p>
 
-<p>
-If you find issues or want new features, please open an issue on the github tracker at https://github.com/graham22/Classic/issues
-</p>
-
-<p>
-Online help: http://graham22.github.io/Classic/classicmonitor/help_en.html
-</p>
-
-
 ## License
 ```
 
- Copyright (c) 2014. FarrelltonSolar
+ Copyright (c) 2020. ClassicDIY
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
