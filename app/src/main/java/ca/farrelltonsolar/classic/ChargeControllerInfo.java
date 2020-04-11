@@ -107,6 +107,12 @@ public class ChargeControllerInfo implements Serializable {
         this.staticIP = staticIP;
     }
 
+    public ChargeControllerInfo(String deviceName) {
+        this.deviceName = deviceName;
+        this.deviceUri = deviceName;
+        this.deviceType = DeviceType.Classic;
+    }
+
     public ChargeControllerInfo(String deviceAddress, int port, boolean staticIP) {
         if (IPV4_PATTERN.matcher(deviceAddress).matches() == false) {
             this.deviceUri = deviceAddress;
@@ -299,28 +305,27 @@ public class ChargeControllerInfo implements Serializable {
         }
     }
 
-    public ChargeControllerTransfer GetTransfer() {
-        ChargeControllerTransfer tranfer = new ChargeControllerTransfer();
-        tranfer.unitID = unitID();
-        tranfer.deviceName = deviceName();
-        tranfer.hasWhizbang = hasWhizbang();
-        tranfer.deviceType = deviceType;
-        tranfer.model = model;
-        tranfer.lastVOC = lastVOC;
-        tranfer.appVersion = appVersion;
-        tranfer.netVersion = netVersion;
-        tranfer.buildDate = buildDate;
-        tranfer.nominalBatteryVoltage = nominalBatteryVoltage;
-        tranfer.mpptMode = mpptMode;
-        tranfer.endingAmps = endingAmps;
-        return tranfer;
-    }
+//    public ChargeControllerTransfer GetTransfer() {
+//        ChargeControllerTransfer tranfer = new ChargeControllerTransfer();
+//        tranfer.unitID = unitID();
+//        tranfer.deviceName = deviceName();
+//        tranfer.hasWhizbang = hasWhizbang();
+//        tranfer.deviceType = deviceType;
+//        tranfer.model = model;
+//        tranfer.lastVOC = lastVOC;
+//        tranfer.appVersion = appVersion;
+//        tranfer.netVersion = netVersion;
+//        tranfer.buildDate = buildDate;
+//        tranfer.nominalBatteryVoltage = nominalBatteryVoltage;
+//        tranfer.mpptMode = mpptMode;
+//        tranfer.endingAmps = endingAmps;
+//        return tranfer;
+//    }
 
     public void LoadTransfer(ChargeControllerTransfer tranfer) {
         unitID = tranfer.unitID;
         deviceName = tranfer.deviceName;
         hasWhizbang = tranfer.hasWhizbang;
-        deviceType = tranfer.deviceType;
         model= tranfer.model;
         lastVOC = tranfer.lastVOC;
         appVersion = tranfer.appVersion;
@@ -329,9 +334,8 @@ public class ChargeControllerInfo implements Serializable {
         nominalBatteryVoltage = tranfer.nominalBatteryVoltage;
         mpptMode = tranfer.mpptMode;
         endingAmps = tranfer.endingAmps;
-        isCurrent = true;
-        isReachable = true;
-        deviceIpAddress = "MQTT broker";
+        deviceIpAddress = tranfer.deviceName;
+        macAddress = tranfer.macAddress;
         return;
     }
 }

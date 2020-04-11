@@ -52,7 +52,7 @@ public class NavigationDrawerArrayAdapter extends ArrayAdapter<ChargeControllerI
     public NavigationDrawerArrayAdapter(Context context, int resource, int textViewResourceId, List<ChargeControllerInfo> objects) {
         super(context, resource, textViewResourceId, objects);
     }
-
+//
 //    @Override
 //    public boolean isEnabled(int position) {
 //        return getItem(position).isReachable();

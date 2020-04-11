@@ -61,7 +61,7 @@ public class CapacityFragment extends ReadingFramentBase {
             v = this.getView().findViewById(R.id.AHMinusValue);
             if (v != null) {
                 Odometer odometer = (Odometer) v;
-                odometer.setValue(readings.getInt(RegisterName.NegativeAmpHours)* 10);
+                odometer.setValue( Math.abs(readings.getInt(RegisterName.NegativeAmpHours)* 10));
             }
             v = this.getView().findViewById(R.id.AHPlusValue);
             if (v != null) {

@@ -44,7 +44,7 @@ public static *** i(...);
 
 # Application classes that will be serialized/deserialized over Gson
 -keep class ca.farrelltonsolar.classic.DeviceType { *; }
--keep class ca.farrelltonsolar.classic.MQTT_Type { *; }
+-keep class ca.farrelltonsolar.classic.CONNECTION_TYPE { *; }
 -keep class ca.farrelltonsolar.classic.ChargeControllers { *; }
 -keep class ca.farrelltonsolar.classic.ChargeControllerInfo { *; }
 -keep class ca.farrelltonsolar.classic.ChargeControllerTransfer { *; }

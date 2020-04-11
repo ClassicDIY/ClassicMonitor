@@ -39,12 +39,14 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     private CheckBoxPreference systemViewEnabled;
     private EditTextPreference _SID;
     private EditTextPreference _APIKey;
-    private ListPreference _mListPreference;
+    private ListPreference _mProtocol;
     private EditTextPreference _brokerHost;
     private EditTextPreference _mqttPort;
     private EditTextPreference _mqttUser;
     private EditTextPreference _mqttPassword;
     private EditTextPreference _mqttRootTopic;
+    private boolean _hasChanged = false;
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -71,14 +73,23 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             @Override
             //On click function
             public void onClick(View view) {
+                setResult(RESULT_CANCELED);
                 Settings.this.finish();
             }
         });
+        _hasChanged = false;
         final Button Apply = (Button) findViewById(R.id.Apply);
         Apply.setOnClickListener(new View.OnClickListener() {
             @Override
             //On click function
             public void onClick(View view) {
+                CONNECTION_TYPE mqtt = CONNECTION_TYPE.valueOf(_mProtocol.getValue());
+                MonitorApplication.chargeControllers().setConnectionType(mqtt);
+                MonitorApplication.chargeControllers().setMqttBrokerHost(_brokerHost.getText());
+                MonitorApplication.chargeControllers().setMqttPort(Integer.parseInt(_mqttPort.getText()));
+                MonitorApplication.chargeControllers().setMqttUser(_mqttUser.getText());
+                MonitorApplication.chargeControllers().setMqttPassword(_mqttPassword.getText());
+                MonitorApplication.chargeControllers().setMqttRootTopic(_mqttRootTopic.getText());
                 MonitorApplication.chargeControllers().setAPIKey(_APIKey.getText());
                 MonitorApplication.chargeControllers().setFahrenheit(useFahrenheit.isChecked());
                 MonitorApplication.chargeControllers().setAutoDetectClassic(autoDetectClassics.isChecked());
@@ -89,13 +100,9 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
                 if (setting != null) {
                     setting.setSID(_SID.getText());
                 }
-                MQTT_Type mqtt = MQTT_Type.valueOf(_mListPreference.getValue());
-                MonitorApplication.chargeControllers().setMQTT_Type(mqtt);
-                MonitorApplication.chargeControllers().setMqttBrokerHost(_brokerHost.getText());
-                MonitorApplication.chargeControllers().setMqttPort(Integer.parseInt(_mqttPort.getText()));
-                MonitorApplication.chargeControllers().setMqttUser(_mqttUser.getText());
-                MonitorApplication.chargeControllers().setMqttPassword(_mqttPassword.getText());
-                MonitorApplication.chargeControllers().setMqttRootTopic(_mqttRootTopic.getText());
+                Intent i =new Intent();
+                i.putExtra("hasChanged", _hasChanged);
+                setResult(RESULT_OK, i);
                 Settings.this.finish();
             }
         });
@@ -108,7 +115,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             systemViewEnabled = (CheckBoxPreference) findPreference(Constants.SystemViewEnabled);
             _SID = (EditTextPreference) findPreference(Constants.SID);
             _APIKey = (EditTextPreference) findPreference(Constants.APIKey);
-            _mListPreference = (ListPreference)getPreferenceScreen().findPreference("listPref");
+            _mProtocol = (ListPreference)getPreferenceScreen().findPreference("protocol");
             _brokerHost = (EditTextPreference) findPreference("brokerHost");
             _mqttPort = (EditTextPreference) findPreference("mqttPort");
             _mqttUser = (EditTextPreference) findPreference("mqttUser");
@@ -131,9 +138,11 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             UploadToPVOutputEnabled(uploadToPVOutput.isChecked());
 
             _APIKey.setSummary(MonitorApplication.chargeControllers().aPIKey());
+            _APIKey.setText(MonitorApplication.chargeControllers().aPIKey());
             PVOutputSetting setting = MonitorApplication.chargeControllers().getPVOutputSetting();
             if (setting != null) {
                 _SID.setSummary(setting.getSID());
+                _SID.setText(setting.getSID());
             }
             Preference button = (Preference) findPreference("ResetLogs");
             button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -144,18 +153,23 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
                 }
             });
 
-            CharSequence[] entries = new CharSequence[]{"Off", "Subscriber", "Publisher"};
-            CharSequence[] entryValues = new CharSequence[]{ MQTT_Type.Off.name(), MQTT_Type.Subscriber.name(), MQTT_Type.Publisher.name() };
-            _mListPreference.setEntries(entries);
-            _mListPreference.setEntryValues(entryValues);
-            _mListPreference.setValueIndex(MonitorApplication.chargeControllers().mqttType().ordinal());
-            _mListPreference.setSummary("MQTT " + _mListPreference.getValue());
+            CharSequence[] entries = new CharSequence[]{"Modbus", "MQTT"};
+            CharSequence[] entryValues = new CharSequence[]{ CONNECTION_TYPE.MODBUS.name(), CONNECTION_TYPE.MQTT.name() };
+            _mProtocol.setEntries(entries);
+            _mProtocol.setEntryValues(entryValues);
+            _mProtocol.setValueIndex(MonitorApplication.chargeControllers().getConnectionType().ordinal());
+            _mProtocol.setSummary(_mProtocol.getEntry().toString());
             _brokerHost.setSummary(MonitorApplication.chargeControllers().mqttBrokerHost());
+            _brokerHost.setText(MonitorApplication.chargeControllers().mqttBrokerHost());
             _mqttPort.setSummary( Integer.toString(MonitorApplication.chargeControllers().mqttPort()));
+            _mqttPort.setText( Integer.toString(MonitorApplication.chargeControllers().mqttPort()));
             _mqttUser.setSummary(MonitorApplication.chargeControllers().mqttUser());
+            _mqttUser.setText(MonitorApplication.chargeControllers().mqttUser());
             _mqttPassword.setSummary(MonitorApplication.chargeControllers().mqttPassword());
+            _mqttPassword.setText(MonitorApplication.chargeControllers().mqttPassword());
             _mqttRootTopic.setSummary(MonitorApplication.chargeControllers().mqttRootTopic());
-            MQTTEnabled();
+            _mqttRootTopic.setText(MonitorApplication.chargeControllers().mqttRootTopic());
+            OnProtocolChanged();
         } catch (Exception ex) {
             Log.w(getClass().getName(), String.format("settings failed ex: %s", ex));
         }
@@ -167,13 +181,20 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
         _APIKey.setEnabled(isEnabled);
     }
 
-    private void MQTTEnabled() {
-        boolean isEnabled = (_mListPreference.getEntry().toString() != MQTT_Type.Off.name());
-        _brokerHost.setEnabled(isEnabled);
-        _mqttPort.setEnabled(isEnabled);
-        _mqttUser.setEnabled(isEnabled);
-        _mqttPassword.setEnabled(isEnabled);
-        _mqttRootTopic.setEnabled(isEnabled);
+    private void OnProtocolChanged() {
+        boolean isModbus = _mProtocol.getValue().compareTo(CONNECTION_TYPE.MODBUS.name()) == 0;
+        _brokerHost.setEnabled(!isModbus);
+        _mqttPort.setEnabled(!isModbus);
+        _mqttUser.setEnabled(!isModbus);
+        _mqttPassword.setEnabled(!isModbus);
+        _mqttRootTopic.setEnabled(!isModbus);
+        uploadToPVOutput.setEnabled(isModbus);
+        UploadToPVOutputEnabled(isModbus);
+        autoDetectClassics.setEnabled(isModbus);
+        if (!isModbus) {
+            autoDetectClassics.setChecked(false);
+            uploadToPVOutput.setChecked(false);
+        }
     }
 
     @Override
@@ -200,10 +221,11 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        _hasChanged = true;
         updatePreferences(findPreference(key));
-        if (key.equals("listPref")) {
-            _mListPreference.setSummary("MQTT " + _mListPreference.getEntry().toString());
-            MQTTEnabled();
+        if (key.equals("protocol")) {
+            _mProtocol.setSummary(_mProtocol.getEntry().toString());
+            OnProtocolChanged();
         }
     }
 }

@@ -73,8 +73,10 @@ public class Constants {
 
     //MQTT
     public static final String CLIENT_ID = "Classic";
-    public static final String STAT_TOPIC_SUFFIX = "classic/stat";
-    public static final String CMND_TOPIC_SUFFIX = "classic/cmnd";
+    public static final String STAT_TOPIC_SUFFIX = "stat";
+    public static final String CMND_TOPIC_SUFFIX = "cmnd";
+    public static final String TELE_TOPIC_SUFFIX = "tele";
     public static final long MQTT_IDLE_DELAY = 60000;
+    public static final long MQTT_WAKE_DELAY = 1000;
 
 }

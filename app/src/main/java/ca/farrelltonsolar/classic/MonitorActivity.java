@@ -18,6 +18,7 @@ package ca.farrelltonsolar.classic;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -28,6 +29,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
@@ -161,7 +163,7 @@ public class MonitorActivity extends AppCompatActivity {
 
     private void AddCharts() {
         // no chart data over MQTT yet
-        if (MonitorApplication.chargeControllers().mqttType() != MQTT_Type.Subscriber) {
+        if (MonitorApplication.chargeControllers().getConnectionType() != CONNECTION_TYPE.MQTT) {
             tabStripAdapter.addTab("DayChart", R.string.DayChartTabTitle, DayLogChart.class, null);
             tabStripAdapter.addTab("HourChart", R.string.HourChartTabTitle, HourLogChart.class, null);
             addDayLogCalendar();
@@ -232,6 +234,21 @@ public class MonitorActivity extends AppCompatActivity {
     };
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if ( data != null) {
+            boolean changed = data.getBooleanExtra("hasChanged", false);
+            if (changed) {
+                MonitorApplication.ConfigurationChanged();
+                MonitorActivity.this.finish();
+                System.gc();
+                MonitorActivity.this.startActivity(getIntent());
+            }
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -240,7 +257,7 @@ public class MonitorActivity extends AppCompatActivity {
         boolean handled = false;
         switch (id) {
             case R.id.action_settings:
-                startActivityForResult(new Intent(this, Settings.class), 0);
+                startActivityForResult(new Intent(this, Settings.class), 5);
                 handled = true;
                 break;
             case R.id.action_help:
