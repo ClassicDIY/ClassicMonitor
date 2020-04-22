@@ -340,7 +340,7 @@ public class Modbus {
   /**
    * Defines the maximum value of the transaction identifier.
    */
-  public static final int MAX_TRANSACTION_ID = (Short.MAX_VALUE * 2);
+  public static final int MAX_TRANSACTION_ID = (Short.MAX_VALUE);
 
 
   /**
