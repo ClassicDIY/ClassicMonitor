@@ -47,6 +47,7 @@ import org.joda.time.DateTime;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Set;
 
 import ca.farrelltonsolar.uicomponents.SlidingTabLayout;
 import ca.farrelltonsolar.uicomponents.TabStripAdapter;
@@ -63,6 +64,13 @@ public class MonitorActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(savedInstanceState != null) {
+            // hack to get around bug with tabs displaying wrong content after device rotates
+            if ( savedInstanceState.containsKey("android:fragments"))
+            {
+                savedInstanceState.remove("android:fragments");
+            }
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         navigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -90,7 +98,6 @@ public class MonitorActivity extends AppCompatActivity {
     }
 
     private void setupActionBar() {
-
         tabStripAdapter = new TabStripAdapter(getFragmentManager(), this, viewPager, stl, null);
         ChargeController cc = MonitorApplication.chargeControllers().getCurrentChargeController();
         if (cc != null && cc.deviceType() == DeviceType.Classic) {
