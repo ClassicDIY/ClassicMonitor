@@ -27,7 +27,7 @@
         android:id="@+id/EnergyToday"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_margin="20dp"
+        android:layout_margin="15dp"
 
         android:layout_weight="52"
         app:autoScale="true"
@@ -45,8 +45,9 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_gravity="center_vertical|top"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
         android:layout_weight="8">
 
 
@@ -61,8 +62,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_gravity="center_vertical|top"
-                android:layout_marginLeft="50dp"
-                android:layout_marginRight="50dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:gravity="center_vertical|top"
                 android:orientation="vertical"
                 android:weightSum="100">
@@ -73,12 +74,12 @@
                     android:layout_weight="30"
                     android:gravity="center_vertical|left"
                     android:labelFor="@+id/Value"
-                    android:text="@string/TotalEnergyTitle"
                     android:shadowColor="@color/material_blue_grey_800"
                     android:shadowDx="1"
                     android:shadowDy="1"
                     android:shadowRadius="1"
                     android:singleLine="true"
+                    android:text="@string/TotalEnergyTitle"
                     android:textColor="@color/black_87"
                     android:textSize="@dimen/textSizeMedium" />
 
@@ -94,21 +95,21 @@
                         android:id="@+id/EnergyTotalValue"
                         android:layout_width="0dp"
                         android:layout_height="fill_parent"
-                        android:layout_weight="75" />
+                        android:layout_weight="90" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="bottom|right"
-                        android:layout_weight="25"
+                        android:layout_weight="10"
                         android:gravity="center"
                         android:paddingLeft="2dp"
-                        android:text="@string/energy_unit"
                         android:shadowColor="@color/material_blue_grey_800"
                         android:shadowDx="1"
                         android:shadowDy="1"
                         android:shadowRadius="1"
                         android:singleLine="true"
+                        android:text="@string/energy_unit"
                         android:textColor="@color/black_87"
                         android:textSize="@dimen/textSizeMedium" />
                 </LinearLayout>
@@ -116,42 +117,45 @@
 
         </LinearLayout>
     </FrameLayout>
+
     <RadioGroup
         android:id="@+id/radio_unit_system"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:paddingBottom="25dp"
-        android:paddingTop="25dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:checkedButton="@+id/radio_unit"
-        android:weightSum="20"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="25dp"
+        android:paddingBottom="25dp"
+        android:weightSum="20">
 
         <RadioButton
             android:id="@+id/radio_system"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="System"
+            android:layout_weight="10"
+            android:background="@drawable/custom_radio_button"
             android:gravity="center"
             android:padding="5dp"
-            android:textSize="@dimen/textSizeLarge"
+            android:text="System"
             android:textColor="@color/custom_radio_color"
-            android:background="@drawable/custom_radio_button"
 
-            android:layout_weight="10"/>
+            android:textSize="@dimen/textSizeLarge" />
 
         <RadioButton
             android:id="@+id/radio_unit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Unit"
-            android:textColor="@color/custom_radio_color"
+            android:layout_weight="10"
+            android:background="@drawable/custom_radio_button"
 
             android:gravity="center"
             android:padding="5dp"
-            android:textSize="@dimen/textSizeLarge"
-            android:background="@drawable/custom_radio_button"
-            android:layout_weight="10"/>
+            android:text="Unit"
+            android:textColor="@color/custom_radio_color"
+            android:textSize="@dimen/textSizeLarge" />
 
 
     </RadioGroup>
