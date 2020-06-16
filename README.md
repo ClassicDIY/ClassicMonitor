@@ -2,7 +2,7 @@
 <h1>Classic Monitor</h1>
 <h2>An Android App for the Midnite Solar Charge Controller</h2>
 
-|If you find this project useful or interesting, please help support further development!|[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=graham.a.ross%40gmail.com&currency_code=CAD&source=url)|
+|If you find this project useful or interesting, please help support further development!|[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=graham.a.ross%40gmail.com&item_name=Support+ClassicMonitor+development&currency_code=USD&source=url)|
 |---|---|
 
 <p>
