@@ -54,8 +54,8 @@
     <string name="HourChartTabTitle">Hour Log Chart</string>
     <string name="MessagesTabTitle">Messages</string>
 
-    <string name="PVVoltTitle">PV Volts</string>
-    <string name="PVCurrentTitle">PV Current</string>
+    <string name="PVVoltTitle">Input Volts</string>
+    <string name="PVCurrentTitle">Input Current</string>
     <string name="BatVoltsTitle">Battery Volts</string>
     <string name="BatPowerTitle">Power</string>
     <string name="PowerTitle">Power</string>
@@ -88,9 +88,9 @@
     <string name="info_tempreature_compensated_battery_voltage">Target Battery Voltage:</string>
     <string name="info_message_1">Classic Over Temperature</string>
     <string name="info_message_2">Classic EEprom read/write found an error</string>
-    <string name="info_message_100">Input Voltage (PV) is lower than battery voltage.</string>
+    <string name="info_message_100">Input Voltage is lower than battery voltage.</string>
     <string name="info_message_200">User current limit or internal temperature current limit reached.</string>
-    <string name="info_message_400">Hyper Voc PV input voltage is above maximum Classic input rating.</string>
+    <string name="info_message_400">Hyper Voc input voltage is above maximum Classic input rating.</string>
     <string name="info_message_4000">Aux 1 ON (aux 1 connector has voltage or relay is closed).</string>
     <string name="info_message_8000">Aux 2 ON (aux 2 connector has voltage present).</string>
     <string name="info_message_10000">Ground Fault detected.</string>
@@ -149,7 +149,7 @@
         <item>Energy</item>
         <item>High Power</item>
         <item>High Temperature</item>
-        <item>High PV Volts</item>
+        <item>High Input Volts</item>
         <item>High Battery Volts</item>
         <item>Float Time</item>
     </string-array>
