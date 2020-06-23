@@ -17,7 +17,9 @@
 package ca.farrelltonsolar.classic;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -42,6 +44,7 @@ public class UDPListener extends Service {
     private final IBinder mBinder = new UDPListenerServiceBinder();
     private static Gson GSON = new Gson();
     private ListenerThread mListener;
+    WifiManager.MulticastLock wifiLock;
 
     public UDPListener() {
     }
@@ -66,6 +69,11 @@ public class UDPListener extends Service {
 
     public void listen(ChargeControllers currentCCs) {
         stopListening();
+        WifiManager wifi = (WifiManager)getApplicationContext().getSystemService( Context.WIFI_SERVICE );
+        if(wifi != null){
+            wifiLock = wifi.createMulticastLock("UDPListener");
+            wifiLock.acquire();
+        }
         mListener = new ListenerThread(currentCCs);
         mListener.setUncaughtExceptionHandler(setUncaughtExceptionHandler);
         mListener.start();
@@ -81,13 +89,15 @@ public class UDPListener extends Service {
     };
 
     public void stopListening() {
+        if (wifiLock != null && wifiLock.isHeld()) {
+            wifiLock.release();
+        }
         if (mListener != null) {
             mListener.SetRunning(false);
             mListener = null;
             Log.d(getClass().getName(), "stopListening");
         }
     }
-
 
     class ListenerThread extends Thread {
         private boolean running;
@@ -147,6 +157,7 @@ public class UDPListener extends Service {
                 do {
                     try {
                         socket = new DatagramSocket(Constants.CLASSIC_UDP_PORT);
+//                        socket.setBroadcast(true);
                         socket.setSoTimeout(5000);
                         break;
                     } catch (IOException ex) {
@@ -186,7 +197,7 @@ public class UDPListener extends Service {
                         int port = ((int) data[4] & 0xff);
                         port += ((long) data[5] & 0xffL) << (8);
                         InetSocketAddress socketAddress = new InetSocketAddress(address, port);
-                        if (!hasAddressAlreadyBeenFound(socketAddress)) {
+                        if (hasAddressAlreadyBeenFound(socketAddress) == false) {
                             Log.d(getClass().getName(), "Found new classic at address: " + address + " port: " + port);
                             addToAlreadyFoundList(socketAddress);
                             ChargeControllerInfo cc = new ChargeControllerInfo(socketAddress);
@@ -199,7 +210,7 @@ public class UDPListener extends Service {
                         }
                     } catch (SocketTimeoutException iox) {
                         // expect a timeout exception when no classic on the network
-//                        Log.w(getClass().getName(), "SocketTimeoutException: " + iox);
+                        Log.w(getClass().getName(), "SocketTimeoutException: " + iox);
                     } catch (IOException ex) {
                         if (socket != null && socket.isClosed()) {
                             break;
@@ -209,6 +220,9 @@ public class UDPListener extends Service {
                     Thread.sleep(sleepTime);
                     if (sleepTime < Constants.UDPListener_Maximum_Sleep_Time) {
                         sleepTime += Constants.UDPListener_Minimum_Sleep_Time;
+                    }
+                    else {
+                        SetRunning(false);
                     }
                 } while (GetRunning());
             } catch (Exception e) {
