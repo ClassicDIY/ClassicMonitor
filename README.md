@@ -13,6 +13,10 @@
 [![http://ClassicDIY.github.io/Classic/classicmonitor/help_en.html](https://img.shields.io/badge/Documentation-Help-blue?style=for-the-badge)](http://ClassicDIY.github.io/Classic/classicmonitor/help_en.html)
 </p>
 
+<p>
+Please refer to the <a href="https://github.com/ClassicDIY/Classic/wiki">Classic wiki</a> for more information.
+</p>
+
 ![Alt text](http://ClassicDIY.github.io/Classic/classicmonitor/images_en/StateOfCharge_landscape.png)
 
 <p>
