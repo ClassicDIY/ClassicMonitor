@@ -387,7 +387,7 @@ class ModbusTask extends TimerTask {
                 short reg6 = registers[5].toShort();
                 short reg7 = registers[6].toShort();
                 short reg8 =  registers[7].toShort();
-                String macAddress = String.format("%02x:%02x:%02x:%02x:%02x:%02x", reg8 >> 8, reg8 & 0x00ff, reg7 >> 8, reg7 & 0x00ff, reg6 >> 8, reg6 & 0x00ff);
+                String macAddress = String.format("%02x:%02x:%02x:%02x:%02x:%02x", (reg8 >> 8) & 0x00ff, reg8 & 0x00ff, (reg7 >> 8) & 0x00ff, reg7 & 0x00ff, (reg6 >> 8) & 0x00ff, reg6 & 0x00ff);
                 chargeControllerInfo.setMacAddress(macAddress);
                 float reg22 = (float) registers[21].getValue();
                 chargeControllerInfo.setLastVOC(reg22 / 10.0f);
