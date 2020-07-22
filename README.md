@@ -14,7 +14,7 @@
 </p>
 
 <p>
-Please refer to the <a href="https://github.com/ClassicDIY/Classic/wiki">Classic wiki</a> and the online documentation <a href="https://classicdiy.github.io/Classic/classicmonitor/help_en.html"> for more information.
+Please refer to the <a href="https://github.com/ClassicDIY/Classic/wiki">Classic wiki</a> and the <a href="https://classicdiy.github.io/Classic/classicmonitor/help_en.html"> online documentation</a> for more information.
 </p>
 
 ![Alt text](http://ClassicDIY.github.io/Classic/classicmonitor/images_en/StateOfCharge_landscape.png)
