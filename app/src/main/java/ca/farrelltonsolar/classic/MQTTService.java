@@ -168,8 +168,10 @@ public class MQTTService extends Service {
             MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
             mqttConnectOptions.setCleanSession(true);
             mqttConnectOptions.setAutomaticReconnect(true);
-            mqttConnectOptions.setUserName(chargeControllers.mqttUser());
-            mqttConnectOptions.setPassword(chargeControllers.mqttPassword().toCharArray());
+            if (chargeControllers.mqttUser() != "")
+                mqttConnectOptions.setUserName(chargeControllers.mqttUser());
+            if (chargeControllers.mqttPassword() != "")
+                mqttConnectOptions.setPassword(chargeControllers.mqttPassword().toCharArray());
             IMqttToken token = mqttClient.connect(mqttConnectOptions);
             token.setActionCallback(new IMqttActionListener() {
                 @Override
