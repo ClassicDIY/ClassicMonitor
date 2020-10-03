@@ -20,7 +20,7 @@
             android:defaultValue="mqtt.dioty.co"
             android:inputType="text"
             android:key="brokerHost"
-            android:maxLength="16"
+            android:maxLength="32"
             android:title="MQTT broker host name" />
         <EditTextPreference
             android:layout_width="wrap_content"
