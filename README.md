@@ -2,14 +2,15 @@
 <h1>Classic Monitor</h1>
 <h2>An Android App for the Midnite Solar Charge Controller</h2>
 
-[![HitCount](http://hits.dwyl.com/ClassicDIY/Classic.svg)](http://hits.dwyl.com/ClassicDIY/Classic)
-
 |If you find this project useful or interesting, please help support further development!|[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=graham.a.ross%40gmail.com&item_name=Support+ClassicMonitor+development&currency_code=USD&source=url)|
 |---|---|
 
 <p>
 <a href='https://play.google.com/store/apps/details?id=ca.farrelltonsolar.classic&hl=en&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width=200/></a>
  
+
+[![HitCount](http://hits.dwyl.com/ClassicDIY/Classic.svg)](http://hits.dwyl.com/ClassicDIY/Classic)
+
 [![GitHub tag (latest SemVer pre-release)](https://img.shields.io/github/v/tag/ClassicDIY/Classic?include_prereleases&label=Pre-Release&style=for-the-badge)](https://github.com/ClassicDIY/Classic/releases)
 [![GitHub issues](https://img.shields.io/github/issues/ClassicDIY/Classic?style=for-the-badge)](https://github.com/ClassicDIY/Classic/issues)
 [![http://ClassicDIY.github.io/Classic/classicmonitor/help_en.html](https://img.shields.io/badge/Documentation-Help-blue?style=for-the-badge)](http://ClassicDIY.github.io/Classic/classicmonitor/help_en.html)
