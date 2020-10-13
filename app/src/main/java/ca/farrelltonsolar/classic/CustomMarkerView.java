@@ -33,6 +33,9 @@ public class CustomMarkerView extends MarkerView {
             else if (RegisterName.BatVoltage == reg){
                 tvContent.setText("" + e.getVal()+"V"); // set the entry-value as the display text
             }
+            else if (RegisterName.SOC == reg){
+                tvContent.setText("" + e.getVal()+"%"); // set the entry-value as the display text
+            }
             else {
                 tvContent.setText("" + e.getVal()+"A"); // set the entry-value as the display text
             }

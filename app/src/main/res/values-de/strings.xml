@@ -50,6 +50,7 @@
     <string name="info_model_title">Modell:</string>
     <string name="info_mac_title">MAC-Adresse:</string>
     <string name="info_ipaddress_title">IP-Adresse:</string>
+    <string name="info_name_title">Einheitenname:</string>
     <string name="info_network_rev_title">Netzwerk-Version:</string>
     <string name="info_last_voc_title">Letzte VOC:</string>
     <string name="info_build_date_title">Software Build-Datum:</string>
@@ -164,7 +165,7 @@
     <string name="EndingAmps">Ladeendstrom: %1$1.1f A (Derzeit bei %2$1.1f A)</string>
     <string name="FloatTime">Erhaltungsladung heute: %s</string>
     <string name="AbsorbTime">Zeit für Konstantspannungsphase: %s</string>
-    <string name="MPPTMode">MPPT-Modus</string>
+    <string name="MPPTMode">MPPT-Modus:</string>
     <string name="EqualizeTime">Zeit für Ausgleichsladen: %s</string>
     <string name="ReasonForResting">Grund für Ruhe: %s</string>
     <string name="PercentCharge">% Ladung</string>

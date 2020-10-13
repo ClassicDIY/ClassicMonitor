@@ -197,7 +197,7 @@ public class UDPListener extends Service {
                         int port = ((int) data[4] & 0xff);
                         port += ((long) data[5] & 0xffL) << (8);
                         InetSocketAddress socketAddress = new InetSocketAddress(address, port);
-                        if (hasAddressAlreadyBeenFound(socketAddress) == false) {
+                        if (!hasAddressAlreadyBeenFound(socketAddress)) {
                             Log.d(getClass().getName(), "Found new classic at address: " + address + " port: " + port);
                             addToAlreadyFoundList(socketAddress);
                             ChargeControllerInfo cc = new ChargeControllerInfo(socketAddress);

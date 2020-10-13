@@ -31,13 +31,20 @@ public final class ChargeControllers {
     final transient Object lock = new Object();
     private static Context context;
     private String APIKey = "";
-    private List<ChargeController> devices = new ArrayList<>();
+    private List<ChargeController> modbusDevices = new ArrayList<>();
+    private List<ChargeController> mqttDevices = new ArrayList<>();
     private boolean useFahrenheit = false;
     private boolean autoDetectClassic = true;
     private boolean showPopupMessages = true;
     private boolean uploadToPVOutput = false;
     private boolean bidirectionalUnitsInWatts;
     private boolean systemViewEnabled = false;
+    private String mqttBrokerHost = "mqtt.dioty.co";
+    private int mqttPort = 1883;
+    private String mqttUser = "";
+    private String mqttPassword = "";
+    private String mqttRootTopic = "";
+    private CONNECTION_TYPE connectionType = CONNECTION_TYPE.MODBUS;
     private PVOutputSetting pVOutputSetting = new PVOutputSetting();
 
     // default ctor for de-serialization
@@ -48,15 +55,19 @@ public final class ChargeControllers {
         this.context = context;
     }
 
+    private List<ChargeController> Devices() {
+        return (connectionType == CONNECTION_TYPE.MODBUS) ? modbusDevices : mqttDevices;
+    }
+    
     public ChargeController get(int position) {
-        synchronized (devices) {
-            return devices.get(position);
+        synchronized (Devices()) {
+            return Devices().get(position);
         }
     }
 
     public ChargeController getCurrentChargeController() {
-        synchronized (devices) {
-            for (ChargeController cc : devices) {
+        synchronized (Devices()) {
+            for (ChargeController cc : Devices()) {
                 if (cc.isCurrent()) {
                     return cc;
                 }
@@ -66,9 +77,9 @@ public final class ChargeControllers {
     }
 
     public int getCurrentControllerIndex() {
-        synchronized (devices) {
-            for (int index = 0; index < devices.size(); index++) {
-                if (devices.get(index).isCurrent()) {
+        synchronized (Devices()) {
+            for (int index = 0; index < Devices().size(); index++) {
+                if (Devices().get(index).isCurrent()) {
                     return index;
                 }
             }
@@ -77,52 +88,52 @@ public final class ChargeControllers {
     }
 
     public boolean setCurrent(int position) {
-        if (position >= devices.size()) {
+        if (position >= Devices().size()) {
             throw new IndexOutOfBoundsException();
         }
-        synchronized (devices) {
-            for (int index = 0; index < devices.size(); index++) {
-                ChargeController cc = devices.get(index);
+        synchronized (Devices()) {
+            for (int index = 0; index < Devices().size(); index++) {
+                ChargeController cc = Devices().get(index);
                 if (cc.isCurrent() && index == position) {
                     return false; // already current
                 } else {
                     cc.setIsCurrent(false);
                 }
             }
-            ChargeControllerInfo cc = devices.get(position);
-            devices.get(position).setIsCurrent(true);
+            ChargeControllerInfo cc = Devices().get(position);
+            Devices().get(position).setIsCurrent(true);
         }
         return true;
     }
 
     public void add(ChargeControllerInfo ccInfo) {
         ChargeController newCC = new ChargeController(ccInfo);
-        synchronized (devices) {
-            devices.add(newCC);
+        synchronized (Devices()) {
+            Devices().add(newCC);
         }
         BroadcastUpdateNotification();
     }
 
     public void remove(ChargeControllerInfo cc) {
-        synchronized (devices) {
+        synchronized (Devices()) {
             cc.clearLogCache();
-            devices.remove(cc);
+            Devices().remove(cc);
         }
         BroadcastUpdateNotification();
         BroadcastRemoveNotification(cc.uniqueId());
     }
 
     public int count() {
-        synchronized (devices) {
-            return devices.size();
+        synchronized (Devices()) {
+            return Devices().size();
         }
     }
 
     // number of classics configured or the number of devices that provide day log data
     public int classicCount() {
-        synchronized (devices) {
+        synchronized (Devices()) {
             int count = 0;
-            for (ChargeController cc : devices) {
+            for (ChargeController cc : Devices()) {
                 if (cc.deviceType() == DeviceType.Classic) {
                     count++;
                 }
@@ -132,21 +143,21 @@ public final class ChargeControllers {
     }
 
     public void clear() {
-        synchronized (devices) {
-            devices.clear();
+        synchronized (Devices()) {
+            Devices().clear();
         }
         BroadcastUpdateNotification();
     }
 
     public void load(ArrayAdapter adapter) {
-        synchronized (devices) {
-            adapter.addAll(devices);
+        synchronized (Devices()) {
+            adapter.addAll(Devices());
         }
     }
 
     public void load(ArrayList<InetSocketAddress> arr, boolean staticOnly) throws UnknownHostException {
-        synchronized (devices) {
-            for (ChargeController cc : devices) {
+        synchronized (Devices()) {
+            for (ChargeController cc : Devices()) {
                 if (cc.isCurrent()) {
                     arr.add(cc.getInetSocketAddress());
                 } else if (!staticOnly || cc.isStaticIP()) { // all non current or all static non current
@@ -156,11 +167,28 @@ public final class ChargeControllers {
         }
     }
 
+    // modbus device
     public void setReachable(String deviceIpAddress, int port, boolean state) {
         boolean updated = false;
-        synchronized (devices) {
-            for (ChargeController cc : devices) {
+        synchronized (Devices()) {
+            for (ChargeController cc : Devices()) {
                 if (deviceIpAddress.compareTo(cc.deviceIpAddress()) == 0 && port == cc.port()) {
+                    updated = cc.setIsReachable(state);
+                    break;
+                }
+            }
+        }
+        if (updated) {
+            BroadcastUpdateNotification();
+        }
+    }
+
+    // MQTT device
+    public void setReachable(String deviceName, boolean state) {
+        boolean updated = false;
+        synchronized (Devices()) {
+            for (ChargeController cc : Devices()) {
+                if (deviceName.compareTo(cc.deviceName()) == 0) {
                     updated = cc.setIsReachable(state);
                     break;
                 }
@@ -202,12 +230,12 @@ public final class ChargeControllers {
     }
 
     public synchronized boolean autoDetectClassic() {
-        return autoDetectClassic;
+
+        return autoDetectClassic && connectionType != CONNECTION_TYPE.MQTT;
     }
 
     public synchronized void setAutoDetectClassic(boolean autoDetectClassic) {
         this.autoDetectClassic = autoDetectClassic;
-        MonitorApplication.ConfigurationChanged();
     }
 
     public synchronized boolean showPopupMessages() {
@@ -239,8 +267,6 @@ public final class ChargeControllers {
         this.APIKey = APIKey;
     }
 
-
-
     public synchronized Boolean uploadToPVOutput() {
         return uploadToPVOutput;
     }
@@ -271,8 +297,8 @@ public final class ChargeControllers {
 
     public void resetPVOutputLogs() {
         pVOutputSetting.resetPVOutputEntry();
-        synchronized (devices) {
-            for (ChargeController cc : devices) {
+        synchronized (Devices()) {
+            for (ChargeController cc : Devices()) {
                 cc.getPVOutputSetting().resetPVOutputEntry();
             }
         }
@@ -289,4 +315,65 @@ public final class ChargeControllers {
             }
         }
     }
+
+    public synchronized CONNECTION_TYPE getConnectionType() {
+        return connectionType;
+    }
+
+    public synchronized boolean setConnectionType(CONNECTION_TYPE val) {
+        boolean hasChanged = this.connectionType != val;
+        this.connectionType = val;
+        return hasChanged;
+    }
+
+    public synchronized String mqttBrokerHost() {
+        return mqttBrokerHost;
+    }
+
+    public synchronized boolean setMqttBrokerHost(String brokerHost) {
+        boolean rVal = this.mqttBrokerHost != brokerHost;
+        this.mqttBrokerHost = brokerHost;
+        return rVal;
+    }
+
+    public synchronized int mqttPort() {
+        return mqttPort;
+    }
+
+    public synchronized boolean setMqttPort(int mqttPort) {
+        boolean rVal = this.mqttPort != mqttPort;
+        this.mqttPort = mqttPort;
+        return rVal;
+    }
+
+    public synchronized String mqttUser() {
+        return mqttUser;
+    }
+
+    public synchronized boolean setMqttUser(String mqttUser) {
+        boolean rVal = this.mqttUser != mqttUser;
+        this.mqttUser = mqttUser;
+        return rVal;
+    }
+
+    public synchronized String mqttRootTopic() {
+        return mqttRootTopic;
+    }
+
+    public synchronized boolean setMqttRootTopic(String mqttRootTopic) {
+        boolean rVal = this.mqttRootTopic != mqttRootTopic;
+        this.mqttRootTopic = mqttRootTopic;
+        return rVal;
+    }
+
+    public synchronized String mqttPassword() {
+        return mqttPassword;
+    }
+
+    public synchronized boolean setMqttPassword(String mqttPassword) {
+        boolean rVal = this.mqttPassword != mqttPassword;
+        this.mqttPassword = mqttPassword;
+        return rVal;
+    }
+
 }

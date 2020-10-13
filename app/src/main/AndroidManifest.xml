@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ca.farrelltonsolar.classic"
-    android:versionCode="265"
-    android:versionName="2.6.5" >
+    android:versionCode="305"
+    android:versionName="3.0.5" >
+
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -11,6 +12,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <!--for debug, save logs & settings to external-->
     <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
@@ -49,12 +51,16 @@
             android:name=".ModbusService"
             android:exported="false" />
         <service
+            android:name=".MQTTService"
+            android:exported="false" />
+        <service
             android:name=".UDPListener"
             android:exported="false" />
         <service
             android:name=".PVOutputService"
             android:exported="false" >
         </service>
+        <service android:name="org.eclipse.paho.android.service.MqttService" />
     </application>
 
 </manifest>

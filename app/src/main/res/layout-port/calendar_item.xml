@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="100sp"
     android:background="@drawable/list_item_background"
@@ -25,14 +26,28 @@
             android:textSize="@dimen/textSizeMedium"
             android:textStyle="bold"></TextView>
 
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/state"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/text_primary"
-            android:textStyle="bold"></TextView>
+            android:layout_gravity="center_horizontal">
 
+            <TextView
+                android:id="@+id/state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/stateSuffix"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|end"
+                android:textSize="@dimen/textSizeSmall"
+                tools:layout_marginLeft="2dp"
+                tools:textColor="@color/text_dim" />
+        </LinearLayout>
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/isfloat"
             android:layout_width="wrap_content"

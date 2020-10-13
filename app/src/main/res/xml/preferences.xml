@@ -3,12 +3,54 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="@string/connectionsPreferenceCategory">
-
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="Off"
+            android:key="protocol"
+            android:title="Protocol" />
         <CheckBoxPreference
             android:key="AutoDetectClassic"
             android:summary="@string/connectionsPreferenceSummary"
             android:disableDependentsState="false"
             android:defaultValue="true" />
+        <EditTextPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="mqtt.dioty.co"
+            android:inputType="text"
+            android:key="brokerHost"
+            android:maxLength="32"
+            android:title="MQTT broker host name" />
+        <EditTextPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="1883"
+            android:digits="0123456789"
+            android:inputType="numberDecimal"
+            android:key="mqttPort"
+            android:maxLength="5"
+            android:numeric="decimal"
+            android:title="MQTT broker port" />
+        <EditTextPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:key="mqttUser"
+            android:maxLength="32"
+            android:title="MQTT User" />
+        <EditTextPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:key="mqttPassword"
+            android:maxLength="32"
+            android:title="MQTT Password" />
+        <EditTextPreference
+            android:key="mqttRootTopic"
+            android:title="MQTT Root Topic"
+            android:inputType="text"
+            android:maxLength="32"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/gaugesPreferenceCategory">
@@ -23,7 +65,7 @@
             android:key="ShowPopupMessages"
             android:summary="@string/ShowPopupSummary"
             android:disableDependentsState="false"
-            android:defaultValue="true" />
+            android:defaultValue="false" />
 
         <CheckBoxPreference
             android:key="SystemViewEnabled"
@@ -47,8 +89,7 @@
             android:key="APIKey"
             android:title="@string/APIKeyTitle"
             android:inputType="text"
-            android:maxLength="40"
-            android:defaultValue="" />
+            android:maxLength="40"/>
 
         <EditTextPreference
             android:dialogTitle="@string/SIDDialogTitle"
@@ -58,8 +99,7 @@
             android:inputType="numberDecimal"
             android:digits="0123456789"
             android:maxLength="5"
-            android:numeric="decimal"
-            android:defaultValue="" />
+            android:numeric="decimal"/>
         <Preference
             android:title="@string/ClearLogsTitle"
             android:icon="@drawable/ic_action_delete"
