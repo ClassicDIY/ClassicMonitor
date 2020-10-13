@@ -260,14 +260,8 @@ public class NavigationDrawerFragment extends Fragment {
         }
 
         if (item.getItemId() == R.id.action_add) {
-            if (MonitorApplication.chargeControllers().getConnectionType() == CONNECTION_TYPE.MODBUS) {
-                IPAddressDialog dialog = new IPAddressDialog();
-                dialog.show(this.getFragmentManager(), "IPAddress");
-            }
-            else {
-                mqttNameDialog dialog = new mqttNameDialog();
-                dialog.show(this.getFragmentManager(), "Unit Name");
-            }
+            IPAddressDialog dialog = new IPAddressDialog();
+            dialog.show(this.getFragmentManager(), "IPAddress");
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -287,9 +281,9 @@ public class NavigationDrawerFragment extends Fragment {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
-//    public void add(ChargeController cc) {
-//        adapter.add(cc);
-//    }
+    public void add(ChargeController cc) {
+        adapter.add(cc);
+    }
 
 
     /**

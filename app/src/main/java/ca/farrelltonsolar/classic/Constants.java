@@ -71,12 +71,4 @@ public class Constants {
     public static final String CA_FARRELLTONSOLAR_CLASSIC_UPDATE_CHARGE_CONTROLLERS = "ca.farrelltonsolar.classic.UpdateChargeControllers";
     public static final String CA_FARRELLTONSOLAR_CLASSIC_MONITOR_CHARGE_CONTROLLER = "ca.farrelltonsolar.classic.MonitorChargeController";
 
-    //MQTT
-    public static final String CLIENT_ID = "Classic";
-    public static final String STAT_TOPIC_SUFFIX = "stat";
-    public static final String CMND_TOPIC_SUFFIX = "cmnd";
-    public static final String TELE_TOPIC_SUFFIX = "tele";
-    public static final long MQTT_IDLE_DELAY = 60000;
-    public static final long MQTT_WAKE_DELAY = 1000;
-
 }

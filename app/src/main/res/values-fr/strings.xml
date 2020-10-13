@@ -69,7 +69,6 @@
     <string name="dialog_port_hint">numéro du port</string>
     <string name="info_build_date_title">Date du logiciel:</string>
     <string name="info_ipaddress_title">Adresse IP:</string>
-    <string name="info_name_title">Nom de l\'unité:</string>
     <string name="info_last_voc_title">Dernier VOC:</string>
     <string name="info_mac_title">Adresse MAC:</string>
     <string name="info_nominal_battery_voltage">Tension nominal:</string>
@@ -181,7 +180,7 @@
     <string name="EndingAmps">Ampérage de fin: %1$1.1f A (maintenant a %2$1.1f A)</string>
     <string name="FloatTime">Temp a flot: %s</string>
     <string name="AbsorbTime">Temp absorber: %s</string>
-    <string name="MPPTMode">Mode MPPT:</string>
+    <string name="MPPTMode">Mode MPPT</string>
     <string name="EqualizeTime">Temps égaliser: %s</string>
     <string name="ReasonForResting">Raison du repos: %s</string>
     <string name="PercentCharge">% Charge</string>

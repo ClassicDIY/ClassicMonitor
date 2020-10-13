@@ -80,7 +80,6 @@
     <string name="info_mac_title">MAC Address:</string>
     <string name="info_unitid_title" translatable="false">Unit ID:</string>
     <string name="info_ipaddress_title">IP Address:</string>
-    <string name="info_name_title">Unit Name:</string>
     <string name="info_classic_rev_title" translatable="false">Classic Rev:</string>
     <string name="info_network_rev_title">Network Rev:</string>
     <string name="info_last_voc_title">Last VOC:</string>
@@ -195,7 +194,7 @@
     <string name="EndingAmps">Ending Amps: %1$1.1f A (currently at %2$1.1f A)</string>
     <string name="FloatTime">Float Time Today: %s</string>
     <string name="AbsorbTime">Absorb Timer: %s</string>
-    <string name="MPPTMode">MPPT Mode:</string>
+    <string name="MPPTMode">MPPT Mode</string>
     <string name="EqualizeTime">Equalize time: %s</string>
     <string name="ReasonForResting">Reason For Resting: %s</string>
     <string name="PercentCharge">% Charge</string>

@@ -30,15 +30,17 @@ import com.google.gson.Gson;
 public class ComplexPreferences {
 
     private static ComplexPreferences complexPreferences;
+    private Context context;
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
     private static Gson GSON = new Gson();
     private String namePreferences;
 
     private ComplexPreferences(Context context, String namePreferences, int mode) {
+        this.context = context;
         if (namePreferences == null || namePreferences.equals("")) {
 //            namePreferences = context.getPackageName() + getVersion(context) + "_complexPreferences";
-            namePreferences = context.getPackageName() + "300_complexPreferences";
+            namePreferences = context.getPackageName() + "211_complexPreferences";
             this.namePreferences = namePreferences;
         }
         preferences = context.getSharedPreferences(namePreferences, mode);
