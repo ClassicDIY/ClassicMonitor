@@ -63,6 +63,13 @@ public class MonitorActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(savedInstanceState != null) {
+            // hack to get around bug with tabs displaying wrong content after device rotates
+            if ( savedInstanceState.containsKey("android:fragments"))
+            {
+                savedInstanceState.remove("android:fragments");
+            }
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         navigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);

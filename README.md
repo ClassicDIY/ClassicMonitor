@@ -1,13 +1,22 @@
 
 <h1>Classic Monitor</h1>
 <h2>An Android App for the Midnite Solar Charge Controller</h2>
+
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FClassicDIY%2FClassic&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
+
+|If you find this project useful or interesting, please help support further development!|[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=graham.a.ross%40gmail.com&item_name=Support+ClassicMonitor+development&currency_code=USD&source=url)|
+|---|---|
+
 <p>
 <a href='https://play.google.com/store/apps/details?id=ca.farrelltonsolar.classic&hl=en&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width=200/></a>
  
 [![GitHub tag (latest SemVer pre-release)](https://img.shields.io/github/v/tag/ClassicDIY/Classic?include_prereleases&label=Pre-Release&style=for-the-badge)](https://github.com/ClassicDIY/Classic/releases)
 [![GitHub issues](https://img.shields.io/github/issues/ClassicDIY/Classic?style=for-the-badge)](https://github.com/ClassicDIY/Classic/issues)
 [![http://ClassicDIY.github.io/Classic/classicmonitor/help_en.html](https://img.shields.io/badge/Documentation-Help-blue?style=for-the-badge)](http://ClassicDIY.github.io/Classic/classicmonitor/help_en.html)
-[![https://www.buymeacoffee.com/r4K2HIB](https://img.shields.io/badge/Donate-Buy%20Me%20a%20coffee-orange?style=for-the-badge)](https://www.buymeacoffee.com/r4K2HIB)
+</p>
+
+<p>
+Please refer to the <a href="https://github.com/ClassicDIY/Classic/wiki">Classic wiki</a> and the <a href="https://classicdiy.github.io/Classic/classicmonitor/help_en.html"> online documentation</a> for more information.
 </p>
 
 ![Alt text](http://ClassicDIY.github.io/Classic/classicmonitor/images_en/StateOfCharge_landscape.png)
@@ -44,6 +53,31 @@ Basic support for the Tristar MPPT charge controller from Morningstar is also in
 
 
 Release notes:
+
+-----------------
+
+version 2.6.5
+
+<ul>
+<li>Update to API 29</li>
+<li>Fixed MAC address display, splash delay</li>
+</ul>
+
+-----------------
+
+version 2.6.4
+
+<ul>
+<li>Enabled multicast lock to fix AutoDetect classic on newer versions of Android</li>
+</ul>
+
+-----------------
+
+version 2.6.0
+
+<ul>
+<li>Clear instance state to get around bug with tabs displaying wrong content</li>
+</ul>
 
 -----------------
 
