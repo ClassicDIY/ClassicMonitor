@@ -64,7 +64,7 @@
     <string name="LoadPowerTitle">Power</string>
 
     <string name="EnergyTodayTitle">Energy Today</string>
-    <string name="TotalEnergyTitle">Total Energy</string>
+    <string name="TotalEnergyTitle">Total Energy (kWh)</string>
     <string name="energy_unit" translatable="false">kWh</string>
     <string name="power_unit" translatable="false">Watts</string>
     <string name="amp_unit">Amps</string>
@@ -169,10 +169,10 @@
     <string name="CapacityTabTitle">Capacity</string>
     <string name="amp_hours_unit">Ah</string>
     <string name="NetCapacityGaugeTitle">Net Charge</string>
-    <string name="TotalCapacityTitle">Total Capacity</string>
+    <string name="TotalCapacityTitle">Total Capacity (Ah)</string>
     <string name="Positive_AH_Title">Charge (Positive Ah)</string>
     <string name="Negative_AH_Title">Discharge (Negative Ah)</string>
-    <string name="RemainingCapacityTitle">Remaining Capacity</string>
+    <string name="RemainingCapacityTitle">Remaining Capacity (Ah)</string>
     <string name="ShuntTemperatureTitle" translatable="false">WB Jr. Shunt</string>
     <string name="TemperatureScaleSummary">Use Fahrenheit scale</string>
     <string name="turn_off_local_app">Please make sure the Midnite Solar local app is not running on the network,\n the classic only supports one connection at a time.</string>

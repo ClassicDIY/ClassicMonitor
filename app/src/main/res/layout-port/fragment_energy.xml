@@ -95,23 +95,7 @@
                         android:id="@+id/EnergyTotalValue"
                         android:layout_width="0dp"
                         android:layout_height="fill_parent"
-                        android:layout_weight="90" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="bottom|right"
-                        android:layout_weight="10"
-                        android:gravity="center"
-                        android:paddingLeft="2dp"
-                        android:shadowColor="@color/material_blue_grey_800"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="1"
-                        android:singleLine="true"
-                        android:text="@string/energy_unit"
-                        android:textColor="@color/black_87"
-                        android:textSize="@dimen/textSizeMedium" />
+                        android:layout_weight="100" />
                 </LinearLayout>
             </LinearLayout>
 
