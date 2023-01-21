@@ -20,7 +20,7 @@
     xmlns:chartview="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent">
 
-    <ca.farrelltonsolar.uicomponents.ChartView
+    <com.missouriwindandsolar.uicomponents.ChartView
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

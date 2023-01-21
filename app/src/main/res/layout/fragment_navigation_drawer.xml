@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:context="ca.farrelltonsolar.classic.NavigationDrawerFragment">
+    tools:context="com.missouriwindandsolar.classic.NavigationDrawerFragment">
 
     <ProgressBar xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/root_progressbar"

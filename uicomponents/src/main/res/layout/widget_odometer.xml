@@ -6,32 +6,32 @@
     android:stretchColumns="*"
     >
     <TableRow>
-        <ca.farrelltonsolar.uicomponents.OdometerSpinner
+        <com.missouriwindandsolar.uicomponents.OdometerSpinner
             android:id="@+id/widget_odometer_spinner_100k"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             />
-        <ca.farrelltonsolar.uicomponents.OdometerSpinner
+        <com.missouriwindandsolar.uicomponents.OdometerSpinner
             android:id="@+id/widget_odometer_spinner_10k"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             />
-        <ca.farrelltonsolar.uicomponents.OdometerSpinner
+        <com.missouriwindandsolar.uicomponents.OdometerSpinner
             android:id="@+id/widget_odometer_spinner_1k"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             />
-        <ca.farrelltonsolar.uicomponents.OdometerSpinner
+        <com.missouriwindandsolar.uicomponents.OdometerSpinner
             android:id="@+id/widget_odometer_spinner_100"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             />
-        <ca.farrelltonsolar.uicomponents.OdometerSpinner
+        <com.missouriwindandsolar.uicomponents.OdometerSpinner
             android:id="@+id/widget_odometer_spinner_10"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             />
-        <ca.farrelltonsolar.uicomponents.OdometerSpinner
+        <com.missouriwindandsolar.uicomponents.OdometerSpinner
             android:id="@+id/widget_odometer_spinner_1"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"

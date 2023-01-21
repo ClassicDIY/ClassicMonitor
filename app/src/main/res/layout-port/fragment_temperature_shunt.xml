@@ -35,7 +35,7 @@
         android:orientation="horizontal"
         android:weightSum="100">
 
-    <ca.farrelltonsolar.uicomponents.TemperatureGauge
+    <com.missouriwindandsolar.uicomponents.TemperatureGauge
         android:id="@+id/BatTemperature"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
@@ -46,7 +46,7 @@
         app:showInnerRim="false"
         app:showReading="true" />
 
-    <ca.farrelltonsolar.uicomponents.TemperatureGauge
+    <com.missouriwindandsolar.uicomponents.TemperatureGauge
         android:id="@+id/FETTemperature"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
@@ -65,7 +65,7 @@
         android:orientation="horizontal"
         android:weightSum="100">
 
-    <ca.farrelltonsolar.uicomponents.TemperatureGauge
+    <com.missouriwindandsolar.uicomponents.TemperatureGauge
         android:id="@+id/PCBTemperature"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
@@ -76,7 +76,7 @@
         app:showInnerRim="false"
         app:showReading="true" />
 
-    <ca.farrelltonsolar.uicomponents.TemperatureGauge
+    <com.missouriwindandsolar.uicomponents.TemperatureGauge
         android:id="@+id/ShuntTemp"
         android:layout_width="0dp"
         android:layout_height="fill_parent"

@@ -4,7 +4,7 @@ android {
     buildToolsVersion "28.0.3"
 
     defaultConfig {
-        applicationId "ca.farrelltonsolar.classic"
+        applicationId "com.missouriwindandsolar.classic"
         minSdkVersion 15
         targetSdkVersion 30
     }

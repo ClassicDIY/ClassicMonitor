@@ -34,7 +34,7 @@
         android:orientation="vertical"
         android:weightSum="6">
 
-        <ca.farrelltonsolar.uicomponents.BaseGauge
+        <com.missouriwindandsolar.uicomponents.BaseGauge
             android:id="@+id/PVVoltage"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
@@ -52,7 +52,7 @@
             app:autoScale="true"
             app:showReading="true" />
 
-        <ca.farrelltonsolar.uicomponents.BaseGauge
+        <com.missouriwindandsolar.uicomponents.BaseGauge
             android:id="@+id/PVCurrent"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
@@ -78,7 +78,7 @@
         android:layout_weight="30"
         android:orientation="vertical">
 
-        <ca.farrelltonsolar.uicomponents.SolarGauge
+        <com.missouriwindandsolar.uicomponents.SolarGauge
             android:id="@+id/Power"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -107,7 +107,7 @@
         android:orientation="vertical"
         android:weightSum="6">
 
-        <ca.farrelltonsolar.uicomponents.BaseGauge
+        <com.missouriwindandsolar.uicomponents.BaseGauge
             android:id="@+id/BatVoltage"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -125,7 +125,7 @@
             app:autoScale="true"
             app:showReading="true" />
 
-        <ca.farrelltonsolar.uicomponents.BaseGauge
+        <com.missouriwindandsolar.uicomponents.BaseGauge
             android:id="@+id/BatCurrent"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

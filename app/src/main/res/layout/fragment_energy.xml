@@ -22,7 +22,7 @@
     android:orientation="horizontal"
     android:weightSum="100">
 
-    <ca.farrelltonsolar.uicomponents.BaseGauge
+    <com.missouriwindandsolar.uicomponents.BaseGauge
         android:id="@+id/EnergyToday"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
@@ -134,7 +134,7 @@
                     android:orientation="horizontal"
                     android:weightSum="100">
 
-                    <ca.farrelltonsolar.uicomponents.Odometer
+                    <com.missouriwindandsolar.uicomponents.Odometer
                         android:id="@+id/EnergyTotalValue"
                         android:layout_width="0dp"
                         android:layout_height="fill_parent"

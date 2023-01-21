@@ -43,11 +43,11 @@ public static *** i(...);
 -keep class com.google.gson.stream.** { *; }
 
 # Application classes that will be serialized/deserialized over Gson
--keep class ca.farrelltonsolar.classic.DeviceType { *; }
--keep class ca.farrelltonsolar.classic.CONNECTION_TYPE { *; }
--keep class ca.farrelltonsolar.classic.ChargeControllers { *; }
--keep class ca.farrelltonsolar.classic.ChargeControllerInfo { *; }
--keep class ca.farrelltonsolar.classic.ChargeControllerTransfer { *; }
+-keep class com.missouriwindandsolar.classic.DeviceType { *; }
+-keep class com.missouriwindandsolar.classic.CONNECTION_TYPE { *; }
+-keep class com.missouriwindandsolar.classic.ChargeControllers { *; }
+-keep class com.missouriwindandsolar.classic.ChargeControllerInfo { *; }
+-keep class com.missouriwindandsolar.classic.ChargeControllerTransfer { *; }
 
 
 

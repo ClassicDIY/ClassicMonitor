@@ -27,7 +27,7 @@
     android:paddingTop="5dp"
     android:weightSum="60">
 
-    <ca.farrelltonsolar.uicomponents.SolarGauge
+    <com.missouriwindandsolar.uicomponents.SolarGauge
         android:id="@+id/Power"
         android:layout_width="fill_parent"
         android:layout_weight="30"
@@ -44,7 +44,7 @@
         app:autoScale="true"
         app:showReading="true" />
 
-    <ca.farrelltonsolar.uicomponents.SolarGauge
+    <com.missouriwindandsolar.uicomponents.SolarGauge
 
         android:id="@+id/Load"
         android:layout_width="fill_parent"
