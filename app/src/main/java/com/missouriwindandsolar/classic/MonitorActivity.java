@@ -247,7 +247,7 @@ public class MonitorActivity extends AppCompatActivity {
                 break;
             case R.id.action_help:
                 String helpContext = navigationDrawerFragment.isDrawerOpen() ? "NavigationBar" : tabStripAdapter.getItemBookmark(viewPager.getCurrentItem());
-                helpContext = String.format("http://graham22.github.io/Classic/classicmonitor/help_%s.html#%s", MonitorApplication.getLanguage(), helpContext);
+                helpContext = String.format("https://windandsolar.com/classic-monitor/help_%s.html#%s", MonitorApplication.getLanguage(), helpContext);
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(helpContext)));
                 handled = true;
                 break;

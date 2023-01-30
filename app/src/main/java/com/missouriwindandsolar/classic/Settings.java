@@ -55,7 +55,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             @Override
             //On click function
             public void onClick(View view) {
-                String helpContext = String.format("http://graham22.github.io/Classic/classicmonitor/help_%s.html#Settings", MonitorApplication.getLanguage());
+                String helpContext = String.format("https://windandsolar.com/classic-monitor/help_%s.html#Settings", MonitorApplication.getLanguage());
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(helpContext)));
                 return;
             }
