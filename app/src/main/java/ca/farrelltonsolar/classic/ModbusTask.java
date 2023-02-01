@@ -33,6 +33,7 @@ import ca.farrelltonsolar.j2modlite.ModbusException;
 import ca.farrelltonsolar.j2modlite.ModbusIOException;
 import ca.farrelltonsolar.j2modlite.facade.ModbusTCPMaster;
 import ca.farrelltonsolar.j2modlite.msg.ReadFileTransferResponse;
+import ca.farrelltonsolar.j2modlite.msg.ReadMEIResponse;
 import ca.farrelltonsolar.j2modlite.procimg.Register;
 
 // Classic modbus table
@@ -103,6 +104,7 @@ class ModbusTask extends TimerTask {
     private boolean foundWhizBangJr = false;
     private boolean foundTriStar = false;
     private boolean initialReadingLoaded = false;
+    private DeviceModel _model;
 
     ModbusTask(ChargeControllerInfo cc, Context ctx) {
         chargeControllerInfo = cc;
@@ -271,22 +273,45 @@ class ModbusTask extends TimerTask {
     private void GetModbusReadings() throws ModbusException {
         try {
             if (foundTriStar) {
-                Register[] registers = modbusMaster.readMultipleRegisters(0, 80);
-                if (registers != null && registers.length == 80) {
-                    readings.set(RegisterName.BatVoltage, VScale(registers[24].getValue()));
-                    readings.set(RegisterName.PVVoltage, VScale(registers[27].getValue()));
-                    readings.set(RegisterName.BatCurrent, IScale(registers[28].getValue()));
-                    readings.set(RegisterName.PVCurrent, IScale(registers[29].getValue()));
-                    readings.set(RegisterName.ChargeState, StateScale(registers[50].getValue()));
-                    readings.set(RegisterName.Power, PScale(registers[58].getValue()));
-                    readings.set(RegisterName.EnergyToday, WHr(registers[68].getValue()));
-                    readings.set(RegisterName.TotalEnergy, (float) registers[57].getValue());
-                    readings.set(RegisterName.BatTemperature, (short)registers[37].getValue() / 1.0f);
-                    readings.set(RegisterName.FETTemperature, (short)registers[35].getValue() / 1.0f);
-                    readings.set(RegisterName.PCBTemperature, (short)registers[35].getValue() / 1.0f);
-                } else {
-                    Log.w(getClass().getName(), "Modbus failed to read 0000, readMultipleRegisters returned null");
-                    throw new ModbusException("Failed to read data from modbus 0000");
+                if (_model == DeviceModel.TS45) {
+                    Register[] registers = modbusMaster.readMultipleRegisters(0, 30);
+                    if (registers != null && registers.length == 30) {
+                        float batV =  (registers[8].getValue() * (float)96.667)/32768;
+                        float batI = (registers[11].getValue() * (float)66.667)/32768;
+                        readings.set(RegisterName.BatVoltage, batV);
+                        readings.set(RegisterName.PVVoltage, (registers[10].getValue() * (float)139.15)/32768);
+                        readings.set(RegisterName.BatCurrent, batI);
+                        readings.set(RegisterName.PVCurrent, (registers[12].getValue() * (float)316.67)/32768);
+                        readings.set(RegisterName.ChargeState, StateScale(registers[27].getValue()));
+                        readings.set(RegisterName.Power, batI * batV);
+//                        readings.set(RegisterName.EnergyToday, WHr(registers[68].getValue()));
+//                        readings.set(RegisterName.TotalEnergy, (float) registers[57].getValue());
+                        readings.set(RegisterName.BatTemperature, (short) registers[15].getValue() / 1.0f);
+                        readings.set(RegisterName.FETTemperature, (short) registers[14].getValue() / 1.0f);
+                        readings.set(RegisterName.PCBTemperature, (short) registers[15].getValue() / 1.0f);
+                    } else {
+                        Log.w(getClass().getName(), "Modbus failed to read 0000, readMultipleRegisters returned null");
+                        throw new ModbusException("Failed to read data from modbus 0000");
+                    }
+                }
+                else {
+                    Register[] registers = modbusMaster.readMultipleRegisters(0, 80);
+                    if (registers != null && registers.length == 80) {
+                        readings.set(RegisterName.BatVoltage, VScale(registers[24].getValue()));
+                        readings.set(RegisterName.PVVoltage, VScale(registers[27].getValue()));
+                        readings.set(RegisterName.BatCurrent, IScale(registers[28].getValue()));
+                        readings.set(RegisterName.PVCurrent, IScale(registers[29].getValue()));
+                        readings.set(RegisterName.ChargeState, StateScale(registers[50].getValue()));
+                        readings.set(RegisterName.Power, PScale(registers[58].getValue()));
+                        readings.set(RegisterName.EnergyToday, WHr(registers[68].getValue()));
+                        readings.set(RegisterName.TotalEnergy, (float) registers[57].getValue());
+                        readings.set(RegisterName.BatTemperature, (short) registers[37].getValue() / 1.0f);
+                        readings.set(RegisterName.FETTemperature, (short) registers[35].getValue() / 1.0f);
+                        readings.set(RegisterName.PCBTemperature, (short) registers[35].getValue() / 1.0f);
+                    } else {
+                        Log.w(getClass().getName(), "Modbus failed to read 0000, readMultipleRegisters returned null");
+                        throw new ModbusException("Failed to read data from modbus 0000");
+                    }
                 }
             } else {
                 if (foundWhizBangJr) {
@@ -451,15 +476,29 @@ class ModbusTask extends TimerTask {
                 if (foundTriStar) {
                     chargeControllerInfo.setDeviceName("TriStar");
                     chargeControllerInfo.setDeviceType(DeviceType.TriStar);
-                    float hi = registers[0].toShort();
-                    float lo = registers[1].toShort();
-                    lo = lo / 65536;
-                    v_pu = hi + lo;
+                    ReadMEIResponse mei = modbusMaster.readMEI();
+                    if (mei.getFieldCount() >= 3) {
+                        String[] flds = mei.getFields();
+                        for (int i = 0; i < mei.getFieldCount(); i++) {
+                            Log.i(getClass().getName(), String.format("MEI fld %d: %s", i, flds[i]));
+                        }
+                        if (flds[1].compareTo("TS-45") == 0) {
+                            _model = DeviceModel.TS45;
+                        }
+                        else {
+                            _model = DeviceModel.TSMPPT;
 
-                    hi = (float) registers[2].toShort();
-                    lo = (float) registers[3].toShort();
-                    lo = lo / 65536;
-                    i_pu = hi + lo;
+                            float hi = registers[0].toShort();
+                            float lo = registers[1].toShort();
+                            lo = lo / 65536;
+                            v_pu = hi + lo;
+
+                            hi = (float) registers[2].toShort();
+                            lo = (float) registers[3].toShort();
+                            lo = lo / 65536;
+                            i_pu = hi + lo;
+                        }
+                    }
                 }
             }
         } catch (ModbusException e) {

@@ -42,6 +42,8 @@ import ca.farrelltonsolar.j2modlite.io.ModbusTCPTransaction;
 import ca.farrelltonsolar.j2modlite.msg.ModbusResponse;
 import ca.farrelltonsolar.j2modlite.msg.ReadFileTransferRequest;
 import ca.farrelltonsolar.j2modlite.msg.ReadFileTransferResponse;
+import ca.farrelltonsolar.j2modlite.msg.ReadMEIRequest;
+import ca.farrelltonsolar.j2modlite.msg.ReadMEIResponse;
 import ca.farrelltonsolar.j2modlite.msg.ReadMultipleRegistersRequest;
 import ca.farrelltonsolar.j2modlite.msg.ReadMultipleRegistersResponse;
 import ca.farrelltonsolar.j2modlite.net.TCPMasterConnection;
@@ -182,4 +184,16 @@ public class ModbusTCPMaster {
         return ((ReadFileTransferResponse) m_Transaction.getResponse());
     }
 
+    public synchronized ReadMEIResponse readMEI()
+            throws ModbusException {
+        ReadMEIRequest request = new ReadMEIRequest();
+        request.setLevel(1);
+        m_Transaction.setRequest(request);
+        m_Transaction.execute();
+        ModbusResponse response = m_Transaction.getResponse();
+        if (response != null) {
+            return (ReadMEIResponse) response;
+        }
+        return null;
+    }
 }//class ModbusTCPMaster
