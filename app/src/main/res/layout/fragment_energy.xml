@@ -19,7 +19,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_weight="30"
     android:orientation="horizontal"
     android:weightSum="100">
 
@@ -27,9 +26,9 @@
         android:id="@+id/EnergyToday"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
-        android:layout_margin="20dp"
+        android:layout_margin="10dp"
 
-        android:layout_weight="60"
+        android:layout_weight="55"
         app:autoScale="true"
         app:gaugeTitle="@string/EnergyTodayTitle"
         app:readingPrecision="1"
@@ -46,14 +45,13 @@
         android:layout_height="fill_parent"
         android:layout_gravity="center_vertical|top"
         android:layout_marginBottom="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_weight="40">
+        android:layout_weight="45">
 
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="0dp"
             android:orientation="vertical"
             android:weightSum="100">
             <RadioGroup
@@ -108,7 +106,7 @@
                 android:layout_height="0dp"
                 android:layout_gravity="center_vertical|top"
                 android:layout_weight="25"
-
+                android:layout_margin="5dp"
                 android:gravity="center_vertical|top"
                 android:orientation="vertical"
                 android:weightSum="100">
@@ -140,23 +138,8 @@
                         android:id="@+id/EnergyTotalValue"
                         android:layout_width="0dp"
                         android:layout_height="fill_parent"
-                        android:layout_weight="90" />
+                        android:layout_weight="100" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="bottom|right"
-                        android:layout_weight="10"
-                        android:gravity="center"
-                        android:paddingLeft="2dp"
-                        android:shadowColor="@color/material_blue_grey_800"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="1"
-                        android:singleLine="true"
-                        android:text="@string/energy_unit"
-                        android:textColor="@color/black_87"
-                        android:textSize="@dimen/textSizeMedium" />
                 </LinearLayout>
             </LinearLayout>
 

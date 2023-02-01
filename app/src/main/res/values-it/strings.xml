@@ -62,7 +62,7 @@
     <string name="SettingsLabel">Regolazioni</string>
     <string name="StateOfChargeTabTitle">Stato di carica</string>
     <string name="TemperatureTabTitle">Temperatura</string>
-    <string name="TotalEnergyTitle">Totale di Energia</string>
+    <string name="TotalEnergyTitle">Totale di Energia (kWh)</string>
     <string name="UploadLogsSummary">Invia i log di PVOUtput</string>
     <string name="amp_unit">Amps</string>
     <string name="dialog_ipaddress_hint">Indirizzo IP</string>
@@ -155,10 +155,10 @@
     <string name="CapacityTabTitle">Capacità</string>
     <string name="amp_hours_unit">Ah</string>
     <string name="NetCapacityGaugeTitle">Carica netta</string>
-    <string name="TotalCapacityTitle">Capacità totale</string>
+    <string name="TotalCapacityTitle">Capacità totale (Ah)</string>
     <string name="Positive_AH_Title">Carica (Positivo Ah)</string>
     <string name="Negative_AH_Title">Scarico (Negativo Ah)</string>
-    <string name="RemainingCapacityTitle">Capacità residua</string>
+    <string name="RemainingCapacityTitle">Capacità residua (Ah)</string>
     <string name="TemperatureScaleSummary">Utilizzare il Fahrenheit scala</string>
     <string name="turn_off_local_app">Si prega di assicurarsi l\'applicazione locale di Midnite Solar non è in esecuzione sulla rete</string>
     <string name="SystemTabTitle">Sistema</string>

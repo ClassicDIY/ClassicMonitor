@@ -42,7 +42,7 @@
     <string name="LoadCurrentTitle">Strom</string>
     <string name="LoadPowerTitle">Energie</string>
     <string name="EnergyTodayTitle">Energieertrag heute</string>
-    <string name="TotalEnergyTitle">Gesamtenergie</string>
+    <string name="TotalEnergyTitle">Gesamtenergie (kWh)</string>
     <string name="amp_unit">Ampere</string>
     <string name="BatTemperature">Batterie</string>
     <string name="Calendar">Kalender</string>
@@ -85,10 +85,10 @@
     <string name="CapacityTabTitle">Kapazität</string>
     <string name="amp_hours_unit">Ah</string>
     <string name="NetCapacityGaugeTitle">Kapazität</string>
-    <string name="TotalCapacityTitle">Gesamtkapazität</string>
-    <string name="Positive_AH_Title">Ladung </string>
-    <string name="Negative_AH_Title">Entladung</string>
-    <string name="RemainingCapacityTitle">Verbleibende Kapazität</string>
+    <string name="TotalCapacityTitle">Gesamtkapazität (Ah)</string>
+    <string name="Positive_AH_Title">Ladung (Ah)</string>
+    <string name="Negative_AH_Title">Entladung (Ah)</string>
+    <string name="RemainingCapacityTitle">Verbleibende Kapazität (Ah)</string>
     <string name="TemperatureScaleSummary">Temperaturen in Fahrenheit</string>
     <string name="turn_off_local_app">Die Midnite Local App darf nicht zeitgleich aktiv sein.\n Der Classic unterstützt nur eine Verbindung!</string>
 

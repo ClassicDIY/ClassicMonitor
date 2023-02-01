@@ -41,7 +41,7 @@
         app:showInnerRim="false"
         app:showReading="true" />
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_gravity="center_vertical|top"
@@ -51,19 +51,19 @@
         android:layout_weight="50">
 
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="10dp"
             android:orientation="vertical"
             android:weightSum="100">
 
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
-                android:layout_gravity="center_vertical|top"
                 android:layout_weight="25"
-
+                android:layout_gravity="center_vertical|top"
+                android:layout_marginRight="10dp"
                 android:gravity="center_vertical|top"
                 android:orientation="vertical"
                 android:weightSum="100">
@@ -74,14 +74,15 @@
                     android:layout_weight="40"
                     android:gravity="center_vertical|left"
                     android:labelFor="@+id/Value"
+                    android:text="@string/TotalCapacityTitle"
                     android:shadowColor="@color/material_blue_grey_800"
                     android:shadowDx="1"
                     android:shadowDy="1"
                     android:shadowRadius="1"
                     android:singleLine="true"
-                    android:text="@string/TotalCapacityTitle"
                     android:textColor="@color/black_87"
                     android:textSize="@dimen/textSizeLarge" />
+
 
                 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     android:layout_width="fill_parent"
@@ -95,31 +96,17 @@
                         android:id="@+id/AHTotalValue"
                         android:layout_width="0dp"
                         android:layout_height="fill_parent"
-                        android:layout_weight="90" />
+                        android:layout_weight="100" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="bottom|right"
-                        android:layout_weight="10"
-                        android:gravity="center"
-                        android:paddingLeft="2dp"
-                        android:shadowColor="@color/material_blue_grey_800"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="1"
-                        android:singleLine="true"
-                        android:text="@string/amp_hours_unit"
-                        android:textColor="@color/black_87"
-                        android:textSize="@dimen/textSizeMedium" />
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
-                android:layout_gravity="center_vertical|top"
                 android:layout_weight="25"
+                android:layout_gravity="center_vertical|top"
+                android:layout_marginRight="10dp"
                 android:gravity="center_vertical|top"
                 android:orientation="vertical"
                 android:weightSum="100">
@@ -130,16 +117,16 @@
                     android:layout_weight="40"
                     android:gravity="center_vertical|left"
                     android:labelFor="@+id/Value"
+                    android:text="@string/RemainingCapacityTitle"
                     android:shadowColor="@color/material_blue_grey_800"
                     android:shadowDx="1"
                     android:shadowDy="1"
                     android:shadowRadius="1"
                     android:singleLine="true"
-                    android:text="@string/RemainingCapacityTitle"
                     android:textColor="@color/black_87"
                     android:textSize="@dimen/textSizeLarge" />
 
-                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
 
@@ -151,31 +138,17 @@
                         android:id="@+id/RemainingAHValue"
                         android:layout_width="0dp"
                         android:layout_height="fill_parent"
-                        android:layout_weight="90" />
+                        android:layout_weight="100" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="bottom|right"
-                        android:layout_weight="10"
-                        android:gravity="center"
-                        android:paddingLeft="2dp"
-                        android:shadowColor="@color/material_blue_grey_800"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="1"
-                        android:singleLine="true"
-                        android:text="@string/amp_hours_unit"
-                        android:textColor="@color/black_87"
-                        android:textSize="@dimen/textSizeMedium" />
                 </LinearLayout>
             </LinearLayout>
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
-                android:layout_gravity="center_vertical|top"
                 android:layout_weight="25"
+                android:layout_gravity="center_vertical|top"
+                android:layout_marginRight="10dp"
                 android:gravity="center_vertical|top"
                 android:orientation="vertical"
                 android:weightSum="100">
@@ -186,12 +159,12 @@
                     android:layout_weight="40"
                     android:gravity="center_vertical|left"
                     android:labelFor="@+id/Value"
+                    android:text="@string/Negative_AH_Title"
                     android:shadowColor="@color/material_blue_grey_800"
                     android:shadowDx="1"
                     android:shadowDy="1"
                     android:shadowRadius="1"
                     android:singleLine="true"
-                    android:text="@string/Negative_AH_Title"
                     android:textColor="@color/black_87"
                     android:textSize="@dimen/textSizeLarge" />
 
@@ -207,31 +180,18 @@
                         android:id="@+id/AHMinusValue"
                         android:layout_width="0dp"
                         android:layout_height="fill_parent"
-                        android:layout_weight="90" />
+                        android:layout_weight="100" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="bottom|right"
-                        android:layout_weight="10"
-                        android:gravity="center"
-                        android:paddingLeft="2dp"
-                        android:shadowColor="@color/material_blue_grey_800"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="1"
-                        android:singleLine="true"
-                        android:text="@string/amp_hours_unit"
-                        android:textColor="@color/black_87"
-                        android:textSize="@dimen/textSizeMedium" />
+
                 </LinearLayout>
             </LinearLayout>
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
-                android:layout_gravity="center_vertical|top"
                 android:layout_weight="25"
+                android:layout_gravity="center_vertical|top"
+                android:layout_marginRight="10dp"
 
                 android:gravity="center_vertical|top"
                 android:orientation="vertical"
@@ -243,12 +203,12 @@
                     android:layout_weight="40"
                     android:gravity="center_vertical|left"
                     android:labelFor="@+id/Value"
+                    android:text="@string/Positive_AH_Title"
                     android:shadowColor="@color/material_blue_grey_800"
                     android:shadowDx="1"
                     android:shadowDy="1"
                     android:shadowRadius="1"
                     android:singleLine="true"
-                    android:text="@string/Positive_AH_Title"
                     android:textColor="@color/black_87"
                     android:textSize="@dimen/textSizeLarge" />
 
@@ -264,23 +224,9 @@
                         android:id="@+id/AHPlusValue"
                         android:layout_width="0dp"
                         android:layout_height="fill_parent"
-                        android:layout_weight="90" />
+                        android:layout_weight="100" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="bottom|right"
-                        android:layout_weight="10"
-                        android:gravity="center"
-                        android:paddingLeft="2dp"
-                        android:shadowColor="@color/material_blue_grey_800"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="1"
-                        android:singleLine="true"
-                        android:text="@string/amp_hours_unit"
-                        android:textColor="@color/black_87"
-                        android:textSize="@dimen/textSizeMedium" />
+
                 </LinearLayout>
             </LinearLayout>
 
