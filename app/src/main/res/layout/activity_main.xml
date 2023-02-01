@@ -22,7 +22,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <ca.farrelltonsolar.uicomponents.SlidingTabLayout
+        <ca.classicdiy.uicomponents.SlidingTabLayout
             android:id="@+id/sliding_tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -43,7 +43,7 @@
         android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:name="ca.farrelltonsolar.classic.NavigationDrawerFragment"
+        android:name="ca.classicdiy.classic.NavigationDrawerFragment"
         tools:layout="@layout/fragment_navigation_drawer" />
 
 </android.support.v4.widget.DrawerLayout>

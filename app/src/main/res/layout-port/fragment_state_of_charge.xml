@@ -28,7 +28,7 @@
     android:weightSum="100"
     android:transitionGroup="true">
 
-    <ca.farrelltonsolar.uicomponents.SOCGauge
+    <ca.classicdiy.uicomponents.SOCGauge
         android:id="@+id/SOC"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -40,7 +40,7 @@
         app:orientation="2"
         android:layout_margin="20dp" />
 
-    <ca.farrelltonsolar.uicomponents.SolarGauge
+    <ca.classicdiy.uicomponents.SolarGauge
         android:id="@+id/BidirectionalCurrent"
         android:layout_width="match_parent"
         android:layout_height="0dp"

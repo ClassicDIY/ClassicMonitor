@@ -23,7 +23,7 @@
     android:orientation="vertical"
     android:weightSum="60">
 
-    <ca.farrelltonsolar.uicomponents.BaseGauge
+    <ca.classicdiy.uicomponents.BaseGauge
         android:id="@+id/EnergyToday"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
@@ -91,7 +91,7 @@
                     android:orientation="horizontal"
                     android:weightSum="100">
 
-                    <ca.farrelltonsolar.uicomponents.Odometer
+                    <ca.classicdiy.uicomponents.Odometer
                         android:id="@+id/EnergyTotalValue"
                         android:layout_width="0dp"
                         android:layout_height="fill_parent"

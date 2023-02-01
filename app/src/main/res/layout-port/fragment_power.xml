@@ -35,7 +35,7 @@
         android:orientation="horizontal"
         android:weightSum="6">
 
-        <ca.farrelltonsolar.uicomponents.BaseGauge
+        <ca.classicdiy.uicomponents.BaseGauge
             android:id="@+id/PVVoltage"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
@@ -52,7 +52,7 @@
             app:autoScale="true"
             app:showReading="true" />
 
-        <ca.farrelltonsolar.uicomponents.BaseGauge
+        <ca.classicdiy.uicomponents.BaseGauge
             android:id="@+id/PVCurrent"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
@@ -71,7 +71,7 @@
 
     </LinearLayout>
 
-    <ca.farrelltonsolar.uicomponents.SolarGauge
+    <ca.classicdiy.uicomponents.SolarGauge
         android:id="@+id/Power"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
@@ -97,7 +97,7 @@
         android:orientation="horizontal"
         android:weightSum="6">
 
-        <ca.farrelltonsolar.uicomponents.BaseGauge
+        <ca.classicdiy.uicomponents.BaseGauge
             android:id="@+id/BatVoltage"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
@@ -114,7 +114,7 @@
             app:autoScale="true"
             app:showReading="true" />
 
-        <ca.farrelltonsolar.uicomponents.BaseGauge
+        <ca.classicdiy.uicomponents.BaseGauge
             android:id="@+id/BatCurrent"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
