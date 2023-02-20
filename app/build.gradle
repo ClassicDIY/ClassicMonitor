@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 android {
-    compileSdkVersion 30
+    signingConfigs {
+        debug {
+            storeFile file('C:\\Users\\Me\\Keys\\MWS\\mws.jks')
+            storePassword 'Missouri'
+            keyPassword 'Missouri'
+            keyAlias 'monitor'
+        }
+    }
+    compileSdkVersion 31
     buildToolsVersion "28.0.3"
 
     defaultConfig {
