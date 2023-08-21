@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ca.classicdiy.classic"
-    android:versionCode="308"
-    android:versionName="3.0.8" >
+    android:versionCode="309"
+    android:versionName="3.0.9" >
 
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -26,7 +25,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="ca.classicdiy.classic.MonitorActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:exported="false" >
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
                 <!--<category android:name="android.intent.category.LAUNCHER" />-->
@@ -35,7 +35,8 @@
 
         <activity
             android:name="ca.classicdiy.classic.Splash"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -45,6 +46,7 @@
         <activity
             android:name="ca.classicdiy.classic.Settings"
             android:label="@string/SettingsLabel"
+            android:exported="false"
             android:parentActivityName="ca.classicdiy.classic.MonitorActivity" />
 
         <service
