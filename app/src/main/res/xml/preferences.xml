@@ -57,7 +57,7 @@
             android:title="@string/SIDTitle"
             android:inputType="numberDecimal"
             android:digits="0123456789"
-            android:maxLength="5"
+            android:maxLength="6"
             android:numeric="decimal"
             android:defaultValue="" />
         <Preference
