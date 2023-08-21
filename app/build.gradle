@@ -24,6 +24,7 @@ android {
 
         }
     }
+    namespace 'ca.farrelltonsolar.classic'
 
 }
 dependencies {
