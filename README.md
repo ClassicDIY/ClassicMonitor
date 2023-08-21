@@ -46,6 +46,40 @@ Release notes:
 
 -----------------
 
+version 2.7.3
+
+<ul>
+<li>Update to API 33</li>
+<li>Updated PVOutput SID length to 6</li>
+</ul>
+
+-----------------
+
+version 2.6.5
+
+<ul>
+<li>Update to API 29</li>
+<li>Fixed MAC address display, splash delay</li>
+</ul>
+
+-----------------
+
+version 2.6.4
+
+<ul>
+<li>Enabled multicast lock to fix AutoDetect classic on newer versions of Android</li>
+</ul>
+
+-----------------
+
+version 2.6.0
+
+<ul>
+<li>Clear instance state to get around bug with tabs displaying wrong content</li>
+</ul>
+
+-----------------
+
 version 2.5.5
 
 <ul>
