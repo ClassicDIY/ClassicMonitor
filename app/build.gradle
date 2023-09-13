@@ -8,11 +8,11 @@ android {
             keyAlias 'monitor'
         }
     }
-    compileSdkVersion 33
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.missouriwindandsolar.classic"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 33
     }
 //    signingConfigs {
