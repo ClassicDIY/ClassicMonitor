@@ -32,9 +32,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
-
 import com.google.gson.Gson;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
