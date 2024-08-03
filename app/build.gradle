@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 android {
-    compileSdk 33
+    compileSdk 34
     defaultConfig {
         applicationId "ca.farrelltonsolar.classic"
-        minSdkVersion 16
-        targetSdkVersion 33
+        minSdkVersion 24
+        targetSdkVersion 34
     }
     signingConfigs {
         release {

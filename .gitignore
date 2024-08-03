@@ -43,3 +43,4 @@ Google Play Picture/New Microsoft Access Database.accdb
 app/release/app-release.aab
 *.hprof
 java_pid16648.hprof
+/app/release
